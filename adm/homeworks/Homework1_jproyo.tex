@@ -1,0 +1,99 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{listings}
+\usepackage{color}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  stepnumber=1,
+}
+
+\theoremstyle{definition}
+\newtheorem*{euclidean}{Euclidean Space}
+\newtheorem*{hamming}{Hamming metric space}
+\newtheorem*{nns}{Nearest Neighbor Search ($\epsilon-NNS$)}
+
+\title{%
+      Homework 1 \\
+      Locality Sensitivity Hashing
+    }
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{ADM - Locality Sensitivity Hashing}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Similarity Search problem are algorithms in which given a collection of objects, we are required to find all those objects that are similar to an specific one. By \textit{similar}, we mean that given an multidimensional point (object) $p_i = (x_1, x_2, \dots x_d)$ where $x_d$ is the $d$-dimension characteristic of $p_i$, there exists a function $f: R^d \to r \mid d > 0, r \in R$ that measure the distance $r$ on each dimension $x_d \land \forall p_j \mid i \neq j$, returning $\argmin_{p_j} = \{ f(p_j) \mid \forall p_j \in R^d \}$ whose distance is the smallest one.
+
+This kind of algorithms are used for different kind of problems: information retrieval, pattern image recognition, text search and everything that can be represented as a \textit{k}-dimensional in some dimensional space $R^d \mid d > 0$. In particular we are going to study in the $d$-dimensional \textit{Euclidean} space.
+
+It is well know that there are several different approaches to solve \textit{Nearest Neighbor} as for example $kd$-trees, but these kind of structures start to perform bad when the amount of dimensions exceeds above \textit{10} or \textit{20} doing it not better than \textit{brute force} linear search.
+
+In this sense, we are going to describe a \textbf{sub-linear} optimized algorithm which is call \textbf{Locality Sensitivity Hashing} \textit{(LSH)}.
+
+The main idea of \textbf{LSH} is to hash the points, in order to have a higher probability of collision of those points which are \textit{similar} or close to each other, rather than those who are apart.
+
+In this document we are going to analyze and describe all the details needed to understand \textit{LSH} based on this paper \cite{gionis_sim_search}.
+
+\section{Definitions}
+
+\begin{euclidean}
+  We use $l^{d}_p$ to denote the \textit{Euclidean} space $R^d$ under the $l_p$ norm, i.e.\ when the length of the vector $(x_1, x_2, \dots, x_d)$ is defined as $(|x_1|^p + |x_2|^p + \dots + |x_d|^p)^{1/p}$. Also, $d_p(p,q) = || p - q ||_p$ which indicates the distance between the point $p$ and $q$ in $l^{d}_p$.
+\end{euclidean}
+
+\begin{hamming}
+  We use $H^d$ to denote \textit{Hamming metric space} of dimension $d$, i.e., the space of binary vectors of length $d$ under the standard \textbf{Hamming} metric. We use $d_H(p,q)$ to denote the \textbf{Hamming distance}, i.e., the number of bits on which $p$ differs from $q$.
+\end{hamming}
+
+\begin{nns}
+  Given a set $P$ of points in a normed space $l^{d}_p$, preprocess $P$ so as to efficiently return a point $p \in P$ for any given query point $q$, such that $d(q, p) \leq (1 + \epsilon)d(q,P)$ where $d(q, P)$ is the distance of $q$ to the its closest point
+in $P$.
+\end{nns}
+
+\section{Description of the Algorithm}
+
+\begin{thebibliography}{9}
+\bibitem{gionis_sim_search}
+  Aristedes Gionis, Piotr Indyk, Rajeev Motwani. 1999. \textit{Similarity Search in High Dimensions via Hashing}. In Vldb, Vol. 99. 518-529.
+\end{thebibliography}
+
+\end{document}
+

@@ -91,6 +91,7 @@ The algorithm proceed as follows:
     \end{equation*}
 
     This means that the encoding does not affect (or preserve), the distance between points.
+\end{enumerate}
 
 \subsection{Preprocessing algorithm}
 
@@ -113,7 +114,9 @@ The algorithm proceed as follows:
    \end{algorithmic}
    \end{algorithm}
 
-\subsection{$\epsilon-NNS$ Algorithm}
+   This algorithm is the preprocessing of building all the Hash tables with all the points applying the \textbf{hash} function $g_i$ for each Hash table.
+
+\subsection{Approximate NNS Algorithm}
 
 \begin{algorithm}
   \label{algo:nns}
@@ -132,7 +135,100 @@ The algorithm proceed as follows:
   \end{algorithmic}
 \end{algorithm}
 
+In this algorithm we are finally doing the approximate search, where giving one query point $q$, we are iterating over all hash tables to find the Nearest point on that Hash table $i$ and putting that point into a resulting subset $S$.
+
+\section{Analysis of LSH}
+As we describe in the introduction section, the main idea behind this method rest on the fact that the Probability of collisions in terms of hashing increase if the elements are near each other.
+
+This statement is formalized in the following way:
+
+\newtheorem*{prob}{Definition}
+\begin{prob}{Definition}
+  Let $D(.,.)$ be the Hamming distance function of elements from a set $S$
+  Let $B(p,r)$ be the set of elements from $S$ within distance from $r$ to $p$
+  A family $H$ of functions from $S$ to $U$ is called $(r_1, r_2, p_1, p_2)$-sensitive for $D(.,.)$ if for any $q, p \in S$
+  \begin{itemize}
+    \item if $p \in B(q,r_1) \implies P[h(q) = h(p)] \geq p_1$
+    \item if $p \notin B(q,r_2) \implies P[h(q) = h(p)] \leq p_2$
+  \end{itemize}
+  Such that $p_1 > p_2$ and $r_1 < r_2$
+\end{prob}
+
+What the first implication of the definition is saying is that the probability of collision in the hashing function of 2 points increase when the 2 points are similar. We can notice that because $p \in B(q,r_1)$, so $p$ it is within a close distance with regards of the subset of points between $q$ and $r_1$. In the second implication the probability of collision in hashes decreases when $p$ it is not in the subset of distance points.
+
+In this analysis we are generalizing the algorithm to an arbitrary local-sensitive family of Hash functions $H$, instead of only one. So our $g_i$ function has the following form:
+
+\begin{equation*}
+  g_i(p) = (h_{i1}(p), h_{i2}(p), \dots, h_{ik}(p))
+\end{equation*}
+
+Where the hashing functions $h_{ik}$ are u.a.r.\ choosen with replacement.
+
+There are two things that this algorithm state in the cited paper \cite{gionis_sim_search}, one is that $whp$ we can assure that hashing collision takes place when the elements are near, and the other is that the complexity of the algorithm is sub linear.
+
+We are going to give a brief analysis now on the authors works that prove this 2 strong statements.
+
+\subsection{High Probability of Hashing Collisions for Near elements}
+The prove that we can have high collision with high probability for nearest elements is done assuming that there are 2 properties that holds in order to achieve this:
+
+\begin{enumerate}
+ \item \textbf{P1} If there exists a $p^*$ such that $p^* \in B(q, r_1) \implies g_j(p^*) = g_j(p)$ for some $j = 1, \dots, l$. This means that if the are an element that is near, if we can find other near they have the same output in the hashes functions.
+ \item \textbf{P2} The total number of blocks pointed by $q$ and containing only points from $P'$ is less than $cl$.
 \end{enumerate}
+
+Assuming that $H$ is a $(r_1, r_2, p_1, p_2)$-sensitive; it is defined that $\rho = \frac{\ln{1/p_1}}{\ln{1/p_2}}$. The correctness of \textbf{LSH} algorithm follows the following theorem:
+
+\newtheorem{high}{Theorem 1}
+\begin{high}
+  Setting $k = \log_{1/p_2}(n/B)$ and $l = (\frac{n}{B})^\rho$ guarantees that properties \textbf{P1} and \textbf{P2} holds with high probability at least $\frac{1}{2} - \frac{1}{\epsilon} \geq 0.132$
+\end{high}
+
+This is achieve by amplifying the algorithm on $O(1/\delta)$ times for obtaining a high probability.
+
+\subsection{Sub Linear complexity}
+Basically the prove is done assuming that $r < \frac{d'}{\ln{n}}$. This can be easily done by augmenting the number of dimensions, and that is trivial by padding with $0$-zeroes at the end of each point representation on Hamming encoding.
+
+Assuming that we have that:
+
+\begin{subequations}
+  \begin{align}
+  \rho &= \frac{\ln{1/p_1}}{\ln{1/p_2}} \\
+       &= \frac{\ln{\frac{1}{1-r/{d'}}}}{\ln{\frac{1}{1-(1+\epsilon)r/{d'}}}} \\
+       &= \frac{\ln{(1-r/{d'})}}{\ln{(1-(1+\epsilon)r/{d'})}}
+  \end{align}
+\end{subequations}
+
+After this we multiply numerator and denominator by $d'/r$ and we obtain:
+
+\begin{equation*}
+  \frac{U}{L} = \frac{\ln{(1-r/{d'})^{d'/r}}}{\ln{(1-(1+\epsilon)r/{d'})^{d'/r}}}
+\end{equation*}
+
+In order to upper bound $\rho$, we need to bound $U$ from below and $L$ from above; note that both $U$ and $L$ are negative. So, we end up with the following equation:
+
+\begin{equation*}
+\frac{U}{L} < \frac{1}{1+\epsilon} - \ln{(1-\frac{1}{\ln n})}
+\end{equation*}
+
+
+Having that $\epsilon > 0$ and $r < \frac{d'}{\ln{n}}$, it can be conclude that:
+
+
+\begin{subequations}
+  \begin{align}
+    n^{\rho} &< n^{1/(1+\epsilon)} n^{- \ln{(1-1/\ln n)}} \\
+             &= n^{1/(1+\epsilon)} (1-1/\ln n)^{-\ln n} \\
+             &= O(n^{1/(1+\epsilon)})
+  \end{align}
+\end{subequations}
+
+
+
+\section{Conclusion}
+We have seen that \textit{Locality Sensitivity Hashing} algorithm is a powerful technique for doing Similarity Search algorithm with sub linear complexity.
+In further works we can set up an experiment similar to the author's work in order to compare the performance and results between this algorithm and other.
+
+
 
 
 \begin{thebibliography}{9}

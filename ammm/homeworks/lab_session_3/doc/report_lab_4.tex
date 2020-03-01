@@ -1,0 +1,290 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{color}
+
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  stepnumber=1,
+  escapechar=!
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+
+\title{Lab Session 4 – GRASP Metaheuristics}
+\author{Juan Pablo Royo Sales \and Francesc Roy Campderrós \and Gerard Martin Teixidor}
+
+
+\begin{document}
+\maketitle
+
+\section{Part a}
+\begin{lstlisting}[language=Python]
+S !$\leftarrow \emptyset$!
+sortedTask !$\leftarrow$! sort(T, !$\sum_{H(t)} r_h$!, DESC)
+
+for each t in T do
+
+    F !$\leftarrow$! findFeasibleAssignments(t)
+
+    if !$F = \emptyset$! then
+      return INFEASIBLE
+
+    sortedF !$\leftarrow$! sort(F, !$F_{highestLoad}$!, DESC) 
+
+    minHighestLoad !$\leftarrow$! !$sortedF[0]_{highestLoad}$!
+    maxHighestLoad !$\leftarrow$! !$sortedF[sizeF - 1]_{highestLoad}$!
+    boundary !$\leftarrow$! !$minHighestLoad - \alpha* (maxHighestLoad - minHighestLoad)$!
+
+    rclMax !$\leftarrow$! !$\{ x \mid x \leftarrow sortedF, x_{highestLoad} \ge boundary\}$!  
+
+    Select !$elem \in rclMax$! at random
+
+    S !$\leftarrow S \cup \{elem\}$!
+
+ 
+return S
+\end{lstlisting}
+
+\section{Part b}
+\subsection{GRASP wihtout LocalSearch - Alpha 0.2}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000095          inf              0
+    0.09167194   0.30479079              1
+   60.03458095   0.30479079            679
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 1086400
+  Total Eval. Time      56.8899569511 s
+  Avg. Time / Candidate 0.0523655715677 ms
+\end{lstlisting}
+
+\subsection{GRASP wihtout LocalSearch - Alpha 0.4}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000191          inf              0
+    0.09190679   0.30472371              1
+   60.06706095   0.30472371            683
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 1092800
+  Total Eval. Time      56.9290728569 s
+  Avg. Time / Candidate 0.0520946859964 ms
+\end{lstlisting}
+
+\subsection{GRASP wihtout LocalSearch - Alpha 0.6}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000191          inf              0
+    0.09170008   0.30479079              1
+   60.02125311   0.30479079            663
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 1060800
+  Total Eval. Time      56.824732542 s
+  Avg. Time / Candidate 0.0535678097116 ms
+\end{lstlisting}
+
+\subsection{GRASP wihtout LocalSearch - Alpha 0.8}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000215          inf              0
+    0.09135795   0.30479079              1
+   60.00699210   0.30479079            658
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 1052800
+  Total Eval. Time      56.8357601166 s
+  Avg. Time / Candidate 0.0539853344572 ms
+\end{lstlisting}
+
+\subsection{GRASP wihtout LocalSearch - Alpha 1.0}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000095          inf              0
+    0.10897708   0.30479079              1
+   60.05233288   0.30479079            657
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 1051200
+  Total Eval. Time      56.6674103737 s
+  Avg. Time / Candidate 0.0539073538562 ms
+\end{lstlisting}
+
+The alpha that gives the best results is 0.4.
+
+\subsection{Constructive + Local search with N1 and BI}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000191          inf              0
+    0.23229003   0.30455732              1
+   65.84744787   0.30455732             10
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 16000
+  Total Eval. Time      1.02649307251 s
+  Avg. Time / Candidate 0.0641558170319 ms
+
+Local Search Performance:
+  Num. Iterations Eval. 394
+  Total Eval. Time      64.757581234 s
+  Avg. Time / Iteration 164.359343233 ms
+\end{lstlisting}
+
+\subsection{Constructive + Local search with N1 and FI}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000215          inf              0
+    0.23289108   0.30479079              1
+   60.11273098   0.30479079             64
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 102400
+  Total Eval. Time      5.95909833908 s
+  Avg. Time / Candidate 0.0581943197176 ms
+
+Local Search Performance:
+  Num. Iterations Eval. 2895
+  Total Eval. Time      53.7968969345 s
+  Avg. Time / Iteration 18.5826932416 ms
+\end{lstlisting}
+
+\subsection{GRASP + Local search with N2 and BI}\label{res:grasp_n2_bi}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000095          inf              0
+    7.63799095   0.30261162              1
+   88.99122190   0.30212228              3
+   88.99124312   0.30212228              3
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 4800
+  Total Eval. Time      0.26437664032 s
+  Avg. Time / Candidate 0.0550784667333 ms
+
+Local Search Performance:
+  Num. Iterations Eval. 291
+  Total Eval. Time      88.7114849091 s
+  Avg. Time / Iteration 304.850463605 ms
+\end{lstlisting}
+
+\subsection{GRASP + Local search with N2 and FI}
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000215          inf              0
+    0.69117808   0.30216077              1
+   62.57493901   0.30216077             20
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 32000
+  Total Eval. Time      1.66873550415 s
+  Avg. Time / Candidate 0.0521479845047 ms
+
+Local Search Performance:
+  Num. Iterations Eval. 2271
+  Total Eval. Time      60.8111665249 s
+  Avg. Time / Iteration 26.7772639916 ms
+\end{lstlisting}
+
+\subsection{Part c}
+We have used GRASP/LocalSearch with N2 and BI improvement.
+
+\begin{lstlisting}
+AMMM Lab Heuristics
+-------------------
+Reading Config file config/config.dat...
+Reading Input Data file data/big_0.dat...
+Creating Problem...
+Solving Problem...
+Elap. Time (s)   Obj. Value     Iterations
+    0.00000095          inf              0
+   10.63552690   0.30170854              1
+  651.26529789   0.30170854             14
+
+GRASP Candidate Evaluation Performance:
+  Num. Candidates Eval. 22400
+  Total Eval. Time      1.2085108757 s
+  Avg. Time / Candidate 0.0539513783795 ms
+
+Local Search Performance:
+  Num. Iterations Eval. 2219
+  Total Eval. Time      649.98689127 s
+  Avg. Time / Iteration 292.91883338 ms
+\end{lstlisting}
+
+As we can see having the algorithm running more time we could improve the
+solutions with less time like it is shown here \ref{res:grasp_n2_bi}
+
+
+\end{document}

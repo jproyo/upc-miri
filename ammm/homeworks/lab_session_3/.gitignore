@@ -1,0 +1,8 @@
+doc/*.log
+doc/*.pdf
+doc/*.aux
+doc/*.gz
+doc/auto/
+*.pyc
+**/logs
+**/solutions

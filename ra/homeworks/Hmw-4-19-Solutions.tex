@@ -1,0 +1,214 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\title{Home work 4 - Solutions}
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{RA - Homework 4}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 21}
+We want the probability that Alice loses is the same as saying that she wins
+less than half of the time, therefore $P[X \leq \frac{n - 1}{2}]$
+
+We know that Alice wins with Probability $0.6$, therefore $\mu = \frac{3}{5}n$
+
+\begin{align*}
+    (1 - \delta)\mu  &= \frac{n - 1}{2}\\
+    (1 - \delta)\frac{3}{5}n &= \frac{n - 1}{2}\\
+    1 - \delta &= \frac{\frac{n-1}{2}}{\frac{3n}{5}}\\
+    \delta &= 1 - \frac{5}{6}\frac{n-1}{n}
+\end{align*}
+
+For a large $n$ $\delta <= \frac{1}{6}$
+
+Taking this we can substitute in our Chernoff inequality getting the following:
+
+\begin{align*}
+    P\left[X \leq (1 - \delta)\mu\right] &= e^{-\mu \delta^2/2}\\
+                                         &= e^{-\frac{3n}{5}\frac{1}{6}/2}\\
+                                         &= e^{-\frac{n}{6}}
+\end{align*}
+
+\section{Exercise 22}
+\subsection{Part a}\label{part:a}
+
+Let $X$ be the number of incorrect votes. For an election of $1000000$ votes, then
+$\mu = E[X]=1000000 \times p = 1000000 \times 0.02 = 20000$
+
+We want to bound by Chernoff that $P[X> 0.04 * 1000000] = P[X>40000]$. Therefore
+
+\begin{align*}
+	(1 - \delta)\mu &= 40000 \\
+  (1 - \delta)20000 &= 40000\\
+	\delta &= 1
+\end{align*}
+
+Applying Chernoff we have the following,
+
+\begin{align*}
+	P[X \geq 40000] &\leq e^{-\mu \delta^2/3}\\
+                  &\leq e^{-20000 \times 1^2/3}\\
+                  &\leq e^{-20000/3}
+\end{align*}
+
+\subsection{Part b}
+
+Let $\bar Y$ be the number of correct votes for $B$, therefore for $B$ wins we
+need $P[X + \bar Y > 500000]$
+
+According the statement problem we have the following
+
+\begin{align*}
+  \mu = E[X + \bar Y] &= 510000p + 490000(1-p) \\
+                      &= 510000(0.02) + 490000(1-0.02) \\
+                      &= 490400
+\end{align*}
+
+Calculating $\delta$ for $B$
+
+\begin{align*}
+  (1 + \delta)\mu &= 500000\\
+  (1 + \delta)490400 &= 500000\\
+  \delta &= \frac{12}{613}
+\end{align*}
+
+Taking bound from \ref{part:a}
+
+\begin{align*}
+  P[B \text{ wins}] &= P[X + \bar Y > 500000]\\
+                   &< e^{-490400 \frac{12}{613}^2/3}\\
+                   &< 6.231 \times 10^{-28}
+\end{align*}
+
+Because votes are independents events we can say,
+
+\begin{align*}
+  P[X + \bar Y > 500000] = P[(X > k) \cap (Y < l)] = P(X > k) + P(Y < l)
+\end{align*}
+
+where $k$ and $l$ satisfy the constraint $k-l > 10000$.
+
+\section{Exercise 23}
+\subsection{Part a}
+
+Let process $\phi$ so that every variable appears at most once in each clause
+(eliminate repeated occurences of a literal, and delete a clause if both a literal and its negation
+occur). Let $n$ denote the number of variables, and $c_i$ the number of variables in
+clause i.
+
+\begin{itemize}
+\item $size(x, S_i)$: return $2^{n–c_i}$ The variables in clause i must be fixed
+  to values that satisfy the clause, and the remaining variables may be assigned any value.
+\item $select(S_i)$: fix the variables in clause i to values that satisfy the
+  clause; choose the values of the remaining variables independently and u.a.r.
+\item $lowest(x)$: $\forall i \mid 1 \leq i \leq n$ test if $x$ satisfies clause
+  $i$ and return the index of the first clause in which $x$ satisfies or undefined if it satisfies no clauses.
+\end{itemize}
+
+\subsection{Part b}
+The problem is that $S$ may occupy only a tiny fraction of all possible
+assignments $U$. Thus the number of samples $t$ would need to be huge in order
+to get a good estimate of $q$. Taking a concrete example, consider the formula
+$\phi = x_1 \wedge x_2 \wedge \text{ ... } \wedge x_n$. Clearly $|S| = 1$ (the only
+satisfying assignment is when all $n$ variables are \textbf{True}). The given
+algorithm will output zero unless it happens to choose this assignment in one of
+its t samples, i.e., it outputs zero with probability $(12^n)^t \geq 1t2^n \cong
+1$ for any $t$ that is only polynomial in $n$. Thus the relative error of the
+algorithm will be arbitrarily large with probability arbitrarily close to 1.
+
+\textit{Note: It is not enough here to quote the bound from class $t =
+  O(q/\epsilon^2\ln(1/\delta))$, which tells us how large a sample size is
+  sufficient to estimate the proportion $q$. The reason is that this is an upper
+  bound on $t$, whereas here we need a lower bound. The lower bound can be
+  derived by the very simple argument given above.}
+
+\subsection{Part c}
+Note that the first two lines of the algorithm select each pair $(x,S_i) \mid x
+\in S_i$ with probability $\frac{|S_i|}{\sum_{j=1}^{m}|S_j|}\frac{1}{|S_i|} =
+\frac{1}{\sum_{j=1}^{m}|S_j|}$.
+
+Let $C = \{(x,S_i) \mid lowest(x) = i\}$, therefore the algorithm outputs 1 with
+probability $\sum_{(x,S_i) \in C}\frac{1}{\sum_{j=1}^{m}|S_j|} =
+\frac{|C|}{\sum_{j=1}^{m}|S_j|}$.
+
+To show that $|C| = |S|$ every element $x \in S$ corresponds to one lowest $S_i$
+such that $C = \{(x,S_lowest(x)) \mid x \in S\}$.
+
+Therefore the algorithm outputs 1 with probability $p = \frac{|S|}{\sum_{j=1}^{m}|S_j|}$
+
+\subsection{Part d}\label{part:d}
+$\forall i \mid 1 \leq i \leq m$ we have $|S_i| \leq |S|$. Therefore
+$\sum_{j=1}^{m}|S_j| \leq m|S|$
+
+\begin{equation}
+  p = \frac{|S|}{\sum_{j=1}^{m}|S_j|} \geq \frac{1}{m}
+\end{equation}
+
+\subsection{Part e}\label{part:e}
+Knowing that $X_1, X_2, ... X_n$ are independents $\{0,1\}$ random variables,
+$E[X]=pt$. Taking Chernoff
+
+\begin{equation}
+  P[|Xpt| \geq \epsilon p t] \leq 2e^{2pt/3}
+\end{equation}
+
+We take
+
+\begin{equation}
+t = \left[ \frac{3}{\epsilon^2 p}\ln{\frac{2}{\delta}} \leq
+  \frac{3m}{\epsilon^2} \ln{\frac{2}{\delta}}\right]
+\end{equation}
+
+Taking part \ref{part:d} we know that $p \geq \frac{1}{m}$
+
+Therefore,
+
+\begin{equation}
+  t = O\left( \frac{m}{\epsilon^2}\log{\frac{1}{\delta}} \right)
+\end{equation}
+
+\subsection{Part f}
+Each iteration in step $(c)$ requires $O(1)$. The final algorithm as we showed
+before takes $O(t) = O\left( \frac{m}{\epsilon^2}\log{\frac{1}{\delta}}
+\right)$.
+
+By definition we know that $|S| = \frac{\sum_{j=1}^{m}|S_j|}{t} \times tp$ and
+$Y = \frac{\sum_{j=1}^{m}|S_j|}{t} \times X$. This implies,
+
+\begin{equation}
+  Y \in [(1 - \epsilon)|S|, (1 + \epsilon)|S|] \iff X \in [(1 - \epsilon)tp,(1 + \epsilon)tp]
+\end{equation}
+
+and
+
+\begin{equation}
+  P[Y \in [(1 - \epsilon)|S|, (1 + \epsilon)|S|]] = P[X \in [(1 - \epsilon)tp,(1 + \epsilon)tp]]
+\end{equation}
+
+By part \ref{part:e} it is shown than 
+
+\begin{equation}
+  P[Y \in [(1 - \epsilon)|S|, (1 + \epsilon)|S|]] \geq 1 - \delta
+\end{equation}
+
+
+\end{document}

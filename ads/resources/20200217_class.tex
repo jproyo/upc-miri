@@ -1,0 +1,96 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+
+\title{Lecture 02/17/2020 \\
+Multidimensional Data Structures
+}
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{ADS - Lecture}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\maketitle
+
+\section{Multidimensional Data Structures}
+
+MDS can be a lot of things, see slides.
+
+But we can divided into:
+
+- Points
+- Spatial
+
+What we are going to study is \textbf{Point Muiltidimensional data structures}
+
+We identify a point in $K$-dimensional space with key $x = (x_0,x_1,\dots,x_{k-1})$
+
+We will assume that each $x_i$ belongs to $Di = [0,1]$
+
+\subsection{Associative Retrieval}
+This kind of DS is not for doing exact search, but for doing more complexs searches.
+When the search involves more than one attribute is call associative.
+
+Some examples:
+
+\begin{itemize}
+  \item Partial Match Queries: All points that matches the attributes that i care not others.
+  \item Orthogonal Range Queries: What points fall in some region. Because of that ranged queries.
+  \item Nearest Neighbor Queries: Closest points to some specific point.
+
+\end{itemize}
+
+
+See slides for formal defiinitions.
+
+\section{Data Structures}
+
+\subsection{Inverted Files - Projections}
+I am going to have an Order list for every attribute and in that list i am going to have every point. (See slides)
+
+The list contain the points in the order according to the attribute of that list.
+
+How do i perform an exact search?
+
+The file is order so the complexity is $O(\log{}n)$ if i dont allow repetitions.
+
+If i allow repetitions is $O(k\log{}n)$
+
+For Partial match or Orthogonal Ranged Queries the cost is
+
+$O(k\log{}n + R)$ R = Results or Number of points that match or are in the query.
+
+\subsection{Grid Files}
+It is a generalization of Hash Table.
+
+In the 2-dimensional case it is a Matrix in which in each cell we have a list of points. See notes.
+
+This kind of data structure is space-driven in contrast with Trees that are data-driven.
+
+It is good for region search but we can have a lot of space empty.
+
+Cost = See Grid Files notes.
+
+Exact search = $O(b)$
+
+
+
+\end{document}

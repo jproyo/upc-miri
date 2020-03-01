@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ASCII"?><project>
+	<version>1.0</version>
+	<configs>
+		<config default="true" name="LabSessionRun1_DataSet_1" category="opl">
+			<ref name="LabSession1.mod" type="model">
+			</ref>
+			<ref name="LabSession1_1.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="LabSessionRun1_DataSet_2" category="opl">
+			<ref name="LabSession1.mod" type="model">
+			</ref>
+			<ref name="LabSession1_2.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="LabSessionRun1_DataSet_3" category="opl">
+			<ref name="LabSession1.mod" type="model">
+			</ref>
+			<ref name="LabSession1_3.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="LabSessionRun1_DataSet_4" category="opl">
+			<ref name="LabSession1.mod" type="model">
+			</ref>
+			<ref name="LabSession1_4.dat" type="data">
+			</ref>
+		</config>
+	</configs>
+	
+</project>

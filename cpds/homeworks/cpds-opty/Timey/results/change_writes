@@ -1,0 +1,78 @@
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:95082, OK:90444, -> 95.12210513030857 %
+2: Transactions TOTAL:95221, OK:90584, -> 95.13027588452127 %
+1: Transactions TOTAL:95247, OK:90525, -> 95.0423635390091 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 6 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:37820, OK:23976, -> 63.39502908514014 %
+1: Transactions TOTAL:37752, OK:23918, -> 63.35558381012927 %
+2: Transactions TOTAL:37876, OK:23942, -> 63.21153236878234 %
+Stopped
+
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 11 WRxTR, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:26477, OK:12763, -> 48.204101673150284 %
+1: Transactions TOTAL:26405, OK:12943, -> 49.017231584927096 %
+3: Transactions TOTAL:26421, OK:12898, -> 48.81722871957912 %
+Stopped
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 16 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:20541, OK:8945, -> 43.54705223698944 %
+2: Transactions TOTAL:20573, OK:8844, -> 42.98838283186701 %
+1: Transactions TOTAL:20514, OK:8830, -> 43.04377498293848 %
+Stopped
+
+
+
+\item $(iv)$ Different ratio in the number of writes per transaction
+
+\begin{table}[h!]
+\begin{tabular}{ |c|c|c|c| }
+  \hline
+  \multicolumn{4}{|c|}{Concurrent Clients - Duration 3s} \\
+  \hline
+  Experiment & Total Transactions & OK Transactions & \% Transactions\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+
+  & 95082 & 90444 &  95.12210513030857 \%\\
+  & 95221 & 90584 &  95.13027588452127 \%\\
+  & 95247 & 90525 &  95.0423635390091 \%\\
+  & & &\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 6 WRxTR}
+
+  & 37820 & 23976 &  63.39502908514014 \%\\
+  & 37752 & 23918 &  63.35558381012927 \%\\
+  & 37876 & 23942 &  63.21153236878234 \%\\
+  & & &\\
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 11 WRxTR}
+
+  & 26477 & 12763 &  48.204101673150284 \%\\
+  & 26405 & 12943 &  49.017231584927096 \%\\
+  & 26421 & 12898 &  48.81722871957912 \%\\
+  & & &\\
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 4 RDxTR \\ 16 WRxTR}
+  & 20541 & 8945 &  43.54705223698944 \%\\
+  & 20573 & 8844 &  42.98838283186701 \%\\
+  & 20514 & 8830 &  43.04377498293848 \%\\
+  & & &\\
+  \hline
+\end{tabular}
+\captionof{figure}{Results of several executions changing the number of writes per transaction in the Timestamp ordering algorithm}
+\label{table:timey_writes}
+\end{table}

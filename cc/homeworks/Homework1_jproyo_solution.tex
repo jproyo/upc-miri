@@ -1,0 +1,143 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\title{%
+      Homework 1 \\
+      Solutions
+}
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{CC - Homework 1}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 1}
+\newtheorem{moderate}{Moderate}
+\begin{moderate}
+Lets first prove that if $f$ and $g$ are moderate therefore $f \circ g$ is moderate.
+\end{moderate}
+
+\begin{proof}
+  If $g$ is moderate by definition of the problem, then $\exists\ p(n): |g(x)| \leq p(|x|)\ \forall x \in \{0,1\}^*$.
+
+  Lets define a $TM\ G$ which executes $g$ in polinomial time in $n$.
+
+  Lets call $y = p(|x|)$ to the result of executing $G$ by definition of moderation on $g$.
+
+  And then applying,
+
+  \begin{subequations}
+    \begin{align}
+      |f(g(x))| &\leq p(|g(x)|) \label{eq:1} \\
+                &\leq p(|p(|x|)|) \label{eq:2}\\
+                &= p(|n^c|) \label{eq:3} \\
+                &= n^{c^{c'}} \label{eq:4} \\
+                &= n^{cc'} \label{eq:5} \\
+                &= n^d
+    \end{align}
+  \end{subequations}
+
+  \ref{eq:1} and \ref{eq:2} by definition of the problem because $f$ is moderate.
+  Replacing \ref{eq:3} by definition of polynomial. We can replace again in \ref{eq:4} by definition of polynomial. We can derived \ref{eq:5} by exponential of exponential law which is the multiplication of both constant replacing $c{c'} = d$.
+
+  We can state that the upper bound of the composition is polynomial in their input $\exists\ p(n): |f(g(x))| \leq p(|g(x)|)\ \forall x \in \{0,1\}^*$.
+
+  Therefore $f \circ g$ is also moderate.
+\end{proof}
+
+\newtheorem{logspace}{Logspace computable}
+
+\begin{logspace}
+  If $f$ and $g$ are \textbf{logspace commputable} then $f \circ g$ is \textbf{logspace computable}.
+\end{logspace}
+
+\begin{proof} \label{proof:logspace}
+    In order to prove that \textbf{logspace computable} functions are closed under composition, we need to first run $g(x)$ and to the result of that applied $f$ using \textbf{logspace computation}.
+
+    Taking the $\text{BIT}_g$ we know by that and because $g$ is moderate that the output of $g$ is of some polynomial length at least $p(|x|)$. This is going to be the input of $f$ in the composition.
+
+    Although both machines of $f$ and $g$ use space $O(log(n))$ by definition of the problem, we cannot use that for proving the composition in logspace because the output of $g$ is going to be use as the input of machine $f$ and we need to store that in a work tape. If we do that as we know that the output of $g$ is polynomial we are not going to have logspace. The way to do this is to transform the output of $g$ in something that use $O(log(n))$ space.
+
+    In order to do so, we are going to use the \textbf{bit-graph} of $g$ $\text{BIT}_g$. Using the bit-graph we know what is the output of $g(x)$ in the $i\text{-th}$ bit by definition of the problem, without needing to store its output.
+
+    When we are running $f$ on $g(x)$ we only need 1 bit at time of the output and we are going to obtain from the bit-graph, using two counters with $O(log(n))$ space on a work-tape indicating the number of the next bit needed by $f$ from $g(x)$.
+
+    The algorithm should look as the following:
+
+    \begin{enumerate}
+
+      \item For each bit on $f$ that we need to compute
+
+      \item Increment counter according to the bit number $f$ needs from the $g$ output. For example if we need the $n\text{-th}$ input bit for $f$, we are going to increment counter by $n$ \label{algo:1}
+
+      \item Reset $g$ input $x$ to beginig and use that counter to count down moving the posision until counter is 0, to the output bit $i$ we need to find. So we found bit-graph $g(x)_{i}$ output bit. \label{algo:2}
+
+      \item Process bit output calculated in the previous step as the input bit of $f$.
+
+      \item After processing $\text{BIT}_f$ on the previous output bit on $f$ we need to check if it is 1 or not to decide the language. We count in another count the amount of 1. \label{algo:3} \\
+
+      \item At the end we decrement the counter in the size of $|f(x)|$. If the result is $0$ we halt and we output 1, we output 0 otherwise.
+
+    \end{enumerate}
+
+    Here we can see that counters \ref{algo:1}, \ref{algo:2} and \ref{algo:3} only need $O(log(n))$ space on $2^n$ bits of the $i\text{-th}$ positions, so both machines uses $O(log(n))$ space.
+
+    Therefore $f \circ g$ is \textbf{logspace computable}.
+  \end{proof}
+
+\section{Exercise 2}
+\newtheorem{verifier}{Logspace Verifier}
+
+\begin{verifier}
+  Assuming that $L = \text{SPACE}(log(n))$ we want to prove that if we replace $P$ by $L$ we still can have a characterization of $NP$ like the one defined in the problem:
+  \begin{align*}
+    x \in A \iff \exists\ y \in \{0,1\}^* : |y| \leq p(|x|)\ \land \langle x,y \rangle \in B
+  \end{align*}
+ \end{verifier}
+
+  But since $B$ is in $P$ and not in $L$, we need something that transform $B$ to $L$ maintaining $NP$ characteristics.
+
+ Having in mind the following:
+
+\newtheorem{cook-levin}{Cook-Levin Theorem} \label{th:cook}
+\begin{cook-levin}
+    $SAT$ is \textbf{NP}-complete.
+    $3SAT$ is \textbf{NP}-complete.
+\end{cook-levin}
+
+ \begin{proof}
+   We know by \ref{th:cook} that because $SAT$ is \textbf{NP}-complete, it is \textbf{NP}-hard and polynomial-time reducible. Because of that we know that \textit{every} \textbf{NP} language $L$ can be reduced to $SAT$.
+
+   If we know that by the theorem, by the definition of the problem we can reduce the language $B$ which is in $NP$ to a $SAT$.
+
+   We define $\langle x,y \rangle \in B \iff y=f(x);\omega$, where $f$ is the reduction from $L$ to $SAT$, and $\omega$ is a satifiable truth assignment of $f(x)$.
+
+   The machine computing $f(x)$ compares 1 by 1 the output with $y$ in logspace, telling when $\omega$ satifies $f(x)$ and does this in logspace.
+
+   Logspace usage can be trivially proved using a counter that compares the position of bit $i$-th with the output of $f(x)_i$. Basically we count 1 each time we advance in output bit $i$ on $f(x)_i$. We use that counter to find the position on $y$ to be compare with.
+
+   Therefore we can replace $P$ with $L$ and still have $NP$ characterization.
+ \end{proof}
+
+
+\end{document}
+

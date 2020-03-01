@@ -1,0 +1,403 @@
+\documentclass{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[linguistics]{forest}
+\setbeamertemplate{frametitle}{%
+  \usebeamerfont{frametitle}\insertframetitle%
+  \vphantom{g}% To avoid fluctuations per frame
+  % \hrule% Uncomment to see desired effect, without a full-width hrule
+  \par\hspace*{-\dimexpr0.5\paperwidth-0.5\textwidth}\rule[0.5\baselineskip]{\paperwidth}{0.4pt}
+  \par\vspace*{-\baselineskip}% <-- reduce vertical space after rule
+}
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  stepnumber=1,
+  escapechar=!
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\usetheme{Boadilla}
+\title{Selective Applicative Functors}
+\author{Juan Pablo Royo Sales\\
+  \ \\
+  \tiny{Originally by:\\
+  Andrew Mokhov, Georgy Lukyanov, Simon Marlow, Jeremie Dimino\\
+  Presented in ICPF 2019}
+}
+\institute{UPC $\sim>$ FIB $\sim>$ TMIRI}
+\date{December $12^{th}$, 2019}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+  \tableofcontents
+\end{frame}
+
+\begin{frame}{Agenda}
+  \section{Context - Monad and Applicative Functors}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Context - Monad and Applicative Functors}
+  \begin{block}{Applicative Functors}
+    \textbf{\textit{Is a Functor to write effectful computations. It is weaker
+        than Monad. Every Monad is an Applicative Functor}}.\\
+  \end{block}
+
+\begin{lstlisting}[language=Haskell]
+  class Functor f => Applicative f where 
+    (<*>) :: f (a -> b) -> f a -> f b
+    
+    pure :: a -> f a
+  \end{lstlisting}
+
+  \begin{block}{Hints}
+  \begin{itemize}
+    \item Non Dependent computations
+    \item Commutative computations
+    \end{itemize}
+    \end{block}
+ 
+\end{frame}
+
+\begin{frame}[fragile]{Context - Monad and Applicative Functors}
+
+  \begin{block}{Monad}
+    \textbf{\textit{A Monad is a Monoid in the monoidal Category of Endofunctors}}.
+  \end{block}
+
+\begin{lstlisting}[language=Haskell]
+  class Applicative f => Monad f where
+    (>>=) :: f a -> (a -> f b) -> f b
+
+    return :: a -> f a
+  \end{lstlisting}
+
+  \begin{block}{Hints}
+  \begin{itemize}
+    \item Dependent computations
+    \item Non commutative
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Context - Monad and Applicative Functors}
+
+  \begin{block}{Monad}
+    \begin{itemize}
+      \item Effects are opaque
+      \item Cannot do static analysis of effects
+    \end{itemize}
+  \end{block}
+
+\begin{lstlisting}[language=Haskell]
+    pingPongM :: IO ()
+    pingPongM = getLine >>= \s -> if s == "ping" then putStrLn "pong" else return ()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Context - Monad and Applicative Functors}
+
+  \begin{block}{Applicative Functors}
+    \begin{itemize}
+    \item Effects are no longer opaque
+    \item Static analysis of effects can be done
+    \item But we lose conditional effects
+    \end{itemize}
+  \end{block}
+
+\begin{lstlisting}[language=Haskell]
+    pingPongA :: IO ()
+    pingPongA = fmap (\s -> id) getLine <*> putStrLn "pong"
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Context - Monad and Applicative Functors}
+
+  \begin{block}{Question}
+    \textbf{Can we combine the advantages of Applicative Functors and Monad?}
+  \end{block}
+
+  \begin{block}{What do we want?}
+    \begin{itemize}
+     \item Conditional Execution of Effects
+     \item Know Statically all effects embedded in a computation
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}{Agenda}
+  \section{Selective Applicative Functors}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Selective Applicative Functors}
+
+  \begin{block}{Definition}
+    It is an \textbf{abstraction} that provides a way to \textbf{embed pure}
+    values into an \textbf{effectful context} $f$ and
+    composing \textit{two independent} effects in which the \textbf{second} computation
+    depends on the \textbf{first}.
+  \end{block}
+
+\begin{lstlisting}[language=Haskell]
+  class Applicative f => Selective f where
+    select :: f (Either a b) -> f (a -> b) -> f b
+
+    -- An infix left-associative synonym for select
+    (<*?) :: f (Either a b) -> f (a -> b) -> f b
+    (<*?) = select 
+\end{lstlisting}
+  
+  \begin{block}{Contributions}
+    \begin{itemize}
+    \item Introduce this Model
+    \item See two industrial case studies 
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{Selective Applicative Functors}
+
+\begin{lstlisting}[language=Haskell]
+ selectM :: Monad f => f (Either a b) -> f (a -> b) -> f b
+ selectM x y = x >>= \e -> case e of 
+                              Left  a -> ($a) <$> y -- Execute y
+                              Right b -> prue b     -- Skip y
+\end{lstlisting}
+
+\begin{lstlisting}[language=Haskell]
+ selectA :: Applicative f => f (Either a b) -> f (a -> b) -> f b
+ selectA x y = x >>= (\e f -> either f id e) <$> x <*> y -- Execute x and y 
+\end{lstlisting}
+
+  \begin{block}{Hints}
+    \begin{itemize}
+    \item \lstinline{selectM} is useful for conditional execution
+    \item \lstinline{selectA} is useful for static analysis
+    \end{itemize}
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}[fragile]{Selective Applicative Functors}
+
+\textbf{Combinators}
+
+\begin{lstlisting}[language=Haskell]
+  whenS :: Selective f => f Bool -> f () -> f () 
+ 
+  branch :: Selective f => f (Either a b) -> f (a -> c) -> f (b -> c) -> f c
+  
+  ifS :: Selective f => f Bool -> f a -> f a -> f a
+
+  ....
+
+  (<||>) :: Selective f => f Bool -> f Bool -> f Bool
+  (<&&>) :: Selective f => f Bool -> f Bool -> f Bool
+  fromMaybeS :: Selective f => f a -> f (Maybe a) -> f a
+  anyS :: Selective f => (a -> f Bool) -> [a] -> f Bool 
+  allS :: Selective f => (a -> f Bool) -> [a] -> f Bool 
+  whileS :: Selective f => f Bool -> f ()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Selective Applicative Functor Laws}
+  \tableofcontents[currentsection]
+\end{frame}
+\begin{frame}[fragile]{Selective Applicative Functor Laws}
+
+  \begin{block}{}
+   \textcolor{red}{And we have LAWS!!!!}    
+ \end{block}
+
+\begin{lstlisting}[language=Haskell]
+  -- Identity
+  x <*? pure id = either id id <$> x
+ 
+  -- Distributivity
+  pure x <*? (y *> z) = (pure x <*? y) *> (pure x <*? z)
+
+  -- Associativity 
+  x <*? (y <*? z) = (f <$> x) <*? (g <$> y) <*? (h <$> z)
+    where
+      f x = Right <$> x
+      g y = \a -> bimap (,a) ($a) y
+      h z = uncurry z
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Real Case Implementations}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Real Case Implementations}
+
+  \begin{block}{Dune Build System}
+    \begin{itemize}
+      \item Over-approximation for solving dependencies without building 
+      \item Under-approximation for maximizing parallelism during build
+      \item Original Implementation with Arrows Abstraction
+    \end{itemize}
+  \end{block}
+
+\begin{lstlisting}[language=Haskell]
+  newtype Task k v = Task { run :: forall f. Selective f => (k -> f v) -> f v }
+
+  dependenciesOver :: Task k v -> [k]
+  dependenciesOver task = getOver $ run task (\k -> Over [k])
+
+  dependenciesUnder :: Task k v -> [k]
+  dependenciesUnder task = getUnder $ run task (\k -> Under [k])
+
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Real Case Implementations}
+  \begin{forest}
+    [release.tar
+    [LICENSE]
+    [exe
+      [src.ml] [config] [\textbf{lib.c}] [\textbf{lib.ml}]
+    ]
+    ]
+ \end{forest}
+  
+\begin{lstlisting}[language=Haskell]
+  
+  !$\lambda$!> dependenciesOver (fromJust $ script "release.tar")
+  ["LICENSE","exe"]
+
+  !$\lambda$!> dependenciesUnder (fromJust $ script "release.tar")
+  ["LICENSE","exe"]
+
+  !$\lambda$!> dependenciesOver (fromJust $ script "exe")
+  ["src.ml","config", "lib.c","lib.ml"]
+
+  !$\lambda$!> dependenciesUnder (fromJust $ script "exe")
+  ["src.ml","config"]
+
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Real Case Implementations}
+
+  \begin{block}{Haxl Facebook}
+    \begin{itemize}
+    \item Speculative or Conditional Execution 
+    \item Effective Parallelization on Speculative for large requests 
+    \end{itemize}
+  \end{block}
+
+\begin{lstlisting}[language=Haskell]
+  instance Selective Haxl where
+    select (Haxl iox) (Haxl iof) = Haxl $ do
+      rx <- iox
+      rf <- iof
+      return $ case (rx, rf) of
+                (Done (Right b), _ ) -> Done b -- Abandon Second Computation
+                (Done (Left a), _ ) -> ($a) <$> rf
+                (_ , Done f) -> either f id <$> rx
+                (Blocked bx x , Blocked bf f) -> Blocked (bx <> bf) (select x f)-- Selective execution
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Related Work}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Related Work}
+  \begin{block}{Arrows}
+    \begin{itemize}
+    \item Generalize computation expliciting input and output. Instead of
+      \textbf{f a} effect we have \textbf{a i o} with an isomorphism \textbf{a () (i -> o)}
+    \item Define a similar abstraction to \textbf{Selective} called \textbf{ArrowChoice}
+    \item \textbf{Dune} could have been done with Arrows for static analysis.
+    \item \textbf{Haxl} should have been more difficult because it is a big
+      codebase base on Applicative and Monads, therefore a complete rewriting
+      should have been needed. 
+    \end{itemize}
+  \end{block}
+\end{frame}
+  
+ \begin{frame}[fragile]{Related Work}
+  \begin{block}{Profunctors}
+    \begin{itemize}
+    \item \textbf{Profunctors} are \textbf{bifunctors} that are \textbf{contravariant} in their first type
+      argument and \textbf{covariant} in their second one.
+    \item Define also an abstraction similar to \textbf{Selective} called \textbf{Cocartesian profunctor}
+    \item It is beyond the scope of this work to analyze this relationship and
+      their implications
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Related Work} 
+  \begin{block}{Parse Combinators}
+    \begin{itemize}
+    \item \textbf{Alternative} is another abstraction which was motivated by
+      \textit{Monadic Parsers}
+    \item As \textbf{Selective} allows to do choices computations on parsers
+    \item There is an interesting research opportunity for analyzing the
+      relationship between these two abstraction
+    \end{itemize}
+  \end{block}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Conclusions}
+  \tableofcontents[currentsection]
+\end{frame}
+\begin{frame}{Conclusions}
+  \begin{itemize}
+    \item New \textbf{Abstraction} linked to \textbf{Applicative Functors and
+        Monads}
+    \item \textbf{Selective Applicative Functors} requires all effects to be
+      known statically, before execution starts.
+    \item Also allows \textbf{dependent and conditional} computation
+    \item We have also the \textbf{usefulness} with 2 industrial real case implementation 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \textbf{\huge{Thank you!!}}
+    \end{center}
+\end{frame}
+ 
+\end{document}
+

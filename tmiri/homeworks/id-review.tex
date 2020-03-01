@@ -1,0 +1,226 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\renewcommand\refname{Bibliography}
+\title{
+  Review of \textit{Selective Applicative Functors}\\
+  \date\today\vspace{-2em}}
+\date{\normalize\today}
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  stepnumber=1,
+}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\begin{itemize}
+\item \textbf{Title:} Selective Applicative Functors
+\item \textbf{Submitted To:} Proceedings of the ACM on Programming Languages
+\end{itemize}
+
+\section{Summary}
+In this paper the authors have proposed a new categorical abstraction for
+functional programming languages called \textit{Selective Applicative Functors}.\\
+This model describes conditional and branch effectful computations which requires that the effects
+are declared statically and in addition they can be selected dynamically to be executed, taking
+the best properties of two well-known categorical abstractions which are \textit{Monads} and \textit{Applicative Functors}.
+
+The main underlying motivation is to build this new categorical abstraction
+which benefit from strong properties of \textbf{Monads and Applicative Functors} such as dependent
+effectful computations and static analysis respectively, providing a new strong
+lawful model with several combinators useful for everyday software development
+in Functional Programming.
+
+Although all the examples in the paper are presented in \textbf{Haskell} for exemplification purpose, it can be
+applied to any Strong Typed Functional Programming language.
+
+Regarding the subject, apart from analyzing some weak points on \textbf{Monads}
+and \textbf{Applicative Functors} when there is a need to represent conditional
+effectful computations, they present the model of this new \textbf{Type Class},
+alongside with a series of combinators. Also they present the possible
+implementation and hierarchy dependency with preexisting abstractions, proposing
+the need to form a \textit{Applicative $->$ Selective $->$ Monad} relationship.
+
+Moreover, after describing all different combinators, as it is usual in the Category
+Theory field, they describe and state all the \textit{Laws} this new abstraction
+should fulfill such as \textit{Identity, Distributivity, Associativity} and some
+other that can be derived from these principal laws and parametricity
+\cite{wadler_theorems}.
+
+In addition, as in any other rigorous work on modeling, this paper shows 2 real software
+implementation of this model and its results:
+
+\begin{itemize}
+  \item \textbf{Dune Build System:} Implementation of \textbf{Selective
+      Functors} in \textit{Dune OCaml} package build system for doing branch static analysis of
+    dependencies.
+  \item \textbf{Haxl:} Haskell Facebook Framework for efficient and parallel
+    data fetching. In this case \textit{Selective Applicative Functors} has been
+    applied to do conditional effectful computation.  
+\end{itemize}
+
+Concluding this paper, and as an extension of the potential use of this abstraction, the
+authors also develop an implementation of \textbf{Free Selective Functors}. As
+it is well known in Functional Programming theory, \textit{free} abstractions
+are \textit{Functors} from a category to its \textbf{F-algebras}. This
+kind of constructions, and in particular in the case of the \textit{Selective
+  Functors}, allow us to focus on internal aspects of the effect without needing
+to define custom instance.\\
+This \textbf{Free Selective Functors} analysis has been stated throughout all
+this work first with a tiny example of an Internal DSL for representing a
+Ping-Pong Program, and lately with a more complex problem to represent an \textbf{ISA}
+(Instruction Set Architecture) simulation.
+
+\section{Originality}
+Studies on abstractions for describing effectful computations in Functional
+Programming have been conducted at least for the least for the last 25 years if
+we take one of the first papers from Wadler \cite{wadler_monads} about
+\textbf{Monads}, but in the literature there is no previous work about
+conditional or branch effectful computations as it is presented here.\\
+Although there is a recognition inside this work in \textbf{Related Work}
+section, that there is some intersection with \textbf{Arrows and Profunctors}
+abstractions which can also represent compositions on effectful computations, it
+is shown that \textbf{Selective Applicative Functors} are complementary to
+\textbf{Arrows}.\\
+Having saying that, the originality of this work is unquestionable.
+
+\section{Significance}
+This work is relevant for the community of Functional Programming languages in
+general and also for mathematicians who study the field of Abstract Algebra and
+Category Theory in particular. On the other hand it is also extremely
+significant for the Industry in general that is using this family of languages
+which is growing year after year, and in fact most of other's language paradigm
+are incorporating Functional Programming concepts and tools more than ever.\\
+Because of that it is quite suitable that this paper was presented in the most
+important Research Conference on that field.
+
+
+\section{Relevance}
+In the field of Functional Programming languages having different alternatives
+to describe effectful computations, with strong formal laws, based on Category
+Theory constructions and implementations on real industrial software, is quite
+relevant for the growth and maturity of the field. The methodology follow in
+this work also shows the standard methodology exposed in different works on this
+field providing not only the formal description but also the implementation in
+at least one of the strongest and most pure functional programming language at
+this moment.
+
+\section{Validity}\label{validity}
+In this work, the authors provide several evidence to reproduce everything that
+it is stated there:
+
+\begin{itemize}
+  \item All the implementation of this abstraction in \textbf{Haskell} code
+  \item How to incorporate this abstraction inside the current \textbf{Haskell}
+    Typeclass hierarchy
+  \item A list of more than 10 combinators using this abstraction with its
+    implementation
+  \item Real case study that are currently implemented in libraries based on
+    this work both for \textbf{OCaml and Haskell}
+  \item Free Selective Functors implementations for ping-pong and ISA case studies.
+\end{itemize}
+
+Although all the exposed before i would like to make some recommendations that
+in my opinion should be revised by the authors to improve the work even more:
+
+\begin{itemize}
+ \item The authors state that \textit{"Many monads directly use
+     \lstinline{select = selectM} in their \textbf{Selective} instances
+     definitions."}. I think this is wrong because this is a new
+   abstraction and it has not been any previous work on this abstraction, there
+   for there is no \textbf{Monads} implementations known with \textbf{Selective}
+   at this moment.\\
+   I would rephrase this as \textit{"In some cases, Monads can be implemented
+     using the equality \lstinline{select = selectM}"}.
+ \item In section \textbf{2.3 Laws} there is a claimed about some complexity
+   that they called \textit{"obscure"} in laws definition. Basically the meaning
+   on associativity law which state that:
+
+   \begin{lstlisting}[language=Haskell,label={ass}]
+     x <*? (y <*? z) = (f <$> x) <*? (g <$> y) <*? (h <$> z)
+       where
+         f x = Right <$> x
+         g y = \a -> bimap (,a) (\$a)
+         h z = uncurry z
+   \end{lstlisting}
+
+   I consider the explanation of this law is quite descriptive but i would add
+   that it is Associative only to the left in all the paragraph where this is
+   state because otherwise tends to confusion and one can assume that it is full
+   associative which is not.
+
+\item In section \textit{6.1 Multiway Selective Functors} the authors state
+     that \lstinline{branch} combinator has some performance advantages in some
+     implementations like \lstinline{bindS} for Monads, assuring that with this
+     the asymptotically analysis is less than $O(N)$, but they don't provide any
+     rigorous analysis on why and what should be the final cost for using
+     \lstinline{branch}. I would strongly recommend to either remove that part,
+     do the analysis or put it in future work.
+     
+\end{itemize}
+
+\section{References}
+This paper contains 47 references most of them are state the art in the field
+and works that has no more than 10 years old.
+This paper has not been cited yet because it is brand new and has been
+presented in the Last ICFP (International Conference of Functional Programming)
+by ACM this year.
+
+\section{Clarity}
+I can state that the paper is very clear for people which has certain level of
+knowledge in the field. Although I know Haskell professionally, exposing this
+model only with this language might be one of the weakest aspect of the work
+because could be a little hard to follow for people who is not so familiar with \textbf{ML} family languages.
+
+\section{Suitability for the conference/journal}
+This is a very suitable work for ICFP (International Conference of Functional
+Programming) because as i mentioned above this is strictly related to that
+field.
+
+\section{Recommendation}
+After my review and suggestions in \textbf{Validity section \ref{validity}}
+are taken under consideration by the authors, I would strongly recommend this
+paper being accepted for such prestigious Conference, because it is a high
+quality work, rigorously analyzed and explored in all its aspects.
+
+\section{Level of Confidence}
+In particular, i am very confident with the topic and the field because i work
+as a Haskell developer and i know several things about the literature exposed on
+this work. 
+
+\begin{thebibliography}{9}
+\bibitem{wadler_theorems} 
+  Phillip Wadler. 1989.\textit{Theorems for free!}. In FPCA, Vol. 89. 347-359.
+\bibitem{wadler_monads} 
+  P. Wadler. 1995.\textit{Monads for functional programming}. In Int'l School on
+  Advanced Functional Programming. Springer, 24-52.
+\end{thebibliography} 
+\end{document}

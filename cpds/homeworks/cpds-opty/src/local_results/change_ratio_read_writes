@@ -1,0 +1,61 @@
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:141736, OK:117163, -> 82.66283795224925 % 
+1: Transactions TOTAL:141790, OK:117143, -> 82.61725086395373 % 
+3: Transactions TOTAL:141872, OK:117244, -> 82.64069019961656 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 0 RDxTR, 10 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:138035, OK:138035, -> 100.0 % 
+3: Transactions TOTAL:138204, OK:138204, -> 100.0 % 
+2: Transactions TOTAL:138471, OK:138471, -> 100.0 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 9 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:102096, OK:53258, -> 52.16462936843755 % 
+1: Transactions TOTAL:101885, OK:52345, -> 51.376551994896204 % 
+3: Transactions TOTAL:101927, OK:52074, -> 51.08950523413816 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 2 RDxTR, 8 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:84651, OK:38032, -> 44.92799848790918 % 
+1: Transactions TOTAL:84669, OK:38087, -> 44.983405969126835 % 
+3: Transactions TOTAL:84621, OK:37938, -> 44.83284291133407 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 4 RDxTR, 6 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:65293, OK:27683, -> 42.39811312085522 % 
+2: Transactions TOTAL:65041, OK:27091, -> 41.65218861948617 % 
+3: Transactions TOTAL:65306, OK:27680, -> 42.38507947202401 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 5 RDxTR, 5 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:59221, OK:25057, -> 42.31100454230763 % 
+3: Transactions TOTAL:59153, OK:24849, -> 42.00801311852315 % 
+1: Transactions TOTAL:59169, OK:24840, -> 41.98144298534706 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 6 RDxTR, 4 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:54199, OK:22819, -> 42.10225280909242 % 
+2: Transactions TOTAL:54235, OK:23150, -> 42.68461325712178 % 
+3: Transactions TOTAL:54244, OK:22889, -> 42.19637194897131 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 8 RDxTR, 2 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:43145, OK:18899, -> 43.803453470854095 % 
+3: Transactions TOTAL:43310, OK:19534, -> 45.10274763334103 % 
+1: Transactions TOTAL:43200, OK:19168, -> 44.370370370370374 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 9 RDxTR, 1 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:37155, OK:18740, -> 50.437357017897995 % 
+3: Transactions TOTAL:37096, OK:18713, -> 50.44479189130904 % 
+2: Transactions TOTAL:37106, OK:18833, -> 50.75459494421387 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 10 RDxTR, 0 WRxTR, 5 ALLOWE, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:31651, OK:31651, -> 100.0 % 
+3: Transactions TOTAL:31621, OK:31621, -> 100.0 % 
+1: Transactions TOTAL:31679, OK:31679, -> 100.0 % 
+Stopped
+{"init terminating in do_boot",0}

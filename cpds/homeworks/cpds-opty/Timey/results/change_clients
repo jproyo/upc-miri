@@ -1,0 +1,136 @@
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:95846, OK:91049, -> 94.99509630031508 %
+2: Transactions TOTAL:95921, OK:91253, -> 95.13349527215104 %
+3: Transactions TOTAL:95735, OK:91007, -> 95.06136731602862 %
+Stopped
+
+
+
+Starting: 8 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:40681, OK:34438, -> 84.65376957301935 %
+5: Transactions TOTAL:40468, OK:34183, -> 84.46921024018978 %
+7: Transactions TOTAL:40652, OK:34386, -> 84.5862442192266 %
+8: Transactions TOTAL:40685, OK:34367, -> 84.47093523411577 %
+6: Transactions TOTAL:40562, OK:34355, -> 84.69750012326809 %
+1: Transactions TOTAL:40761, OK:34513, -> 84.6716223841417 %
+4: Transactions TOTAL:40566, OK:34346, -> 84.66696248089534 %
+3: Transactions TOTAL:40694, OK:34421, -> 84.58495109844203 %
+Stopped
+
+
+
+
+Starting: 13 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+5: Transactions TOTAL:  26690, OK:20729, -> 77.66579243162234 %
+1: Transactions TOTAL:  26656, OK:20670, -> 77.54351740696279 %
+8: Transactions TOTAL:  26706, OK:20640, -> 77.2860031453606 %
+12: Transactions TOTAL: 26709, OK:20742, -> 77.65921599460856 %
+11: Transactions TOTAL: 26708, OK:20904, -> 78.2686835405122 %
+10: Transactions TOTAL: 26706, OK:20867, -> 78.13599940088369 %
+9: Transactions TOTAL:  26700, OK:20695, -> 77.50936329588015 %
+4: Transactions TOTAL:  26793, OK:20880, -> 77.93080282163251 %
+6: Transactions TOTAL:  26782, OK:20736, -> 77.42513628556493 %
+7: Transactions TOTAL:  26794, OK:20845, -> 77.79726804508472 %
+13: Transactions TOTAL: 26742, OK:20691, -> 77.37267220103209 %
+2: Transactions TOTAL:  26683, OK:20554, -> 77.03031892965559 %
+3: Transactions TOTAL:  26779, OK:20879, -> 77.96781059785653 %
+Stopped
+
+
+
+
+
+Starting: 18 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+17: Transactions TOTAL:19381, OK:14309, -> 73.83003972963212 %
+15: Transactions TOTAL:19363, OK:14313, -> 73.91933068222899 %
+2: Transactions TOTAL: 19449, OK:14268, -> 73.36109825697979 %
+11: Transactions TOTAL:19447, OK:14279, -> 73.42520697279787 %
+3: Transactions TOTAL: 19361, OK:14249, -> 73.59640514436238 %
+14: Transactions TOTAL:19431, OK:14377, -> 73.99001595388812 %
+5: Transactions TOTAL: 19310, OK:14275, -> 73.92542723977213 %
+18: Transactions TOTAL:19470, OK:14494, -> 74.4427324088341 %
+9: Transactions TOTAL: 19367, OK:14156, -> 73.09340630970208 %
+8: Transactions TOTAL: 19388, OK:14219, -> 73.33917887353002 %
+4: Transactions TOTAL: 19384, OK:14279, -> 73.66384647131655 %
+7: Transactions TOTAL: 19342, OK:14254, -> 73.69455071864337 %
+16: Transactions TOTAL:19420, OK:14373, -> 74.01132852729145 %
+12: Transactions TOTAL:19271, OK:14125, -> 73.2966633802086 %
+1: Transactions TOTAL: 19273, OK:14143, -> 73.3824521351113 %
+13: Transactions TOTAL:19461, OK:14390, -> 73.94275730949077 %
+6: Transactions TOTAL: 19478, OK:14404, -> 73.95009754594928 %
+10: Transactions TOTAL:19314, OK:14169, -> 73.36129232680956 %
+Stopped
+
+
+
+
+\item $(i)$ Different number of clients
+
+\begin{table}[h!]
+\begin{tabular}{ |c|c|c|c| }
+  \hline
+  \multicolumn{4}{|c|}{Concurrent Clients - Duration 3s} \\
+  \hline
+  Experiment & Total Transactions & OK Transactions & \% Transactions\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 95846 & 91049 &  94.99509630031508 \%\\
+  & 95921 & 91253 &  95.13349527215104 \%\\
+  & 95735 & 91007 &  95.06136731602862 \%\\
+  & & &\\
+  \hline
+  \multirow{8}{3cm}{8 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 40681 & 34438 &  84.65376957301935 \%\\
+  & 40468 & 34183 &  84.46921024018978 \%\\
+  & 40652 & 34386 &  84.5862442192266 \%\\
+  & 40685 & 34367 &  84.47093523411577 \%\\
+  & 40562 & 34355 &  84.69750012326809 \%\\
+  & 40761 & 34513 &  84.6716223841417 \%\\
+  & 40566 & 34346 &  84.66696248089534 \%\\
+  & 40694 & 34421 &  84.58495109844203 \%\\
+  \hline
+
+  \multirow{13}{3cm}{13 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 26690 & 20729 &  77.66579243162234 \%\\
+  & 26656 & 20670 &  77.54351740696279 \%\\
+  & 26706 & 20640 &  77.2860031453606 \%\\
+  & 26709 & 20742 &  77.65921599460856 \%\\
+  & 26708 & 20904 &  78.2686835405122 \%\\
+  & 26706 & 20867 &  78.13599940088369 \%\\
+  & 26700 & 20695 &  77.50936329588015 \%\\
+  & 26793 & 20880 &  77.93080282163251 \%\\
+  & 26782 & 20736 &  77.42513628556493 \%\\
+  & 26794 & 20845 &  77.79726804508472 \%\\
+  & 26742 & 20691 &  77.37267220103209 \%\\
+  & 26683 & 20554 &  77.03031892965559 \%\\
+  & 26779 & 20879 &  77.96781059785653 \%\\
+  \hline
+
+  \multirow{18}{3cm}{18 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 19381 & 14309 &  73.83003972963212 \%\\
+  & 19363 & 14313 &  73.91933068222899 \%\\
+  & 19449 & 14268 &  73.36109825697979 \%\\
+  & 19447 & 14279 &  73.42520697279787 \%\\
+  & 19361 & 14249 &  73.59640514436238 \%\\
+  & 19431 & 14377 &  73.99001595388812 \%\\
+  & 19310 & 14275 &  73.92542723977213 \%\\
+  & 19470 & 14494 &  74.4427324088341 \%\\
+  & 19367 & 14156 &  73.09340630970208 \%\\
+  & 19388 & 14219 &  73.33917887353002 \%\\
+  & 19384 & 14279 &  73.66384647131655 \%\\
+  & 19342 & 14254 &  73.69455071864337 \%\\
+  & 19420 & 14373 &  74.01132852729145 \%\\
+  & 19271 & 14125 &  73.2966633802086 \%\\
+  & 19273 & 14143 &  73.3824521351113 \%\\
+  & 19461 & 14390 &  73.94275730949077 \%\\
+  & 19478 & 14404 &  73.95009754594928 \%\\
+  & 19314 & 14169 &  73.36129232680956 \%\\
+  \hline
+\end{tabular}
+\captionof{figure}{Results of several executions changing the number of entries in the Timestamp ordering algorithm}
+\label{table:acceptorsDelay}
+\end{table}

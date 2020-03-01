@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ASCII"?><project>
+	<version>1.0</version>
+	<configs>
+		<config category="opl" default="true" name="Ex1">
+			<ref name="P2.mod" type="model">
+			</ref>
+			<ref name="datos1.dat" type="data">
+			</ref>
+		</config>
+		<config category="opl" default="false" name="ExP1">
+			<ref name="P1.mod" type="model">
+			</ref>
+			<ref name="datos1.dat" type="data">
+			</ref>
+		</config>
+		<config category="opl" default="false" name="nofeasable">
+			<ref name="P2.mod" type="model">
+			</ref>
+			<ref name="datanofeasible.dat" type="data">
+			</ref>
+		</config>
+		<config category="opl" default="false" name="exp2a">
+			<ref name="P2a.mod" type="model">
+			</ref>
+			<ref name="datanofeasible.dat" type="data">
+			</ref>
+		</config>
+		<config category="opl" default="false" name="exp2b">
+			<ref name="P2b.mod" type="model">
+			</ref>
+			<ref name="datanofeasible.dat" type="data">
+			</ref>
+		</config>
+	</configs>
+	
+</project>

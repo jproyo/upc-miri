@@ -1,0 +1,192 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{color}
+
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  stepnumber=1,
+  escapechar=!
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+
+\title{Lab Session 3 – Greedy + Local Search Heuristics}
+\author{Juan Pablo Royo Sales \and Roy Campderrós \and Gerard Martin Teixidor}
+
+\begin{document}
+\maketitle
+
+\section{Part C}
+\begin{lstlisting}[language=Python]
+S !$\leftarrow \emptyset$!
+sortedTask !$\leftarrow$! sort(T, !$\sum_{H(t)} r_h$!, DESC)
+
+for each t in T do
+    F !$\leftarrow$! findFeasibleAssignments(t)
+
+    minHighestLoad !$\leftarrow$! inf
+
+    for each f in F do
+        if f!$_{highestLow}$! !$<$! minHighestLoad  
+            minHighestLoad !$\leftarrow$! f!$_{highestLow}$!
+            choosenAssigment !$\leftarrow$! f
+ 
+    if choosenAssigment !$\neq$! defined
+         return INFEASIBLE
+      
+    S !$\leftarrow$! S  !$\cup\ \langle t, choosenAssigment_{cpuId} \rangle$!
+
+return S
+\end{lstlisting}
+
+\section{Part D}
+\begin{lstlisting}[language=Python]
+Given a solution S
+keepIterating !$\leftarrow$! True
+
+bestSolution !$\leftarrow$! S
+bestHighestLoad !$\leftarrow$! bestSolution!$_{hiestLoad}$!
+
+while keepIterating do
+    keepIterating !$\leftarrow$! False
+
+    neighbor !$\leftarrow$! exploreNeighborhood
+    if bestHighestLoad > neighbor!$_{hiestLoad}$!
+        bestHighestLoad !$\leftarrow$! neighbor!$_{hiestLoad}$!
+        bestSolution !$\leftarrow$! neighbor
+        keepIterating !$\leftarrow$! True
+
+return bestSolution
+\end{lstlisting}
+
+\begin{description}
+\item[Best improvement] Consist in finding the best solution of all possible solutions in the  neighborhood. Once the best solution is found, the algorithm stars over until a local optimum is found.
+
+\item[First improvement] Consists in finding the first solution in the neighborhood which is better than the current one. Once a solution is found, the algorithm stars over until a local optimum is found.
+\end{description}
+
+The default implementation is the \emph{First improvement} algorithm.
+
+\section{Part e}
+\subsection{Greedy without Local Search}
+\begin{lstlisting}
+  Creating Problem...
+  Solving Problem...
+  Elap. Time (s)   Obj. Value     Iterations
+  0.00000405          inf              0
+  0.09288716   0.30455732              1
+  0.09291005   0.30455732              1
+
+  Greedy Candidate Evaluation Performance:
+  Num. Candidates Eval. 1600
+  Total Eval. Time      0.087993144989 s
+  Avg. Time / Candidate 0.0549957156181 ms
+\end{lstlisting}
+
+\subsection{Greedy LocalSearch - Exchange BI}
+\begin{lstlisting}
+  Creating Problem...
+  Solving Problem...
+  Elap. Time (s)   Obj. Value     Iterations
+  0.00000286          inf              0
+  0.09541392   0.30455732              1
+  11.29684687   0.30191587              1
+
+  Greedy Candidate Evaluation Performance:
+  Num. Candidates Eval. 1600
+  Total Eval. Time      0.0904817581177 s
+  Avg. Time / Candidate 0.0565510988235 ms
+
+  Local Search Performance:
+  Num. Iterations Eval. 39
+  Total Eval. Time      11.2013521194 s
+  Avg. Time / Iteration 287.214156909 ms
+\end{lstlisting}
+
+\subsection{Greedy LocalSearch - Exchange FI}
+\begin{lstlisting}
+  Creating Problem...
+  Solving Problem...
+  Elap. Time (s)   Obj. Value     Iterations
+  0.00000405          inf              0
+  0.09790301   0.30455732              1
+  0.84485793   0.30195183              1
+
+  Greedy Candidate Evaluation Performance:
+  Num. Candidates Eval. 1600
+  Total Eval. Time      0.0927958488464 s
+  Avg. Time / Candidate 0.057997405529 ms
+
+  Local Search Performance:
+  Num. Iterations Eval. 26
+  Total Eval. Time      0.746874809265 s
+  Avg. Time / Iteration 28.7259542025 ms
+\end{lstlisting}
+
+\subsection{Greedy LocalSearch - Reassignment BI}
+\begin{lstlisting}
+  Creating Problem...
+  Solving Problem...
+  Elap. Time (s)   Obj. Value     Iterations
+  0.00000310          inf              0
+  0.09969592   0.30455732              1
+  0.22314000   0.30455732              1
+
+  Greedy Candidate Evaluation Performance:
+  Num. Candidates Eval. 1600
+  Total Eval. Time      0.0946154594421 s
+  Avg. Time / Candidate 0.0591346621513 ms
+
+  Local Search Performance:
+  Num. Iterations Eval. 1
+  Total Eval. Time      0.123419046402 s
+  Avg. Time / Iteration 123.419046402 ms
+\end{lstlisting}
+
+\subsection{Greedy LocalSearch - Reassignment FI}
+\begin{lstlisting}
+  Creating Problem...
+  Solving Problem...
+  Elap. Time (s)   Obj. Value     Iterations
+  0.00000310          inf              0
+  0.09700894   0.30455732              1
+  0.21986794   0.30455732              1
+
+  Greedy Candidate Evaluation Performance:
+  Num. Candidates Eval. 1600
+  Total Eval. Time      0.0921926498413 s
+  Avg. Time / Candidate 0.0576204061508 ms
+
+  Local Search Performance:
+  Num. Iterations Eval. 1
+  Total Eval. Time      0.122833013535 s
+  Avg. Time / Iteration 122.833013535 ms
+\end{lstlisting} 
+
+\subsection{Conclusion}
+As we can appreciate after executing all the combinations, the best approaches
+in terms of quality are \textbf{Greedy with Local search and Exchange} reaching
+an optimum of $0.3019$. On the other hand in terms of time is \textbf{Greedy
+  without Local Search}. \\
+
+We can conclude that the best that combine quality of result and time is
+\textbf{Greedy with Local Search and Exchange Best Improvement}
+
+\end{document}

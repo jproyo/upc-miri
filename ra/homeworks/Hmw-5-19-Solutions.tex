@@ -1,0 +1,211 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\title{Home work 5 - Solutions}
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{RA - Homework 5}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 24}
+\subsection{Part a}
+
+\begin{align*}
+  P[X = 1 \land Y = 2] &= P[X = 1 \cap Y = 2]\\
+                       &= P[X = 1] P[Y = 2]\\
+                       &= e^{-1} e^{-2} 2 \\
+                       &= 0.099
+\end{align*}
+
+\subsection{Part b}
+
+\begin{align*}
+  P[\frac{X+Y}{2} \geq 1] &= 1 - P[X+Y < 2]\\
+                          &= 1 - P[X+Y = 0] + P[X+Y = 1]\\
+                          &= 1 - \frac{e^{-3} 3^0}{0!} + \frac{e^{-3} 3^1}{1!}\\
+                          &= 0.80
+\end{align*}
+
+\subsection{Part c}
+
+\begin{align*}
+  P[X = 1 \mid \frac{X+Y}{2} \geq 2] &= \frac{P[Y \geq 3]}{P[X+Y \geq 4]}\\
+                                     &= \frac{1 - P[Y = 0] + P[Y = 1] + P[Y = 2]}{1 - P[X+Y=3] + P[X+Y=2] + P[X+Y=1] + P[X+Y=0]}\\
+                                     &= \frac{1 - 0.13 + 0.27 + 0.27}{1 - 0.22 + 0.22 + 0.149 + 0.049}\\
+                                     &= 0.911
+\end{align*}
+
+\section{Exercise 25}
+\subsection{Part a}
+
+\begin{align*}
+  E[3X + 5] &= 3E[X] + 5\\
+            &= 3\lambda + 5
+\end{align*}
+
+\subsection{Part b}
+
+\begin{align*}
+  Var[3X + 5] &= 9 Var[X]\\
+              &= 9 \lambda (1 - p)
+\end{align*}
+
+\subsection{Part c}
+
+\begin{align*}
+  E[\frac{1}{1+X}] &= \sum_{i=0}^{n} \frac{1}{1+x_i} \frac{e^{-\lambda} \lambda^i}{i!}\\
+                   &= \frac{e^{-\lambda}}{\lambda} \sum_{i=0}^{n} \frac{\lambda^{i+1}}{(i+1)!}\\
+                   &= \frac{e^{-\lambda}}{\lambda} \sum_{i=0}^{n} \frac{\lambda^i}{i!} - 1\\
+                   &= \frac{1 - e^{-\lambda}}{\lambda}
+\end{align*}
+
+\section{Exercise 26}
+\subsection{Part a}
+
+Since we have the following conditional probability $P[X_1 = 1 \mid X_1 = 1 \lor
+X_2 = 1 \lor X_3 = 1]$, we know that we have 1 ball at least in $X_1$ or $X_2$
+or $X_3$ bean, given by the condition probability. Therefore the $P[X_1 = 1 \mid
+\text{It is in 1, 2 o 3}] = \frac{1}{3}$ 
+
+\subsection{Part b}
+Since $X_2 = 0$, we still have $m-1$ balls and $n-1$ bins. Therefore $E[X_1=1] = P[X_1 = 1] = \frac{m-1}{n-1}$
+
+\subsection{Part c}
+
+\begin{itemize}
+  
+\item The probability that bin 2 gets exactly $i-1$ balls is
+  $\binom{n}{i-1}\frac{1}{n^{i-1}}(\frac{n-1}{n})^{n-i+1}$. \\
+
+  The probability that bin 1 gets at least $i$ balls, given that bin 2 gets
+  exactly $i-1$ balls is: $\binom{n-i+1}{i}\frac{1}{n^{i}}$. \\
+
+  Therefore,
+
+  \begin{align*}
+    \sum_{i=1}^{n/2}\binom{n}{i-1}\frac{1}{n^{i-1}} (\frac{n-1}{n})^{n-i+1}\binom{n-i+1}{i}\frac{1}{n^{i}}
+  \end{align*}
+
+\item The probability that bin 2 gets exactly $i$ balls is
+  $\binom{n}{i}\frac{1}{n^{i}}(\frac{n-1}{n})^{n-i}$.\\
+
+  The probability that bin 1 gets exactly $i$ balls, given that bin 2 gets
+  exactly $i$ balls is: $\binom{n-i}{i}\frac{1}{n^{i}}(\frac{n-1}{n})^{n-i}$.
+
+  Therefore,
+
+  \begin{align*}
+    0.5(1-\sum_{i=1}^{n/2}\binom{n}{i}\frac{1}{n^{i}}(\frac{n-1}{n})^{n-i}\binom{n-i}{i}\frac{1}{n^{i}}(\frac{n-1}{n})^{n-i})
+  \end{align*}
+
+
+\end{itemize}
+
+\section{Exercise 27}
+\subsection{Part a}
+
+\begin{subequations}
+  \begin{align}
+    E[X] &= \sum_{i=0}^m 1 \binom{n}{2} \frac{1}{m} \\
+         &= \binom{n}{2}
+  \end{align}
+\end{subequations}
+
+\subsection{Part b}
+\begin{subequations}
+  \begin{align}
+    P[|Z - \mu| \geq c\sqrt{\mu}] &\leq \frac{Var[Z]}{(c\sqrt{\mu})^2}\\
+                                  &\leq \frac{\mu}{c^2\mu}\\\label{eq:3}
+                                  &\leq \frac{1}{c^2}
+  \end{align}
+\end{subequations}
+
+\ref{eq:3} because $E[Z] = Var[Z]$ when p is small 
+
+\subsection{Part c}
+
+Let $Y$ be a r.v. counting the number of balls in bin $i$
+
+Therefore applying Chernoff and union bound we have:
+
+\begin{subequations}
+  \begin{align}
+    P[Y \geq 2] &= P[Y \geq (1 + (\frac{2m}{n} - 1))E[Y]]\\
+                &\leq e^{-\frac{(\frac{2m}{n} - 1)^2(\frac{n}{m})}{2 + (\frac{2m}{n} - 1)}}\\
+                &\leq e^{-\frac{(2m - n)^2}{m(n + 2m)}} \sim \theta(1)
+  \end{align}
+\end{subequations}
+
+
+
+\section{Exercise 28}
+\subsection{Part a}
+We know by Chebyshev's that $P[|Y - \mu| \geq b] \leq \frac{Var[Y]}{b^2}$
+
+Lets calculate then $Var[Y]$
+
+\begin{subequations}
+  \begin{align}
+  Var[Y] &= \sum_{i=0}^{m-1} Var[Y_i]\\
+         &= \sum_{i=0}^{m-1} \frac{1 - p_i}{p_i^2}\\
+         &= \sum_{i=0}^{m-1} \frac{mi}{(m - i)^2}\\
+         &= \sum_{j=1}^{m} \frac{m(m - j)}{j^2}\label{eq:1} \\
+         &= m^2 \sum_{j=1}^{m} \frac{1}{j^2} - m \sum_{j=1}^{m} \frac{1}{j}\label{eq:2}\\
+         &= \frac{m^2 \pi^2}{6} - m\ln{m}
+  \end{align}
+\end{subequations}
+
+Replacing index $i$ by $j$ starting in 1 \ref{eq:1}\\
+According to statement of the problem \ref{eq:2}\\
+
+Applying Chebyshev's
+
+\begin{align*}
+  P[|Y - \mu| \geq c \mu] &\leq \frac{\frac{m^2 \pi^2}{6} - m\ln{m}}{c^3m^2{\ln{m}}^2}\\
+                          &\leq \frac{m^2 \pi^2}{6c^2Hm}
+\end{align*}
+
+\subsection{Part b}
+Let $Y$ be the number of balls in bin $i$. We know by definition that $E[Y] =
+\ln{n} + c$ for some constant $c$
+
+Therefore by Chernoff bound we have:
+
+\begin{align*}
+  P[Y \leq 0] &= P[Y \leq (1 - 1)E[Y]]\\
+              &\leq e^{\frac{-E[Y]}{2}}\\
+              &\leq e^\frac{-\ln{n} + c}{2}
+\end{align*}
+
+Using union bound we have that $P[\text{Some bin is empty}] \leq nP[Y \leq 0] =
+e^{\ln{n} - \frac{\ln{n} + c}{2}}$, therefore we can set $c = \ln{n} + 2\ln{(1/\delta)}$
+
+\subsection{Part c}
+We can assure that this 2 bounds are much more tight that the one that we show
+in class, because for any value of $m$
+
+\begin{align*}
+  e^\frac{-\ln{n} + c}{2} \ll n^{1-c}
+\end{align*}
+
+
+
+\end{document}

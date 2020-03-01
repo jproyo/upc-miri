@@ -1,0 +1,347 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{titling} 
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\title{Home work 2 - Solutions}
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{RA - Homework 2}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\begin{titlingpage}
+  \maketitle
+\end{titlingpage}
+
+\section{Exercise 9}
+\subsection{Part a}
+
+Given that the $P[\text{matching on any } D(T_j)]$ each event is independent
+$\forall j,\, 1 <= j <= n - m + 1$ for all substring slicing, the probability of
+one match when no match can be obtain by the probability of 1 event that match
+when that event $D(T_j) \neq D(S)$.
+
+Lets take an event $i$ of some slice substring on $T$
+
+\begin{subequations}
+  \begin{align}
+    P[\text{match} \mid \text{no match}] &= P\left[D(T_i) \bmod p = D(S) \bmod p \mid D(T_i) \neq D(S)\right] \\
+                                         &= \frac{\text{\# primes diving } | D(T_i) - D(S) | }{\text{\# primes }<= m} \\
+                                         &<= \frac{N}{n/\ln{m}} \\
+                                         &= \frac{N\ln{m}}{cN\ln{N}} \\
+                                         &= \frac{N\ln{m}}{cN\ln{N}} \\
+                                         &= \frac{\ln{m}}{c\ln{N}} \\
+                                         &= \frac{\ln{cN\ln{N}}}{c\ln{N}} \\
+                                         &= \frac{\ln{N}+\ln{c\ln{N}}}{c\ln{N}} \\
+                                         &= \frac{1}{c} + \frac{\ln{c\ln{N}}}{c\ln{N}} \\
+                                         &= \frac{1}{c} + o(1) 
+  \end{align}
+\end{subequations}
+
+Given that all each event is independent, the probability of match when no match
+for 1 slicing substring is $\frac{1}{c}$
+
+\subsection{Part b}
+
+Given that $\phi{(S)}$ is compared against each slicing $T_{j,m-1}$ and this is
+done $n-m+1$ steps, therefore $O(n-m+1) \cong O(n)$.
+
+Also we can assure that compute each $D(T_j)$ takes $O(m-1)$ steps which is
+$O(m-1) \cong O(m)$
+
+Therefore, the algorithm takes $O(n + m)$
+
+\section{Exercise 11}
+
+We need to calculate the $E[X=\text{'proof'}]$
+
+Giving that the $P[X=\text{'proof'}] = \frac{1}{26^5}$
+
+Let $X_i$ be
+
+\[ \begin{cases} 
+    1 & \text{if at } n-4 \text{ typing position the monkey type
+      \textit{\textbf{proof}}} \\
+    0 & otherwise \\
+  \end{cases}
+\]
+
+Therefore,
+
+\begin{subequations}
+  \begin{align}
+    E[X = \text{proof}] &= E\left[\displaystyle\sum_{i=1}^{10^6-4}X_i\right] \\
+                        &= \displaystyle\sum_{i=1}^{10^6-4}P[X_i] \\
+                        &= \displaystyle\sum_{i=1}^{10^6-4}\frac{1}{26^5} \\
+                        &= \frac{10^6-4}{26^5} = 0.084
+  \end{align}
+\end{subequations}
+
+
+\section{Exercise 12}
+
+Let $X$ be the amount you can win, therefore $X = {0,1,2,3,-1,-2}$ are the
+possible winning amounts.
+
+This can be achieve with the possible combinations:
+
+Let say 
+$R = \text{Red}$
+$W = \text{White}$
+$B = \text{Blue}$
+
+Possible combinations of this are:
+
+\begin{equation}
+  \Omega = \{\text{WWW}, \text{BBB}, \text{RRR}, \text{RRW}, \text{RRB}, \text{RBB}, \text{RWW}, \text{RBW}, \text{BBW}, \text{WWB}\}
+\end{equation}
+
+Therefore
+\begin{equation}
+  px(x) \forall x \in X
+\end{equation}
+
+
+\begin{subequations}
+  \begin{align}
+    px(0) = \frac{\binom{5}{3} + \binom{3}{1} \binom{3}{1} \binom{5}{1}}{\binom{11}{3}} = \frac{55}{165} \\
+    px(1) = \frac{\binom{3}{2} \binom{3}{1} + \binom{3}{1} \binom{5}{2}}{\binom{11}{3}} = \frac{39}{165} \\
+    px(2) = \frac{\binom{3}{2} \binom{5}{1}}{\binom{11}{3}} = \frac{15}{165} \\
+    px(3) = \frac{\binom{3}{3}}{\binom{11}{3}} = \frac{1}{165} \\
+    px(-1) = \frac{\binom{3}{1} \binom{5}{2} + \binom{3}{1} \binom{5}{2}}{\binom{11}{3}} = \frac{39}{165} \\
+    px(-2) = \frac{\binom{3}{2} \binom{5}{1}}{\binom{11}{3}} = \frac{15}{165}
+  \end{align}
+\end{subequations}
+
+\section{Exercise 13}
+\subsection{Part a}
+
+Let calculate $E[max(X_1,X_2)]$
+
+\begin{subequations}
+  \begin{align}
+    E[max(X_1,X_2)] &= E\left[ \displaystyle\sum_{x1,x2=1}^{k} max(x1,x2) \right] \\
+                    &= \displaystyle\sum{x1,x2=1}^{k} E[max(x1,x2)] \\
+                    &= \displaystyle\sum_{x1,x2=1}^{k} max(x1,x2)P[max(x1,x2)] \\
+                    &= \displaystyle\sum_{x1,x2=1}^{k} max(x1,x2)\frac{1}{k}\frac{1}{k} \\
+                    &= \frac{1}{k^2} \displaystyle\sum_{x1,x2=1}^{k} max(x1,x2) \\
+                    &= \frac{1}{k^2} \displaystyle\sum_{x1=1}^{k} \displaystyle\sum_{x2<=x1=1}^{k} x1 + \displaystyle\sum_{x1<x2=1}^{k} x2 \label{max:1}
+    \end{align}
+\end{subequations}
+
+It is similar for the minimum with the order changed $E[min(X_1,X_2)]$
+
+\begin{subequations}
+  \begin{align}
+    E[min(X_1,X_2)] &= E\left[ \displaystyle\sum_{x1,x2=1}^{k} min(x1,x2) \right] \\
+                    &= \displaystyle\sum{x1,x2=1}^{k} E[min(x1,x2)] \\
+                    &= \displaystyle\sum_{x1,x2=1}^{k} min(x1,x2)P[min(x1,x2)] \\
+                    &= \displaystyle\sum_{x1,x2=1}^{k} min(x1,x2)\frac{1}{k}\frac{1}{k} \\
+                    &= \frac{1}{k^2} \displaystyle\sum_{x1,x2=1}^{k} min(x1,x2) \\
+                    &= \frac{1}{k^2} \displaystyle\sum_{x1=1}^{k} \displaystyle\sum_{x2<=x1=1}^{k} x2 + \displaystyle\sum_{x1<x2=1}^{k} x1 \label{min:1}
+  \end{align}
+\end{subequations}
+
+
+\subsection{Part b} \label{ex_13_part_b}
+
+In order to prove that $E[max(X_1,X_2)] + E[min(X_1,X_2)] = E[X_1] + E[X_2]$ we
+use \ref{max:1} and \ref{min:1}
+
+\begin{subequations}
+  \begin{align}
+    \begin{split}
+      E[max(X_1,X_2)] + E[min(X_1,X_2)] &= \frac{1}{k^2} \displaystyle\sum_{x1=1}^{k} \displaystyle\sum_{x2<=x1=1}^{k} x1 + \displaystyle\sum_{x1<x2=1}^{k} x2 \\
+      & + \frac{1}{k^2} \displaystyle\sum_{x1=1}^{k} \displaystyle\sum_{x2<=x1=1}^{k} x2 + \displaystyle\sum_{x1<x2=1}^{k} x1 \\
+                                      &= \frac{1}{k^2} \displaystyle\sum_{x1=1}^{k} \left( \displaystyle\sum_{x2=1}^{k} x1 + \displaystyle\sum_{x2=1}^{k} x2 \right) \\
+                                      &= \frac{1}{k^2} \displaystyle\sum_{x1=1}^{k} \displaystyle\sum_{x=2}^{k} x1 + x2\\
+                                      &= \displaystyle\sum_{x1=1}^{k} x1 \frac{1}{k} + \displaystyle\sum_{x2=1}^{k} x2 \frac{1}{k} \\
+                                      &= E[X_1] + E[X_2]
+                                      \end{split}
+  \end{align}
+\end{subequations}
+
+
+\subsection{Part c} \label{ex_13_part_c}
+
+Solve with Linearity which state that $E[X+Y] = E[X] + E[Y]$ on formula in \ref{ex_13_part_b}
+
+\begin{subequations}
+  \begin{align}
+    E[max(X_1,X_2)] + E[min(X_1,X_2)] &= E[max(X_1,X_2) + min(X_1,X_2)] \label{lin:1} \\
+                                      &= E[X_1 + X_2] \\
+                                      &= E[X_1] + E[X_2]                  
+  \end{align}
+\end{subequations}
+
+This \ref{lin:1} is because either $X_1$ is max or $X_2$ is max. Choosing one of
+them the minimum should be the other for exclusion.
+
+
+\section{Exercise 14}
+\subsection{Part a}
+
+\begin{subequations}
+  \begin{align}
+    P[X = Y] &= \displaystyle\sum_{i=1}^{\infty}(1-p)^{i-1}p(1-q)^{i-1}q \\
+             &= \displaystyle\sum_{i=1}^{\infty}pq [(1-p)(1-q)]^{i-1} \\
+             &= \frac{pq}{1-[(1-p)(1-q)]} \label{geom:1} \\
+             &= \frac{pq}{p + q - pq}
+  \end{align}
+\end{subequations}
+
+Taking definition of Geometric Series which state that, \\
+
+\label{fact:1} if $x < 1 \implies \displaystyle\sum_{k=0}^{\infty} x^k = \frac{1}{1-x}$ we can deduce \ref{geom:1}
+
+\subsection{Part b}
+
+It can be deduced from \ref{ex_13_part_c} that $E[max(X,Y)] = E[X] + E[Y] -
+E[min(X,Y)]$, and from the follow subsection \ref{ex_14_part_c} we know that
+$min(X,Y)$ is a geometric random variable $p + q - pq$. Therefore by definition
+$E[min(X,Y)]=\frac{1}{p+q-pq}$
+
+Therefore,
+
+\begin{equation}
+    E[max(X,Y)] = \frac{1}{p} + \frac{1}{q} - \frac{1}{p+q-pq}
+\end{equation}
+
+\subsection{Part c} \label{ex_14_part_c}
+
+Lets take 2 disjoint events when $X = k$ and $Y >= k$ and the $Y = k$ and $X >
+k$
+
+\begin{subequations}
+  \begin{align}
+    P[min(X,Y) = k] &= P[X = k, Y >= k] + P[Y = k, X > k] \\
+                    &= P[X=k]P[Y>=k] + P[Y=k]P[X>k]
+  \end{align}
+\end{subequations}
+
+By definition,
+
+\begin{subequations}
+  \begin{align}
+    P[X = k] = (1 - p)^{k-1}p \\
+    P[X > k] &= P[X >= k] - P[x = k] = (1 - p)^{k-1}(1 - p)
+  \end{align}
+\end{subequations}
+
+Therefore,
+
+\begin{subequations}
+  \begin{align}
+    P[min(X,Y) = k] &= (1 - p)^{k-1}p(1 - q)^{k-1} + (1-p)^{k-1}(1-p)(1-q)^{k-1}q \\
+                    &= [(1-p)(1-q)]^{k-1}(p+(1-p)q) \\
+                    &= [(1-p)(1-q)]^{k-1}(p + q - pq) \\
+                    &= \frac{1}{p + q - pq} \label{geom:2}
+  \end{align}
+\end{subequations}
+
+This \ref{geom:2} is solve by the same principle as here \ref{fact:1}
+
+\subsection{Part d}
+
+\begin{subequations}
+  \begin{align}
+    E[X \mid X <= Y] &= \displaystyle\sum_{x>=1}^{n} x P[x \mid x <= Y] \\
+                     &= \displaystyle\sum_{x>=1}^{n} x \frac{P[X=x \cap x <= Y]}{P[X<=Y]}
+  \end{align}
+\end{subequations}
+
+
+Solving $P[X<=Y]$
+
+\begin{subequations}
+  \begin{align}
+    P[X<=Y] &= \sum_{i>=1}^{n} P[X = i \cap i <= Y] \\
+            &= \sum_{i>=1}^{n} P[X=i]P[i<=Y] \\
+            &= \sum_{i>=1}^{n} (1-p)^{i-1}p(1-q)^{i-1} \\
+            &= \sum_{i>=1}^{n} [(1-p)(1-q)]^{i-1}p \\
+            &= p \sum_{i>=1}^{n} (1 - p - q + pq)^{i-1} \\
+            &= \frac{p}{p + q - pq} \label{geom:3}             
+  \end{align}
+\end{subequations}
+
+Therefore solving everything together,
+
+\begin{subequations}
+  \begin{align}
+    E[X \mid X <= Y] &= \frac{p+q-pq}{p} \displaystyle\sum_{x>=1}^{n} x P[X=x \cap x <= Y] \\
+                     &= \frac{p+q-pq}{p} \displaystyle\sum_{x>=1}^{n} x (1-p)^{i-1}p(1-q)^{i-1} \\
+                     &= (p+q-pq) \displaystyle\sum_{x>=1}^{n} x (1 - p - q + pq)^{i-1} \label{geom:4}
+  \end{align}
+\end{subequations}
+
+
+This \ref{geom:4} is the same as $E[X]$ which is geometric, therefore 
+
+\begin{equation}
+    E[X \mid X <= Y] = \frac{1}{p+q-pq} 
+\end{equation}
+
+\section{Exercise 15}
+
+Lets state that $T = {t_1, t_2, t_3, ..., t_n}$ where $t_i$ is the tweet that
+arrives at time $i$.
+
+Lets define $X_n$ as the random variable which is the Tweet that is put in
+memory time $n$
+
+\begin{equation}
+  P[X_n = t_i] = 1/n \forall 1 <= i <= n
+\end{equation}
+
+\begin{itemize}
+\item{
+    Base Case: \\
+    \begin{equation}
+      P[X_1 = t_1] = 1
+    \end{equation}
+
+    Because it is the first tweet that arrives at time 1
+   
+  }
+
+\item{
+    N+1 Case:
+    
+    \begin{subequations}
+      \begin{align}
+        P[X_{n+1} = t_i] &= P[\text{no change the tweet in memory} \cap P[X_n = t_i]] \\
+                         &= P[\text{no change the tweet in memory}]P[X_n=t_i] \\
+                         &= \frac{n}{n+1}\frac{1}{n} \\
+                         &= \frac{1}{n+1}
+      \end{align}
+    \end{subequations}
+
+}
+
+Therefore, if it is hold for $n+1$ by induction holds for $n$
+
+\begin{equation}
+  P[X_n = t_i] = \frac{1}{n}
+\end{equation}
+
+
+\end{itemize}
+
+
+
+\end{document}

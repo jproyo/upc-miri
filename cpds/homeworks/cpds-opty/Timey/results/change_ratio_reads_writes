@@ -1,0 +1,147 @@
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:96620, OK:91978, -> 95.19561167460154 %
+2: Transactions TOTAL:96765, OK:92206, -> 95.28858574897949 %
+3: Transactions TOTAL:96807, OK:92279, -> 95.32265228754119 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 0 RDxTR, 10 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:25409, OK:25154, -> 98.99641859183754 %
+1: Transactions TOTAL:25392, OK:25151, -> 99.05088216761185 %
+2: Transactions TOTAL:25403, OK:25150, -> 99.00405463921584 %
+Stopped
+
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 2 RDxTR, 8 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:28972, OK:13556, -> 46.79000414193014 %
+2: Transactions TOTAL:29005, OK:13599, -> 46.885019824168246 %
+1: Transactions TOTAL:28960, OK:13397, -> 46.2603591160221 %
+Stopped
+
+
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 4 RDxTR, 6 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:27129, OK:14496, -> 53.43359504589185 %
+2: Transactions TOTAL:27150, OK:14524, -> 53.49539594843462 %
+3: Transactions TOTAL:27177, OK:14685, -> 54.03466166243515 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 5 RDxTR, 5 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:26892, OK:16020, -> 59.57161981258367 %
+3: Transactions TOTAL:26925, OK:15989, -> 59.38347260909935 %
+2: Transactions TOTAL:26906, OK:15872, -> 58.99055972645507 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 6 RDxTR, 4 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:26953, OK:17735, -> 65.79972544800208 %
+2: Transactions TOTAL:26918, OK:17734, -> 65.88156623820493 %
+3: Transactions TOTAL:26962, OK:17795, -> 66.00029671389363 %
+Stopped
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 8 RDxTR, 2 WRxTR, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:26784, OK:22065, -> 82.38127240143369 %
+3: Transactions TOTAL:26737, OK:22085, -> 82.60089015222351 %
+1: Transactions TOTAL:26715, OK:21967, -> 82.22721317611828 %
+Stopped
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 10 RDxTR, 0 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:29451, OK:29451, -> 100.0 %
+3: Transactions TOTAL:29483, OK:29483, -> 100.0 %
+2: Transactions TOTAL:29425, OK:29425, -> 100.0 %
+Stopped
+
+& 29451 & 29451 &  100.0 \%\\
+& 29483 & 29483 &  100.0 \%\\
+& 29425 & 29425 &  100.0 \%\\
+& & &\\
+
+\item $(v)$ Different ratio in the number of reads and writes per transaction
+
+\begin{table}[h!]
+\begin{tabular}{ |c|c|c|c| }
+  \hline
+  \multicolumn{4}{|c|}{Concurrent Clients - Duration 3s} \\
+  \hline
+  Experiment & Total Transactions & OK Transactions & \% Transactions\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+
+  & 96620 & 91978 &  95.19561167460154 \%\\
+  & 96765 & 92206 &  95.28858574897949 \%\\
+  & 96807 & 92279 &  95.32265228754119 \%\\
+  & & &\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 0 RDxTR \\ 10 WRxTR}
+  & 25409 & 25154 &  98.99641859183754 \%\\
+  & 25392 & 25151 &  99.05088216761185 \%\\
+  & 25403 & 25150 &  99.00405463921584 \%\\
+  & & &\\
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 2 RDxTR \\ 8 WRxTR}
+
+  & 28972 & 13556 &  46.79000414193014 \%\\
+  & 29005 & 13599 &  46.885019824168246 \%\\
+  & 28960 & 13397 &  46.2603591160221 \%\\
+  & & &\\
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 4 RDxTR \\ 6 WRxTR}
+  & 27129 & 14496 &  53.43359504589185 \%\\
+  & 27150 & 14524 &  53.49539594843462 \%\\
+  & 27177 & 14685 &  54.03466166243515 \%\\
+  & & &\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 5 RDxTR \\ 5 WRxTR}
+  & 26892 & 16020 &  59.57161981258367 \%\\
+  & 26925 & 15989 &  59.38347260909935 \%\\
+  & 26906 & 15872 &  58.99055972645507 \%\\
+  & & &\\
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 6 RDxTR \\ 4 WRxTR}
+
+
+  & 26953 & 17735 &  65.79972544800208 \%\\
+  & 26918 & 17734 &  65.88156623820493 \%\\
+  & 26962 & 17795 &  66.00029671389363 \%\\
+  & & &\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 8 RDxTR \\ 2 WRxTR}
+
+  & 26784 & 22065 &  82.38127240143369 \%\\
+  & 26737 & 22085 &  82.60089015222351 \%\\
+  & 26715 & 21967 &  82.22721317611828 \%\\
+  & & &\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 10 RDxTR \\ 0 WRxTR}
+
+  & 29451 & 29451 &  100.0 \%\\
+  & 29483 & 29483 &  100.0 \%\\
+  & 29425 & 29425 &  100.0 \%\\
+  & & &\\
+  \hline
+
+\end{tabular}
+\captionof{figure}{Results of several executions changing the ratio if reads and writes per transaction in the Timestamp ordering algorithm}
+\label{table:timey_change_ratio}
+\end{table}

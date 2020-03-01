@@ -1,0 +1,180 @@
+A cycling example and Bland's rule
+----------------------------------
+
+This example is taken from the book Chvátal, V., "Linear Programming",
+New York: W. H. Freeman and Company, 1983. The tableaux sequence that
+shows the cycling and the tableaux sequence that shows the application
+of Bland's rule are due to by M. Pugh, University of Toronto.
+
+We use the simplex method for the following linear programming problem:
+
+	maximize 10 x1 - 57 x2 - 9 x3 - 24 x4
+	subject to
+		1/2 x1 - 11/2 x2 - 5/2 x3 + 9 x4  <= 0
+		1/2 x1 -  3/2 x2 - 1/2 x3 +   x4  <= 0
+		    x1                  <= 1
+	x1,x2,x3,x4 >= 0
+
+Here is the initial simplex tableau:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x5   0.5    -5.5    -2.5       9       1       0       0       0
+  x6   0.5    -1.5    -0.5       1       0       1       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj   -10      57       9      24       0       0       0       0
+
+The only possible entering variable is x1.  There are two choices for
+departing variable: x5 and x6.  I choose x5.  The next simplex tableau
+is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x1     1     -11      -5      18       2       0       0       0
+  x6     0       4       2      -8      -1       1       0       0
+  x7     0      11       5     -18      -2       0       1       1
+ obj     0     -53     -41     204      20       0       0       0
+ 
+There are two possible entering variables: x2 and x3.  I choose x2.
+The only possible choice for departing variable is x6.  The next
+simplex tableau is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x1     1       0     0.5      -4   -0.75    2.75       0       0
+  x2     0       1     0.5      -2   -0.25    0.25       0       0
+  x7     0       0    -0.5       4    0.75   -2.75       1       1
+ obj     0       0   -14.5      98    6.75   13.25       0       0
+
+The only possible entering variable is x3.  There are two choices for
+departing variable: x1 and x2.  I choose x1.  The next simplex tableau
+is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x3     2       0       1      -8    -1.5     5.5       0       0
+  x2    -1       1       0       2     0.5    -2.5       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj    29       0       0     -18     -15      93       0       0
+
+There are two possible entering variables: x4 and x5.  I choose x4.
+The only possible choice for departing variable is x2.  The next
+simplex tableau is:
+
+        x1      x2      x3      x4      x5      x6      x7
+  x3    -2       4       1       0     0.5    -4.5       0       0
+  x4  -0.5     0.5       0       1    0.25   -1.25       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj    20       9       0       0   -10.5    70.5       0       0
+
+The only possible entering variable is x5.  There are two choices for
+departing variable: x3 and x4.  I choose x3.  The next simplex tableau
+is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x5    -4       8       2       0       1      -9       0       0
+  x4   0.5    -1.5    -0.5       1       0       1       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj   -22      93      21       0       0     -24       0       0
+
+There are two possible entering variables: x1 and x6.  I choose x6.
+The only possible choice for departing variable is x4.  The next
+simplex tableau is:
+
+        x1      x2      x3      x4      x5      x6      x7
+  x5   0.5    -5.5    -2.5       9       1       0       0       0
+  x6   0.5    -1.5    -0.5       1       0       1       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj   -10      57       9      24       0       0       0       0
+
+This is precisely where we started!  This shows that an infinite loop
+is possible!
+
+Now I'll start over from the beginning (which is where we are right
+now) but this time I'll apply Bland's rule whenever there is no choice
+of entering variable that will increase the objective function.
+(Translation: if all possible choices of entering variables would lead
+to no increase of the objective function then I will use Bland's rule
+to choose the entering and departing variables...)
+
+The only possible entering variable is x1 and it won't increase the
+objective function.  So I'll apply Bland's rule.  There are two
+choices for departing variable: x5 and x6.  By Bland's rule, I choose
+the departing variable with lower index.  Since 5 < 6, I choose x5.
+The next simplex tableau is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x1     1     -11      -5      18       2       0       0       0
+  x6     0       4       2      -8      -1       1       0       0
+  x7     0      11       5     -18      -2       0       1       1
+ obj     0     -53     -41     204      20       0       0       0
+
+There are two possible entering variables: x2 and x3 and neither will
+lead to an increase of the objective function.  So I apply Bland's
+rule and I choose x2.  The only possible choice for departing variable
+is x6.  The next simplex tableau is:
+
+        x1      x2      x3      x4      x5      x6      x7
+  x1     1       0     0.5      -4   -0.75    2.75       0       0
+  x2     0       1     0.5      -2   -0.25    0.25       0       0
+  x7     0       0    -0.5       4    0.75   -2.75       1       1
+ obj     0       0   -14.5      98    6.75   13.25       0       0
+
+The only possible entering variable is x3 and it won't lead to an
+increase of the objective function.  So I apply Bland's rule.  There
+are two choices for departing variable: x1 and x2.  By Bland's rule, I
+choose the departing variable with lower index.  Since 1 < 2, I choose
+x1.  The next simplex tableau is:
+
+        x1      x2      x3      x4      x5      x6      x7
+  x3     2       0       1      -8    -1.5     5.5       0       0
+  x2    -1       1       0       2     0.5    -2.5       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj    29       0       0     -18     -15      93       0       0
+ 
+There are two possible entering variables: x4 and x5 and neither will
+lead to an increase of the objective function.  So I apply Bland's
+rule and I choose x4.  The only possible choice for departing variable
+is x2.  The next simplex tableau is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x3    -2       4       1       0     0.5    -4.5       0       0
+  x4  -0.5     0.5       0       1    0.25   -1.25       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj    20       9       0       0   -10.5    70.5       0       0
+
+The only possible entering variable is x5 and it won't lead to an
+increase of the objective function.  So I apply Bland's rule.  There
+are two choices for departing variable: x3 and x4.  By Bland's rule, I
+choose the departing variable with lower index.  Since 3 < 4, I choose
+x3.  The next simplex tableau is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x5    -4       8       2       0       1      -9       0       0
+  x4   0.5    -1.5    -0.5       1       0       1       0       0
+  x7     1       0       0       0       0       0       1       1
+ obj   -22      93      21       0       0     -24       0       0
+
+There are two possible entering variables: x1 and x6 and neither will
+lead to an increase of the objective function.  So I apply Bland's
+rule and I choose x1.  The only possible choice for departing variable
+is x4.  (NOTE: THIS IS THE FIRST TIME WE DID SOMETHING DIFFERENTLY
+FROM THE INFINITE LOOP CASE.)  The next simplex tableau is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x5     0      -4      -2       8       1      -1       0       0
+  x1     1      -3      -1       2       0       2       0       0
+  x7     0       3       1      -2       0      -2       1       1
+ obj     0      27      -1      44       0      20       0       0
+
+The only possible entering variable is x3 and it will lead to an
+increase of the objective function.  The departing variable is x7.
+The next simplex tableau is:
+ 
+        x1      x2      x3      x4      x5      x6      x7
+  x5     0       2       0       4       1      -5       2       2
+  x1     1       0       0       0       0       0       1       1
+  x3     0       3       1      -2       0      -2       1       1
+ obj     0      30       0      42       0      18       1       1
+ 
+And we've found an optimal solution!  (Blands rule!)
+x1 = 1, x2 = 0, x3 = 1, x4 = 0,
+x5 = 2, x6 = 0, x7 = 0, objective function = 1
+
+----------------------------------------------------------------------------

@@ -1,0 +1,224 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsthm,graphicx,parskip}
+\usepackage{hyperref}
+\title{Home work 1 - Solutions}
+\author{Juan Pablo Royo Sales}
+\date{15 September 2019}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 1}
+\subsection{Part a}
+
+Given that the events are dependent and if i flip the first coin the second could not be the same as before, the space is the following:
+
+$\Omega = \{HTH, THT\}$
+
+Then the \textbf{minimal} $P[HHH] = 0$
+
+Only if the 3 coins are equal the \textbf{maximum} probability $P[HHH] = 1/2$ because either $HHH$ or $TTT$
+
+\subsection{Part b}
+If all pairs of coins are independent and we divide the space between pair
+independent coins:
+
+\begin{itemize}
+\item $A = \{HTH,TTT,HHT,THH\}$
+\item $B = \{HHH,TTH,HTT,THT\}$
+\end{itemize}
+
+Then taking $A$ the \textbf{minimum} probability is $P[HHH] = 0$
+
+Taking $B$ \textbf{maximum} probability is $P[HHH] = 1/4$
+
+\section{Exercise 2}
+
+Let $B$ be the event of picking up one \textbf{Black} ball from the Bag.
+
+Let $I$ be the event of picking up one \textbf{White} ball from the Bag.
+
+Let $W_n$ be the number of \textbf{White} balls in the bag.
+
+We need to prove that the Probability of any number of \textbf{White} balls is equally distributed:
+
+\begin{center}
+  \begin{displaymath}
+    P[W_n=k] = \frac{1}{(n-1)} \qquad \forall k,\, 1 <= k <= (n - 1)
+  \end{displaymath}
+\end{center}
+
+Prove by Induction:
+
+\textbf{\underline{Base case:}} $n = 3$
+
+$P[W_n=1] = 1/2$ and $P[W_n=2] = 1/2$ are equally probable of taking either one ball \textbf{White} or \textbf{Black} in the first iteration.
+
+\textbf{\underline{Inductive case:} $n + 1$}
+
+We can have to cases here:
+\begin{itemize}
+  \item $W_n=k$ pick \textbf{Black} ball (where $k$ is number of white balls)
+  \item $W_n=k-1$ pick \textbf{White} ball (where $k$ is number of white balls)
+\end{itemize}
+
+Since this 2 events at $n$ are \textbf{disjoint} we can state that:
+
+\begin{center}
+  \begin{align*}
+    P[W_n+1=k] &= P[B \cap W_n=k] + P[I \cap W_n=k-1] \\
+               &= P[B|W_n=k]P[W_n=k] + P[I|W_n=k-1]P[W_n=k-1] \\
+               &= \left(1-\frac{k}{n}\right)\left(\frac{1}{n-1}\right) + \left(\frac{k-1}{n}\right)\left(\frac{1}{n-1}\right) \\
+               &= \frac{1}{n}
+  \end{align*}
+\end{center}
+
+If it holds for $n+1$ then by induction it holds for $n$
+
+$P[W_n=k] = \frac{1}{(n-1)}$ \qed
+
+\section{Exercise 3}
+\subsection{Part a} \label{ex_3_part_a}
+
+Since $S = \{1,.....,n\}$ each element of $S$ can be added to $X$ or not depends
+if it is head or tails, then there are $2^n$ possible subsets.
+
+Taking that $P[X] = \frac{1}{2}$ is head or tails.
+
+Then any subset $X \subseteq S$ can be chosen with equal probability of
+
+$P[S] = P[\bigcap_{i=1}^{n}X] = \displaystyle\prod_{i=1}^{n} \frac{1}{2} = \frac{1}{2^n}$
+
+Then $X$ is equally likely to be any of $2^n$ possible subsets
+
+\subsection{Part b}
+\subsubsection{\(P[X \subseteq Y]\)}
+
+Taking the Total Probability Law which states that:
+
+\begin{center}
+  \begin{displaymath}
+    P[A] = \displaystyle\sum_{i=1}^{n} P[A \cap E_i] = \displaystyle\sum_{i=1}^{n} P[A|E_i]P[E_i]
+  \end{displaymath}
+\end{center}
+
+Then,
+
+\begin{center}
+  \begin{displaymath}
+    P[X \subseteq Y] = \displaystyle\sum_{k=0}^{n} P[X \cap Y \mid\, |Y|=k]P[|Y|=k]
+  \end{displaymath}
+\end{center}
+
+Solving this equation:
+
+If $|Y| = k$ then there is $2^k$ possible $X \subseteq Y$.
+
+Let this subsets be $Z_1, Z_2,...., Z_{2^k}$
+
+Having shown in \ref{ex_3_part_a} that $X$ is equally likely to be any of this
+subsets, then
+
+\begin{equation}
+  \label{eq:1}
+  P[X=S_i] = \frac{1}{2^n} \forall 1 <= i <= 2^k
+\end{equation}
+
+Therefore,
+
+\begin{subequations}
+  \begin{align}
+  P[X \subseteq Y \mid\, |Y| = k] &= P\left[\bigcup_{i=1}^{2^k} \, X = S_i\right] \\
+                                  &= P[X=S1] + P[X=S2] + .... + P[X = S_{2^k}] \eqref{eq:1}\\  
+                                  &= \displaystyle\sum_{i=1}^{2^k} \frac{1}{2^n} \\
+                                  &= \frac{2^k}{2^n} \\
+                                  &= 2^{k-n} \label{eq:2}
+  \end{align}
+\end{subequations}
+
+And,
+
+\begin{subequations}
+  \begin{align}
+    P[|Y| = k] &= \frac{\text{number of subsets size }k}{\text{All posible subsets of }S} \\
+               &= \frac{\binom{n}{k}}{2^n} \\
+               &= \binom{n}{k}{2^{-n}} \label{eq:3}
+  \end{align}
+\end{subequations}
+
+
+Putting together \ref{eq:2} and \ref{eq:3} then,
+
+
+\begin{subequations} 
+  \begin{align}
+    P[X \subseteq Y] &= \displaystyle\sum_{k=0}^{n} 2^{k-n}\binom{n}{k}{2^{-n}} \\
+                     &= \frac{1}{2^n} \displaystyle\sum_{k=0}^{n} \binom{n}{k} \left(\frac{1}{2}\right)^{n-k} \label{eq:4} \\
+                     &= \frac{1}{2^n}\left( \frac{3}{2} \right)^n \\
+                     &= \left( \frac{3}{4} \right)^n \label{eq:5}
+  \end{align}
+\end{subequations}
+
+\ref{eq:4} is because of Binomial Theorem which states that:
+
+
+\begin{equation}
+  (a + b)^n = \displaystyle\sum_{i=0}^{n} \binom{n}{i} {a^{n-i}}b^i
+\end{equation}
+
+\subsubsection{\(P[{X \cup Y} = \{1,....,n\}]\)}
+
+\begin{subequations} 
+  \begin{align}
+    P[{X \cup Y} = \{1,....,n\}] &= P[{\{1,...,n\} - X} \subseteq Y] \label{eq:6} \\
+    &= P[X \subseteq Y] \label{eq:7}
+  \end{align}
+\end{subequations}
+
+\begin{itemize}
+  \item Explanation \ref{eq:6}: If we remove $X$ from the whole set $\{1,...,n\}$,
+    $\{1,...,n\} - X$ then we have $Y$. $Y = \{1,....,n\} - X$. Therefore $X \cup Y
+    = \{1,....,n\}$
+    \item Explanation \ref{eq:7}: Taking \ref{eq:5} we have stated that taking
+      any 2 sets u.a.r., let say $A$ and $B$ from $S$ then $P[A \subseteq B] =
+      \left( \frac{3}{4} \right)^n$, therefore
+      \begin{equation}
+        \begin{aligned}
+          P[{X \cup Y} = \{1,....,n\}] &= P [ {\{1,....,n\} - X} \subseteq Y] \\
+          &= \left( \frac{3}{4} \right)^n
+        \end{aligned}
+      \end{equation}
+\end{itemize}
+
+\section{Exercise 4}
+
+Let $A$ be the numbers divisible by 4 $1000000/4 = 250000 $
+
+Let $B$ be the numbers divisible by 6 $1000000/6 = 166666,6$
+
+Let $C$ be the numbers divisible by 9 $1000000/9 = 111111,1$
+
+According to the exclusion-inclusion principle:
+
+\begin{equation}
+  \begin{aligned}
+    P[A \cup B \cup C] = P[A] + P[B] + P[C] - P[A \cap B] - P[B \cap C] - P[A \cap C] + P[A \cap B \cap C]
+  \end{aligned}
+\end{equation}
+
+Therefore,
+
+\begin{equation}
+  \begin{aligned}
+    P[A \cup B \cup C] &= 0,25 + 0,16 + 0,11 - P[A \cap B] - P[B \cap C] - P[A \cap C] + P[A \cap B \cap C] \\
+    &= 0,52 - 0,041 - 0,018 - 0,027 + P [A \cap B \cap C] \\
+    &= 0,434 + 0,004 \\
+    &= 0,438 
+  \end{aligned}
+\end{equation}
+
+
+
+\end{document}

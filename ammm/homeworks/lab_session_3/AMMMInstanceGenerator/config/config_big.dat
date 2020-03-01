@@ -1,0 +1,17 @@
+# file name: ../AMMMLabHeuristics/data/instance_XX.dat
+instancesDirectory = ../AMMMLabHeuristics/data;
+fileNamePrefix = big;
+fileNameExtension = dat;
+numInstances = 1;
+
+numCPUs = 20;
+minNumCoresPerCPU = 1;
+maxNumCoresPerCPU = 4;
+minCapacityPerCore = 5000;
+maxCapacityPerCore = 10000;
+
+numTasks = 80;
+minNumThreadsPerTask = 1;
+maxNumThreadsPerTask = 10; 
+minResourcesPerThread = 100;
+maxResourcesPerThread = 500;

@@ -1,0 +1,56 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage{parskip}
+\usepackage{hyperref}
+\title{
+  Writing Exam\\
+  Juan Pablo Royo Sales\\
+  DNI 26594881G\\
+  \date\today\vspace{-2em}}
+\date{\normalize\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 1}
+\textbf{Light off} is a 1 Player game in which:
+
+\begin{itemize}
+\item Given a Board $B$ of $n x m$ cells
+\item Each cell $c_{ij} = {0,1}$ where $0$ is the status \textbf{off} and $1$ is
+  the status \textbf{on}
+\end{itemize}
+
+The game consist in a series of movements $M$ in which the player clicks on a
+cell $c_{ij} \in B$. The goal of the player is to win the level such that
+$min|M|$
+
+When the user clicks on a cell $c_{ij}$ this cell and others possible adjancent
+cell $u.a.r$ switch their status.
+
+\begin{itemize}
+\item An Adjancent cell $c_{i'j'}$ to $c_{ij}$ if and only if $i' = i + 1 \lor j' = j + 1
+  \lor i' = i - 1 \lor j' = j - 1$ such that $i' \geq 0 \land i' \leq n \land j'
+  \geq 0 \land j' \leq m$, without breaking the boundaries of the board.
+\item Switching the value of $c_{ij}$ is a $f: a \rightarrow b \mid if a = 0
+  \rightarrow b = 1 \lor if a = 1 \rightarrow b = 1$ 
+\end{itemize}
+
+There are a set of \textbf{Levels} which is unknown. When the user completes or
+\textbf{win} a level, the game start over with a new Board.
+
+A \textbf{Player wins} a level when $\forall c_{ij} \in B, c_{ij} = 0$. All
+\textbf{lights are in 'off' state}.
+
+\section{Problem 2}
+
+\begin{equation}
+  f(M) = \left\{ \sum_{i = 1}^{n/2} \sum_{j = 1}^{n/2} c_{ij} \mid c_{ij} = 1 \land c_{ij} = c_{i(n-j-1)} \right\}
+\end{equation}
+
+\end{document}

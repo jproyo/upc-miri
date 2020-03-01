@@ -1,0 +1,144 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{titling} 
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\graphicspath{ {./images/} }
+\title{
+  Lab Session 2 - Answers \\
+  AMMM
+}
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AMMM - Lab Session 2}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\begin{titlingpage}
+  \maketitle
+\end{titlingpage}
+
+\section{Answers}
+\subsection{Answer 1}\label{answer_1}
+
+On the P1 solution, we have the following results:
+
+\begin{itemize}
+  \item Constraints 10
+  \item Variables 13
+  \item Optimal solutions: we have the following matrix
+
+\begin{subequations}
+  \begin{align}
+    z = 1
+    x_tc = [[1 0 0], [0 0.59151 0.40828] [0.44636 0.55364 0] [1 0 0]]
+  \end{align}
+\end{subequations}
+
+ \item Regarding solving time is taking $0.1090$ 
+\end{itemize}
+
+On the P2 IP solution we have the following:
+
+\begin{itemize}
+\item Constraints is the same 10, because we are working with the constraints model
+\item Variables in this case we change to 12 Binaries vars and 1 of other. In
+  this case it is because we have 3 CPUS and 4 Tasks which is the 12 binaries we
+  have defined. The other is a free variable.
+  \item Optimal solutions: we have the following matrix
+
+\begin{subequations}
+  \begin{align}
+    z = 1
+    x_tc = [[1 0 0], [0 0 0] [0 1 0] [1 0 0]]
+  \end{align}
+\end{subequations}
+
+We can check here since we are with binaries solution that compare the others
+all the values that are bellow 0.5 are round down to 0, which is far away from
+optimal in this particular case.
+
+\item Regarding solving time is taking $0.1360$. It is greater because we are
+  working with integer numbers and the resource allocation is greater for this
+  type of problem 
+\end{itemize}
+
+
+\subsection{Answer 2}
+The problem is now unsatisfiable because the capacity constraint in the IP
+problem cannot be satisfied because of the following:
+
+\begin{itemize}
+\item Task $560.89$ only can go to CPU with $701.78$
+  \item When that happen there is no more capacity to attend to the rest of the
+    task as the following sum shows
+
+    \begin{subequations}
+      \begin{align}
+        sum_rc = 505.67 + 503.68 = 1009.35 \\
+        sum_rt = 261.27 + 310.51 + 105.80 + 344.7 = 1022.28 \\
+        sum_rc < sum_rt 
+      \end{align}
+    \end{subequations}
+
+    Therefore there is no capacity.
+\end{itemize}
+
+\subsection{Answer 3}
+The value of the highest loaded computer for each value of $K | \forall k \in K
+1 <= k <= 5$ is the following:
+
+\begin{itemize}
+\item $K = 1 \implies CPU_3 = 0.64\%$
+\item $K = 2 \implies CPU_3 = 0.44\%$
+\item $K = 3 \implies CPU_3 = 0.37\%$
+\item $K = 4 \implies CPU_3 = 0.15\%$
+\item $K = 5 \implies CPU_3 = 0\%$
+\end{itemize}
+
+\subsection{Answer 4}
+
+On the P2 solution, we have the following results:
+
+\begin{itemize}
+  \item Constraints 11
+  \item Variables 15 binaries and 1 of Other kind
+  \item Regarding solving time is taking $0.2578$. This is the most time
+    consuming because it is not feasible.
+\end{itemize}
+
+On the P2a solution with $K=1$ we have the following:
+
+\begin{itemize}
+\item Constraints is 12 because here there has been added another contratint.
+\item Variables are the same as before 15 binaries and 1 of other kind.
+\item Regarding solving time is taking $0.2001$.
+\end{itemize}
+
+On the P2b solution we have the following:
+
+\begin{itemize}
+\item Constraints is 8 because here we are eliminating one constraint and
+  minimizing the amount of server loaded.
+\item Variables are the same as before 15 binaries, because the constraint elimination.
+\item Regarding solving time is taking $0.2419$. It is taking more that P2a
+  because here there is not rebalancing of the tasks with $K$ parameter, so
+  optimization is more time consuming.
+\end{itemize}
+
+
+\end{document}

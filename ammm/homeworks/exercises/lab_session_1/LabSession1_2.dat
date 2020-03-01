@@ -1,0 +1,13 @@
+/*********************************************
+ * OPL 12.8.0.0 Data
+ * Author: Juan Pablo Royo Sales
+ * Creation Date: Sep 30, 2019 at 10:32:04 AM
+ *********************************************/
+ // One CPU with average capacity, low capacity and high capacity
+ 
+ nTasks=4;
+ nCPUS=3;
+ 
+ rt=[261.27 560.89 310.51 105.80];
+ rc=[365.43 3122.3 91.8];
+ 

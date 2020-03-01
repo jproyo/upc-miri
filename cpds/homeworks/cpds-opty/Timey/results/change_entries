@@ -1,0 +1,76 @@
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:83714, OK:79750, -> 95.26483025539336 %
+1: Transactions TOTAL:83462, OK:79407, -> 95.14150152165057 %
+2: Transactions TOTAL:83683, OK:79722, -> 95.26666109006608 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 10 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:86061, OK:83926, -> 97.51920149661287 %
+2: Transactions TOTAL:86258, OK:84141, -> 97.54573488835818 %
+3: Transactions TOTAL:86285, OK:84142, -> 97.51637016862722 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 15 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:85535, OK:84107, -> 98.3305079791898 %
+1: Transactions TOTAL:85691, OK:84365, -> 98.45257961746275 %
+3: Transactions TOTAL:85738, OK:84447, -> 98.49424992418764 %
+Stopped
+
+
+Starting: 3 CLIENTS, 20 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:86984, OK:85927, -> 98.78483399245839 %
+3: Transactions TOTAL:86733, OK:85650, -> 98.75134032029331 %
+1: Transactions TOTAL:86756, OK:85695, -> 98.7770298307898 %
+Stopped
+
+
+
+\item $(ii)$ Different number of entries
+
+\begin{table}[h!]
+\begin{tabular}{ |c|c|c|c| }
+  \hline
+  \multicolumn{4}{|c|}{Concurrent Clients - Duration 3s} \\
+  \hline
+  Experiment & Total Transactions & OK Transactions & \% Transactions\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 83714 & 79750 &  95.26483025539336 \%\\
+  & 83462 & 79407 &  95.14150152165057 \%\\
+  & 83683 & 79722 &  95.26666109006608 \%\\
+  & & &\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 10 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 86061 & 83926 &  97.51920149661287 \%\\
+  & 86258 & 84141 &  97.54573488835818 \%\\
+  & 86285 & 84142 &  97.51637016862722 \%\\
+  & & &\\
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 15 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 85535 & 84107 &  98.3305079791898 \%\\
+  & 85691 & 84365 &  98.45257961746275 \%\\
+  & 85738 & 84447 &  98.49424992418764 \%\\
+  & & &\\
+
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 20 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 86984 & 85927 &  98.78483399245839 \%\\
+  & 86733 & 85650 &  98.75134032029331 \%\\
+  & 86756 & 85695 &  98.7770298307898 \%\\
+  & & &\\
+
+  \hline
+\end{tabular}
+\captionof{figure}{Results of several executions changing the number of entries in the Timestamp ordering algorithm}
+\label{table:timey_change_entries}
+\end{table}

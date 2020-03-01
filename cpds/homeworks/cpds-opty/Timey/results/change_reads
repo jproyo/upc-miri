@@ -1,0 +1,78 @@
+Starting: 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:84802, OK:80827, -> 95.31261055163793 %
+2: Transactions TOTAL:84585, OK:80552, -> 95.23201513270675 %
+1: Transactions TOTAL:84694, OK:80737, -> 95.32788627293552 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 6 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+3: Transactions TOTAL:32364, OK:29636, -> 91.57088122605364 %
+1: Transactions TOTAL:32377, OK:29713, -> 91.77193686876487 %
+2: Transactions TOTAL:32353, OK:29532, -> 91.28056130807035 %
+Stopped
+
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 11 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+2: Transactions TOTAL:19417, OK:17853, -> 91.9452026574651 %
+1: Transactions TOTAL:19428, OK:17825, -> 91.7490220300597 %
+3: Transactions TOTAL:19403, OK:17777, -> 91.61985260011339 %
+Stopped
+
+
+
+Starting: 3 CLIENTS, 5 ENTRIES, 16 RDxTR, 1 WRxTR, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:13542, OK:12612, -> 93.13247673903412 %
+2: Transactions TOTAL:13548, OK:12568, -> 92.76645999409507 %
+3: Transactions TOTAL:13545, OK:12571, -> 92.80915466961979 %
+Stopped
+
+
+\item $(iii)$ Different number of reads per transaction
+
+\begin{table}[h!]
+\begin{tabular}{ |c|c|c|c| }
+  \hline
+  \multicolumn{4}{|c|}{Concurrent Clients - Duration 3s} \\
+  \hline
+  Experiment & Total Transactions & OK Transactions & \% Transactions\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 1 RDxTR \\ 1 WRxTR}
+  & 84802 & 80827 &  95.31261055163793 \%\\
+  & 84585 & 80552 &  95.23201513270675 \%\\
+  & 84694 & 80737 &  95.32788627293552 \%\\
+  & & &\\
+  \hline
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 6 RDxTR \\ 1 WRxTR}
+  & 32364 & 29636 &  91.57088122605364 \%\\
+  & 32377 & 29713 &  91.77193686876487 \%\\
+  & 32353 & 29532 &  91.28056130807035 \%\\
+  & & &\\
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 11 RDxTR \\ 1 WRxTR}
+  & 19417 & 17853 &  91.9452026574651 \%\\
+  & 19428 & 17825 &  91.7490220300597 \%\\
+  & 19403 & 17777 &  91.61985260011339 \%\\
+  & & &\\
+
+  \hline
+
+  \multirow{4}{3cm}{3 CLIENTS \\ 5 ENTRIES \\ 16 RDxTR \\ 1 WRxTR}
+
+
+  & 13542 & 12612 &  93.13247673903412 \%\\
+  & 13548 & 12568 &  92.76645999409507 \%\\
+  & 13545 & 12571 &  92.80915466961979 \%\\
+  & & &\\
+  \hline
+\end{tabular}
+\captionof{figure}{Results of several executions changing the number of reads per transaction in the Timestamp ordering algorithm}
+\label{table:timey_change_reads}
+\end{table}

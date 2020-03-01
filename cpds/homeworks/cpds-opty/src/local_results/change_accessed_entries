@@ -1,0 +1,57 @@
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 1 WRxTR, 5 ALLOWE, DURATION 3 s
+Validator Node nonode@nohost
+Stopping...
+2: Transactions TOTAL:142536, OK:117794, -> 82.64157826794634 % 
+1: Transactions TOTAL:142789, OK:117943, -> 82.59949996148163 % 
+3: Transactions TOTAL:142512, OK:117855, -> 82.6982990906029 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 6 WRxTR, 4 ALLOWE, DURATION 3 s
+Validator Node nonode@nohost
+Stopping...
+1: Transactions TOTAL:114353, OK:66215, -> 57.90403399998251 % 
+2: Transactions TOTAL:113979, OK:74988, -> 65.79106677545863 % 
+3: Transactions TOTAL:113896, OK:65381, -> 57.40412305963335 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 11 WRxTR, 3 ALLOWE, DURATION 3 s
+Validator Node nonode@nohost
+Stopping...
+2: Transactions TOTAL:101740, OK:68126, -> 66.96088067623354 % 
+1: Transactions TOTAL:102144, OK:57387, -> 56.18244830827068 % 
+3: Transactions TOTAL:102121, OK:57234, -> 56.04527961927517 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 5 ENTRIES, 1 RDxTR, 16 WRxTR, 2 ALLOWE, DURATION 3 s
+Validator Node nonode@nohost
+Stopping...
+2: Transactions TOTAL:90919, OK:78709, -> 86.57046381944367 % 
+1: Transactions TOTAL:91111, OK:54920, -> 60.278122290393036 % 
+3: Transactions TOTAL:90759, OK:78383, -> 86.36388677706894 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 15 ENTRIES, 1 RDxTR, 16 WRxTR, 10 ALLOWE, DURATION 3 s
+Validator Node nonode@nohost
+Stopping...
+2: Transactions TOTAL:70885, OK:39096, -> 55.15412287507935 % 
+1: Transactions TOTAL:70628, OK:42511, -> 60.19000962790961 % 
+3: Transactions TOTAL:70478, OK:45097, -> 63.98734356820568 % 
+Stopped
+Starting: local MODE 3 CLIENTS, 15 ENTRIES, 1 RDxTR, 16 WRxTR, 7 ALLOWE, DURATION 3 s
+Validator Node nonode@nohost
+Stopping...
+1: Transactions TOTAL:74117, OK:50234, -> 67.77662344671263 % 
+2: Transactions TOTAL:73891, OK:50030, -> 67.70783992637804 % 
+3: Transactions TOTAL:74195, OK:45022, -> 60.68063885706584 % 
+Stopped
+Validator Node nonode@nohost
+Starting: local MODE 3 CLIENTS, 15 ENTRIES, 1 RDxTR, 16 WRxTR, 3 ALLOWE, DURATION 3 s
+Stopping...
+1: Transactions TOTAL:82839, OK:70800, -> 85.46699018578207 % 
+2: Transactions TOTAL:83198, OK:71080, -> 85.43474602754874 % 
+3: Transactions TOTAL:82806, OK:82806, -> 100.0 % 
+Stopped
+Validator Node nonode@nohost
+Starting: local MODE 3 CLIENTS, 15 ENTRIES, 1 RDxTR, 16 WRxTR, 2 ALLOWE, DURATION 3 s
+Stopping...
+{"init termi1: Transactions TOTAL:89473, OK:89473, -> 100.0 % 
+2: Transactions TOTAL:89588, OK:73283, -> 81.80001785953476 % 
+3: Transactions TOTAL:89691, OK:72726, -> 81.08505870154197 % 
+Stopped
+nating in do_boot",0}

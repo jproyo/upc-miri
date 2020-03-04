@@ -8,6 +8,7 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{color}
+\usepackage{float}
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -44,9 +45,9 @@
 \maketitle
 
 \section{Introduction}
-Similarity Search problem are algorithms in which given a collection of objects, we are required to find all those objects that are similar to an specific one. By \textit{similar}, we mean that given an multidimensional point (object) $p_i = (x_1, x_2, \dots x_d)$ where $x_d$ is the $d$-dimension characteristic of $p_i$, there exists a function $f: R^d \to r \mid d > 0, r \in R$ that measure the distance $r$ on each dimension $x_d \land \forall p_j \mid i \neq j$, returning $\argmin_{p_j} = \{ f(p_j) \mid \forall p_j \in R^d \}$ whose distance is the smallest one.
+Similarity Search problem are algorithms in which given a collection of objects, we are required to find all those objects that are similar to an specific one. By \textit{similar}, we mean that given an multidimensional point (object) $p_i = (x_1, x_2, \dots x_d)$ where $x_d$ is the $d$-dimension characteristic of $p_i$, there exists a function $f: R^d \to r \mid d > 0, r \in R$ that measure the distance $r$ on each dimension $x_d, \forall p_j | i \neq j$, returning $\argmin_{p_j} = \{ f(p_j) \mid \forall p_j \in R^d \}$ whose distance is the smallest one.
 
-This kind of algorithms are used for different kind of problems: information retrieval, pattern image recognition, text search and everything that can be represented as a \textit{k}-dimensional in some dimensional space $R^d \mid d > 0$. In particular we are going to study in the $d$-dimensional \textit{Euclidean} space.
+This kind of algorithms are used for different kind of problems: information retrieval, pattern image recognition, text search and everything that can be represented as a \textit{k}-dimensional in some dimensional space $R^d \mid d > 0$. In particular we are going to do this analysis in the $d$-dimensional \textit{Euclidean} space.
 
 It is well know that there are several different approaches to solve \textit{Nearest Neighbor} as for example $kd$-trees, but these kind of structures start to perform bad when the amount of dimensions exceeds above \textit{10} or \textit{20} doing it not better than \textit{brute force} linear search.
 
@@ -72,7 +73,7 @@ in $P$.
 \end{nns}
 
 \section{LSH - Algorithm}
-This algorithm was first introduced here \cite{motwani_lsh}, but as we mentioned before in the introduction, we are going to be based on the improvements made it in this \cite{gionis_sim_search} work. In their work they have improved original algorithm with the following features:
+This algorithm was first introduced here \cite{motwani_lsh}, but as we mentioned before in the introduction, we are going to conduct the analysis based on the improvements made it in this \cite{gionis_sim_search} work. In that paper the authors have improved original algorithm with the following features:
 
 \begin{itemize}
   \item Hash buckets are not required
@@ -91,11 +92,14 @@ The algorithm proceed as follows:
     \end{equation*}
 
     This means that the encoding does not affect (or preserve), the distance between points.
+  \item Taking the Hamming distance we are going to compute the Hash functions on each point to construct a Hash tables for each function based on the similarities, providing the fact that the probability of collision is going to increase for similar points.
+
+In the following subsection we are going to describe how the algorithm of building this Hash tables works and how \textbf{NNS} find the nearest points.
 \end{enumerate}
 
 \subsection{Preprocessing algorithm}
 
-    \begin{algorithm}
+    \begin{algorithm}[H]
      \label{alg:preproc}
      \caption{Preprocessing}
      \begin{algorithmic}
@@ -116,9 +120,20 @@ The algorithm proceed as follows:
 
    This algorithm is the preprocessing of building all the Hash tables with all the points applying the \textbf{hash} function $g_i$ for each Hash table.
 
+   The hash functions $g_i$ are defined as following:
+
+   \begin{itemize}
+     \item For an Integer $l$ to be specified, $l$ subsets from $I_1, \dots, I_l$ of ${1, \dots, d'}$ are chosen.
+     \item $p_{|I}$ is the projection of the vector $p$ in the coordinate set $I$. We compute that $p_{|I}$ selection the coordinate positions according to $I$ and adding bits to that position.
+     \item Then $g_j(p) = p_{|I_j}$
+     \item Store each $p \in P$ in the bucket $g_j(p), \forall j = 1, \dots, l$.
+  \end{itemize}
+
+  Since the number of buckets can increase too much, there is a second hashing level which is a standard hash for the points $p$ that fell into the bucket $g_j(p)$
+
 \subsection{Approximate NNS Algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \label{algo:nns}
   \caption{Approximate Nearest Neighbor Query}
   \begin{algorithmic}
@@ -135,10 +150,11 @@ The algorithm proceed as follows:
   \end{algorithmic}
 \end{algorithm}
 
-In this algorithm we are finally doing the approximate search, where giving one query point $q$, we are iterating over all hash tables to find the Nearest point on that Hash table $i$ and putting that point into a resulting subset $S$.
+In this algorithm we are finally doing the approximate search, where giving one query point $q$, we are iterating over all $l$ points that we use on previous $g_j(p)$ hash functions to found all the points that are on the buckets that match with $q$ into a resulting subset $S$.
+
 
 \section{Analysis of LSH}
-As we describe in the introduction section, the main idea behind this method rest on the fact that the Probability of collisions in terms of hashing increase if the elements are near each other.
+As we describe in the introduction section, the main idea behind this method rest on the fact that the Probability of collisions regarding hashing, which increase if the elements are near each other.
 
 This statement is formalized in the following way:
 
@@ -225,8 +241,8 @@ Having that $\epsilon > 0$ and $r < \frac{d'}{\ln{n}}$, it can be conclude that:
 
 
 \section{Conclusion}
-We have seen that \textit{Locality Sensitivity Hashing} algorithm is a powerful technique for doing Similarity Search algorithm with sub linear complexity.
-In further works we can set up an experiment similar to the author's work in order to compare the performance and results between this algorithm and other.
+We have seen that \textit{Locality Sensitivity Hashing} algorithm is a powerful technique for doing Similarity Search with sub linear complexity.
+In further works we can set up an experiment similar to the author's work in order to compare the performance and results between this algorithm and other multidimensional data structure, \textbf{kd-trees}, which in the paper is mention but it perform bad above 10 dimensions.
 
 
 

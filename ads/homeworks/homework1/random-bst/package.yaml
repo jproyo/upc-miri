@@ -30,7 +30,6 @@ library:
   dependencies:
     - base
     - containers
-    - directory
     - pretty-simple
     - random
     - time
@@ -50,5 +49,6 @@ tests:
     dependencies:
       - base
       - QuickCheck
+      - random
       - test-framework
       - test-framework-quickcheck2

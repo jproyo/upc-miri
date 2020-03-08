@@ -11,9 +11,14 @@ category:            Experimental
 extra-source-files:
 - README.md
 
+dependencies:
+  - base
+  - random
+
 library:
   exposed-modules:
     - RandomBST
+    - Experiments
 
   source-dirs:
     - src
@@ -30,9 +35,16 @@ library:
   dependencies:
     - base
     - containers
-    - pretty-simple
-    - random
-    - time
+    - QuickCheck
+
+executables:
+  random-bst:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - directory
+      - random-bst
+      - time
 
 tests:
   random-bst-test:
@@ -47,8 +59,4 @@ tests:
       - -with-rtsopts=-N
       - -fdiagnostics-color=always
     dependencies:
-      - base
       - QuickCheck
-      - random
-      - test-framework
-      - test-framework-quickcheck2

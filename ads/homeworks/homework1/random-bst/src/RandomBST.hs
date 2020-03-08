@@ -1,13 +1,18 @@
+{-# LANGUAGE RankNTypes #-}
+
 {-
 All this source code was taken and modified from here https://wiki.haskell.org/The_Monad.Reader/Issue4/On_Treaps_And_Randomization
 -}
 module RandomBST
-  ( insert
+  ( RTreap
+  , insert
   , delete
   , empty
   , height
   , fromList
-  , RTreap
+  , leafDepth
+  , depth
+  , nodes
   )
 where
 
@@ -33,6 +38,24 @@ tEmpty = Empty
 tHeight :: Treap k p -> Int
 tHeight Empty                 = 0
 tHeight (Node left _ _ right) = 1 + max (tHeight left) (tHeight right)
+
+tDepth :: Treap k p -> Int
+tDepth tree = calc tree 0
+  where
+    calc Empty _ = 0
+    calc (Node l _ _ r) d = d + calc l (d + 1) + calc r (d + 1)
+
+tNodes :: Treap k p -> Int
+tNodes Empty = 0
+tNodes (Node le _ _ ri) = 1 + tNodes le + tNodes ri
+
+tLeafDepth :: Treap k p -> [Int]
+tLeafDepth = flip (heights 0) []
+    where
+        heights dth Empty accum = dth : accum
+        heights dth (Node l _ _ r) accum
+            = heights (dth + 1) l
+            $ heights (dth + 1) r accum
 
 rotateLeft :: Treap k p -> Treap k p
 rotateLeft (Node a k p (Node b1 k' p' b2)) = Node (Node a k p b1) k' p' b2
@@ -92,9 +115,20 @@ insert k (RT (g, tr)) =
 delete :: (Show k, RandomGen g, Ord k, Ord p) => k -> RTreap g k p -> RTreap g k p
 delete k (RT (g, tr)) = RT (g, tDelete k tr)
 
-height :: RTreap g k p -> Int
-height (RT (_, treap)) = tHeight treap
+applyToTreap :: (Treap k p -> r) -> RTreap g k p -> r
+applyToTreap f (RT (_, treap)) = f treap
 
+height :: RTreap g k p -> Int
+height = applyToTreap tHeight
+
+depth :: RTreap g k p -> Int
+depth = applyToTreap tDepth
+
+nodes :: RTreap g k p -> Int
+nodes = applyToTreap tNodes
+
+leafDepth :: RTreap g k p -> [Int]
+leafDepth = applyToTreap tLeafDepth
 
 fromList
   :: (Ord a, Ord p, Num p, Random p, RandomGen g) => [a] -> g -> RTreap g a p

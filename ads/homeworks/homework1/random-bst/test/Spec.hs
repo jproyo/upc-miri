@@ -3,11 +3,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving  #-}
 
-import           Test.Framework                 ( defaultMain
-                                                , testGroup
-                                                )
-import           Test.Framework.Providers.QuickCheck2
-                                                ( testProperty )
 import           Data.List
 import           RandomBST
 import           System.Random
@@ -21,36 +16,71 @@ newtype ListArrayTest = ListArrayTest { unList :: [Int] }
 instance Arbitrary ListArrayTest where
   arbitrary =
     ListArrayTest
-      <$>        (listOf $ choose (100, 2000) :: Gen [Int])
+      <$>        (choose (20, 2000) >>= flip vectorOf (choose (0, 10000000)) :: Gen [Int])
       `suchThat` isUnique
     where isUnique x = nub x == x
 
+lengthA = length . unList
+
 main :: IO ()
 main = do
+
   gen <- newStdGen
-  defaultMain $ tests gen
 
-tests gen =
-  [ testGroup
-      "Insertion RandomBST with height in log_n time"
-      [ testProperty "Insertion with random lists from 10 to 2000 elems cases"
-                     (withMaxSuccess 1000 (insertionRandom gen))
-      ]
-  ]
+  putStrLn "\nInsertion with random lists from 20 to 2000 elems cases"
+  quickCheck $ withMaxSuccess 200 $ insertionRandom gen
 
-generateLists :: Gen [Int]
-generateLists = unList <$> (arbitrary :: Gen ListArrayTest) `suchThat` \l -> (not $ Data.List.null (unList l)) && (length $ (unList l)) > 20
+  putStrLn "\nDeletion with random lists from 20 to 2000 elems cases"
+  quickCheck $ withMaxSuccess 200 $ deletionRandom gen
 
-insertionRandom :: StdGen -> Property
-insertionRandom gen =
-  forAll generateLists $ \xs ->
-  let
-    lengthList    = length xs
-    expected =
-      (logBase ((fromIntegral 2) :: Float) ((fromIntegral lengthList) :: Float))
-        * 3
-  in
-    fromIntegral (height $ (fromList xs gen :: RTreap StdGen Int Int))
-      <= expected
-  where types = gen::StdGen
+  putStrLn "\nInsertion with random insertion after first build on random lists from 20 to 2000 elems cases"
+  quickCheck $ withMaxSuccess 200 $ buildAndInsertRandom gen
+
+insertionRandom :: StdGen -> ListArrayTest -> Property
+insertionRandom gen xs =
+    lengthA xs >= 20 ==>
+      cover 30 (lengthA xs < 100) "Less than 100 elems" $
+      cover 30 (lengthA xs > 100 && lengthA xs < 1000) "Between 100 and 1000" $
+      cover 40 (lengthA xs > 1000) "Between 1000 and 2000" $
+      let
+        list       = unList xs
+        lengthList = lengthA xs
+        action = height (fromList list gen :: RTreap StdGen Int Int)
+        result = fromIntegral action
+       in result <= expected lengthList
+      where types = gen :: StdGen
+
+deletionRandom :: StdGen -> ListArrayTest -> Property
+deletionRandom gen xs =
+    lengthA xs >= 20 ==>
+      cover 30 (lengthA xs < 100) "Less than 100 elems" $
+      cover 30 (lengthA xs > 100 && lengthA xs < 1000) "Between 100 and 1000" $
+      cover 40 (lengthA xs > 1000) "Between 1000 and 2000" $
+      let
+        list       = unList xs
+        lengthList = (lengthA xs - 1)
+        toDelete   = list !! ((lengthA xs `div` 2) - 1)
+        action = height . RandomBST.delete toDelete $ (fromList list gen :: RTreap StdGen Int Int)
+        result = fromIntegral action
+       in result <= expected lengthList
+      where types = gen :: StdGen
+
+
+
+buildAndInsertRandom :: StdGen -> ListArrayTest -> Positive (Small Int) -> Property
+buildAndInsertRandom gen xs elem =
+    lengthA xs >= 20 ==>
+      cover 30 (lengthA xs < 100) "Less than 100 elems" $
+      cover 30 (lengthA xs > 100 && lengthA xs < 1000) "Between 100 and 1000" $
+      cover 40 (lengthA xs > 1000) "Between 1000 and 2000" $
+      let
+        newX       = getSmall . getPositive $ elem
+        list       = unList xs
+        lengthList = lengthA xs
+        action = height . RandomBST.insert newX  $ (fromList list gen :: RTreap StdGen Int Int)
+        result = fromIntegral action
+       in result <= expected lengthList
+      where types = gen :: StdGen
+
+expected lengthList = logBase (2 :: Float) (fromIntegral lengthList :: Float) * 3
 

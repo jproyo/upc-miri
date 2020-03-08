@@ -56,10 +56,10 @@ tInsert k p t@(Node left k' p' right) = case compare k k' of
     _ -> t
 
 
-tDelete :: (Ord k, Ord p) => k -> Treap k p -> Treap k p
-tDelete = recDelete
+tDelete :: (Show k, Ord k, Ord p) => k -> Treap k p -> Treap k p
+tDelete key = recDelete key
  where
-  recDelete _ Empty = error "Key does not exist in tree (tDelete)"
+  recDelete _ Empty = error ("Key does not exist in tree (tDelete) - Key: " <> show key)
   recDelete k' t@(Node left k'' p right) = case compare k' k'' of
     LT -> Node (recDelete k' left) k'' p right
     GT -> Node left k'' p (recDelete k' right)
@@ -89,7 +89,7 @@ insert
 insert k (RT (g, tr)) =
   let (p, g') = randomR (-2000000000, 2000000000) g in RT (g', tInsert k p tr)
 
-delete :: (RandomGen g, Ord k, Ord p) => k -> RTreap g k p -> RTreap g k p
+delete :: (Show k, RandomGen g, Ord k, Ord p) => k -> RTreap g k p -> RTreap g k p
 delete k (RT (g, tr)) = RT (g, tDelete k tr)
 
 height :: RTreap g k p -> Int

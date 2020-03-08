@@ -41,21 +41,20 @@ tHeight (Node left _ _ right) = 1 + max (tHeight left) (tHeight right)
 
 tDepth :: Treap k p -> Int
 tDepth tree = calc tree 0
-  where
-    calc Empty _ = 0
-    calc (Node l _ _ r) d = d + calc l (d + 1) + calc r (d + 1)
+ where
+  calc Empty          _ = 0
+  calc (Node l _ _ r) d = d + calc l (d + 1) + calc r (d + 1)
 
 tNodes :: Treap k p -> Int
-tNodes Empty = 0
+tNodes Empty            = 0
 tNodes (Node le _ _ ri) = 1 + tNodes le + tNodes ri
 
 tLeafDepth :: Treap k p -> [Int]
 tLeafDepth = flip (heights 0) []
-    where
-        heights dth Empty accum = dth : accum
-        heights dth (Node l _ _ r) accum
-            = heights (dth + 1) l
-            $ heights (dth + 1) r accum
+ where
+  heights dth Empty accum = dth : accum
+  heights dth (Node l _ _ r) accum =
+    heights (dth + 1) l $ heights (dth + 1) r accum
 
 rotateLeft :: Treap k p -> Treap k p
 rotateLeft (Node a k p (Node b1 k' p' b2)) = Node (Node a k p b1) k' p' b2
@@ -82,7 +81,8 @@ tInsert k p t@(Node left k' p' right) = case compare k k' of
 tDelete :: (Show k, Ord k, Ord p) => k -> Treap k p -> Treap k p
 tDelete key = recDelete key
  where
-  recDelete _ Empty = error ("Key does not exist in tree (tDelete) - Key: " <> show key)
+  recDelete _ Empty =
+    error ("Key does not exist in tree (tDelete) - Key: " <> show key)
   recDelete k' t@(Node left k'' p right) = case compare k' k'' of
     LT -> Node (recDelete k' left) k'' p right
     GT -> Node left k'' p (recDelete k' right)
@@ -105,14 +105,15 @@ tDelete key = recDelete key
 
 
 insert
-  :: (RandomGen g, Ord k, Ord p, Num p, Random p)
+  :: (RandomGen g, Ord k, Bounded p, Ord p, Num p, Random p)
   => k
   -> RTreap g k p
   -> RTreap g k p
 insert k (RT (g, tr)) =
-  let (p, g') = randomR (-2000000000, 2000000000) g in RT (g', tInsert k p tr)
+  let (p, g') = randomR (0, maxBound) g in RT (g', tInsert k p tr)
 
-delete :: (Show k, RandomGen g, Ord k, Ord p) => k -> RTreap g k p -> RTreap g k p
+delete
+  :: (Show k, RandomGen g, Ord k, Ord p) => k -> RTreap g k p -> RTreap g k p
 delete k (RT (g, tr)) = RT (g, tDelete k tr)
 
 applyToTreap :: (Treap k p -> r) -> RTreap g k p -> r
@@ -131,7 +132,10 @@ leafDepth :: RTreap g k p -> [Int]
 leafDepth = applyToTreap tLeafDepth
 
 fromList
-  :: (Ord a, Ord p, Num p, Random p, RandomGen g) => [a] -> g -> RTreap g a p
+  :: (Ord a, Ord p, Bounded p, Num p, Random p, RandomGen g)
+  => [a]
+  -> g
+  -> RTreap g a p
 fromList xs g = foldl (flip insert) (empty g) xs
 
 

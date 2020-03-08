@@ -8,7 +8,8 @@ import           RandomBST
 
 experiment :: StdGen -> Int -> IO String
 experiment gen n = do
-  list <- generate $ generateList n
+  number <- (generate $ choose (0, 10000000)) :: IO Int
+  let list = [number..number+n-1]
   let lengthList = length list
   let action     = fromList list gen :: RTreap StdGen Int Int
   let heightA    = height action
@@ -18,7 +19,6 @@ experiment gen n = do
   let avgLeafD = average $ map fromIntegral leafD :: Double
   let varLeafD = variance $ map fromIntegral leafD :: Double
   return $ intercalate "," [show lengthList, show heightA, show expectedHeight, show varHeight, show avgLeafD, show varLeafD] <> "\n"
-
 
 
 generateList :: Int -> Gen [Int]

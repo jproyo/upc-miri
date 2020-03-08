@@ -1,0 +1,60 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[acronym]{glossaries}
+
+\title{%
+      Homework 1 \\
+      Experimental Prove of $\theta(\log n)$ height on Random Binary Search Trees
+}
+\author{Juan Pablo Royo Sales}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{ADS - Homework 1}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\makeglossaries
+
+\newacronym{bst}{BST}{Binary Search Tree}
+\newacronym{rbst}{RandomBST}{Randomly Built Binary Search Tree}
+\newacronym{rtreap}{RTreap}{Randomized Treap}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+In this Homework I have selected to explore and analyze \textbf{\acrfull{rbst}} in order to prove through experimentation that the expected height of \textit{\acrshort{rbst}} is $E[h] = \theta(\log n)$.
+
+In order to do that we are going to first give a brief introduction to this type of Data Structure and the theoretical analysis of this feature.
+
+\section{\acrlong{rbst}}
+A \acrshort{rbst} is a \textbf{\acrfull{bst}} that is specifically built using random insertions, in order to achieve \textbf{balanced} \acrshort{bst} \textit{whp}.
+
+Given an insertion in a \acrshort{rbst} of size $n - 1$ there exists the same probability for the key to be inserted in the same interval that the keys already present in the tree. Basically all $n{!}$ possible permutations of the keys are equally likely.
+
+There exists a specific implementation, which is the one I used to conduct the analysis, which is \textbf{\acrfull{rtreap}}.
+
+In the following sections I am going to describe this Data Structure that fulfill the specification of an \acrshort{rbst}.
+
+\subsection{Formal Analysis}
+
+
+\printglossary[type=\acronymtype]
+
+\end{document}
+

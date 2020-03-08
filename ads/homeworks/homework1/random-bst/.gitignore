@@ -15,4 +15,7 @@ temp/
 # IDE stuff
 hie.yaml
 
-
+# Profiling
+*.hp
+*.prof
+*.html

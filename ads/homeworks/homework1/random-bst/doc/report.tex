@@ -87,7 +87,7 @@ There exists a specific implementation, which is the one I used to conduct the a
 In the following sections I am going to describe this Data Structure that fulfill the specification of an \acrshort{rbst}.
 
 \section{Treap and Randomized Treap}
-A \textbf{\acrfull{treap}} is a \acrshort{bst} in which every node has both the proper key and a priority associated with it $(k_i, p_i)$, such that the Left subtree $L$ of an specific node $N_i = (k_i, p_i)$ contains keys which priorities are less than the parent $\forall j, j \in L \land j \neq i \implies k_i \geq k_j \land p_i \geq p_j$. On the other hand the right subtree $R$ of $N_i$ contains the greater keys and priorities such that $\forall j, j \in R \land j \neq i \implies k_i \leq k_j \land p_i \leq p_R$. A \acrshort{treap} can be seen as a \acrshort{bst} for the search keys and a min-heap for the priorities.
+A \textbf{\acrfull{treap}} is a \acrshort{bst} in which every node has both the proper key and a priority associated with it $(k_i, p_i)$, such that the Left subtree $L$ of an specific node $N_i = (k_i, p_i)$ contains keys whose values are less than the parent and priorities are less than the parent $\forall j, j \in L \land j \neq i \implies k_i \geq k_j \land p_i \leq p_j$. On the other hand the right subtree $R$ of $N_i$ contains keys whose values the greater and priorities that are less such that $\forall j, j \in R \land j \neq i \implies k_i \leq k_j \land p_i \leq p_j$. A \acrshort{treap} can be seen as a \acrshort{bst} for the search keys and a min-heap for the priorities.
 
 \begin{figure}[H]
 \centering

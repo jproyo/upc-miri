@@ -1,6 +1,4 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric #-}
 
 module Experiments where
 
@@ -9,8 +7,6 @@ import           Test.QuickCheck
 import           Data.List
 import           System.Random
 import           RandomBST                     as RBST
-import           Data.Default
-import           GHC.Generics
 
 experiment :: StdGen -> Int -> IO String
 experiment gen n = do
@@ -25,7 +21,7 @@ data Meassure = Meassure
   , empHeight  :: Int
   , expHeight :: Double
   , avgLeaf :: Double
-  } deriving (Generic, Default)
+  }
 
 instance Show Meassure where
   show Meassure {..} = intercalate

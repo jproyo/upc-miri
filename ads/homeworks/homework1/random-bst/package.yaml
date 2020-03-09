@@ -34,7 +34,6 @@ library:
 
   dependencies:
     - base
-    - data-default
     - containers
     - QuickCheck
 

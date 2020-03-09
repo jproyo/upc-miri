@@ -13,7 +13,7 @@
 \usepackage{color}
 \usepackage{caption}
 \usepackage[acronym]{glossaries}
-\graphicspath{ {./images/} }
+\graphicspath{{./images/}}
 
 \tikzstyle{bag} = [align=center]
 
@@ -92,9 +92,7 @@ A \textbf{\acrfull{treap}} is a \acrshort{bst} in which every node has both the 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[level/.style={sibling distance=60mm/#1}]
-  \node [bag,circle,draw](z){
-    $k_1 = \text{H}$ \\
-    $p_1 = 1$}
+  \node [bag,circle,draw](z){$k_1 = \text{H}$ \\ $p_1 = 1$}
     child {node [bag,circle,draw] (a) {$k_2 = F$ \\ $p_2 = 2$}
       child {node [bag,circle,draw] (d) {$k_3 = B$ \\ $p_3 = 7$}}
       child {node [bag,circle,draw] (e) {$k_3 = G$ \\ $p_3 = 5$}}
@@ -178,15 +176,31 @@ The implementation has 2 parts: the \acrshort{treap} implementation with all the
 There are more code that includes helper functions to gather metrics, testing with Property Based Testing in Quickcheck and other helper functions. This can be found with the bundle package and references are in Appendix section.
 
 \subsection{Experiments}
+One important aspect of the experiments I have design is that, I am selecting the elements to be inserted from \textbf{ordered fixed list}. This mean that I have designed them \textbf{on purpose} to not have Random Inputs in order to show with the empirical data that, even in the worst scenario the Final Tree is Balanced with Random priority insertion.
+
 The following are the experiments I have conducted in order to have empirical prove that the tested height approximates to $\log n$.
 
 \begin{itemize}
-  \item Generate a random list of $n$ distinct elements
+  \item Let $r$ be a Random Integer from $0$ to $10000000$
+  \item Generate a fixed list of $n$ distinct elements based on the Random number selected before. This means that the final list $L_{exp}$ that I am going to use to conduct the experiment is going to be form with $L_{exp} = \{ x | r \leq x \leq (r+n) \}$.
   \item Build a \acrshort{rbst} with the given random list.
+  \item Perform a Random Deletion on the same \acrshort{rbst}.
 \end{itemize}
 
+This is the main algorithm form the experiment:
+
+\begin{lstlisting}[language=Haskell,title={\textbf{Experiments.hs} - Experiment Algorithm}]
+experiment :: StdGen -> Int -> IO String
+experiment gen n = do
+  number <- (generate $ choose (0, 10000000)) :: IO Int
+  let list      = [number !..! number + n - 1]
+  let action    = fromList list gen :: RTreap StdGen Int Int
+  let actionDel = RBST.delete (list at ((n div 2) - 1)) action
+  return $ foldMap (show !.! experiment') [action, actionDel]
+\end{lstlisting}
+
  \begin{table}[H]
-    \begin{tabular}{ |c|c|c| }
+    \begin{tabular}{|c|c|c|}
       \hline
       \multicolumn{3}{|c|}{Experiments Conducted on Insertion and Deletion in \acrshort{rbst}}\\
       \hline
@@ -243,7 +257,7 @@ The following are the experiments I have conducted in order to have empirical pr
 After running all the experiments here we have the following results.
 
 \begin{table}[H]
-    \begin{tabular}{ |c|c|c|c|c| }
+    \begin{tabular}{|c|c|c|c|c|}
       \hline
       \multicolumn{5}{|c|}{Results Experiments} \\
       \hline

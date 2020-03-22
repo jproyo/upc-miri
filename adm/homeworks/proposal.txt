@@ -1,0 +1,2 @@
+Second Deliverable: My plan in the second deliverable is to study Kd-tree as a Data Structure for doing Near Neighbour predictor.
+Third Deliverable: In the third task i will do a practical experiment comparing Kd-tree agains Locality Sensitive Hashing

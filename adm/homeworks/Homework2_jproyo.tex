@@ -1,0 +1,86 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{color}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+
+\graphicspath{{./images/}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input}}
+\renewcommand{\algorithmicensure}{\textbf{Output}}
+
+\title{%
+      Homework 2 \\
+      Kd-Trees
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{ADM - Kd-Trees}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\makeglossaries
+
+\newacronym{kdt}{K-d Tree}{K-Dimensional Binary Search Tree}
+\newacronym{bst}{BST}{Binary Search Tree}
+\newacronym{nns}{NNS}{Nearest Neighbor Search}
+\newacronym{lsh}{LSH}{Locality Sensitivity Hashing}
+
+\begin{document}
+
+\maketitle
+
+\medskip
+
+\section{Introduction}
+A \textbf{\acrfull{kdt}} was defined by first time in \cite{bentley} is a Multidimensional Data Structure and a generalization of a \textbf{\acrfull{bst}} but with discriminators by level. In the following sections we are going to describe formally this structure.
+
+\acrshort{kdt} can be \textbf{Standard} which is the definition given by \cite{bentley} or \textbf{Relaxed} which implements a Randomized selection of the discriminators at each level. In this article we are going to describe and focus only in \textbf{Standard} \acrshort{kdt}.
+
+The idea of this article is to show the power of \acrshort{kdt} for running \acrfull{nns} algorithm in order to be tested against \acrfull{lsh} in a posterior work.
+
+\section{Definition}
+A \textbf{\acrshort{kdt}} of size $n \geq 0$ contains a Set $n$ $K$-dimensional records, such that each key $x = (x_0, \dots , x_{K-1}) \in D$ where  $D = D_0 \times \dots \times D_{K-1}$, and each $D_j, 0 < j < K$, is a totally ordered domain.
+
+A \textbf{\acrshort{kdt}} $T$ is a \acrshort{bst} such that:
+
+\begin{itemize}
+    \item If $n = 0$ then $T$ is empty
+    \item Root's $T$ stores a pair $(x,d)$ given that $x$ is the key of one of the $K$-dimensional points and $d$ is the level or discriminant of the node such that $ d = \text{root level } mod K, 0 \leq j < K$
+    \item A left $L$ and right $R$ subtree is build recursively with the following form: $ L = \{ x_i | x_i < x_{root} \}$ and $R = \{x_j | x_j > x_{root}\}$.
+    \item Each level of the tree use the same discriminator level $j$.
+\end{itemize}
+
+\medskip
+
+\bibliographystyle{alpha}
+\bibliography{homework2}
+
+\printglossaries
+
+\end{document}
+

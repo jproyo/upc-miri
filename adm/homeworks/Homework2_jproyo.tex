@@ -8,12 +8,13 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{color}
+\usepackage{caption}
 \usepackage{float}
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
-
+\usepackage{tikz}
 \graphicspath{{./images/}}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -72,13 +73,41 @@ A \textbf{\acrshort{kdt}} $T$ is a \acrshort{bst} such that:
     \item If $n = 0$ then $T$ is empty
     \item Root's $T$ stores a pair $(x,d)$ given that $x$ is the key of one of the $K$-dimensional points and $d$ is the level or discriminant of the node such that $ d = \text{root level } mod K, 0 \leq j < K$
     \item A left $L$ and right $R$ subtree is build recursively with the following form: $ L = \{ x_i | x_i < x_{root} \}$ and $R = \{x_j | x_j > x_{root}\}$.
-    \item Each level of the tree use the same discriminator level $j$.
+    \item Each level of the tree use the same discriminator $d$.
 \end{itemize}
 
-\medskip
+The following example that was taken from \cite{vtech_page} illustrate the definition given above:
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{KDTree}
+  \captionof{figure}{Example of KDTree}
+  \label{fig:kdtree_example}
+\end{minipage}
+
+As we can see in this example \acrshort{kdt} divides the \textit{space} in \textit{hyperrectangles}. As we can see here point $A$ which is the first inserted use as a discriminator dimension $x$, so in the next level discriminator will be $y$ and after that $x$ again.
+
+\acrshort{kdt} are optimal for doing any kind of range query, as well as exact search, partial matches and of course \acrshort{nns} searches.
+
+\section{Cost Analysis}
+In the case of cost analysis on \acrshort{kdt} we should distinguish different kinds of cost:
+
+\begin{itemize}
+  \item Construction cost: $\Theta(n\log{n})$ worst case
+  \item Storage cost: $\Theta(n)$ worst case
+  \item Range Query cost: $\Theta(R + n^{1 - \frac{s}{K} + \Theta(\frac{s}{K})})$ in average, where $R$ is the number of points in the range.
+  \item Near Neighbor Search cost: $O(\log{n} + R)$ according to \cite{fried} average case for small answer.
+\end{itemize}
+
+We are going to focusing in the Cost analysis of \acrshort{nns} which is the goal of our work for doing predictions and comparing in a future work with \acrshort{lsh}.
+
+
+\section{Near Neighbor Search Analysis}
+
+
+
 
 \bibliographystyle{alpha}
-\bibliography{homework2}
+\bibliography{Homework2_jproyo}
 
 \printglossaries
 

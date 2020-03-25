@@ -80,6 +80,7 @@ The following example that was taken from \cite{vtech_page} illustrate the defin
 
 \begin{minipage}[t]{\linewidth}
   \includegraphics[width=\textwidth]{KDTree}
+  \captionsetup{type=figure}
   \captionof{figure}{Example of KDTree}
   \label{fig:kdtree_example}
 \end{minipage}
@@ -88,7 +89,7 @@ As we can see in this example \acrshort{kdt} divides the \textit{space} in \text
 
 \acrshort{kdt} are optimal for doing any kind of range query, as well as exact search, partial matches and of course \acrshort{nns} searches.
 
-\section{Cost Analysis}
+\subsection{Characteristics}
 In the case of cost analysis on \acrshort{kdt} we should distinguish different kinds of cost:
 
 \begin{itemize}
@@ -101,9 +102,52 @@ In the case of cost analysis on \acrshort{kdt} we should distinguish different k
 We are going to focusing in the Cost analysis of \acrshort{nns} which is the goal of our work for doing predictions and comparing in a future work with \acrshort{lsh}.
 
 
-\section{Near Neighbor Search Analysis}
+\section{Near Neighbor Search Analysisi}
+
+Given a \acrshort{kdt} with $N$ nodes, without doing a rough analysis we can say that on average, at least $O(\log{N})$ visits are necessary, because any \acrshort{nns} algorithm requires traverse to at least one \textbf{leaf} of the tree. It is obvious that there is no need to visit more than $N$ since the algorithm inspect each node at most once.
+
+Since we want to know how well it performed for future empirical analysis comparison against \acrshort{lsh}, we want to know the worst case number of visited nodes and the \textbf{expected} one to see the average case.
 
 
+\begin{minipage}[t]{\linewidth}
+  \begin{center}
+    \includegraphics{kdt_1}
+  \end{center}
+  \captionsetup{type=figure}
+  \captionof{figure}{KDTree example construction for analysis}
+  \label{fig:kdt_1}
+\end{minipage}
+
+
+\begin{minipage}[t]{\linewidth}
+   \begin{center}
+    \includegraphics{kdt_2}
+  \end{center}
+  \captionsetup{type=figure}
+  \captionof{figure}{KDTree zoom on worst distribution of points}
+  \label{fig:kdt_2}
+\end{minipage}
+
+As we can see in the \ref{fig:kdt_1} that was extracted from \cite{moore_phd}, this distribution example shows us that we are going to visit much more less nodes than $N$ because all the grey areas can be discarding while searching.
+
+On the other hand \ref{fig:kdt_2} shows how a bad distribution will lead us to visit almost every node in a worst case scenario.
+
+In the case of the expected number of nodes visited analysis, as we can see on \cite{fried}, this analysis is based on the \textbf{expected} number of \textbf{hyperrectangles} corresponding to a leaf node with high probability of being inspected. That hyperrectangles intersect the hypersphere corresponding with the query point $x$. In the image \ref{fig:kdt_1} it is the hypersphere of the circle marked with $X$. In this example the number of hyperrectangles is 2 because it is easy to see that the circle is intersecting them.
+
+The asymptotic search time analysis in \cite{fried} shows that it is $O(\log{n})$ because the required time to descend from the root to a \textit{terminal bucket}, as it is called in \cite{fried} for leaves nodes, is logarithmic in the number of nodes, which is directly proportional to the size of $N$.
+
+As it is pointed out in the analysis, we need also take into consideration the \textit{backtracking} in the tree since we need to go back to visit nodes that we need still visit because each level of the tree represents a specific dimension. As it is shown in the paper, the amount of backtracking in search is $\overline{l}$, which is the expected number of buckets overlapped by the Search region.
+
+\begin{equation*}
+\overline{l} \leq \overline{L} = \{[(m/b)G(k)]^{1/k}\}^k
+\end{equation*}
+
+Where $\overline{L}$ represents the average number of buckets overlapped by the search region. As we can see this number does not depend on $N$. Therefore the expected number of search time is proportional to $\log{N}$.
+
+
+\section{Conclusion}
+As we have seen \acrshort{kdt} is a good alternative to explore predictors with reasonable logarithmic average cost on that search.
+Although this is what we are going to explore empirically in a next work, we already know that this data structure suffer from what is called the curse of dimensionality and it is what \acrshort{lsh} tries to solve.
 
 
 \bibliographystyle{alpha}

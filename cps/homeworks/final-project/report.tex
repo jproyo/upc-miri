@@ -77,13 +77,13 @@ Given:
 We can define the following constraint solving program:
 
 \begin{itemize}
-  \item Variables: $a_{ij}b_p$ meaning the row $i$ and column $j$ on the roll we have the box number $b_p$.
+  \item Variables: $a_{ij} = b_p$ meaning the row $i$ and column $j$ on the roll we have the box number $b_p$.
   \item Domain: ${1,\dots,p}$ the number of the box
   \item Constraints:
     \begin{subequations}
       \begin{align}
-        a_{ij}b_p = x_p * b_p \ \ \forall j=\{0,\dots,N-1\} \land \forall p=\{1,\dots,N\} \\
-        \sum_{i=0}^W\sum_{j=0}^{N-1} a_{ij}b_p = x_p * y_p * b_p \ \ \forall p=\{1,\dots,N\}
+       % a_{ij}b_p = x_p * b_p \ \ \forall j=\{0,\dots,N-1\} \land \forall p=\{1,\dots,N\} \\
+        \sum_{i=0}^W\sum_{j=0}^{N-1} a_{ij} = x_p * y_p * b_p \ \ \forall p=\{1,\dots,N\}
     \end{align}
     \end{subequations}
 \end{itemize}

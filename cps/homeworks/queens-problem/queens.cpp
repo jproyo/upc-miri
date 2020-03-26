@@ -1,71 +1,99 @@
-/*
- *  Authors:
- *    Christian Schulte <schulte@gecode.org>
- *
- *  Copyright:
- *    Christian Schulte, 2008-2013
- *
- *  Permission is hereby granted, free of charge, to any person obtaining
- *  a copy of this software, to deal in the software without restriction,
- *  including without limitation the rights to use, copy, modify, merge,
- *  publish, distribute, sublicense, and/or sell copies of the software,
- *  and to permit persons to whom the software is furnished to do so, subject
- *  to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be
- *  included in all copies or substantial portions of the software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- */
-
+#include <cstdlib>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
 
 using namespace Gecode;
+using namespace std;
 
 class Queens : public Space {
 
   protected:
     int n;
-    BoolVarArray b;
+    BoolVarArray queens;
 
   public:
 
-    SendMoreMoney() : l(*this, 8, 0, 9) { // initialize array and start constructor
-    IntVar s(l[0]), e(l[1]), n(l[2]), d(l[3]),
-           m(l[4]), o(l[5]), r(l[6]), y(l[7]);
-    rel(*this, s != 0); // rel ~ Constraint relacional
-    rel(*this, m != 0);
-    distinct(*this, l); // same as all_diferent
-    rel(*this,             1000*s + 100*e + 10*n + d
-                         + 1000*m + 100*o + 10*r + e
-              == 10000*m + 1000*o + 100*n + 10*e + y);
-    branch(*this, l, INT_VAR_SIZE_MIN(), INT_VAL_MIN()); // branch = Search. INT_VAR_SIZE_MIN is because in the backtracking it is choosing the variable with min size in their domain. INT_VAL_MIN choose the minimum value of the domain.
-  }
-  SendMoreMoney(SendMoreMoney& s) : Space(s) {
-    l.update(*this, s.l);
-  }
-  virtual Space* copy() {
-    return new SendMoreMoney(*this);
-  }
-  void print() const {
-    std::cout << l << std::endl;
-  }
+    Queens(int num): n(num), queens(*this, num*num, 0, 1) {
+
+      // N queens in the board
+      linear(*this, queens, IRT_EQ, n);
+
+      //Each row 1 queen
+      for(int i = 0; i < n; i++){
+        BoolVarArgs row(n);
+        for(int j= 0; j < n; j++){
+          row[j] = queens[i*n+j];
+        }
+        linear(*this, row, IRT_EQ, 1);
+      }
+
+      //Each column 1 queen
+      for(int j = 0; j < n; j++){
+        BoolVarArgs column(n);
+        for(int i= 0; i < n; i++){
+          column[i] = queens[i*n+j];
+        }
+        linear(*this, column, IRT_EQ, 1);
+      }
+
+      //Each Diagonal 1 queen
+      for (int k = 1-n; k <= n-1; ++k) {
+        int l = max(0, k);
+        int u = min(n-1, k+n-1);
+        BoolVarArgs diag(u-l+1);
+        for (int i = l; i <= u; ++i) {
+	        int j = i - k;
+	        diag[i-l] = queens[i*n+j];
+        }
+        linear(*this, diag, IRT_LQ, 1);
+      }
+
+
+      for (int k = 0; k <= 2*n-2; ++k) {
+        int l = max(0, k-n+1);
+        int u = min(n-1, k);
+        BoolVarArgs diag(u-l+1);
+        for (int i = l; i <= u; ++i) {
+	        int j = k - i;
+	        diag[i-l] = queens[i*n+j];
+        }
+        linear(*this, diag, IRT_LQ, 1);
+      }
+
+      branch(*this, queens, BOOL_VAR_NONE(), BOOL_VAL_MIN());
+    }
+
+    Queens(Queens& s) : Space(s) {
+      queens.update(*this, s.queens);
+      n = s.n;
+    }
+
+    virtual Space* copy() {
+      return new Queens(*this);
+    }
+
+    void print() const {
+      for(int i = 0; i < n; i++){
+        for(int j=0; j < n; j++) cout << (queens[i*n+j].val() ? "X" : ".");
+        cout << endl;
+      }
+    }
 };
 
-int main() {
-  SendMoreMoney* m = new SendMoreMoney;
-  DFS<SendMoreMoney> e(m);
-  delete m;
-  while (SendMoreMoney* s = e.next()) {
-    s->print(); delete s;
+int main(int argc, char* argv[]) {
+  try {
+    if (argc != 2) return 1;
+    int n = atoi(argv[1]);
+    Queens* m = new Queens(n);
+    DFS<Queens> e(m);
+    delete m;
+    if (Queens* s = e.next()) {
+      s->print(); delete s;
+    }
+  }catch(Exception e){
+    cerr << "Gecode exception: " << e.what() << endl;
+    return 1;
   }
+  return 0;
 }

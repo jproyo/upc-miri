@@ -1,0 +1,79 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+
+\title{%
+  Computational Complexity \\
+  Homework 2 - Solutions
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{CC - Homework 2}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\maketitle
+
+\section{Self-reducibility}
+
+In order to prove that if $k$-COL decision problem can be solved in polynomial time, then it search version SEARCH-$k$-COL can be also solved in polynomial time, we are going to be based on the following theorem:
+
+\newtheorem{searchpnp}{Theorem}
+\begin{searchpnp}
+  If $P = NP$, then for every decision problem in $A \in NP$ the search version of $A$ can be solved in polynomial time.
+\end{searchpnp}
+
+For that purpose we need to find a Prefix version of $k$-COL that can at the end certificate $k$-COL. In other words, given a $x$ and $z$, is there a $y$, such that $|zy| \leq |x|^c\ \land \langle x,zy \rangle \in V$?
+By the following lemma we know that:
+
+\newtheorem{lemmasearch}{Lemma}
+\begin{lemmasearch}
+  If the Prefix version of $A$ is in $P$ then the search version can be solved in polynomial time.
+\end{lemmasearch}
+
+Given the $k$-COL problem we can construct the following algorithm as the Prefix version of $k$-COL.
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{Given $G = (V, E)$}
+  \Output{$a_1,\dots,a_{|V|}$}
+  \nlset{$|V|$ times}\For{$i \leftarrow 1$ \KwTo $|V|$}{ \tcp{For each vertex}
+    \nlset{$k$ times}\For{$j \leftarrow 1$ \KwTo $k$}{ \tcp{For each color}
+      $a_i \leftarrow j$; \\
+      \nlset{polytime}Check if $v_1 = a_1, \dots, v_{i-1} = a_{i-1}, v_i = a_i$ is valid assignment coloring applying the decision $k$-COL;\label{polytime}
+    }
+    \eIf{None $j$ was valid}{
+        Halt and return NOT-COLORING;
+    }{
+      $a_i \leftarrow j$; \tcp{With the $j$ that was valid}
+    }
+  }
+  return $a_1,\dots,a_{|V|}$;
+  \caption{Prefix version of $k$-COL}
+\end{algorithm}
+
+As we can see in the algorithm for the Prefix $k$-COL this part \ref{polytime} is polytime by definition. Checking for a set of vertices if the they are $k$-coloring couldn't take more than $O(|E|)$, so the algorithm is $O(|V| \times |E| \times k)$. Therefore it is polynomial time.
+
+\end{document}
+

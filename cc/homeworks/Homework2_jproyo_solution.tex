@@ -73,7 +73,7 @@ Given the $k$-COL problem we can construct the following algorithm as the Prefix
   \caption{Prefix version of $k$-COL}
 \end{algorithm}
 
-As we can see in the algorithm for the Prefix $k$-COL this part \ref{polytime} is polytime by definition. Checking for a set of vertices if the they are $k$-coloring couldn't take more than $O(|E|)$, so the algorithm is $O(|V| \times |E| \times k)$. Therefore it is polynomial time.
+As we can see in the algorithm for the Prefix $k$-COL this part \ref{polytime} is polynomial time by definition of the problem, so that part cannot take more than $O(n^c)$. Having that the total cost of the algorithm is $O(|V| \times k \times n^c)$. Therefore it is polynomial time.
 
 \end{document}
 

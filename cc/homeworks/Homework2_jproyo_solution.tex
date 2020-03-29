@@ -8,6 +8,8 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
 
 \title{%
   Computational Complexity \\
@@ -30,20 +32,30 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
+\makeglossaries
+
+\newacronym{kcol}{$k$-COL}{$k$-coloring problem}
+\newacronym{scol}{SEARCH-$k$-COL}{Search $k$-coloring problem}
+\newacronym{2col}{$2$-COL}{$2$-coloring problem}
+\newacronym{bipart}{BIPARTITE}{Bipartite Graph}
+\newacronym{dreach}{DREACH}{Direct Reachability problem}
+\newacronym{immsze}{IMME-SZE}{Immerman-Szelepcsényi Theorem}
+\newacronym{nbipart}{$\overline{BIPARTITE}$}{Not Bipartite Graph}
+
 \begin{document}
 
 \maketitle
 
 \section{Self-reducibility}
 
-In order to prove that if $k$-COL decision problem can be solved in polynomial time, then it search version SEARCH-$k$-COL can be also solved in polynomial time, we are going to be based on the following theorem:
+In order to prove that if \acrfull{kcol} decision problem can be solved in polynomial time, then it search version \acrfull{scol} can be also solved in polynomial time, we are going to be based on the following theorem:
 
 \newtheorem{searchpnp}{Theorem}
 \begin{searchpnp}
   If $P = NP$, then for every decision problem in $A \in NP$ the search version of $A$ can be solved in polynomial time.
 \end{searchpnp}
 
-For that purpose we need to find a Prefix version of $k$-COL that can at the end certificate $k$-COL\@. In other words, given a $x$ and $z$, is there a $y$, such that $|zy| \leq |x|^c\ \land \langle x,zy \rangle \in V$?
+For that purpose we need to find a Prefix version of \acrshort{kcol} that can at the end certificate \acrshort{kcol}\@. In other words, given a $x$ and $z$, is there a $y$, such that $|zy| \leq |x|^c\ \land \langle x,zy \rangle \in V$?
 By the following lemma we know that:
 
 \newtheorem{lemmasearch}{Lemma}
@@ -51,7 +63,7 @@ By the following lemma we know that:
   If the Prefix version of $A$ is in $P$ then the search version can be solved in polynomial time.
 \end{lemmasearch}
 
-Given the $k$-COL problem we can construct the following algorithm as the Prefix version of $k$-COL.
+Given the \acrshort{kcol} problem we can construct the following algorithm as the Prefix version of \acrshort{kcol}.
 
 \begin{algorithm}[H]
   \SetKwInOut{Input}{Input}
@@ -61,20 +73,20 @@ Given the $k$-COL problem we can construct the following algorithm as the Prefix
   \nlset{$|V|$ times}\For(\tcp*[f]{For each vertex}){$i \leftarrow 1$ \KwTo $|V|$}
   {\nlset{$k$ times}\For(\tcp*[f]{For each color}){$j \leftarrow 1$ \KwTo $k$}
     {$a_i \leftarrow j$; \\
-      \nlset{polytime}Check if $v_1 = a_1, \dots, v_{i-1} = a_{i-1}, v_i = a_i$ is valid assignment coloring applying the decision $k$-COL;\label{polytime}
+      \nlset{polytime}Check if $v_1 = a_1, \dots, v_{i-1} = a_{i-1}, v_i = a_i$ is valid assignment coloring applying the decision \acrshort{kcol};\label{polytime}
     }\eIf{None $j$ was valid}
     {\emph{Halt and return NOT-COLORING}
     }
     {$a_i \leftarrow j$; \tcp{With the $j$ that was valid}}
   }
   return $a_1,\dots,a_{|V|}$;
-  \caption{Prefix version of $k$-COL}
+  \caption{Prefix version of \acrshort{kcol}}
 \end{algorithm}
 
-As we can see in the algorithm for the Prefix $k$-COL this part~\ref{polytime} is polynomial time by definition of the problem, so that part cannot take more than $O(n^c)$. Having that the total cost of the algorithm is $O(|V| \times k \times n^c)$. Therefore it is polynomial time.
+As we can see in the algorithm for the Prefix \acrshort{kcol} this part~\ref{polytime} is polynomial time by definition of the problem, so that part cannot take more than $O(n^c)$. Having that the total cost of the algorithm is $O(|V| \times k \times n^c)$. Therefore it is polynomial time.
 
 \section{Zero-error}
-As the problem definition state, we assume that there is $NTM\ M$ that decide $k$-COL in $BPP$, so we need to prove that if this exists, there is also a $NTM\ M'$ that decide $k$-COL in $ZPP$. We can prove that by the theorem of Error reduction for $BPP$.
+As the problem definition state, we assume that there is $NTM\ M$ that decide \acrshort{kcol} in $BPP$, so we need to prove that if this exists, there is also a $NTM\ M'$ that decide \acrshort{kcol} in $ZPP$. We can prove that by the theorem of Error reduction for $BPP$.
 
 \newtheorem{bpperror}{Error reduction for BPP}\label{bpp:error}
 \begin{bpperror}
@@ -83,9 +95,9 @@ As the problem definition state, we assume that there is $NTM\ M$ that decide $k
 \end{bpperror}
 
 \begin{proof}
- The proof of this theorem that lead to the prof of the $k$-COL is done by probability amplification.
+ The proof of this theorem that lead to the prof of the \acrshort{kcol} is done by probability amplification.
 
- Let say that in the context of the problem our $PTM\ M$ is deciding $k$-COL.
+ Let say that in the context of the problem our $PTM\ M$ is deciding \acrshort{kcol}.
 
  We define a $PTM\ M'$ that for every input $x \in \{0,1\}^*$, run $M(x)$ for $k = 8|x|^{2c + d}$ times obtaining $k$ outputs $y_1, \dots, y_k \in \{0,1\}^*$. If $\sum_{i=1}^k y_i \geq k/2$ then output $1$ else output $0$.
 
@@ -120,7 +132,7 @@ Remembering the definition of $ZPP$ that state:
    $x \not\in L \implies Pr[M(x) = 1] = 0, Pr[M(x) = 0] \geq 1/2$\\
  \end{subequations}
 
- Taking the theorem of error reduction~\ref{bpp:error}, if we amplify the error defining a machine $M'$ that run $k$-COL in $BPP\ M$ $8|x|^{2c+d}$ times we are going to have the following probabilities:
+ Taking the theorem of error reduction~\ref{bpp:error}, if we amplify the error defining a machine $M'$ that run \acrshort{kcol} in $BPP\ M$ $8|x|^{2c+d}$ times we are going to have the following probabilities:
 
 
  \begin{subequations}
@@ -130,7 +142,56 @@ Remembering the definition of $ZPP$ that state:
 
  Therefore $M' \in ZPP$
 
- \section{Logarithmic Space}
+\section{Logarithmic Space}
+In order to show that \acrfull{2col} is in $P$ and even in $NL$ we are going to use the fact that any \acrshort{2col} is a \acrfull{bipart} with not contains \textbf{cycles} with an \textbf{odd number} of nodes. If we can give a \textbf{polynomial time} algorithm for constructing a \acrshort{bipart} which also use \textbf{logarithmic space}, we can have an $TM\ M$ that decides \acrshort{2col} in $P$ and $NL$.
+
+In order to do so, we are going to give an algorithm that shows if a Graph $G=(V,E)$ is \acrfull{nbipart}, using \acrfull{dreach} algorithm that we know it is in $NL$.
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{Given $\langle G,s,t \rangle$}
+  \Output{$1$ if there is a connected path from $s$ to $t$ with odd number of edges, $0$ otherwise}
+  \Begin{$n \leftarrow |V|$\;
+  \nlset{$|V|$ times}\For{$v \in V$}
+  {$c \leftarrow v$\;
+   $i \leftarrow 1$\;
+   \While{$c \neq t \land i \leq n$}
+   {\nlset{$\log(n)$ space}\emph{Guess $u \in V$}\;
+     \nlset{$\log(n)$ space}\If{$(c,u) \in E$}
+     {\nlset{$\log(n)$ space}$c \leftarrow u$\;
+       \nlset{$\log(n)$ space}$i \leftarrow i + 1$\;
+      \If{$u = t \land i \text{ is odd}$}
+      {return 1\;}
+     }
+   }
+  }
+  return 0\;
+  }
+  \caption{Algorithm \acrshort{dreach} for counting cycle with odd number of edges}\label{algo:2}
+\end{algorithm}
+
+
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{Given $G = (V, E)$}
+  \Output{$1$ if $G \notin$ \acrshort{2col}, $0$ otherwise}
+  \Begin
+  {\nlset{$|V|$ times}\For(\tcp*[f]{For each vertex}){$v \in V$}
+  {$r \leftarrow \text{Call algo~\ref{algo:2} with} \langle G,v,v \rangle$\;
+   \If{$r = 1$}
+   {\emph{Halt and Output 1}\tcp*[f]{\acrshort{nbipart}}}
+  }
+  return 0\tcp*[f]{\acrshort{bipart}}
+  }
+  \caption{Algorithm for checking if $G \notin$ \acrshort{2col}}\label{algo:3}
+\end{algorithm}
+
+As we can see our algorithm is in $P$ because it use at most $O(|V|^3)$ between the 2 for loops plus the Guessing for the next vertex in the algo~\ref{algo:2}. As we can also it is in $NL$ since it use $\log(n)$ space.
+
+But this algorithm tell us if our $G$ is not in \acrshort{2col}, and for doing this we are using a \acrshort{nbipart} algorithm, so we can say that this algorithm is in $co$-NL\@. By \acrfull{immsze} we now that $co$-NL $= NL$, therefore to determine if $G$ is in \acrshort{2col} algorithm is in $NL$.
 
 
 \appendix

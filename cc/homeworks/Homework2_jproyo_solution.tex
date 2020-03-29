@@ -43,7 +43,7 @@ In order to prove that if $k$-COL decision problem can be solved in polynomial t
   If $P = NP$, then for every decision problem in $A \in NP$ the search version of $A$ can be solved in polynomial time.
 \end{searchpnp}
 
-For that purpose we need to find a Prefix version of $k$-COL that can at the end certificate $k$-COL. In other words, given a $x$ and $z$, is there a $y$, such that $|zy| \leq |x|^c\ \land \langle x,zy \rangle \in V$?
+For that purpose we need to find a Prefix version of $k$-COL that can at the end certificate $k$-COL\@. In other words, given a $x$ and $z$, is there a $y$, such that $|zy| \leq |x|^c\ \land \langle x,zy \rangle \in V$?
 By the following lemma we know that:
 
 \newtheorem{lemmasearch}{Lemma}
@@ -58,22 +58,91 @@ Given the $k$-COL problem we can construct the following algorithm as the Prefix
   \SetKwInOut{Output}{Output}
   \Input{Given $G = (V, E)$}
   \Output{$a_1,\dots,a_{|V|}$}
-  \nlset{$|V|$ times}\For{$i \leftarrow 1$ \KwTo $|V|$}{ \tcp{For each vertex}
-    \nlset{$k$ times}\For{$j \leftarrow 1$ \KwTo $k$}{ \tcp{For each color}
-      $a_i \leftarrow j$; \\
+  \nlset{$|V|$ times}\For(\tcp*[f]{For each vertex}){$i \leftarrow 1$ \KwTo $|V|$}
+  {\nlset{$k$ times}\For(\tcp*[f]{For each color}){$j \leftarrow 1$ \KwTo $k$}
+    {$a_i \leftarrow j$; \\
       \nlset{polytime}Check if $v_1 = a_1, \dots, v_{i-1} = a_{i-1}, v_i = a_i$ is valid assignment coloring applying the decision $k$-COL;\label{polytime}
+    }\eIf{None $j$ was valid}
+    {\emph{Halt and return NOT-COLORING}
     }
-    \eIf{None $j$ was valid}{
-        Halt and return NOT-COLORING;
-    }{
-      $a_i \leftarrow j$; \tcp{With the $j$ that was valid}
-    }
+    {$a_i \leftarrow j$; \tcp{With the $j$ that was valid}}
   }
   return $a_1,\dots,a_{|V|}$;
   \caption{Prefix version of $k$-COL}
 \end{algorithm}
 
-As we can see in the algorithm for the Prefix $k$-COL this part \ref{polytime} is polynomial time by definition of the problem, so that part cannot take more than $O(n^c)$. Having that the total cost of the algorithm is $O(|V| \times k \times n^c)$. Therefore it is polynomial time.
+As we can see in the algorithm for the Prefix $k$-COL this part~\ref{polytime} is polynomial time by definition of the problem, so that part cannot take more than $O(n^c)$. Having that the total cost of the algorithm is $O(|V| \times k \times n^c)$. Therefore it is polynomial time.
+
+\section{Zero-error}
+As the problem definition state, we assume that there is $NTM\ M$ that decide $k$-COL in $BPP$, so we need to prove that if this exists, there is also a $NTM\ M'$ that decide $k$-COL in $ZPP$. We can prove that by the theorem of Error reduction for $BPP$.
+
+\newtheorem{bpperror}{Error reduction for BPP}\label{bpp:error}
+\begin{bpperror}
+  Let $L \in \{0,1\}^*$ be a language that exists a polynomial time $PTM\ M$ such that for every $x \in \{0,1\}^*$, $Pr[M(x)=L(x)] \geq \frac{1}{2} + |x|^{-c}$.
+  Then for every constant $d > 0$ there exists a polynomial time $PTM\ M'$ such that for every $x \in \{0,1\}^*$, $Pr[M'(x)=L(x)] \geq 1 - 2^{-|x|^d}$.
+\end{bpperror}
+
+\begin{proof}
+ The proof of this theorem that lead to the prof of the $k$-COL is done by probability amplification.
+
+ Let say that in the context of the problem our $PTM\ M$ is deciding $k$-COL.
+
+ We define a $PTM\ M'$ that for every input $x \in \{0,1\}^*$, run $M(x)$ for $k = 8|x|^{2c + d}$ times obtaining $k$ outputs $y_1, \dots, y_k \in \{0,1\}^*$. If $\sum_{i=1}^k y_i \geq k/2$ then output $1$ else output $0$.
+
+ For analyzing the probability augmentation lets define an Indicator Random Variable $X_i$ for every $i \in k$ such that
+
+  \[
+    X_i = \begin{cases}{lr}
+        1 & \text{if } y_i = L(x)\\
+        0 & \text{otherwise}
+        \end{cases}
+  \]
+
+  All $X_1, \dots, X_k$ are independents \textit{r.v.} with $E[X_i] = Pr[X_i = 1] \geq p, p = 1/2 + |x|^{-c}$.
+
+  By Chernoff bounds corollary~\ref{col:chernoff} implies that for $\delta$ small enough:
+
+  \begin{equation*}
+    Pr\left[\middle|\sum_{i=1}^k X_i - pk \middle| > \delta pk\right] < e^{-\frac{\delta^2}{4}pk}
+  \end{equation*}
+
+  In our case $p = 1/2 + |x|^{-c}$ and setting $\delta = |x|^{-c}/2$ guarantees that if $\sum_{i=1}^k X_i \geq pk - \delta pk$ then the output the right answer. Therefore the probability of error is bounded by
+
+ \begin{equation*}
+   e^{-\frac{1}{4|x|^{2c}}\frac{1}{2}8|x|^{2c+d}} \leq 2^{-|x|^d}
+ \end{equation*}
+\end{proof}
+
+Remembering the definition of $ZPP$ that state:
+
+ \begin{subequations}
+   $x \in L \implies Pr[M(x) = 0] = 0, Pr[M(x) = 1] \geq 1/2$ \\
+   $x \not\in L \implies Pr[M(x) = 1] = 0, Pr[M(x) = 0] \geq 1/2$\\
+ \end{subequations}
+
+ Taking the theorem of error reduction~\ref{bpp:error}, if we amplify the error defining a machine $M'$ that run $k$-COL in $BPP\ M$ $8|x|^{2c+d}$ times we are going to have the following probabilities:
+
+
+ \begin{subequations}
+   $x \in L \implies Pr[M'(x) = 1] \geq 1 - 2^{-|x|^d} >> 1/2$ \\
+   $x \not\in L \implies Pr[M'(x) = 1] \leq 2^{-|x|^d} << 1/2 \implies Pr[M'(x)=0] \geq 1 - 2^{-|x|^d} >> 1/2$ \\
+ \end{subequations}
+
+ Therefore $M' \in ZPP$
+
+ \section{Logarithmic Space}
+
+
+\appendix
+\section{Chernoff Bounds}
+\label{col:chernoff}
+\newtheorem{corollary_chernoff}{Corollary Chernoff}
+\begin{corollary_chernoff}
+  \begin{equation*}
+    Pr\left[\middle|\sum_{i=1}^n X_i - \mu \middle| \geq c\mu\right] \leq 2 \times e^{-\min\{c^2/4,c/2\}\mu}
+  \end{equation*}
+\end{corollary_chernoff}
+
 
 \end{document}
 

@@ -1,0 +1,62 @@
+name:                cukoo-hash
+version:             0.1.0.0
+synopsis:            Cukoo Hashing implementation
+#description:
+homepage:            https://github.com/jproyo/upc-miri/ads/homeworks/homework2/cukoo-hash#readme
+license:             BSD3
+author:              Juan Pablo Royo Sales
+maintainer:          juanpablo.royo@gmail.com
+copyright:           2020 Juan Pablo Royo Sales
+category:            Experimental
+extra-source-files:
+- README.md
+
+dependencies:
+  - base
+  - random
+
+library:
+  exposed-modules:
+    - Data.Hash.Cukoo
+
+  source-dirs:
+    - src
+
+  ghc-options:
+    - -Wall
+    - -fconstraint-solver-iterations=0
+    - -fno-warn-orphans
+    - -fno-warn-partial-type-signatures
+    - -O2
+    - -Werror
+    - -fdiagnostics-color=always
+
+  dependencies:
+    - base
+    - array
+    - primes
+    - QuickCheck
+
+executables:
+  cukoo:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - directory
+      - cukoo-hash
+      - time
+
+tests:
+  random-bst-test:
+    main: Spec.hs
+    source-dirs:
+      - test
+      - src
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -fdiagnostics-color=always
+    dependencies:
+      - QuickCheck

@@ -45,8 +45,9 @@ createUHashtable n = do
   let hashTables = [hashT1, hashT2]
   return UHashtable {..}
 
-insert' :: [Hashing s] -> Int -> Bool
-insert' (x:xs) k = do
+insert' :: [Hashing s] -> Int -> Int -> ST s Bool
+insert' _ _ 0 = False
+insert' (x:xs) k c = do
   case findElem x k of
     Nothing -> M.write (tk1 h) (hash1 h k) k
     Just e ->

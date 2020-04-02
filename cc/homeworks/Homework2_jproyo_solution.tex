@@ -46,7 +46,7 @@
 
 \maketitle
 
-\section{Self-reducibility}
+\section{Self-reducibility}\label{ex:1}
 
 In order to prove that if \acrfull{kcol} decision problem can be solved in polynomial time, then it search version \acrfull{scol} can be also solved in polynomial time, we are going to be based on the following theorem:
 
@@ -86,61 +86,30 @@ Given the \acrshort{kcol} problem we can construct the following algorithm as th
 As we can see in the algorithm for the Prefix \acrshort{kcol} this part~\ref{polytime} is polynomial time by definition of the problem, so that part cannot take more than $O(n^c)$. Having that the total cost of the algorithm is $O(|V| \times k \times n^c)$. Therefore it is polynomial time.
 
 \section{Zero-error}
-As the problem definition state, we assume that there is $NTM\ M$ that decide \acrshort{kcol} in $BPP$, so we need to prove that if this exists, there is also a $NTM\ M'$ that decide \acrshort{kcol} in $ZPP$. We can prove that by the theorem of Error reduction for $BPP$.
+In order to show that given a \acrshort{kcol} in $BPP$ we can construct a $NTM\ M'$ which decide that \acrshort{kcol} in $ZPP$ we are going to assume that $P = NP$, because we know that if $NP = P \implies BPP = P$.
 
-\newtheorem{bpperror}{Error reduction for BPP}\label{bpp:error}
-\begin{bpperror}
-  Let $L \in \{0,1\}^*$ be a language that exists a polynomial time $PTM\ M$ such that for every $x \in \{0,1\}^*$, $Pr[M(x)=L(x)] \geq \frac{1}{2} + |x|^{-c}$.
-  Then for every constant $d > 0$ there exists a polynomial time $PTM\ M'$ such that for every $x \in \{0,1\}^*$, $Pr[M'(x)=L(x)] \geq 1 - 2^{-|x|^d}$.
-\end{bpperror}
+Having this assumption stated, we are going to work with the definition of the Excercise 1~\ref{ex:1}.
 
-\begin{proof}
- The proof of this theorem that lead to the prof of the \acrshort{kcol} is done by probability amplification.
+\begin{itemize}
+  \item Lets $M$ be the $BPP$ that decide \acrshort{kcol}.
+  \item Lets $M'$ be new machine that is going decide \acrshort{kcol} using \acrshort{scol} from~\ref{ex:1}
+\end{itemize}
 
- Let say that in the context of the problem our $PTM\ M$ is deciding \acrshort{kcol}.
+What we are going to do is to run $M(x)$ which we know it is a $BPP$. Since we cannot have errors, we are going to run \acrshort{scol} to find a valid assignment for that \acrshort{kcol}. We can do this because we are assuming that $NP = P$ and under that assumption $BPP = P$. So our $BPP$ for \acrshort{kcol} applies to problem in~\ref{ex:1}. So we have a \acrshort{scol} in polynomial time that can find a valid assignment for that \acrshort{kcol}. If the valid assignment coincides with the same output as $M$ we are sure if $x \in L \lor x \notin L$.
 
- We define a $PTM\ M'$ that for every input $x \in \{0,1\}^*$, run $M(x)$ for $k = 8|x|^{2c + d}$ times obtaining $k$ outputs $y_1, \dots, y_k \in \{0,1\}^*$. If $\sum_{i=1}^k y_i \geq k/2$ then output $1$ else output $0$.
+Having that, if the output of $M(x) = 0$ and $x \in L$, and we can know that because of running $M'$ \acrshort{scol}, since we cannot be sure about the error so with mark as \textbf{?}. By symmetry if $x \notin L \land M(x) = 1$, we are going to mark as \textbf{?}. So the other 2 cases we are going to have a $x \in L \implies Pr[M(x) = 1] \geq 3/4$ because of $BPP$ on $M$ and if $x \notin L \implies Pr[M(x) = 0] \geq 3/4$ also because of $BPP$
 
- For analyzing the probability augmentation lets define an Indicator Random Variable $X_i$ for every $i \in k$ such that
+Therefore our $M'$ is going to have the following probabilities:
 
-  \[
-    X_i = \begin{cases}{lr}
-        1 & \text{if } y_i = L(x)\\
-        0 & \text{otherwise}
-        \end{cases}
-  \]
+\begin{subequations}
+  \begin{align}
+  x \in L \implies Pr[M'(x)=0] = 0 \land Pr[M'(x) = 1] \geq 1/2\\
+  x \in L \implies Pr[M'(x)=1] = 0 \land Pr[M'(x) = 0] \geq 1/2\\
+\end{align}
+\end{subequations}
 
-  All $X_1, \dots, X_k$ are independents \textit{r.v.} with $E[X_i] = Pr[X_i = 1] \geq p, p = 1/2 + |x|^{-c}$.
+There is no way to put an error because those output that we dont know we have marked as \textbf{?}, therefore $M' \in ZPP$.
 
-  By Chernoff bounds corollary~\ref{col:chernoff} implies that for $\delta$ small enough:
-
-  \begin{equation*}
-    Pr\left[\middle|\sum_{i=1}^k X_i - pk \middle| > \delta pk\right] < e^{-\frac{\delta^2}{4}pk}
-  \end{equation*}
-
-  In our case $p = 1/2 + |x|^{-c}$ and setting $\delta = |x|^{-c}/2$ guarantees that if $\sum_{i=1}^k X_i \geq pk - \delta pk$ then the output the right answer. Therefore the probability of error is bounded by
-
- \begin{equation*}
-   e^{-\frac{1}{4|x|^{2c}}\frac{1}{2}8|x|^{2c+d}} \leq 2^{-|x|^d}
- \end{equation*}
-\end{proof}
-
-Remembering the definition of $ZPP$ that state:
-
- \begin{subequations}
-   $x \in L \implies Pr[M(x) = 0] = 0, Pr[M(x) = 1] \geq 1/2$ \\
-   $x \not\in L \implies Pr[M(x) = 1] = 0, Pr[M(x) = 0] \geq 1/2$\\
- \end{subequations}
-
- Taking the theorem of error reduction~\ref{bpp:error}, if we amplify the error defining a machine $M'$ that run \acrshort{kcol} in $BPP\ M$ $8|x|^{2c+d}$ times we are going to have the following probabilities:
-
-
- \begin{subequations}
-   $x \in L \implies Pr[M'(x) = 1] \geq 1 - 2^{-|x|^d} >> 1/2$ \\
-   $x \not\in L \implies Pr[M'(x) = 1] \leq 2^{-|x|^d} << 1/2 \implies Pr[M'(x)=0] \geq 1 - 2^{-|x|^d} >> 1/2$ \\
- \end{subequations}
-
- Therefore $M' \in ZPP$
 
 \section{Logarithmic Space}
 In order to show that \acrfull{2col} is in $P$ and even in $NL$ we are going to use the fact that any \acrshort{2col} is a \acrfull{bipart} with not contains \textbf{cycles} with an \textbf{odd number} of nodes. If we can give a \textbf{polynomial time} algorithm for constructing a \acrshort{bipart} which also use \textbf{logarithmic space}, we can have an $TM\ M$ that decides \acrshort{2col} in $P$ and $NL$.
@@ -193,16 +162,6 @@ As we can see our algorithm is in $P$ because it use at most $O(|V|^3)$ between 
 
 But this algorithm tell us if our $G$ is not in \acrshort{2col}, and for doing this we are using a \acrshort{nbipart} algorithm, so we can say that this algorithm is in $co$-NL\@. By \acrfull{immsze} we now that $co$-NL $= NL$, therefore to determine if $G$ is in \acrshort{2col} algorithm is in $NL$.
 
-
-\appendix
-\section{Chernoff Bounds}
-\label{col:chernoff}
-\newtheorem{corollary_chernoff}{Corollary Chernoff}
-\begin{corollary_chernoff}
-  \begin{equation*}
-    Pr\left[\middle|\sum_{i=1}^n X_i - \mu \middle| \geq c\mu\right] \leq 2 \times e^{-\min\{c^2/4,c/2\}\mu}
-  \end{equation*}
-\end{corollary_chernoff}
 
 
 \end{document}

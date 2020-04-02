@@ -1,0 +1,30 @@
+
+{0,1,?}
+
+BPP M
+ZPP M'
+
+M(x) = 1|0 
+
+BPP = NP
+
+if NP = P => BPP = P
+
+
+k-COL in BPP => k-COL in P => SEARCH-k-COL in P => SEARCH-k-COL in ZPP
+
+SEARCH-k-COL => x \in L => M(x) = 0 => M'(x) = ?
+SEARCH-k-COL => x \notin L => M(x) = 1 => M'(x) = ?
+
+Pr[M(x) = 0] < 1/4
+
+Pr[M(x) = 1] < 1/4
+
+x \in L => Pr[M(x) = 0] = 0
+
+x \notin L => Pr[M(x) = 1] = 0
+
+
+
+P = NP <=> (k-COL P => SEARCH-k-COL P)
+

@@ -33,8 +33,9 @@ library:
 
   dependencies:
     - base
-    - array
+    - exceptions
     - primes
+    - vector
     - QuickCheck
 
 executables:

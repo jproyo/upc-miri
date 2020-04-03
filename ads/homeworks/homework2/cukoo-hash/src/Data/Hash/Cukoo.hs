@@ -1,9 +1,13 @@
-{-# LANGUAGE CPP             #-}
 {-# LANGUAGE LambdaCase      #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Data.Hash.Cukoo where
-  --
+module Data.Hash.Cukoo
+  ( create
+  , insert
+  , delete
+  , lookup
+  , toList
+  ) where
 
 -------------------------------------------------------------------------------
 import           Control.Monad
@@ -18,6 +22,8 @@ import           Debug.Trace
 import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Unboxed         as U
 import qualified Data.Vector.Unboxed.Mutable as M
+
+import           Prelude                     hiding (lookup)
 -------------------------------------------------------------------------------
 
 newtype HCukoo s =

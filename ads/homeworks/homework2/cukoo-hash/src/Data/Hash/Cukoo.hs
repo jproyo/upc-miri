@@ -54,6 +54,20 @@ lookup' h@Hashing {..} k = do
       then Just e
       else Nothing
 
+delete :: HCukoo s -> Int -> ST s (Maybe Int)
+delete h k = do
+  t <- readSTRef . coerce $ h
+  msum <$> sequence (flip delete' k <$> (hashTables t))
+
+delete' :: Hashing s -> Int -> ST s (Maybe Int)
+delete' h@Hashing {..} k = do
+  let ix = idx h k
+  e <- M.read table ix
+  if e == k
+    then writeElem' h 0 ix ((-)1) >> (return $ Just e)
+    else return Nothing
+
+
 insert :: HCukoo s -> Int -> ST s Bool
 insert h k = do
   rehash <- needsReHash h
@@ -72,7 +86,7 @@ insert'' _ _ _ 0 = return False
 insert'' [] h k c = insert'' h h k (c-1)
 insert'' (x@Hashing {..}:xs) h k c = do
   findElem x k >>= \case
-    Nothing -> writeElem x k >> return True
+    Nothing -> insertElem x k >> return True
     Just e -> do
       if (e == k) then return True
                   else modifyElem x k >> insert'' xs h e (c - 1)
@@ -80,10 +94,11 @@ insert'' (x@Hashing {..}:xs) h k c = do
 modifyElem :: Hashing s -> Int -> ST s ()
 modifyElem h@Hashing{..} k = M.modify table (const k) (idx h k)
 
-writeElem :: Hashing s -> Int -> ST s ()
-writeElem h@Hashing{..} k =
-  M.write table (idx h k) k >>
-  modifySTRef size (+1)
+insertElem :: Hashing s -> Int -> ST s ()
+insertElem h k = writeElem' h k (idx h k) (+1)
+
+writeElem' :: Hashing s -> Int -> Int -> (Int -> Int) -> ST s ()
+writeElem' Hashing{..} k ix sFn = M.write table ix k >> modifySTRef size sFn
 
 findElem :: Hashing s -> Int -> ST s (Maybe Int)
 findElem h@Hashing {..} k = do

@@ -156,6 +156,29 @@ insertWithoutRehash' n = do
 \label{lst:insertWithoutRehash}
 \end{listing}
 
+In the case of this experiment I am running $3000$ iterations of Random lists which size is between $100$ and $10000$ elements.
+
+\subsection{Average Number of Rehashes}
+The other experiment that I have run is the average number of rehashes. In this case what I have done is to run $1000$ iterations, creating Hashtables in each iteration of Random number of elements always greater than $1000$ elements but less than $10000$. In this case, after each creation of the whole iteration I have used \mintinline{haskell}{rehashesCount} function to gather the number of rehashes done and compare with the size of the internal Hashtable which is always going to be $2M$ as i have mentioned in the previous section.
+
+\begin{listing}[H]
+\begin{haskellcode*}{}
+avgRehashes' :: Int -> IO (Int, Int)
+avgRehashes' n = do
+  idx <- getPositive <$> generate (arbitrary @(Positive Int))
+  list <- generate $ shuffle [idx `.`. idx + n]
+  return $
+    runST $ do
+      hash <- create
+      mapM_ (C.insert hash) list
+      rehashes <- C.rehashesCount hash
+      l        <- C.length hash
+      return (l, rehashes)
+\end{haskellcode*}
+\caption{Rehash Count Experiment Function}
+\label{lst:avgRehashes}
+\end{listing}
+
 \appendix\label{appendix}
 \section{Haskell Code}
 \subsection{Source Code}

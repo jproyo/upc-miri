@@ -14,5 +14,5 @@ main = do
 
   writeFile ("output/result_insert_without_rehash_"<>show time'<>".csv") =<< runInsertWithoutRehash
 
-  --writeFile ("output/result_avg_rehashes_"<>show time'<>".csv") =<< runAvgRehashes
+  writeFile ("output/result_avg_rehashes_"<>show time'<>".csv") =<< runAvgRehashes
 

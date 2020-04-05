@@ -1,1 +1,1 @@
-# random-bst
+# Cukoo Hashing implementation in Haskell

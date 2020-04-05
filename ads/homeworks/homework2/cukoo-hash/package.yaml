@@ -13,11 +13,11 @@ extra-source-files:
 
 dependencies:
   - base
-  - random
 
 library:
   exposed-modules:
     - Data.Hash.Cukoo
+    - Experiments
 
   source-dirs:
     - src
@@ -34,6 +34,7 @@ library:
   dependencies:
     - base
     - primes
+    - time >= 1.9.1
     - vector
     - QuickCheck
 
@@ -44,6 +45,7 @@ executables:
     dependencies:
       - directory
       - cukoo-hash
+      - criterion
       - time
 
 tests:

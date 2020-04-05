@@ -1,50 +1,93 @@
+{-# LANGUAGE RecordWildCards  #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Experiments where
 
+--------------------------------------------------------------------------------
+import           Control.Monad
 import           Control.Monad.ST
-import           Data.Hash.Cukoo  as C
-import           Test.QuickCheck
+import           Data.Hash.Cukoo       as C
+import           Data.List
+import           Data.Maybe
+import           Data.Time
+import           Data.Time.Clock.POSIX
+import           Prelude               as P
+import           System.IO.Unsafe
+import           Test.QuickCheck       as T
 
-experiment :: Int -> IO String
-experiment n = do
-  idx    <- getPositive <$> generate (arbitrary @(Positive Int))
-  list <- generate $ shuffle [idx..idx+n]
-  print list
-  (r1, r2) <- runST $ do
-    hash <- create
-    _ <- mapM (insert hash) $ list
-    size <- C.elements hash
-    l    <- toList hash
-    pure $ return (size, l)
-  return $ ("Size: "<>show r1<>" - List: " <> show r2)
+--------------------------------------------------------------------------------
+data Meassure =
+  Meassure
+    { sizeList :: !Int
+    , hashtableSize :: !Int
+    , avg      :: !Integer
+    }
+
+instance Show Meassure where
+  show Meassure {..} = intercalate "," [show sizeList, show hashtableSize, show avg] <> "\n"
 
 
---
---data Meassure = Meassure
---  { sizeList :: Int
---  , empHeight  :: Int
---  , expHeight :: Double
---  , avgLeaf :: Double
---  }
---
---instance Show Meassure where
---  show Meassure {..} = intercalate
---    ","
---    [show sizeList, show empHeight, show expHeight, show avgLeaf] <> "\n"
---
---experiment' :: RandomGen g => RTreap g Int Int -> Meassure
---experiment' rbst =
---  let listL = nodes rbst
---  in  Meassure { sizeList  = listL
---               , empHeight = height rbst
---               , expHeight = expectedHeight listL
---               , avgLeaf   = average $ map fromIntegral $ leafDepth rbst
---               }
---
---expectedHeight :: Int -> Double
---expectedHeight = logBase 2 . fromIntegral
---
---average :: Fractional a => [a] -> a
---average xs = sum xs / fromIntegral (length xs)
---
+runAvgRehashes :: IO String
+runAvgRehashes = do
+  idx <- getPositive <$> generate ((arbitrary @(Positive Int)) `suchThat` (flip (<) 10000 . getPositive))
+  list <- generate $ shuffle [idx .. idx + 1000]
+  result <- mapM avgRehashes list
+  return $ foldMap show result
+
+avgRehashes :: Int -> IO Meassure
+avgRehashes n = do
+  (l, r) <- avgRehashes' n
+  return $ Meassure {hashtableSize = l, sizeList = n, avg = fromIntegral r}
+
+avgRehashes' :: Int -> IO (Int, Int)
+avgRehashes' n = do
+  idx <- getPositive <$> generate (arbitrary @(Positive Int))
+  list <- generate $ shuffle [idx .. idx + n]
+  return $
+    runST $ do
+      hash <- create
+      mapM_ (C.insert hash) $ list
+      rehashes <- C.rehashesCount hash
+      l        <- C.length hash
+      return (l, rehashes)
+
+runInsertWithoutRehash :: IO String
+runInsertWithoutRehash = do
+  result <-
+    replicateM 3000 $ do
+      n <-
+        generate
+          (T.elements [100, 200, 600, 800, 1000, 2000, 6000, 8000, 10000])
+      insertWithoutRehash n
+  return $ foldMap show result
+
+insertWithoutRehash :: Int -> IO Meassure
+insertWithoutRehash n = do
+  result <- insertWithoutRehash' n
+  return
+    Meassure
+      {hashtableSize = 0, sizeList = n, avg = (sum result) `div` (fromIntegral (P.length result))}
+
+insertWithoutRehash' :: Int -> IO [Integer]
+insertWithoutRehash' n = do
+  idx <- getPositive <$> generate (arbitrary @(Positive Int))
+  list <- generate $ shuffle [idx .. idx + n]
+  let (test, train) = splitAt (n `div` 2) list
+  fmap catMaybes <$> return $
+    runST $ do
+      hash <- create
+      mapM_ (C.insert hash) $ test
+      forM train $ \e -> do
+        start <- toNano <$> return (unsafePerformIO getCurrentTime)
+        _ <- C.insert hash e
+        rehash <- C.rehashed hash
+        end <- toNano <$> return (unsafePerformIO getCurrentTime)
+        return $ unsafePerformIO $ print start
+        let diff = (end - start)
+        return $
+          if rehash
+            then Nothing
+            else Just diff
+
+toNano :: UTCTime -> Integer
+toNano = floor . (1e9 *) . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds

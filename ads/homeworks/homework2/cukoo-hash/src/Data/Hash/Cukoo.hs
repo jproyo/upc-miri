@@ -8,6 +8,10 @@ module Data.Hash.Cukoo
   , lookup
   , toList
   , elements
+  , HCukoo
+  , rehashed
+  , rehashesCount
+  , length
   ) where
 
 -------------------------------------------------------------------------------
@@ -23,7 +27,7 @@ import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Unboxed         as U
 import qualified Data.Vector.Unboxed.Mutable as M
 
-import           Prelude                     hiding (lookup)
+import           Prelude                     hiding (lookup, length)
 -------------------------------------------------------------------------------
 
 newtype HCukoo s =
@@ -33,6 +37,7 @@ data UHashtable s =
   UHashtable
     { hashTables  :: [Hashing s]
     , rehashCount :: !Int
+    , wasReashed  :: STRef s Bool
     }
 
 data Hashing s =
@@ -44,7 +49,7 @@ data Hashing s =
     }
 
 create :: ST s (HCukoo s)
-create = createNewUHash 2 0 >>= liftM HCukoo . newSTRef
+create = createNewUHash 10 0 >>= liftM HCukoo . newSTRef
 
 lookup :: HCukoo s -> Int -> ST s (Maybe Int)
 lookup h k = do
@@ -80,7 +85,7 @@ insert h k = do
   let table = hashTables t
   insert' table k >>= \case
      Nothing -> reHashC h >> insert' table k
-     e       -> return e
+     e       -> writeSTRef (wasReashed t) False >> return e
 
 
 insert' :: [Hashing s] -> Int -> ST s (Maybe Int)
@@ -120,8 +125,19 @@ idx Hashing{..} k = let upperIdx = M.length table - 1
                       in min upperIdx hash
 
 
-lengthC :: HCukoo s -> ST s Int
-lengthC h = do
+
+rehashed :: HCukoo s -> ST s Bool
+rehashed h = do
+  t <- readSTRef . coerce $ h
+  readSTRef (wasReashed t)
+
+rehashesCount :: HCukoo s -> ST s Int
+rehashesCount h = do
+  t <- readSTRef . coerce $ h
+  return $ rehashCount t
+
+length :: HCukoo s -> ST s Int
+length h = do
   table <- readSTRef . coerce $ h
   return $ getLength table
   where
@@ -138,8 +154,9 @@ elements h = do
 reHashC :: HCukoo s -> ST s ()
 reHashC c@(HCukoo h)= do
   t <- readSTRef h
-  n <- lengthC c
+  n <- length c
   newHash <- createNewUHash n ((rehashCount t)+1)
+  writeSTRef (wasReashed newHash) True
   mapM_ (insertIntoNewTable newHash) $ hashTables t
   writeSTRef h newHash
 
@@ -158,6 +175,7 @@ createNewUHash n count = do
   tk2 <- M.new n
   size1 <- newSTRef 0
   size2 <- newSTRef 0
+  wasReashed <- newSTRef False
   let hashT1 = Hashing {salt = salt, table = tk1, hashFn = hash1, size = size1}
   let hashT2 = Hashing {salt = salt, table = tk2, hashFn = hash2, size = size2}
   let hashTables = [hashT1, hashT2]

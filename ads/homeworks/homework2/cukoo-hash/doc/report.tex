@@ -108,10 +108,14 @@ module Data.Hash.Cukoo
   ) where
 \end{haskellcode*}
 
+\subsection{Limitations and Assumptions}
 The first limitation that is important to pointed out is the \mintinline{haskell}{create} function which creates a new \acrshort{cuk} empty data structure. My implementation does not support multiple Hashtables indirections, and I have worked with a \acrshort{cuk} implementation of \textbf{2} Hashtables.
 
 Another important limitation is that I only allow \mintinline{haskell}{Integer} Positive values $x | x \in \mathbb{N}$. This restriction is allowing me to used \textbf{Unboxed Values} which increase the performance of my Data Type in big order of magnitude. You can check \textbf{Unboxed Values} explanation on \acrshort{haskell} here \cite{unboxed}.
 
+The last limitation or assumption on hour implementation is the viability to work with \textbf{Universal Hash Functions}. Since we know although theoretical is possible, in the real implementations is very hard to achieve, in my implementation I am not working with \textbf{Universal Hash Function} but I am using 2 hash function that use a \textbf{next Prime} of the table expected size and the module of that.
+
+\subsection{Function Interface}
 As we can see in the \textbf{export} module list of the \acrshort{cuk} implementation we have the following functions exported and implemented:
 
 \begin{itemize}
@@ -126,7 +130,7 @@ As we can see in the \textbf{export} module list of the \acrshort{cuk} implement
 \section{Experiments}
 In this section I am going to describe what is the setup of the experiment I have prepared and run and what assumptions I am doing.
 
-\subsection{Insert without Rehashing - Average time}
+\subsection{Insert without Rehashing - Average time}\label{sec:ins}
 In order to calculate the average time of insertion without rehashing, I am measuring the time of the successful inserts, and only those that after insert the \mintinline{haskell}{rehashed} function returns \mintinline{haskell}{False}.
 
 \begin{listing}[H]
@@ -158,7 +162,7 @@ insertWithoutRehash' n = do
 
 In the case of this experiment I am running $3000$ iterations of Random lists which size is between $100$ and $10000$ elements.
 
-\subsection{Average Number of Rehashes}
+\subsection{Average Number of Rehashes}\label{sec:rehash}
 The other experiment that I have run is the average number of rehashes. In this case what I have done is to run $1000$ iterations, creating Hashtables in each iteration of Random number of elements always greater than $1000$ elements but less than $10000$. In this case, after each creation of the whole iteration I have used \mintinline{haskell}{rehashesCount} function to gather the number of rehashes done and compare with the size of the internal Hashtable which is always going to be $2M$ as i have mentioned in the previous section.
 
 \begin{listing}[H]
@@ -178,6 +182,57 @@ avgRehashes' n = do
 \caption{Rehash Count Experiment Function}
 \label{lst:avgRehashes}
 \end{listing}
+
+\section{Results}
+\subsection{Average Time Insert without Rehash}
+After running the experiment described in~\ref{sec:ins} we can draw the following graph with the gathered data.
+
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{insert_without_rehash}
+    \captionof{figure}{Insert without Rehash Average Time}
+    \label{fig:ins_rehash}
+  \end{minipage}
+
+  In this graph we can appreciate that no matter the \textbf{Number of Elements} that we insert in the table the average time is mainly in the
+  \textit{850 nanoseconds}.
+
+  On the other hand we can appreciate that there are some data points which are far away from the average time, but it is not the majority since the samples are big this is not representative.
+
+  Analyzing the data I have appreciate that those points that are far away from from the \textbf{Mean} are those when the number of elements are small and in consequence when the size of the Hashtable is small too.
+
+  If we take the theoretical \textbf{amortized insert} cost that we state in the Introduction, we can see \textit{w.l.g.} that the time is more or less constant in practice for the majority of the samples.
+
+
+\subsection{Average Number of Rehashes}
+After running the experiments described in~\ref{sec:rehash} we can see the following graph built with the gathered data.
+
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{average_rehash_count_2m}
+  \captionof{figure}{Average Rehash Count vs. Hashtable Size}
+  \label{fig:rehash_avg_2m}
+\end{minipage}
+
+
+The first analysis we can state is comparing the number of \textbf{rehashes} with respect to the size of Hashtables.
+
+As we can appreciate from the results the total number of rehashes is never above $7$ and never grows abruptly in spite the number of elements of being inserted is increasing faster with the number of iterations. We are going to see that in a more clear way in the following plot.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{average_rehash_count_n}
+  \captionof{figure}{Average Rehash Count vs. Number Elements}
+  \label{fig:rehash_avg_n}
+\end{minipage}
+
+In this graphic we can clearly see that in spite the number of elements grows and even double as the iterations take place, we never go above $7$. This is a great approximation to the probability state in the introduction that says that in this \acrshort{bpgraph} is $O(1/n)$.
+
+\section{Conclusion}
+In conclusion I can state that this structure is very close to its theoretical statement.
+
+On the one hand I feel more confident with the empirical results of \textbf{rehash count} rather than \textbf{average time on insertion}.
+
+One of the possibility to have many data points far away the average in the case of Insertion is the real viability to work with \textbf{Universal Hash Function} which implies that I am having to much collisions and unsuccessful inserts which lead me to a worst time in some cases for insertions. Because of that for big number since the Hashtables are larger i am getting less collisions and more successful inserts, therefore less insertion average time.
+
 
 \appendix\label{appendix}
 \section{Haskell Code}

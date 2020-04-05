@@ -1,20 +1,25 @@
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Experiments where
 
+import           Control.Monad.ST
+import           Data.Hash.Cukoo  as C
+import           Test.QuickCheck
 
---import           Test.QuickCheck
---import           Data.List
---import           System.Random
---import           RandomBST                     as RBST
---
---experiment :: StdGen -> Int -> IO String
---experiment gen n = do
---  number <- (generate $ choose (0, 10000000)) :: IO Int
---  let list      = [number .. number + n - 1]
---  let action    = fromList list gen :: RTreap StdGen Int Int
---  let actionDel = RBST.delete (list !! ((n `div` 2) - 1)) action
---  return $ foldMap (show . experiment') [action, actionDel]
+experiment :: Int -> IO String
+experiment n = do
+  idx    <- getPositive <$> generate (arbitrary @(Positive Int))
+  list <- generate $ shuffle [idx..idx+n]
+  print list
+  (r1, r2) <- runST $ do
+    hash <- create
+    _ <- mapM (insert hash) $ list
+    size <- C.elements hash
+    l    <- toList hash
+    pure $ return (size, l)
+  return $ ("Size: "<>show r1<>" - List: " <> show r2)
+
+
 --
 --data Meassure = Meassure
 --  { sizeList :: Int

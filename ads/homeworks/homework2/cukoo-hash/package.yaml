@@ -33,7 +33,6 @@ library:
 
   dependencies:
     - base
-    - exceptions
     - primes
     - vector
     - QuickCheck

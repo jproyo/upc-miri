@@ -7,17 +7,17 @@ module Data.Hash.Cukoo
   , delete
   , lookup
   , toList
+  , elements
   ) where
 
 -------------------------------------------------------------------------------
 import           Control.Monad
 import           Control.Monad.ST
 import           Data.Coerce
+import           Data.Maybe
 import           Data.Monoid
 import           Data.Numbers.Primes
 import           Data.STRef
-
-import           Debug.Trace
 
 import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Unboxed         as U
@@ -74,27 +74,26 @@ delete' h@Hashing {..} k = do
     else return Nothing
 
 
-insert :: HCukoo s -> Int -> ST s Bool
+insert :: HCukoo s -> Int -> ST s (Maybe Int)
 insert h k = do
-  rehash <- needsReHash h
-  when rehash $ reHashC h
   t <- readSTRef . coerce $ h
-  s <- showT $ hashTables t
-  trace ("current "<> s <> " - Key "<>show k) $ return ()
-  insert' (hashTables t) k
+  let table = hashTables t
+  insert' table k >>= \case
+     Nothing -> reHashC h >> insert' table k
+     e       -> return e
 
 
-insert' :: [Hashing s] -> Int -> ST s Bool
+insert' :: [Hashing s] -> Int -> ST s (Maybe Int)
 insert' h k = insert'' h h k 10
 
-insert'' :: [Hashing s] -> [Hashing s]-> Int -> Int -> ST s Bool
-insert'' _ _ _ 0 = return False
+insert'' :: [Hashing s] -> [Hashing s]-> Int -> Int -> ST s (Maybe Int)
+insert'' _ _ _ 0 = return Nothing
 insert'' [] h k c = insert'' h h k (c-1)
 insert'' (x@Hashing {..}:xs) h k c = do
   findElem x k >>= \case
-    Nothing -> insertElem x k >> return True
+    Nothing -> insertElem x k >> return (Just k)
     Just e -> do
-      if (e == k) then return True
+      if (e == k) then return (Just e)
                   else modifyElem x k >> insert'' xs h e (c - 1)
 
 modifyElem :: Hashing s -> Int -> ST s ()
@@ -136,12 +135,6 @@ elements h = do
     getSize = foldMap (fmap Sum . readSTRef . size) . hashTables
 
 
-needsReHash :: HCukoo s -> ST s Bool
-needsReHash h = do
-  nElem <- elements h
-  lengthT <- lengthC h
-  return (nElem >= lengthT `div` 2)
-
 reHashC :: HCukoo s -> ST s ()
 reHashC c@(HCukoo h)= do
   t <- readSTRef h
@@ -154,8 +147,8 @@ insertIntoNewTable :: UHashtable s -> Hashing s -> ST s ()
 insertIntoNewTable UHashtable{..} h =
   G.mapM_ (insert' hashTables) . G.filter ((/=) 0) =<< U.freeze (table h)
 
-showT :: [Hashing s] -> ST s String
-showT = foldMap (fmap show . U.freeze . table)
+--showT :: [Hashing s] -> ST s String
+--showT = foldMap (fmap show . U.freeze . table)
 
 createNewUHash :: Int -> Int -> ST s (UHashtable s)
 createNewUHash n count = do
@@ -165,8 +158,8 @@ createNewUHash n count = do
   tk2 <- M.new n
   size1 <- newSTRef 0
   size2 <- newSTRef 0
-  let hashT1 = Hashing {salt = salt, table = tk1, hashFn = hash1, size = size1 }
-  let hashT2 = Hashing {salt = salt, table = tk2, hashFn = hash2, size = size2 }
+  let hashT1 = Hashing {salt = salt, table = tk1, hashFn = hash1, size = size1}
+  let hashT2 = Hashing {salt = salt, table = tk2, hashFn = hash2, size = size2}
   let hashTables = [hashT1, hashT2]
   return $ UHashtable{..}
 
@@ -175,7 +168,7 @@ toList :: HCukoo s -> ST s [Int]
 toList h = do
   t <- readSTRef . coerce $ h
   v <- mapM (U.freeze . table) $ hashTables t
-  return $ U.toList $ U.concat v
+  return $ filter (/= 0) $ U.toList $ U.concat v
 
 hash1 :: Int -> Int -> Int
 hash1 = mod

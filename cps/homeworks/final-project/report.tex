@@ -13,6 +13,9 @@
 \usepackage{color}
 \usepackage{caption}
 \usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
 \graphicspath{{./images/}}
 
 \tikzstyle{bag} = [align=center]
@@ -61,32 +64,75 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
+\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
+
+\newacronym{cp}{CP}{Constraint Programming}
+
 \begin{document}
 
 \maketitle
 
-\section{Formal Definition}
-Given:
+\section{Constraint Programming}
 
-
-\begin{itemize}
-  \item Set of $N$ boxes $b_p$ with coordinates $(x_p, y_p)$ which indicates the size of each box $x_p * y_p$
-  \item Roll of width $W$
-\end{itemize}
-
-We can define the following constraint solving program:
+\subsection{Predefinitions}
+Values given by the state the of the program.
 
 \begin{itemize}
-  \item Variables: $a_{ij} = b_p$ meaning the row $i$ and column $j$ on the roll we have the box number $b_p$.
-  \item Domain: ${1,\dots,p}$ the number of the box
-  \item Constraints:
-    \begin{subequations}
-      \begin{align}
-       % a_{ij}b_p = x_p * b_p \ \ \forall j=\{0,\dots,N-1\} \land \forall p=\{1,\dots,N\} \\
-        \sum_{i=0}^W\sum_{j=0}^{N-1} a_{ij} = x_p * y_p * b_p \ \ \forall p=\{1,\dots,N\}
-    \end{align}
-    \end{subequations}
+  \item $1 \leq W \leq 11$ maximum width paper roll
+  \item $L$ maximum length paper roll. By definition is infinite
+  \item $N = \{1, \dots, n\}$ total number of Boxes
+  \item $w_b$ Width of the Box $b, b \in N$
+  \item $h_b$ Height of the Box $b, b \in N$
 \end{itemize}
+
+\subsection{Formal Definition}
+Given the statement of the problem proposed, we are going to define the following variables for our \acrfull{cp} solution.
+
+\subsubsection{Variables}
+\begin{itemize}
+  \item $l$ is the length of paper needed for the current configuration
+  \item $x_i^{tl}$: Top \textbf{left} corner whose value is the Box number. Means in the position $i$ on the top left $x$-coordinate starts Box $b \in \{1,\dots,N\}$.
+  \item $y_i^{tl}$: Top \textbf{left} corner whose value is the Box number. Means in the position $i$ on the top left $y$-coordinate starts Box $b \in \{1,\dots,N\}$.
+  \item $x_i^{br}$: Bottom \textbf{right} corner whose value is the Box number. Means in the position $i$ on the bottom right $x$-coordinate ends Box $b \in \{1,\dots,N\}$.
+  \item $y_i^{br}$: Bottom \textbf{right} corner whose value is the Box number. Means in the position $i$ on the bottom right $y$-coordinate ends Box $b \in \{1,\dots,N\}$.
+  \item $r_b$: Boolean Array that indicates if the Box $b$ is rotated or not. By default all are in $0$.
+\end{itemize}
+
+As we can see this variables are obvious from the statement problem in section \textbf{2.2 Output Format} Paragraph 2 and 3.
+
+\subsubsection{Domains}
+\begin{itemize}
+  \item $l = \{1,\dots,n\}$
+  \item $x_i^{tl} = \{1, \dots, N\}, i \in \{0,\dots,W-1\}$
+  \item $y_i^{tl} = \{1, \dots, N\}, i \in \{0,\dots,L-1\}$
+  \item $x_i^{br} = \{1, \dots, N\}, i \in \{0,\dots,W-1\}$
+  \item $y_i^{br} = \{1, \dots, N\}, i \in \{0,\dots,L-1\}$
+  \item $r_b = \{0,1\}, b \in N$
+\end{itemize}
+
+
+\subsubsection{Constraints}
+
+\begin{enumerate}
+  \item $x_i^{tl} \leq x_i^{br}\ \forall b \in N$: Each top left $x$ coordinate must be less or equal than the bottom right $x$-coordinate in each Box.
+  \item $y_i^{tl} \leq y_i^{br}\ \forall b \in N$: Each top left $y$-coordinate must be less or equal than the bottom right $y$-coordinate in each Box.
+  \item\label{c:3} $y_i^{br} \leq l\ \forall b \in N$: There is no bottom right $y$-coordinate that is longer that the final length of paper $l$
+  \item\label{c:4} $x_i^{br} \leq W\ \forall b \in N$: There is no bottom right $x$-coordinate that is longer that the maximum width of paper roll $W$.\\
+  Constraints~\ref{c:3} and~\ref{c:4} Indicates that the position of the boxes are limited by the area. In the case of the length is going to be optimized by the constraint programming tool.
+\item\label{c:5} $x_i^{br} = x_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotated the amount of $x$ coordinates that occupies it is the width of the box.
+
+  % See here we need to add the restriction that for b1 and b2 if b2 came after b1 then xtl of b2 should be greater than xtl of b1 if it is not
+%  \item $x_i^{br} = x_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotated the amount of $x$ coordinates that occupies it is the width of the box.
+\
+\item\label{c:6} $y_i^{br} = y_i^{tl} + (h_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotate the amount of $y$-coordinates that occupies it is the height of the box.
+\item $x_i^{br} = x_i^{tl} + (h_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:5} but the amount of $x$-coordinates that occupies is the height because it is rotated.
+  \item $y_i^{br} = y_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:6} but the amount of $y$-coordinates that occupies is the width because it is rotated.
+  \item $x_i^{tl} \neq x_j^{tl}\ \forall b \in N$: All Top Left $x$-coordinates should be distinct for each pair of boxes.
+  \item $y_i^{tl} \neq y_j^{tl}\ \forall b \in N$: All Top Left $y$-coordinates should be distinct for each pair of boxes.
+  \item\label{c:8} $x_i^{tl} < x_j^{tl}\ \forall b_1, b_2 \in N, w_{b_1} \times h_{b_1} \geq w_{b_2} \times h_{b_2}$: For each pair of boxes try to put first the bigger box.
+  \item $y_i^{tl} < y_j^{tl}\ \forall b_1, b_2 \in N, w_{b_1} \times h_{b_1} \geq w_{b_2} \times h_{b_2}$: Same as~\ref{c:8} But for $y$ coordinates
+  \item $l = \argmax_{y_i^{br}} {b \in N}$: Length of the roll at the end cannot be larger than the biggest bottom right $y$-coordinate.
+\end{enumerate}
 
 \end{document}
 

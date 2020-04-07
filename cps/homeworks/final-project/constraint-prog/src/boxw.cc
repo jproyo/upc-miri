@@ -16,42 +16,41 @@ BOX boxes;
 class BoxWrapping : public Space {
 
   protected:
-    int colors;
-    int vertices;
-    bool **graph;
-    IntVarArray colVertex;
+    int width;
+    int length;
+    IntVarArray x_tl;
+    IntVarArray y_tl;
+    IntVarArray x_br;
+    IntVarArray y_br;
+    BoolVarArray r_b;
 
   public:
 
-    BoxWrapping(int col, bool **g, int vert) : vertices(vert), colors(col), graph(g), colVertex(*this, vertices, 0, colors) {
+    BoxWrapping(int w, int maxLength, BOX boxes) :
+      width(w),
+      length(maxLength),
+      x_tl(*this, w, 1, boxes.size()),
+      y_tl(*this, maxLength, 1, boxes.size()),
+      x_br(*this, w, 1, boxes.size()),
+      y_br(*this, maxLength, 1, boxes.size()),
+      r_b(*this, boxes.size(), 0, 1){
 
-    // If (i,j) \in E \implies c_i != c_j
-    for(int i = 0; i<vertices;i++)
-      for(int j=0; j<vertices;j++)
-        if(graph[i][j]) rel(*this, colVertex[i] != colVertex[j]);
-
-    branch(*this, colVertex, INT_VAR_NONE(), INT_VAL_MIN());
   }
 
   BoxWrapping(BoxWrapping& s) : Space(s) {
-    colVertex.update(*this, s.colVertex);
-    vertices = s.vertices;
-    colors = s.colors;
-    graph = s.graph;
+    x_tl.update(*this, s.x_tl);
+    y_tl.update(*this, s.y_tl);
+    x_br.update(*this, s.x_br);
+    y_br.update(*this, s.y_br);
+    r_b.update(*this, s.r_b);
+    width = s.width;
+    length = s.length;
   }
 
   virtual Space* copy() {
     return new BoxWrapping(*this);
   }
-  void print() const {
-    std::cout << colVertex << std::endl;
-  }
 
-  void printGraph() const {
-    for(int i = 0; i<vertices;i++)
-      for(int j=0; j<vertices;j++)
-        if(graph[i][j]) std::cout << i << " -> " << j << std::endl;
-  }
 };
 
 
@@ -83,7 +82,7 @@ void show_boxes(){
   BOX::iterator it;
   cout << "----BOXES---";
   for (it = boxes.begin(); it < boxes.end(); it++)
-    cout << "X: " << (*it).first << " - Y: " << (*it).second << endl;
+    cout << "X: " << it->first << " - Y: " << it->second << endl;
   cout << endl;
 }
 

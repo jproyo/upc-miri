@@ -120,17 +120,15 @@ As we can see this variables are obvious from the statement problem in section \
   \item\label{c:4} $x_i^{br} \leq W\ \forall b \in N$: There is no bottom right $x$-coordinate that is longer that the maximum width of paper roll $W$.\\
   Constraints~\ref{c:3} and~\ref{c:4} Indicates that the position of the boxes are limited by the area. In the case of the length is going to be optimized by the constraint programming tool.
 \item\label{c:5} $x_i^{br} = x_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotated the amount of $x$ coordinates that occupies it is the width of the box.
-
-  % See here we need to add the restriction that for b1 and b2 if b2 came after b1 then xtl of b2 should be greater than xtl of b1 if it is not
-%  \item $x_i^{br} = x_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotated the amount of $x$ coordinates that occupies it is the width of the box.
-\
 \item\label{c:6} $y_i^{br} = y_i^{tl} + (h_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotate the amount of $y$-coordinates that occupies it is the height of the box.
 \item $x_i^{br} = x_i^{tl} + (h_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:5} but the amount of $x$-coordinates that occupies is the height because it is rotated.
   \item $y_i^{br} = y_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:6} but the amount of $y$-coordinates that occupies is the width because it is rotated.
-  \item $x_i^{tl} \neq x_j^{tl}\ \forall b \in N$: All Top Left $x$-coordinates should be distinct for each pair of boxes.
-  \item $y_i^{tl} \neq y_j^{tl}\ \forall b \in N$: All Top Left $y$-coordinates should be distinct for each pair of boxes.
-  \item\label{c:8} $x_i^{tl} < x_j^{tl}\ \forall b_1, b_2 \in N, w_{b_1} \times h_{b_1} \geq w_{b_2} \times h_{b_2}$: For each pair of boxes try to put first the bigger box.
-  \item $y_i^{tl} < y_j^{tl}\ \forall b_1, b_2 \in N, w_{b_1} \times h_{b_1} \geq w_{b_2} \times h_{b_2}$: Same as~\ref{c:8} But for $y$ coordinates
+  \item $x_i^{tl} \neq x_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $x$-coordinates should be distinct for each pair of boxes.
+  \item $y_i^{tl} \neq y_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $y$-coordinates should be distinct for each pair of boxes.
+  \item $x_i^{br} \neq x_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $x$-coordinates should be distinct for each pair of boxes.
+  \item $y_i^{br} \neq y_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $y$-coordinates should be distinct for each pair of boxes.
+  \item\label{c:8} $x_i^{tl} < x_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
+  \item $y_i^{tl} < y_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates
   \item $l = \argmax_{y_i^{br}} {b \in N}$: Length of the roll at the end cannot be larger than the biggest bottom right $y$-coordinate.
 \end{enumerate}
 

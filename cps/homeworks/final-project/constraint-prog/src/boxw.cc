@@ -65,16 +65,16 @@ class BoxWrapping : public Space {
           rel(*this, ((x_tl[i] + box_width - 1) < x_tl[j]) || ((y_tl[i] + box_height - 1) < y_tl[j]));
         }
 
-
+        //Constraint 9 and 10 are given by sort_boxes_bigger_desc
 
         //Constraint 11 - According to report.pdf
         rel(*this, length == max(y_br) + 1);
 
         //Branch and bound
-        branch(*this, x_tl, INT_VAR_NONE(), INT_VAL_MIN());
-        //branch(*this, x_br, INT_VAR_NONE(), INT_VAL_MIN());
-        branch(*this, y_tl, INT_VAR_NONE(), INT_VAL_MIN());
-        //branch(*this, y_br, INT_VAR_NONE(), INT_VAL_MIN());
+        branch(*this, x_tl, INT_VAR_DEGREE_MIN(), INT_VAL_MIN());
+        //branch(*this, x_br, INT_VAR_DEGREE_MIN(), INT_VAL_MAX());
+        branch(*this, y_tl, INT_VAR_DEGREE_MIN(), INT_VAL_MIN());
+        //branch(*this, y_br, INT_VAR_DEGREE_MIN(), INT_VAL_MAX());
         branch(*this, r_b, BOOL_VAR_NONE(), BOOL_VAL_MIN());
 
       }
@@ -95,6 +95,11 @@ class BoxWrapping : public Space {
 
   virtual Space* copy() {
     return new BoxWrapping(*this);
+  }
+
+  virtual void constrain(const Space& boxWrap) {
+    const BoxWrapping& oldBox = static_cast<const BoxWrapping&>(boxWrap);
+    rel(*this,length < oldBox.length);
   }
 
   void print(){
@@ -177,10 +182,14 @@ int main(int argc, char* argv[]) {
   cout << "Max length: " << maxLength << " - Max width: " << width << endl;
 
   BoxWrapping* m = new BoxWrapping(width, maxLength, boxes);
-  DFS<BoxWrapping> e(m);
+  BAB<BoxWrapping> e(m);
   delete m;
-  if (BoxWrapping* s = e.next()) {
-    s->print();
-    delete s;
+  BoxWrapping* newSol;
+  while(BoxWrapping* sol = e.next()) {
+    if(sol) newSol = sol;
   }
+  if(newSol) {
+    newSol->print();
+  }
+  delete newSol;
 }

@@ -121,13 +121,10 @@ As we can see this variables are obvious from the statement problem in section \
 \item\label{c:6} $y_b^{br} = y_b^{tl} + (h_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotate the amount of $y$-coordinates that occupies it is the height of the box.
 \item $x_b^{br} = x_b^{tl} + (h_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:5} but the amount of $x$-coordinates that occupies is the height because it is rotated.
   \item $y_b^{br} = y_b^{tl} + (w_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:6} but the amount of $y$-coordinates that occupies is the width because it is rotated.
-  \item $x_b^{tl} < x_j^{tl} \lor y_b^{tl} < y_j^{tl}, \ \forall b_i > b_j \in N, i \neq j$:
-%  \item $x_b^{tl} \neq x_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $x$-coordinates should be distinct for each pair of boxes.
-%  \item $y_b^{tl} \neq y_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $y$-coordinates should be distinct for each pair of boxes.
-%  \item $x_b^{br} \neq x_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $x$-coordinates should be distinct for each pair of boxes.
-%  \item $y_b^{br} \neq y_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $y$-coordinates should be distinct for each pair of boxes.
-  \item\label{c:8} $x_b^{tl} < x_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
-  \item $y_b^{tl} < y_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates
+  \item\label{c:7} $x_{b_i}^{tl} + w_{b_i} - 1 < x_{b_j}^{tl} \lor y_{b_i}^{tl} + h_{b_i} - 1 < y_{b_j}^{tl}, \ \forall b_i > b_j \in N, i \neq j, r_{b_i} = 0$: Not overlap boxes for non rotated $i$.
+  \item $x_{b_i}^{tl} + h_{b_i} - 1 < x_{b_j}^{tl} \lor y_{b_i}^{tl} + w_{b_i} - 1 < y_{b_j}^{tl}, \ \forall b_i > b_j \in N, i \neq j, r_{b_i} = 0$: Same as~\ref{c:7} for rotated $i$.
+  \item\label{c:8} $x_{b_i}^{tl} < x_{b_j}^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
+  \item $y_{b_i}^{tl} < y_{b_j}^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates
   \item $l = \argmax_{y_b^{br}} {b \in N}$: Length of the roll at the end cannot be larger than the biggest bottom right $y$-coordinate.
 \end{enumerate}
 

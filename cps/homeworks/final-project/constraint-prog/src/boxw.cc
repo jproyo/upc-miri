@@ -60,21 +60,23 @@ class BoxWrapping : public Space {
         //Constraint 7 - According to report.pdf
         rel(*this, r_b[i] >> (y_br[i] == y_tl[i] + (box_width - 1)));
 
-        //Constraint 8 - According to report.pdf
         for(int j = i+1; j < boxes.size(); j++){
-          rel(*this, ((x_tl[i] + box_width - 1) < x_tl[j]) || ((y_tl[i] + box_height - 1) < y_tl[j]));
+
+          //Constraint 8 - According to report.pdf
+          rel(*this, !r_b[i] >> ((x_tl[i] + box_width - 1) < x_tl[j]) || ((y_tl[i] + box_height - 1) < y_tl[j]));
+
+          //Constraint 9 - According to report.pdf
+          rel(*this, r_b[i] >> ((x_tl[i] + box_height - 1) < x_tl[j]) || ((y_tl[i] + box_width - 1) < y_tl[j]));
         }
 
-        //Constraint 9 and 10 are given by sort_boxes_bigger_desc
+        //Constraint 10 and 11 are given by sort_boxes_bigger_desc
 
-        //Constraint 11 - According to report.pdf
+        //Constraint 12 - According to report.pdf
         rel(*this, length == max(y_br) + 1);
 
         //Branch and bound
         branch(*this, x_tl, INT_VAR_DEGREE_MIN(), INT_VAL_MIN());
-        //branch(*this, x_br, INT_VAR_DEGREE_MIN(), INT_VAL_MAX());
         branch(*this, y_tl, INT_VAR_DEGREE_MIN(), INT_VAL_MIN());
-        //branch(*this, y_br, INT_VAR_DEGREE_MIN(), INT_VAL_MAX());
         branch(*this, r_b, BOOL_VAR_NONE(), BOOL_VAL_MIN());
 
       }

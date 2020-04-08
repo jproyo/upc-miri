@@ -91,11 +91,11 @@ Given the statement of the problem proposed, we are going to define the followin
 \subsubsection{Variables}
 \begin{itemize}
   \item $l$ is the length of paper needed for the current configuration
-  \item $x_i^{tl}$: Top \textbf{left} corner whose value is the Box number. Means in the position $i$ on the top left $x$-coordinate starts Box $b \in \{1,\dots,N\}$.
-  \item $y_i^{tl}$: Top \textbf{left} corner whose value is the Box number. Means in the position $i$ on the top left $y$-coordinate starts Box $b \in \{1,\dots,N\}$.
-  \item $x_i^{br}$: Bottom \textbf{right} corner whose value is the Box number. Means in the position $i$ on the bottom right $x$-coordinate ends Box $b \in \{1,\dots,N\}$.
-  \item $y_i^{br}$: Bottom \textbf{right} corner whose value is the Box number. Means in the position $i$ on the bottom right $y$-coordinate ends Box $b \in \{1,\dots,N\}$.
-  \item $r_b$: Boolean Array that indicates if the Box $b$ is rotated or not. By default all are in $0$.
+  \item $x_b^{tl}$: Top \textbf{left} corner $x$. Means the box $b$ is on the top left $x$-coordinate.
+  \item $y_b^{tl}$: Top \textbf{left} corner $y$. Means the box $b$ is on the top left $y$-coordinate.
+  \item $x_b^{br}$: Bottom \textbf{right} corner $x$. Means the box $b$ is on the bottom right $x$-coordinate.
+  \item $y_b^{br}$: Bottom \textbf{right} corner $y$. Means the box $b$ is on the bottom right $y$-coordinate.
+  \item $r_b$: Boolean Array that indicates if the Box $b$ is rotated or not.
 \end{itemize}
 
 As we can see this variables are obvious from the statement problem in section \textbf{2.2 Output Format} Paragraph 2 and 3.
@@ -103,10 +103,10 @@ As we can see this variables are obvious from the statement problem in section \
 \subsubsection{Domains}
 \begin{itemize}
   \item $l = \{1,\dots,n\}$
-  \item $x_i^{tl} = \{1, \dots, N\}, i \in \{0,\dots,W-1\}$
-  \item $y_i^{tl} = \{1, \dots, N\}, i \in \{0,\dots,L-1\}$
-  \item $x_i^{br} = \{1, \dots, N\}, i \in \{0,\dots,W-1\}$
-  \item $y_i^{br} = \{1, \dots, N\}, i \in \{0,\dots,L-1\}$
+  \item $x_b^{tl} = \{0,\dots,W-1\}, b \in N$
+  \item $y_b^{tl} = \{0,\dots,L-1\}, b \in N$
+  \item $x_b^{br} = \{0,\dots,W-1\}, b \in N$
+  \item $y_b^{br} = \{0,\dots,L-1\}, b \in N$
   \item $r_b = \{0,1\}, b \in N$
 \end{itemize}
 
@@ -114,22 +114,21 @@ As we can see this variables are obvious from the statement problem in section \
 \subsubsection{Constraints}
 
 \begin{enumerate}
-  \item $x_i^{tl} \leq x_i^{br}\ \forall b \in N$: Each top left $x$ coordinate must be less or equal than the bottom right $x$-coordinate in each Box.
-  \item $y_i^{tl} \leq y_i^{br}\ \forall b \in N$: Each top left $y$-coordinate must be less or equal than the bottom right $y$-coordinate in each Box.
-  \item\label{c:3} $y_i^{br} \leq l\ \forall b \in N$: There is no bottom right $y$-coordinate that is longer that the final length of paper $l$
-  \item\label{c:4} $x_i^{br} \leq W\ \forall b \in N$: There is no bottom right $x$-coordinate that is longer that the maximum width of paper roll $W$.\\
-  Constraints~\ref{c:3} and~\ref{c:4} Indicates that the position of the boxes are limited by the area. In the case of the length is going to be optimized by the constraint programming tool.
-\item\label{c:5} $x_i^{br} = x_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotated the amount of $x$ coordinates that occupies it is the width of the box.
-\item\label{c:6} $y_i^{br} = y_i^{tl} + (h_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotate the amount of $y$-coordinates that occupies it is the height of the box.
-\item $x_i^{br} = x_i^{tl} + (h_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:5} but the amount of $x$-coordinates that occupies is the height because it is rotated.
-  \item $y_i^{br} = y_i^{tl} + (w_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:6} but the amount of $y$-coordinates that occupies is the width because it is rotated.
-  \item $x_i^{tl} \neq x_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $x$-coordinates should be distinct for each pair of boxes.
-  \item $y_i^{tl} \neq y_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $y$-coordinates should be distinct for each pair of boxes.
-  \item $x_i^{br} \neq x_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $x$-coordinates should be distinct for each pair of boxes.
-  \item $y_i^{br} \neq y_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $y$-coordinates should be distinct for each pair of boxes.
-  \item\label{c:8} $x_i^{tl} < x_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
-  \item $y_i^{tl} < y_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates
-  \item $l = \argmax_{y_i^{br}} {b \in N}$: Length of the roll at the end cannot be larger than the biggest bottom right $y$-coordinate.
+  \item $x_b^{tl} \leq x_b^{br}\ \forall b \in N$: Each top left $x$ coordinate must be less or equal than the bottom right $x$-coordinate in each Box.
+  \item $y_b^{tl} \leq y_b^{br}\ \forall b \in N$: Each top left $y$-coordinate must be less or equal than the bottom right $y$-coordinate in each Box.
+  \item\label{c:4} $x_b^{br} \leq W\ \forall b \in N$: There is no bottom right $x$-coordinate that is longer that the maximum width of paper roll $W$.
+\item\label{c:5} $x_b^{br} = x_b^{tl} + (w_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotated the amount of $x$ coordinates that occupies it is the width of the box.
+\item\label{c:6} $y_b^{br} = y_b^{tl} + (h_b - 1)\ \forall b \in N, r_b = 0$: If the Box is not rotate the amount of $y$-coordinates that occupies it is the height of the box.
+\item $x_b^{br} = x_b^{tl} + (h_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:5} but the amount of $x$-coordinates that occupies is the height because it is rotated.
+  \item $y_b^{br} = y_b^{tl} + (w_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:6} but the amount of $y$-coordinates that occupies is the width because it is rotated.
+  \item $x_b^{tl} < x_j^{tl} \lor y_b^{tl} < y_j^{tl}, \ \forall b_i > b_j \in N, i \neq j$:
+%  \item $x_b^{tl} \neq x_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $x$-coordinates should be distinct for each pair of boxes.
+%  \item $y_b^{tl} \neq y_j^{tl}\ \forall b_i,b_j \in N,\ i \neq j$: All Top Left $y$-coordinates should be distinct for each pair of boxes.
+%  \item $x_b^{br} \neq x_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $x$-coordinates should be distinct for each pair of boxes.
+%  \item $y_b^{br} \neq y_j^{br}\ \forall b_i,b_j \in N,\ i \neq j$: All Bottom Right $y$-coordinates should be distinct for each pair of boxes.
+  \item\label{c:8} $x_b^{tl} < x_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
+  \item $y_b^{tl} < y_j^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates
+  \item $l = \argmax_{y_b^{br}} {b \in N}$: Length of the roll at the end cannot be larger than the biggest bottom right $y$-coordinate.
 \end{enumerate}
 
 \end{document}

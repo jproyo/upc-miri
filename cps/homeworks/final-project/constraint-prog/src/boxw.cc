@@ -10,14 +10,15 @@ using namespace std;
 
 typedef pair<int, int> DIM;
 typedef vector<DIM>    BOX;
-int width;
-BOX boxes;
 
 class BoxWrapping : public Space {
 
-  protected:
+  private:
     int width;
-    int length;
+    BOX boxes;
+
+  protected:
+    IntVar length;
     IntVarArray x_tl;
     IntVarArray y_tl;
     IntVarArray x_br;
@@ -26,14 +27,58 @@ class BoxWrapping : public Space {
 
   public:
 
-    BoxWrapping(int w, int maxLength, BOX boxes) :
+    BoxWrapping(int w, int maxLength, const BOX& b) :
+      boxes(b),
       width(w),
-      length(maxLength),
-      x_tl(*this, w, 1, boxes.size()),
-      y_tl(*this, maxLength, 1, boxes.size()),
-      x_br(*this, w, 1, boxes.size()),
-      y_br(*this, maxLength, 1, boxes.size()),
+      length(*this, 0, maxLength),
+      x_tl(*this, boxes.size(), 0, w-1),
+      y_tl(*this, boxes.size(), 0, maxLength),
+      x_br(*this, boxes.size(), 0, w-1),
+      y_br(*this, boxes.size(), 0, maxLength),
       r_b(*this, boxes.size(), 0, 1){
+
+
+      for(int i = 0; i<boxes.size(); i++){
+        int box_width = boxes[i].first;
+        int box_height = boxes[i].second;
+        //Constraint 1 - According to report.pdf
+        rel(*this, x_tl[i] <= x_br[i]);
+        //Constraint 2 - According to report.pdf
+        rel(*this, y_tl[i] <= y_br[i]);
+        //Constraint 3 - According to report.pdf
+        rel(*this, x_br[i] <= width);
+
+        //It is not rotated
+        //Constraint 4 - According to report.pdf
+        rel(*this, !r_b[i] >> (x_br[i] == x_tl[i] + (box_width - 1)));
+        //Constraint 5 - According to report.pdf
+        rel(*this, !r_b[i] >> (y_br[i] == y_tl[i] + (box_height - 1)));
+
+        //It is rotated
+        //Constraint 6 - According to report.pdf
+        rel(*this, r_b[i] >> (x_br[i] == x_tl[i] + (box_height - 1)));
+        //Constraint 7 - According to report.pdf
+        rel(*this, r_b[i] >> (y_br[i] == y_tl[i] + (box_width - 1)));
+
+        //Constraint 8 - According to report.pdf
+        for(int j = i+1; j < boxes.size(); j++){
+          rel(*this, ((x_tl[i] + box_width - 1) < x_tl[j]) || ((y_tl[i] + box_height - 1) < y_tl[j]));
+        }
+
+
+
+        //Constraint 11 - According to report.pdf
+        rel(*this, length == max(y_br) + 1);
+
+        //Branch and bound
+        branch(*this, x_tl, INT_VAR_NONE(), INT_VAL_MIN());
+        //branch(*this, x_br, INT_VAR_NONE(), INT_VAL_MIN());
+        branch(*this, y_tl, INT_VAR_NONE(), INT_VAL_MIN());
+        //branch(*this, y_br, INT_VAR_NONE(), INT_VAL_MIN());
+        branch(*this, r_b, BOOL_VAR_NONE(), BOOL_VAL_MIN());
+
+      }
+
 
   }
 
@@ -43,18 +88,30 @@ class BoxWrapping : public Space {
     x_br.update(*this, s.x_br);
     y_br.update(*this, s.y_br);
     r_b.update(*this, s.r_b);
+    length.update(*this, s.length);
     width = s.width;
-    length = s.length;
+    boxes = s.boxes;
   }
 
   virtual Space* copy() {
     return new BoxWrapping(*this);
   }
 
+  void print(){
+    cout << "----DEBUG PURPOSE ONLY-----" << endl;
+    cout << "Length: " << length.val() << endl;
+    for(int i = 0; i < boxes.size(); i++){
+      cout << "BOX: " << i << " x_tl:" << x_tl[i].val() << " - y_tl:" << y_tl[i].val() <<  " - x_br:" << x_br[i].val() << " - y_br:" << y_br[i].val() << " - rotated:" << r_b[i].val() << endl;
+    }
+    cout << endl;
+  }
+
 };
 
 
-void read_instance() {
+pair<BOX,int> read_instance() {
+  BOX boxes;
+  int width;
   int num;
   cin >> width >> num;
   int n, x, y;
@@ -67,6 +124,7 @@ void read_instance() {
     }
     ++c;
   }
+  return make_pair(boxes, width);
 }
 
 void show_help(int argc, char* argv[]){
@@ -78,39 +136,51 @@ void show_help(int argc, char* argv[]){
   }
 }
 
-void show_boxes(){
+void show_boxes(BOX& boxes){
   BOX::iterator it;
-  cout << "----BOXES---";
+  cout << "----BOXES---" << endl;
   for (it = boxes.begin(); it < boxes.end(); it++)
     cout << "X: " << it->first << " - Y: " << it->second << endl;
   cout << endl;
 }
 
-int main(int argc, char* argv[]) {
-  show_help(argc,argv);
-  read_instance();
-  show_boxes();
+
+int calculateMaxLength(BOX& boxes){
+  BOX::iterator it;
+  int maxLength = 0;
+  for (it = boxes.begin(); it < boxes.end(); it++)
+    maxLength += max(it->first, it->second);
+  return maxLength;
 }
-//int main(int argc, char* argv[]) {
-//  if (argc != 3) return 1;
-//  int colors = atoi(argv[1]);
-//  int vertices = atoi(argv[2]);
-//  bool **graph;
-//  graph = new bool *[vertices];
-//  for(int i = 0; i <vertices; i++){
-//    graph[i] = new bool[vertices];
-//  }
-//
-//  for(int i=0; i<vertices; i++)
-//    for(int j=0;j<vertices;j++)
-//      (i!=j) ? graph[i][j] = true : graph[i][j] = false;
-//
-//  BoxWrapping* m = new BoxWrapping(colors, graph, vertices);
-//  DFS<BoxWrapping> e(m);
-//  m->printGraph();
-//  delete m;
-//  while (BoxWrapping* s = e.next()) {
-//    s->print();
-//    delete s;
-//  }
-//}
+
+bool sort_boxes_bigger_desc(DIM b1, DIM b2){
+  return (b1.first * b1.second) > (b2.first * b2.second);
+}
+
+int main(int argc, char* argv[]) {
+
+  show_help(argc,argv);
+
+  pair<BOX, int> instance = read_instance();
+
+  BOX boxes = instance.first;
+
+  int width = instance.second;
+
+  int maxLength = calculateMaxLength(boxes);
+
+  // Sort boxes Bigger first
+  sort(boxes.begin(), boxes.end(), sort_boxes_bigger_desc);
+
+  show_boxes(boxes);
+
+  cout << "Max length: " << maxLength << " - Max width: " << width << endl;
+
+  BoxWrapping* m = new BoxWrapping(width, maxLength, boxes);
+  DFS<BoxWrapping> e(m);
+  delete m;
+  if (BoxWrapping* s = e.next()) {
+    s->print();
+    delete s;
+  }
+}

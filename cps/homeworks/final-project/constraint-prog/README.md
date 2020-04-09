@@ -8,6 +8,8 @@ In order to see the report in which it is described the formal definition of the
 
 ## Running the Program
 
+### OS Configuration
+
 To run the program you are going to need first modify the `Makefile` in order to set the proper environment variables for compiling the program according to you **OS** and **Gecode** instalation.
 
 Open `Makefile` and edit the first 3 lines according to your **Operative System**. In my case which is a **OSX** operative system this is my setup
@@ -24,6 +26,8 @@ LIBS = -framework gecode
 
 > NOTE: In OSX Geocode lib is different than other system like Windows or Linux
 
+### Compiling
+
 Once you did that, you can just run:
 
 ```shell
@@ -32,6 +36,14 @@ Once you did that, you can just run:
 ```
 
 All the binaries are going to be place in [bin](bin/) directory
+
+### Help
+
+```shell
+> bin/boxw -h
+```
+
+### Running
 
 For running the program just do:
 

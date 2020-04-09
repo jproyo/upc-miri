@@ -12,17 +12,17 @@ else
 endif
 
 
-all: checker boxw
+all: checker main
 .PHONY: all
 
 clean:
 	rm -rf bin/*
 
-bin/boxw.o: src/boxw.cc
-	$(CXX) -I$(DIR)/include -c src/boxw.cc -o bin/boxw.o
+bin/main.o: src/main.cc
+	$(CXX) -I$(DIR)/include -c src/main.cc -o bin/main.o
 
-boxw: bin/boxw.o
-	$(CXX) -L$(DIR)/lib -o bin/boxw bin/boxw.o $(LIBS)
+main: bin/main.o
+	$(CXX) -L$(DIR)/lib -o bin/boxw bin/main.o $(LIBS)
 
 bin/checker.o: src/checker.cc
 	$(CXX) -I$(DIR)/include -c src/checker.cc -o bin/checker.o

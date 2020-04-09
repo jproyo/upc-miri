@@ -122,9 +122,11 @@ As we can see this variables are obvious from the statement problem in section \
 \item $x_b^{br} = x_b^{tl} + (h_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:5} but the amount of $x$-coordinates that occupies is the height because it is rotated.
   \item $y_b^{br} = y_b^{tl} + (w_b - 1)\ \forall b \in N, r_b = 1$: Same as~\ref{c:6} but the amount of $y$-coordinates that occupies is the width because it is rotated.
   \item\label{c:7} $x_{b_i}^{tl} + w_{b_i} - 1 < x_{b_j}^{tl} \lor y_{b_i}^{tl} + h_{b_i} - 1 < y_{b_j}^{tl}, \ \forall b_i > b_j \in N, i \neq j, r_{b_i} = 0$: Not overlap boxes for non rotated $i$.
-  \item $x_{b_i}^{tl} + h_{b_i} - 1 < x_{b_j}^{tl} \lor y_{b_i}^{tl} + w_{b_i} - 1 < y_{b_j}^{tl}, \ \forall b_i > b_j \in N, i \neq j, r_{b_i} = 0$: Same as~\ref{c:7} for rotated $i$.
+  \item $x_{b_i}^{tl} + h_{b_i} - 1 < x_{b_j}^{tl} \lor y_{b_i}^{tl} + w_{b_i} - 1 < y_{b_j}^{tl}, \ \forall b_i > b_j \in N, i \neq j, r_{b_i} = 1$: Same as~\ref{c:7} for rotated $i$.
   \item\label{c:8} $x_{b_i}^{tl} < x_{b_j}^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
   \item $y_{b_i}^{tl} < y_{b_j}^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates
+  \item $x_b^{tl} < \frac{W}{2}-1,\ b = 1$: Break column symmetry. At least first box should be on the most left half of the roll width.
+   \item $y_b^{tl} < \frac{l}{2}-1,\ b = 1$: Break row symmetry. At least first box should be on the top half of the roll length.
   \item $l = \argmax_{y_b^{br}} {b \in N}$: Length of the roll at the end cannot be larger than the biggest bottom right $y$-coordinate.
 \end{enumerate}
 

@@ -20,6 +20,8 @@ using namespace std;
 
 typedef pair<int, int> DIM;
 typedef vector<DIM>    BOX;
+typedef pair<int,DIM> CONF;
+typedef vector<CONF> INITIAL_CONF;
 
 class Boxes {
 
@@ -27,8 +29,9 @@ class Boxes {
     int width;
     int maxLength;
     BOX boxes;
+    INITIAL_CONF conf;
 
-    Boxes(int w, const BOX& b): width(w), boxes(b){
+    Boxes(int w, const BOX& b, const INITIAL_CONF& c): width(w), boxes(b), conf(c){
       sort(boxes.begin(), boxes.end(), sort_boxes_bigger_desc);
       maxLength = calculateMaxLength();
     };
@@ -55,10 +58,12 @@ class Boxes {
     int boxWidth(int index) const;
     int boxHeight(int index) const;
     int boxArea(int index) const;
-    void print();
+    void printDebug();
+    void show() const;
 
   static Boxes& fromStdIn(){
     BOX bs;
+    INITIAL_CONF cf;
     int w;
     int num;
     cin >> w >> num;
@@ -66,21 +71,23 @@ class Boxes {
     int c = 1;
     while (num != 0) {
       cin >> n >> x >> y;
+      DIM dim(x,y);
+      cf.push_back(CONF(n,dim));
       num -= n;
       for(int i = 0; i < n; i++){
-        bs.push_back(DIM(x,y));
+        bs.push_back(dim);
       }
       ++c;
     }
 
-    static Boxes b(w,bs);
+    static Boxes b(w,bs,cf);
     return b;
   }
 };
 
 Boxes::Boxes(){}
 
-Boxes::Boxes(const Boxes& b2): width(b2.width), maxLength(b2.maxLength), boxes(b2.boxes){}
+Boxes::Boxes(const Boxes& b2): width(b2.width), maxLength(b2.maxLength), boxes(b2.boxes), conf(b2.conf){}
 
 int Boxes::getWidth() const{
   return this->width;
@@ -107,16 +114,21 @@ int Boxes::boxArea(int index) const{
   return this->boxWidth(index)*this->boxHeight(index);
 }
 
-void Boxes::print(){
+void Boxes::printDebug(){
   BOX::iterator it;
   cerr << "----BOXES---" << endl;
   cerr << "Max length: " << maxLength << " - Max width: " << width << endl;
   for (it = boxes.begin(); it < boxes.end(); it++)
     cerr << "X: " << it->first << " - Y: " << it->second << endl;
   cerr << endl;
+}
 
 
-  cerr << "Size: " << this->size() << endl;
+void Boxes::show() const {
+  INITIAL_CONF::const_iterator it;
+  cout << this->getWidth() << " " << this->size() << endl;
+  for (it = conf.begin(); it < conf.end(); it++)
+    cout << it->first << "   " << it->second.first << " " << it->second.second << endl;
 }
 
 

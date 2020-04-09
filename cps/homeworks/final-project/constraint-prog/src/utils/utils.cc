@@ -36,7 +36,9 @@ namespace utils {
     }
   }
 
-  void show_result(const Boxes& boxes, const BoxWrapping& result){
+  void show_result(Boxes boxes, BoxWrapping* result){
+    boxes.show();
+    result->show();
   }
 
 }

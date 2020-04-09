@@ -131,7 +131,7 @@ class BoxWrapping : public Space {
     rel(*this, length < oldBox.length);
   }
 
-  void print(){
+  void printDebug(){
     cerr << "----DEBUG PURPOSE ONLY-----" << endl;
     cerr << "Length: " << length.val() << endl;
     for(int i = 0; i < boxes.size(); i++){
@@ -139,6 +139,15 @@ class BoxWrapping : public Space {
     }
     cerr << endl;
   }
+
+  void show() {
+    cout << length.val() << endl;
+    for(int i = 0; i < boxes.size(); i++){
+      cout << x_tl[i].val() << " " << y_tl[i].val() <<  "   " << x_br[i].val() << " " << y_br[i].val() << endl;
+    }
+   }
+
+
 
 };
 

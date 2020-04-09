@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     Boxes boxes = Boxes::fromStdIn();
 
-    boxes.print();
+    boxes.printDebug();
 
     BoxWrapping* m = new BoxWrapping(boxes);
     BAB<BoxWrapping> e(m);
@@ -48,8 +48,11 @@ int main(int argc, char* argv[]) {
       if(sol) newSol = sol;
     }
     if(newSol) {
-      newSol->print();
+      newSol->printDebug();
     }
+
+    show_result(boxes, newSol);
+
     delete newSol;
 
   }catch(Exception e) {

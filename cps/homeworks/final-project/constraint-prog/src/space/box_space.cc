@@ -28,6 +28,7 @@ class BoxWrapping : public Space {
 
   private:
     Boxes boxes;
+    static IntPropLevel PROP_LEVEL;
 
   protected:
     IntVar length;
@@ -38,6 +39,40 @@ class BoxWrapping : public Space {
     BoolVarArray r_b;
 
   public:
+
+
+    double merit_aux(int i) const{
+      return boxes.boxArea(i);
+    }
+
+    static double merit(const Space& home, IntVar x, int i) {
+      return static_cast<const BoxWrapping&>(home).merit_aux(i);
+    }
+
+    int value_aux(IntVar x, int i) const {
+      int max = 0;
+      for(int i = 0; i<boxes.size(); i++){
+        if(x_br[i].assigned()){
+          if(max <= x_br[i].val()){
+            max = x_br[i].val();
+          }
+        }
+      }
+      int r = x.min();
+      for (IntVarValues k(x); k( ) ; ++k) {
+        int j  = k.val();
+        if(max+1 < boxes.getWidth()-1 && j > max && j > r){
+          r = j;
+        }
+      }
+      return r;
+    }
+
+    static int value(const Space& home, IntVar x, int i) {
+      return static_cast<const BoxWrapping&>(home).value_aux(x, i);
+    }
+
+
 
     BoxWrapping(const Boxes& b) :
       boxes(b),
@@ -52,23 +87,23 @@ class BoxWrapping : public Space {
         int box_width = boxes.boxWidth(i);
         int box_height = boxes.boxHeight(i);
         //Constraint 1 - According to report.pdf
-        rel(*this, x_tl[i] <= x_br[i]);
+        rel(*this, x_tl[i] <= x_br[i], PROP_LEVEL);
         //Constraint 2 - According to report.pdf
-        rel(*this, y_tl[i] <= y_br[i]);
+        rel(*this, y_tl[i] <= y_br[i], PROP_LEVEL);
         //Constraint 3 - According to report.pdf
-        rel(*this, x_br[i] <= boxes.getWidth());
+        rel(*this, x_br[i] <= boxes.getWidth(), PROP_LEVEL);
 
         //It is not rotated
         //Constraint 4 - According to report.pdf
-        rel(*this, !r_b[i] >> (x_br[i] == x_tl[i] + (box_width - 1)));
+        rel(*this, !r_b[i] >> (x_br[i] == x_tl[i] + (box_width - 1)), PROP_LEVEL);
         //Constraint 5 - According to report.pdf
-        rel(*this, !r_b[i] >> (y_br[i] == y_tl[i] + (box_height - 1)));
+        rel(*this, !r_b[i] >> (y_br[i] == y_tl[i] + (box_height - 1)), PROP_LEVEL);
 
         //It is rotated
         //Constraint 6 - According to report.pdf
-        rel(*this, r_b[i] >> (x_br[i] == x_tl[i] + (box_height - 1)));
+        rel(*this, r_b[i] >> (x_br[i] == x_tl[i] + (box_height - 1)), PROP_LEVEL);
         //Constraint 7 - According to report.pdf
-        rel(*this, r_b[i] >> (y_br[i] == y_tl[i] + (box_width - 1)));
+        rel(*this, r_b[i] >> (y_br[i] == y_tl[i] + (box_width - 1)), PROP_LEVEL);
 
         for(int j = i+1; j < boxes.size(); j++){
 
@@ -76,35 +111,39 @@ class BoxWrapping : public Space {
           int box_height_j = boxes.boxHeight(j);
 
           //Constraint 8 - According to report.pdf
-          rel(*this, !r_b[i] >> ((x_tl[i] + box_width - 1) < x_tl[j]) || ((y_tl[i] + box_height - 1) < y_tl[j]));
+          rel(*this, !r_b[i] >> ((x_tl[i] + box_width - 1) < x_tl[j]) || ((y_tl[i] + box_height - 1) < y_tl[j]), PROP_LEVEL);
 
           //Constraint 9 - According to report.pdf
-          rel(*this, r_b[i] >> ((x_tl[i] + box_height - 1) < x_tl[j]) || ((y_tl[i] + box_width - 1) < y_tl[j]));
+          rel(*this, r_b[i] >> ((x_tl[i] + box_height - 1) < x_tl[j]) || ((y_tl[i] + box_width - 1) < y_tl[j]), PROP_LEVEL);
 
           if(boxes.boxArea(i) < boxes.boxArea(j)){
             //Constraint 10 - According to report.pdf
-            rel(*this, x_tl[i] < x_tl[j]);
+            rel(*this, x_tl[i] < x_tl[j], PROP_LEVEL);
             //Constraint 11 - According to report.pdf
-            rel(*this, y_tl[i] < y_tl[j]);
+            rel(*this, y_tl[i] < y_tl[j], PROP_LEVEL);
           }
 
 
         }
 
-        if(i == 0){
-          //Constraint 12 - According to report.pdf
-          rel(*this, x_tl[i] < (boxes.getWidth()/2)-1);
+        //Constraint 12 - According to report.pdf
+        rel(*this, element(x_tl, 0) < (boxes.getWidth()/2)-1, PROP_LEVEL);
 
-          //Constraint 13 - According to report.pdf
-          rel(*this, y_tl[i] < (length/2)-1);
-        }
+        //Constraint 13 - According to report.pdf
+        rel(*this, element(y_tl,0) < (length/2)-1, PROP_LEVEL);
 
         //Constraint 14 - According to report.pdf
-        rel(*this, length == max(y_br) + 1);
+        rel(*this, length == max(y_br) + 1, PROP_LEVEL);
 
         //Branch and bound
-        branch(*this, x_tl, INT_VAR_DEGREE_MIN(), INT_VAL_MIN());
-        branch(*this, y_tl, INT_VAR_DEGREE_MIN(), INT_VAL_MIN());
+        //Strategy best success principle.
+        //In this case we are going to choose the variable with the smallest domain but in case
+        //of tie we are going to choose that one who has a bigger box to try to fill first bigger boxes
+        //In the case of the val we are going to try to fill from top left to bottom right. In that sense we are going to look for x_tl more to the left and y_tl more to the top
+        //In the case of x_tl val selection we are going to do a custom selection which is the following:
+        //Instead of selecting the most left x_tl first try to see if there is width left in the roll. If there is still width in the roll and value of that x_tl is avaible first try to select that, otherwise select min value which is most left.
+        branch(*this, x_tl, tiebreak(INT_VAR_SIZE_MIN(), INT_VAR_MERIT_MAX(&merit)), INT_VAL(&value));
+        branch(*this, y_tl, tiebreak(INT_VAR_SIZE_MIN(), INT_VAR_MERIT_MAX(&merit)), INT_VAL_MIN());
         branch(*this, r_b, BOOL_VAR_NONE(), BOOL_VAL_MIN());
 
       }
@@ -151,3 +190,5 @@ class BoxWrapping : public Space {
 
 };
 
+// Domain Propagation
+IntPropLevel BoxWrapping::PROP_LEVEL = IPL_DOM;

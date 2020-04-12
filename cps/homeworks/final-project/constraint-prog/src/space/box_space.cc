@@ -61,7 +61,7 @@ class BoxWrapping : public Space {
       int r = x.min();
       for (IntVarValues k(x); k( ) ; ++k) {
         int j  = k.val();
-        if(max+1 < boxes.getWidth()-1 && j > max && j > r){
+        if(max < boxes.getWidth()-1 && j > max && j < r){
           r = j;
         }
       }
@@ -86,6 +86,7 @@ class BoxWrapping : public Space {
       for(int i = 0; i<boxes.size(); i++){
         int box_width = boxes.boxWidth(i);
         int box_height = boxes.boxHeight(i);
+
         //Constraint 1 - According to report.pdf
         rel(*this, x_tl[i] <= x_br[i], PROP_LEVEL);
         //Constraint 2 - According to report.pdf
@@ -127,21 +128,15 @@ class BoxWrapping : public Space {
         }
 
         //Constraint 12 - According to report.pdf
-        rel(*this, element(x_tl, 0) < (boxes.getWidth()/2)-1, PROP_LEVEL);
+        rel(*this, element(x_tl, 0) == 0, PROP_LEVEL);
 
         //Constraint 13 - According to report.pdf
-        rel(*this, element(y_tl,0) < (length/2)-1, PROP_LEVEL);
+        rel(*this, element(y_tl,0) == 0, PROP_LEVEL);
 
         //Constraint 14 - According to report.pdf
         rel(*this, length == max(y_br) + 1, PROP_LEVEL);
 
         //Branch and bound
-        //Strategy best success principle.
-        //In this case we are going to choose the variable with the smallest domain but in case
-        //of tie we are going to choose that one who has a bigger box to try to fill first bigger boxes
-        //In the case of the val we are going to try to fill from top left to bottom right. In that sense we are going to look for x_tl more to the left and y_tl more to the top
-        //In the case of x_tl val selection we are going to do a custom selection which is the following:
-        //Instead of selecting the most left x_tl first try to see if there is width left in the roll. If there is still width in the roll and value of that x_tl is avaible first try to select that, otherwise select min value which is most left.
         branch(*this, x_tl, tiebreak(INT_VAR_SIZE_MIN(), INT_VAR_MERIT_MAX(&merit)), INT_VAL(&value));
         branch(*this, y_tl, tiebreak(INT_VAR_SIZE_MIN(), INT_VAR_MERIT_MAX(&merit)), INT_VAL_MIN());
         branch(*this, r_b, BOOL_VAR_NONE(), BOOL_VAL_MIN());

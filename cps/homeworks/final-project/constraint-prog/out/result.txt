@@ -1,0 +1,46 @@
+COMPILING
+rm -rf bin/*
+g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/checker.cc -o bin/checker.o
+g++ -std=c++11 -F/Library/Frameworks -L/usr/local/lib -o bin/checker bin/checker.o -framework gecode
+g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/main.cc -o bin/main.o
+g++ -std=c++11 -F/Library/Frameworks -L/usr/local/lib -o bin/boxw bin/main.o -framework gecode
+----------------- STARTING !!!! BOX WRAPPING CP PROGRAM ---------------------
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_10_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_10_11_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_10_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_10_13_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_10_9_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_11_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_11_11_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_11_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_11_13_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_11_8_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_11_9_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_3_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_4_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_4_11_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_4_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_5_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_5_13_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_6_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_6_11_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_6_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_6_13_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_6_9_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_7_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_7_11_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_7_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_7_13_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_7_8_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_7_9_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_8_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_8_11_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_8_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_8_13_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_8_9_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_9_10_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_9_11_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_9_12_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_9_13_1.inp has TIMED OUT
+Instance /Users/juan/Projects/upc/upc-miri/cps/homeworks/final-project/constraint-prog/instances/bwp_9_9_1.inp has TIMED OUT
+----------------- FINISHED !!!! BOX WRAPPING CP PROGRAM ---------------------

@@ -17,8 +17,6 @@ for ifile in $INST_DIR/*.$INST_EXT; do
     timeout $TIME_LIMIT $BOX_EXEC < $ifile > $OUTPUT_DIR/$output
     if [ $? != 0 ]; then
     	echo "Instance $ifile has TIMED OUT"
-    else
-      $CHECKER < $OUTPUT_DIR/$output
     fi
 done
 echo "----------------- FINISHED !!!! BOX WRAPPING CP PROGRAM ---------------------"

@@ -14,9 +14,10 @@
 \usepackage{caption}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
-\usepackage[cache=false]{minted}
+\usepackage[cache=true]{minted}
 \usemintedstyle{default}
 \graphicspath{{./images/}}
+\newminted{cpp}{frame=lines,framerule=2pt}
 
 \tikzstyle{bag} = [align=center]
 
@@ -67,6 +68,9 @@
 \DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
 
 \newacronym{cp}{CP}{Constraint Programming}
+\newacronym{bsp}{BSP}{Best Success Principle}
+\newacronym{ffp}{FFP}{Fail First Principle}
+\newacronym{bab}{BAB}{Branch and Bound}
 
 \begin{document}
 
@@ -125,10 +129,129 @@ As we can see this variables are obvious from the statement problem in section \
   \item $x_{b_i}^{tl} + h_{b_i} - 1 < x_{b_j}^{tl} \lor y_{b_i}^{tl} + w_{b_i} - 1 < y_{b_j}^{tl}, \ \forall b_i > b_j \in N, i \neq j, r_{b_i} = 1$: Same as~\ref{c:7} for rotated $i$.
   \item\label{c:8} $x_{b_i}^{tl} < x_{b_j}^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
   \item $y_{b_i}^{tl} < y_{b_j}^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates
-  \item $x_b^{tl} < \frac{W}{2}-1,\ b = 1$: Break column symmetry. At least first box should be on the most left half of the roll width.
-   \item $y_b^{tl} < \frac{l}{2}-1,\ b = 1$: Break row symmetry. At least first box should be on the top half of the roll length.
+  \item $x_b^{tl} = 0,\ b = 1$: Break column symmetry. At least first box should be on the most left half of the roll width.
+   \item $y_b^{tl} = 0,\ b = 1$: Break row symmetry. At least first box should be on the top half of the roll length.
   \item $l = \argmax_{y_b^{br}} {b \in N}$: Length of the roll at the end cannot be larger than the biggest bottom right $y$-coordinate.
 \end{enumerate}
+
+\subsection{Optimization and Improvements}
+\subsubsection{Constraint Optimization}
+Regarding constraint optimization I am implemented the \textbf{length} optimization of the roll paper which is the final goal of the problem: Putting all boxes such as we are minimizing the used length. This is done in the \mintinline{cpp}{constrain} method during \acrfull{bab}.
+
+\begin{listing}[H]
+\begin{cppcode*}{}
+  virtual void constrain(const Space& boxWrap) {
+    const BoxWrapping& oldBox = static_cast<const BoxWrapping&>(boxWrap);
+    rel(*this, length < oldBox.length);
+  }
+\end{cppcode*}
+\caption{Branch and Bound Constraint Optimization}
+\label{lst:constrain}
+\end{listing}
+
+
+
+\subsubsection{Variable - Value Selection}
+The branch and bound strategy it is being implemented only on 3 Array variables of the model: $x_tl$, $y_tl$ and $r_b$. This is because the other 2 arrays which are the bottom rights, are calculated based on the constraints stated in the previous section and not need to do a value or var selection for that.
+
+I have implemented the following strategies for the variable and value selection:
+
+\begin{itemize}
+  \item \textbf{$x_b^{tl}$ Variable Selection}: I am doing a \acrfull{bsp} strategy, that state to try to choose those variable that will lead to solution first. In the case of the problem I am doing a \mintinline{cpp}{tiebreak} between the \mintinline{cpp}{INT_VAR_SIZE_MIN} and the box which is bigger in order to put first the \textbf{bigger} boxes. Although I am doing a descending sort based on the size of the boxes at the beginning of the program, I am also constraint this by the Gecode.
+
+
+\begin{listing}[H]
+\begin{cppcode*}{}
+  double merit_aux(int i) const{
+    return boxes.boxArea(i);
+  }
+
+  static double merit(const Space& home, IntVar x, int i){
+    return static_cast<const BoxWrapping&>(home).merit_aux(i);
+  }
+
+  branch(*this, x_tl,
+                tiebreak(INT_VAR_SIZE_MIN(),
+                         INT_VAR_MERIT_MAX(&merit)),
+                INT_VAL(&value));
+\end{cppcode*}
+\caption{Branch and Bound on $x_b^{tl}$ - Variable Selection}
+\label{lst:branch_var_x_tl}
+\end{listing}
+
+\item \textbf{$x_b^{tl}$ Value Selection}: In the case of value selection, since we are selecting the indexes in which the box are going to be positioned, we want first to try to fill the width first to take advantage of the width roll. In this case in the \mintinline{cpp}{value} custom method I am trying to see according to the bottom right $x$ coordinates that has been assigned, if there is still free space to put the current box to the right of the last assigned $x_b^{br}$ box.
+
+
+\begin{listing}[H]
+\begin{cppcode*}{}
+  int value_aux(IntVar x, int i) const {
+    int max = 0;
+    for(int i = 0; i<boxes.size(); i++){
+      if(x_br[i].assigned()){
+        if(max <= x_br[i].val()){
+          max = x_br[i].val();
+        }
+      }
+    }
+    int r = x.min();
+    for (IntVarValues k(x); k( ) ; ++k) {
+      int j  = k.val();
+      if(max < boxes.getWidth()-1 && j > max && j < r){
+        r = j;
+      }
+    }
+    return r;
+  }
+
+  static int value(const Space& home, IntVar x, int i) {
+    return static_cast<const BoxWrapping&>(home).value_aux(x, i);
+  }
+
+  branch(*this, x_tl,
+                tiebreak(INT_VAR_SIZE_MIN(),
+                         INT_VAR_MERIT_MAX(&merit)),
+                INT_VAL(&value));
+\end{cppcode*}
+\caption{Branch and Bound on $x_b^{tl}$ - Value Selection}
+\label{lst:branch_val_x_tl}
+\end{listing}
+
+\item\label{item:var_y_b_tl} \textbf{$y_b^{tl}$ Variable Selection}: In the case of $y$ top left coordinate variable selection I am following the same strategy as $x$-coordinate because we want to prioritize bigger boxes.
+
+\begin{listing}[H]
+\begin{cppcode*}{}
+  double merit_aux(int i) const{
+    return boxes.boxArea(i);
+  }
+
+  static double merit(const Space& home, IntVar x, int i) {
+    return static_cast<const BoxWrapping&>(home).merit_aux(i);
+  }
+
+  branch(*this, y_tl,
+                tiebreak(INT_VAR_SIZE_MIN(), INT_VAR_MERIT_MAX(&merit)),
+                INT_VAL_MIN());
+\end{cppcode*}
+\caption{Branch and Bound on $y_b^{tl}$ - Variable Selection}
+\label{lst:branch_var_y_tl}
+\end{listing}
+
+\item \textbf{$y_b^{tl}$ Value Selection}: In this case as it can be seen~\ref{item:var_y_b_tl} the selection of the value is the minimum because we want to fill fill from top down roll.
+
+\item \textbf{$r_b$ - Selection}: In this case which are the variables that indicate rotation I am following a default strategy and simple select \mintinline{ccp}{BOOL_VAL_MIN} in the case of value which indicate that it is going to be prioritize NO rotation first.
+
+\begin{listing}[H]
+\begin{cppcode*}{}
+  branch(*this, r_b, BOOL_VAR_NONE(), BOOL_VAL_MIN());
+\end{cppcode*}
+\caption{Branch and Bound on $r_b$ - Selection}
+\label{lst:branch_r_b}
+\end{listing}
+
+\end{itemize}
+
+
+
 
 \end{document}
 

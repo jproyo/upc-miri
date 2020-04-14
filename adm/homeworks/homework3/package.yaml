@@ -1,0 +1,66 @@
+name:                lsh-kdtree-exp
+version:             0.1.0.0
+synopsis:            Locality Sensitivity Hashing
+#description:
+homepage:            https://github.com/jproyo/upc-miri/adm/homeworks/homework3#readme
+license:             BSD3
+author:              Juan Pablo Royo Sales
+maintainer:          juanpablo.royo@gmail.com
+copyright:           2020 Juan Pablo Royo Sales
+category:            Experimental
+extra-source-files:
+- README.md
+
+dependencies:
+  - base
+
+library:
+  exposed-modules:
+    - Data.LSH.LSH
+    - Data.Tree.KDTree
+
+  source-dirs:
+    - src
+
+  ghc-options:
+    - -Wall
+    - -fconstraint-solver-iterations=0
+    - -fno-warn-orphans
+    - -fno-warn-partial-type-signatures
+    - -O2
+    - -Werror
+    - -fdiagnostics-color=always
+
+  dependencies:
+    - base
+    - containers
+    - hashable
+    - random
+    - split
+    - time
+    - QuickCheck
+
+executables:
+  cukoo:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - directory
+      - lsh-kdtree-exp
+      - criterion
+      - time
+
+tests:
+  random-bst-test:
+    main: Spec.hs
+    source-dirs:
+      - test
+      - src
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -fdiagnostics-color=always
+    dependencies:
+      - QuickCheck

@@ -1,0 +1,2 @@
+In the previous topic task, for 2nd deliverable, i asked for doing an experiment comparing Locality Sensitivity Hashing implementation against KD Tree for Nearest Points. I was said that was ok for a deliverable but just in case i am putting here again.
+I think also before the confinment we have discuss about the data set to use for the experiment and i am going to use the data set you recommended me, which is a data set with transactional data from a grossery store.

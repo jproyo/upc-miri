@@ -1,20 +1,24 @@
-
 module Experiments where
 
-import Data.LSH.LSH as L
-import Data.Tree.KDTree as K
-import Data.Types
-import IO.Data
+import           Data.LSH.LSH     as L
+import           Data.Text        (Text)
+import           Data.Tree.KDTree as K
+import           Data.Types
+import           IO.Data
 
-experimentKDTree :: IO (Maybe (Tuple15 Int), Integer)
-experimentKDTree =
-  flip K.nearest (toTuple15 [1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0]) .
-  (fromList tuple15D) . fmap snd <$>
-  ioForKDTree
+experimentKDTree :: [Text] -> IO ()
+experimentKDTree toSearch = do
+  ds <- ioForKDTree
+  let result = flip K.nearest (toTuple15 $ toBits toSearch) . (fromList tuple15D) . fmap tuples . trainingData $ ds
+  case result of
+    (Nothing, _) -> putStrLn "Nothing found"
+    (Just _, ix) -> print . input . searchValue ix $ ds
 
 
-experimentLSH :: IO [Int]
-experimentLSH = do
-  lsh <-foldr (uncurry L.insert) (L.new 1000 10) <$> ioForLSH
-  return $ L.nearest (["Homeowner", "Male"]::[String]) lsh
-
+-- Ideally 20 bands 15 rows
+experimentLSH :: [Text] -> Int -> Int -> IO ()
+experimentLSH toSearch band rows = do
+  ds <- ioForLSH
+  let lsh = foldr (uncurry L.insert . toLSH) (L.new band rows) $ trainingData ds
+  let result = L.nearest toSearch lsh
+  foldMap (print . flip searchValue ds) result

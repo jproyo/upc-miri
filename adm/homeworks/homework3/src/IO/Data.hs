@@ -1,58 +1,64 @@
-{-# LANGUAGE DeriveAnyClass  #-}
-{-# LANGUAGE DeriveFunctor   #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module IO.Data where
 
-import           Control.Arrow
-import           Data.List
-import           Data.Text     (Text)
-import qualified Data.Text     as L
-import qualified Data.Text.IO  as LIO
-import           Data.Types
+import Control.Arrow
+import Control.DeepSeq
+import Data.List
+import Data.Text (Text)
+import qualified Data.Text as L
+import qualified Data.Text.IO as LIO
+import Data.Types
+import GHC.Generics (Generic)
 
 data DataSet a =
   DataSet
     { trainingData :: [a]
-    , testData     :: [a]
+    , testData :: [a]
     }
-  deriving (Show)
+  deriving (Show, Generic, NFData)
 
 instance Functor DataSet where
   fmap f DataSet {..} = DataSet (fmap f trainingData) (fmap f testData)
 
-instance Semigroup (DataSet a) where
-  (<>) d1 d2 =
-    DataSet
-      { trainingData = trainingData d1 <> trainingData d2
-      , testData = testData d1 <> testData d2
-      }
-
-instance Monoid (DataSet a) where
-  mempty = DataSet [] []
+class Search a where
+  match :: a -> Int -> Bool
 
 data KDTreeInput =
   KDTreeInput
     { input :: Input
     , tuples :: Tuple15 Int
     }
-  deriving (Show)
+  deriving Show
+
+instance NFData KDTreeInput where
+  rnf = rnf . input
+
+instance Search KDTreeInput where
+  match k n = match (input k) n
 
 data Input =
   Input
-    { idx    :: Int
+    { idx :: Int
     , labels :: [Text]
     }
-  deriving (Show)
+  deriving (Show, Generic, NFData)
+
+instance Search Input where
+  match Input {..} n = idx == n
 
 toLSH :: Input -> (Int, [Text])
 toLSH = idx &&& labels
 
-searchValue :: Int -> DataSet a -> a
-searchValue idx DataSet {..} = trainingData !! (idx - 1)
+searchValue :: Search a => Int -> DataSet a -> Maybe a
+searchValue idx DataSet {..} = find (flip match idx) trainingData
 
-zipDataSet :: [a] -> DataSet b -> DataSet (a, b)
-zipDataSet as DataSet {..} = DataSet (zip as trainingData) (zip as testData)
+zipDataSet :: DataSet b -> DataSet (Int, b)
+zipDataSet DataSet {..} =
+  DataSet (zip [1 ..] trainingData) (zip [1 ..] testData)
 
 ioForLSH :: IO (DataSet Input)
 ioForLSH = ioToWords
@@ -60,10 +66,13 @@ ioForLSH = ioToWords
 ioForKDTree :: IO (DataSet KDTreeInput)
 ioForKDTree = toTuple15DataSet . normalize <$> ioToWords
 
-toTuple15DataSet ::
-     DataSet (Int, [(Int, Text)]) -> DataSet KDTreeInput
+toTuple15DataSet :: DataSet (Int, [(Int, Text)]) -> DataSet KDTreeInput
 toTuple15DataSet =
-  fmap (\(idx, points) -> KDTreeInput (Input idx (snd <$> filter ((/=) 0 . fst) points)) (toTuple15 (fst <$> points)))
+  fmap
+    (\(idx, points) ->
+       KDTreeInput
+         (Input idx (snd <$> filter ((/=) 0 . fst) points))
+         (toTuple15 (fst <$> points)))
 
 normalize :: DataSet Input -> DataSet (Int, [(Int, Text)])
 normalize = fmap (idx &&& (bitVal . labels))
@@ -80,7 +89,7 @@ toBits = fmap fst . bitVal
 ioToWords :: IO (DataSet Input)
 ioToWords =
   fmap (uncurry Input) .
-  zipDataSet [1 ..] .
+  zipDataSet .
   uncurry DataSet . (take 800 &&& drop 800) . fmap L.words . L.lines <$>
   LIO.readFile "./input/data.in"
 

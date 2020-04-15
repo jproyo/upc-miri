@@ -21,6 +21,7 @@ library:
   exposed-modules:
     - Data.LSH.LSH
     - Data.Tree.KDTree
+    - Experiments
 
   source-dirs:
     - src
@@ -37,6 +38,7 @@ library:
   dependencies:
     - base
     - containers
+    - deepseq
     - hashable
     - random
     - split
@@ -45,9 +47,9 @@ library:
     - QuickCheck
 
 executables:
-  cukoo:
+  lsh-kdtree-bench:
     main: Main.hs
-    source-dirs: app
+    source-dirs: app/bench
     dependencies:
       - directory
       - lsh-kdtree-exp

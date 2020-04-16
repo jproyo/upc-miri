@@ -15,12 +15,20 @@ dependencies:
   - base
 
 default-extensions:
+  - DerivingStrategies
+  - DeriveFunctor
+  - DeriveAnyClass
+  - DeriveGeneric
+  - GeneralizedNewtypeDeriving
   - OverloadedStrings
+  - TypeApplications
+  - RecordWildCards
 
 library:
   exposed-modules:
     - Data.LSH.LSH
     - Data.Tree.KDTree
+    - Data.Types
     - Experiments
 
   source-dirs:
@@ -44,7 +52,6 @@ library:
     - split
     - text
     - time
-    - QuickCheck
 
 executables:
   lsh-kdtree-bench:
@@ -53,6 +60,12 @@ executables:
     dependencies:
       - lsh-kdtree-exp
       - criterion
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -fdiagnostics-color=always
 
   lsh-kdtree-data:
     main: Main.hs
@@ -62,18 +75,25 @@ executables:
       - lsh-kdtree-exp
       - text
       - time
-
-tests:
-  random-bst-test:
-    main: Spec.hs
-    source-dirs:
-      - test
-      - src
     ghc-options:
       - -threaded
       - -O2
       - -rtsopts
       - -with-rtsopts=-N
       - -fdiagnostics-color=always
+
+  lsh-kdtree-random:
+    main: Main.hs
+    source-dirs: app/random
     dependencies:
+      - lsh-kdtree-exp
+      - criterion
       - QuickCheck
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -fdiagnostics-color=always
+
+

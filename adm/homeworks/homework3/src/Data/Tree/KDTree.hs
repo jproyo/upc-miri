@@ -1,11 +1,11 @@
 {-# OPTIONS_GHC -fno-warn-incomplete-patterns #-}
-{-# LANGUAGE TypeApplications #-}
 
 module Data.Tree.KDTree where
 
-import           Data.List     (genericLength, minimumBy, sortBy)
-import           Data.Ord      (comparing)
-import           System.Random hiding (split)
+import           Control.DeepSeq
+import           Data.List       (genericLength, sortBy)
+import           Data.Ord        (comparing)
+import           GHC.Generics
 
 -- A finite list of dimensional accessors tell a KDTree how to get a
 -- Euclidean dimensional value 'b' out of an arbitrary datum 'a'.
@@ -15,6 +15,7 @@ type DimensionalAccessors a b = [a -> b]
 data Tree a
   = Node a (Tree a) (Tree a)
   | Empty
+  deriving (Generic, NFData)
 
 instance Show a => Show (Tree a) where
   show Empty = "Empty"
@@ -24,6 +25,7 @@ instance Show a => Show (Tree a) where
 -- A k-d tree structure of 'a' with Euclidean dimensions of 'b'.
 data KDTree a b =
   KDTree (DimensionalAccessors a b) (Tree a)
+  deriving (Generic, NFData)
 
 instance Show a => Show (KDTree a b) where
   show (KDTree _ tree) = "KDTree " ++ show tree
@@ -139,75 +141,3 @@ nearest (KDTree dims tree) value = near (cycle dims) tree
                                  if bestDist < dist value otherBest
                                    then (Just best, count)
                                    else (maybeOtherBest, count)
-
--- Dimensional accessors for a 2-tuple
-tuple2D :: [(a, a) -> a]
-tuple2D = [fst, snd]
-
--- Dimensional accessors for a 3-tuple
-tuple3D :: [(a, a, a) -> a]
-tuple3D = [d1, d2, d3]
-  where
-    d1 (a, _, _) = a
-    d2 (_, b, _) = b
-    d3 (_, _, c) = c
-
--- Random 3-tuple generation
-instance (Random a, Random b, Random c) => Random (a, b, c) where
-  random gen =
-    let (vA, genA) = random gen
-        (vB, genB) = random genA
-        (vC, genC) = random genB
-     in ((vA, vB, vC), genC)
-  randomR ((lA, lB, lC), (hA, hB, hC)) gen =
-    let (vA, genA) = randomR (lA, hA) gen
-        (vB, genB) = randomR (lB, hB) genA
-        (vC, genC) = randomR (lC, hC) genB
-     in ((vA, vB, vC), genC)
-
-printResults ::
-     (Show a, Show b, Show c, Floating c)
-  => a
-  -> (Maybe a, b)
-  -> DimensionalAccessors a c
-  -> IO ()
-printResults point result dims = do
-  let (near, visited) = result
-  case near of
-    Nothing -> putStrLn "Could not find nearest."
-    Just value -> do
-      let dist = sqrt $ sqrDist dims point value
-      putStrLn $ "Point:    " ++ show point
-      putStrLn $ "Nearest:  " ++ show value
-      putStrLn $ "Distance: " ++ show dist
-      putStrLn $ "Visited:  " ++ show visited
-      putStrLn ""
-
--- Naive nearest search used to confirm results.
-linearNearest ::
-     (Ord b, Num b) => DimensionalAccessors a b -> a -> [a] -> Maybe a
-linearNearest _ _ [] = Nothing
-linearNearest dims value xs =
-  Just $ minimumBy (comparing $ sqrDist dims value) xs
-
-main :: IO ()
-main = do
-  let wikiValues :: [(Double, Double)]
-      wikiValues = [(2, 3), (5, 4), (9, 6), (4, 7), (8, 1), (7, 2)]
-      wikiTree = fromList tuple2D wikiValues
-      wikiSearch = (9, 2)
-      wikiNearest = nearest wikiTree wikiSearch
-  putStrLn "Wikipedia example:"
-  printResults @(Double, Double) @Integer wikiSearch wikiNearest tuple2D
-  let stdGen = mkStdGen 0
-      randRange :: ((Double, Double, Double), (Double, Double, Double))
-      randRange = ((0, 0, 0), (1000, 1000, 1000))
-      (randSearch, stdGenB) = randomR randRange stdGen
-      randValues = take 1000 $ randomRs randRange stdGenB
-      randTree = fromList tuple3D randValues
-      randNearest = nearest randTree randSearch
-      randNearestLinear = linearNearest tuple3D randSearch randValues
-  putStrLn "1000 random 3D points on the range of [0, 1000):"
-  printResults @(Double, Double, Double) @Integer randSearch randNearest tuple3D
-  putStrLn "Confirm naive nearest:"
-  print randNearestLinear

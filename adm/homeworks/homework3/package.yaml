@@ -51,9 +51,16 @@ executables:
     main: Main.hs
     source-dirs: app/bench
     dependencies:
-      - directory
       - lsh-kdtree-exp
       - criterion
+
+  lsh-kdtree-data:
+    main: Main.hs
+    source-dirs: app/data
+    dependencies:
+      - directory
+      - lsh-kdtree-exp
+      - text
       - time
 
 tests:

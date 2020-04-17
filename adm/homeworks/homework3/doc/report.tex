@@ -22,32 +22,9 @@
 
 \tikzstyle{bag} = [align=center]
 
-\lstset{frame=tb,
-  language=Haskell,
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\small\ttfamily},
-  numbers=left,
-  numberstyle=\tiny\color{gray},
-  keywordstyle=\color{blue},
-  commentstyle=\color{dkgreen},
-  stringstyle=\color{mauve},
-  breaklines=true,
-  breakatwhitespace=true,
-  tabsize=2,
-  stepnumber=1,
-  escapechar=`
-}
-
-\definecolor{dkgreen}{rgb}{0,0.6,0}
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\definecolor{mauve}{rgb}{0.58,0,0.82}
-
 \title{%
-      Homework 2 \\
-      Experimental Prove of Cukoo Hashing features
+      Homework 3 \\
+      Experimental Comparison between KDTrees vs. Locality Sensitivity Hashing
 }
 \author{%
   Juan Pablo Royo Sales \\
@@ -59,7 +36,7 @@
 \fancyhf{}
 \fancyhead[C]{}
 \fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
-\fancyhead[L]{ADS - Homework 2}
+\fancyhead[L]{ADM - Homework 3}
 \fancyfoot[L,C]{}
 \fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
 \setlength{\headheight}{15pt}
@@ -68,206 +45,202 @@
 
 \makeglossaries
 
-\newacronym{cuk}{CUKOO}{Cukoo Hashing}
-\newacronym{ccc}{CCC}{Complex Connected Component}
-\newacronym{bpgraph}{BGRAPH}{Bipartite Graph}
+\newacronym{lsh}{LSH}{Locality Sensitivity Hashing}
+\newacronym{kdt}{KDTree}{KDTrees}
+\newacronym{nns}{NNS}{Nearest Neighbor Search}
 \newacronym{haskell}{Haskell}{Haskell Programming Language}
+\newacronym{kde}{KDE}{Kernel Density Estimate}
+\newacronym{lrm}{LRM}{Linear Regression Model}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
-In this homework I am going to show through experimentation analysis two of the most important features of \acrfull{cuk} that are describe in detail here \cite{cukoo}:
+\section{Introduction}\label{sec:intro}
+In this work, I am going to show the experimental results of comparing \acrfull{lsh} vs. \acrfull{kdt} for doing \acrfull{nns} algorithm as a good predictor.
+
+In previous works \cite{hmw1} and \cite{hmw2} I've done a deep analysis on how this Data Structures work in order to achieve good asymptotic cost for doing \acrshort{nns} and predict values.
+
+In this work I have done an implementation of both Data Structures in Haskell \acrfull{haskell}.
+
+In the following sections I am going to describe where it can be found each source of information and code as well as the experiments run and the results.
+
+\section{Asset organization}
+Please check the appendix~\ref{apx:org} to see how the different assets are organized, how to run the experiment, and so on.
+
+\section{Data Source}
+\subsection{Static Data}
+The data source used for this experiment is the \textbf{Transactional Grocery Store} data accorded with the teacher that can be found in~\ref{apx:data}.
+
+I have chosen this data in agreement with the teacher because we want to experiment on high dimensional transactional data.
+
+This data source contains \textbf{1000} records of transactional data with at most \textbf{15} dimensions.
+
+The data set is divided into:
 
 \begin{itemize}
-  \item Insertion amortized expected $\theta(1)$
-  \item The probability that \acrshort{cuk} contains \acrfull{ccc} in terms of the Hastables that forms a \acrfull{bpgraph} when $m = (1+\epsilon)n$ is $m =O(1/n)$ \cite{kutze}
+  \item 800 Rows of Training Data
+  \item 200 Rows of Testing Data
 \end{itemize}
 
-I am going to show through experimental analysis, that empirically we can implement a \acrshort{cuk} that fulfill these properties.
+\subsection{Randomized Data}\label{sub:sec:random:data}
+For randomization experiments, I am generating $100000$ records with 15 dimensions each of positive integer values each.
 
-In order to see how the code and resources are organized and where to find all the material need, please check~\ref{appendix} section.
+For that I am using a \acrshort{haskell} library called QuickCheck \cite{QuickCheck}.
 
-\section{Implementation}
-The \acrshort{cuk} implementation that has been done for running this experiments is in \acrfull{haskell}.
+After generating the points I am splitting up in Training and Test Data Set of equal size $50000$
 
-I have implemented a full feature \acrshort{cuk} with some limitations:
+   \begin{listing}[H]
+    \inputminted[firstline=11, lastline=15]{haskell}{../app/random/Main.hs}
+    \caption{Extracted from source code app/random/Main.hs}
+    \label{src:main:random}
+   \end{listing}
 
-\begin{haskellcode*}{}
-module Data.Hash.Cukoo
-  ( create
-  , insert
-  , delete
-  , lookup
-  , toList
-  , elements
-  , rehashed
-  , rehashesCount
-  , length
-  ) where
-\end{haskellcode*}
 
-\subsection{Limitations and Assumptions}
-The first limitation that is important to pointed out is the \mintinline{haskell}{create} function which creates a new \acrshort{cuk} empty data structure. My implementation does not support multiple Hashtables indirections, and I have worked with a \acrshort{cuk} implementation of \textbf{2} Hashtables.
 
-Another important limitation is that I only allow \mintinline{haskell}{Integer} Positive values $x | x \in \mathbb{N}$. This restriction is allowing me to used \textbf{Unboxed Values} which increase the performance of my Data Type in big order of magnitude. You can check \textbf{Unboxed Values} explanation on \acrshort{haskell} here \cite{unboxed}.
+\subsection{Sanitizing Data}
+Since the data is not structured and each record contains different dimension we need to sanitize somehow in order to be able to feed the algorithm for further processing.
 
-The last limitation or assumption on hour implementation is the viability to work with \textbf{Universal Hash Functions}. Since we know although theoretical is possible, in the real implementations is very hard to achieve, in my implementation I am not working with \textbf{Universal Hash Function} but I am using 2 hash function that use a \textbf{next Prime} of the table expected size and the module of that.
+In the case of \acrshort{lsh} implementation, I don't need this sanitation because my implementation works on set of value hashing, so different combinations of unstructured record which are similar will lead to the same hash bucket.
 
-\subsection{Function Interface}
-As we can see in the \textbf{export} module list of the \acrshort{cuk} implementation we have the following functions exported and implemented:
+On the other hand, in the case of \acrshort{kdt}, I am going to need to sanitize this data because since \acrshort{kdt} is a multidimensional data structure, all the dimensional points are need to be represented in a structured way.
+
+For that reason I have done the following sanitation:
 
 \begin{itemize}
-  \item Complete \mintinline{haskell}{insert}, \mintinline{haskell}{delete} and \mintinline{haskell}{lookup} functions
-  \item \mintinline{haskell}{toList} to convert the \acrshort{cuk} Data Type to a regular list with all the keys in the Hashtable.
-  \item \mintinline{haskell}{elements} Count the number of elements in the Hashtable
-  \item \mintinline{haskell}{rehashed} Return \mintinline{haskell}{True} if the hash was rehashed on the last \mintinline{haskell}{insert}
-  \item \mintinline{rehashesCount} Return the number of rehashes so far.
-  \item \mintinline{haskell}{length} Return the length of both internal Hashtables. In fact this is going to return $2M$ where $M$ is the size of 1 of the internal hashtable.
+  \item Having different records of that like:
+
+    \inputminted[firstline=2, lastline=12]{text}{../input/data.in}
+
+  \item I took all the different possible dimensional labels
+    \begin{listing}[H]
+    \inputminted[firstline=91, lastline=108]{haskell}{../src/IO/Data.hs}
+    \caption{Extracted from source code src/IO/Data.hs}
+    \label{src:io:data:1}
+    \end{listing}
+
+  \item With for each record I create a dimensional point of 15 dimension with Bits values that indicates $1$ if the dimension is present in the record, $0$ otherwise.
+    \begin{listing}[H]
+    \inputminted[firstline=72, lastline=82]{haskell}{../src/IO/Data.hs}
+    \caption{Extracted from source code src/IO/Data.hs}
+    \label{src:io:data:2}
+    \end{listing}
+
 \end{itemize}
 
-\section{Experiments}
-In this section I am going to describe what is the setup of the experiment I have prepared and run and what assumptions I am doing.
+\section{Experiments Details}
+As I pointed out in the Introduction section~\ref{sec:intro}, I have already analyzed theoretical properties of these two Data Structures in the previous homework. Therefore, the main goal of this work is to focus in the experimental comparison.
 
-\subsection{Insert without Rehashing - Average time}\label{sec:ins}
-In order to calculate the average time of insertion without rehashing, I am measuring the time of the successful inserts, and only those that after insert the \mintinline{haskell}{rehashed} function returns \mintinline{haskell}{False}.
+In order to do that, I have defined 3(\textbf{three}) experiments.
 
-\begin{listing}[H]
-\begin{haskellcode*}{}
-insertWithoutRehash' :: Int -> IO [Integer]
-insertWithoutRehash' n = do
-  idx <- getPositive <$> generate (arbitrary @(Positive Int))
-  list <- generate $ shuffle [idx `.`. idx + n]
-  let (test, train) = splitAt (n '`div'` 2) list
-  fmap catMaybes <$> return $
-    runST $ do
-      hash <- create
-      mapM_ (C.insert hash) $ test
-      forM train $ \e -> do
-        start <- toNano <$> return (unsafePerformIO getCurrentTime)
-        _ <- C.insert hash e
-        rehash <- C.rehashed hash
-        end <- toNano <$> return (unsafePerformIO getCurrentTime)
-        return $ unsafePerformIO $ print start
-        let diff = (end - start)
-        return $
-          if rehash
-            then Nothing
-            else Just diff
-\end{haskellcode*}
-\caption{Insert without Rehashing Function}
-\label{lst:insertWithoutRehash}
-\end{listing}
+\begin{itemize}
+  \item \textbf{Benchmark}
+  \item \textbf{Qualitative}
+  \item \textbf{Randomized Benchmark}
+\end{itemize}
 
-In the case of this experiment I am running $3000$ iterations of Random lists which size is between $100$ and $10000$ elements.
+\subsection{Benchmark}\label{sub:sec:bench}
+This experiment consist in measuring and comparing the empirical performance on both data structures. For that I have used a very well known \acrshort{haskell} library \cite{criterion}.
 
-\subsection{Average Number of Rehashes}\label{sec:rehash}
-The other experiment that I have run is the average number of rehashes. In this case what I have done is to run $1000$ iterations, creating Hashtables in each iteration of Random number of elements always greater than $1000$ elements but less than $10000$. In this case, after each creation of the whole iteration I have used \mintinline{haskell}{rehashesCount} function to gather the number of rehashes done and compare with the size of the internal Hashtable which is always going to be $2M$ as i have mentioned in the previous section.
+Basically this library run several samples of the same process to take statistical analysis of the running time of the process. With that statistical information it builds a \acrfull{kde} graphic and a \acrfull{lrm}.
 
-\begin{listing}[H]
-\begin{haskellcode*}{}
-avgRehashes' :: Int -> IO (Int, Int)
-avgRehashes' n = do
-  idx <- getPositive <$> generate (arbitrary @(Positive Int))
-  list <- generate $ shuffle [idx `.`. idx + n]
-  return $
-    runST $ do
-      hash <- create
-      mapM_ (C.insert hash) list
-      rehashes <- C.rehashesCount hash
-      l        <- C.length hash
-      return (l, rehashes)
-\end{haskellcode*}
-\caption{Rehash Count Experiment Function}
-\label{lst:avgRehashes}
-\end{listing}
+The benchmarking experiments are going to be focus on the following comparisons:
+
+\begin{itemize}
+  \item Running time of loading Training Data Set on \acrshort{lsh}
+  \item Running time of loading Training Data Set on \acrshort{kdt}
+  \item Running time of performing \acrshort{nns} on each Test Data Set on \acrshort{lsh}
+  \item Running time of performing \acrshort{nns} on each Test Data Set on \acrshort{kdt}
+\end{itemize}
+
+\subsection{Qualitative}
+Qualitative analysis is basically load the training data, and after that for each row of the Testing Data Set, run \acrshort{nns} in order to see and analyze each result.
+
+\subsection{Randomized Benchmark}
+Randomized Benchmark is the same kind of experiment as Benchmark~\ref{sub:sec:bench} but the difference is that I am using randomized generated data to train and search in the model.
+
+This experiment I have done in order to test the performance of the Data Structures with a lot of data since $1000$ records it is not too much.
+
+In order to see details about randomized data generation check subsection~\ref{sub:sec:random:data}
 
 \section{Results}
-\subsection{Average Time Insert without Rehash}
-After running the experiment described in~\ref{sec:ins} we can draw the following graph with the gathered data.
 
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{insert_without_rehash}
-    \captionof{figure}{Insert without Rehash Average Time}
-    \label{fig:ins_rehash}
-  \end{minipage}
+\section{Conclusions}
 
-  In this graph we can appreciate that no matter the \textbf{Number of Elements} that we insert in the table the average time is mainly in the
-  \textit{850 nanoseconds}.
+\bibliographystyle{alpha}
+\bibliography{report}
 
-  On the other hand we can appreciate that there are some data points which are far away from the average time, but it is not the majority since the samples are big this is not representative.
+\printglossary[type=\acronymtype]
 
-  Analyzing the data I have appreciate that those points that are far away from from the \textbf{Mean} are those when the number of elements are small and in consequence when the size of the Hashtable is small too.
-
-  If we take the theoretical \textbf{amortized insert} cost that we state in the Introduction, we can see \textit{w.l.g.} that the time is more or less constant in practice for the majority of the samples.
-
-
-\subsection{Average Number of Rehashes}
-After running the experiments described in~\ref{sec:rehash} we can see the following graph built with the gathered data.
-
-
-\begin{minipage}[t]{\linewidth}
-  \includegraphics[width=\textwidth]{average_rehash_count_2m}
-  \captionof{figure}{Average Rehash Count vs. Hashtable Size}
-  \label{fig:rehash_avg_2m}
-\end{minipage}
-
-
-The first analysis we can state is comparing the number of \textbf{rehashes} with respect to the size of Hashtables.
-
-As we can appreciate from the results the total number of rehashes is never above $7$ and never grows abruptly in spite the number of elements of being inserted is increasing faster with the number of iterations. We are going to see that in a more clear way in the following plot.
-
-\begin{minipage}[t]{\linewidth}
-  \includegraphics[width=\textwidth]{average_rehash_count_n}
-  \captionof{figure}{Average Rehash Count vs. Number Elements}
-  \label{fig:rehash_avg_n}
-\end{minipage}
-
-In this graphic we can clearly see that in spite the number of elements grows and even double as the iterations take place, we never go above $7$. This is a great approximation to the probability state in the introduction that says that in this \acrshort{bpgraph} is $O(1/n)$.
-
-\section{Conclusion}
-In conclusion I can state that this structure is very close to its theoretical statement.
-
-On the one hand I feel more confident with the empirical results of \textbf{rehash count} rather than \textbf{average time on insertion}.
-
-One of the possibility to have many data points far away the average in the case of Insertion is the real viability to work with \textbf{Universal Hash Function} which implies that I am having to much collisions and unsuccessful inserts which lead me to a worst time in some cases for insertions. Because of that for big number since the Hashtables are larger i am getting less collisions and more successful inserts, therefore less insertion average time.
-
-
-\appendix\label{appendix}
-\section{Haskell Code}
+\appendix\label{apx:org}
+\section{Haskell}
 \subsection{Source Code}
 In the source code there are 2 folders with code:
 
 \begin{itemize}
-  \item \textbf{app}: \mintinline{haskell}{Main.hs} which contains the main entry point of the program that run all the experiment
-  \item \textbf{src}: \mintinline{haskell}{Experiments.hs} contains the experiments and \mintinline{haskell}{Data/Hash/Cukoo.hs} that contains the implementation of \acrshort{cuk}
+  \item \textbf{app}: Which contains 3 programs with the 3 executables source code file. Here we can find:
+    \begin{itemize}
+      \item \textbf{\mintinline{haskell}{app/bench/Main.hs}}: It is the main entry point that run the Benchmark analysis in both Data Structures.
+      \item \textbf{\mintinline{haskell}{app/data/Main.hs}}: It is the main entry point that run the A Qualitative analysis in both Data Structures to see what is the output on each case.
+      \item \textbf{\mintinline{haskell}{app/random/Main.hs}}: It is the main entry point that run a Benchmark but based on Random generate data in both Data Structures.
+    \end{itemize}
+  \item \textbf{src}: Contains the implementation source code of the Data Structures.
+    \begin{itemize}
+      \item \textbf{\mintinline{haskell}{src/Experiments.hs}}: It contains the different experiment run.
+      \item \textbf{\mintinline{haskell}{src/Data/LSH/LSH.hs}}: \acrshort{lsh} Implementation.
+      \item \textbf{\mintinline{haskell}{src/Data/Tree/KDTree.hs}}: \acrshort{kdt} Implementation.
+      \item \textbf{\mintinline{haskell}{src/Data/Types.hs}}: Usefull types to handle 15 dimensional points.
+      \item \textbf{\mintinline{haskell}{src/IO/Data.hs}}: Handle reading dataset from file, sanitizing and transforming to be fed into implementations. Also partition the data between training and test set.
+    \end{itemize}
+
 \end{itemize}
 
 \subsection{Run the Code}
 All the solution has been coded with \textbf{Stack} \cite{stack} version 2.1.3 or higher. It is a prerequisite to install \textit{stack} for running this code.
 
 \subsubsection{Running Experiments}
+In order to run the experiments just do the following in each case.
 
-In order to run the experiments just do the following:
+\begin{itemize}
+  \item \textbf{Benchmark Experiment}
 
-\begin{lstlisting}[language=Haskell,title={Running Experiments}]
-shell> stack build
-shell> stack exec cukoo
-\end{lstlisting}
+\begin{minted}{bash}
+stack build
+stack exec lsh-kdtree-bench -- --output MY_OUTPUT_FILE.html
+\end{minted}
+
+This is going to left an HTML report with the benchmark results in \mintinline{bash}{MY_OUTPUT_FILE.html}
+
+\item \textbf{Randomized Benchmark Experiment}
+
+\begin{minted}{bash}
+stack build
+stack exec lsh-kdtree-random -- --output MY_OUTPUT_FILE.html
+\end{minted}
+
+This is going to left an HTML report with the randomized benchmark results in \mintinline{bash}{MY_OUTPUT_FILE.html}
+
+
+\item \textbf{Qualitative Data Experiment}
+
+\begin{minted}{bash}
+stack build
+stack exec lsh-kdtree-data
+\end{minted}
+
+This is going to print a summarized result, but it is going to left \textbf{csv} files under \mintinline{haskell}{output} directory with a timestamp suffix to identified the run, where you can find that for every tested data case what is the \acrshort{nns} result.
+
+\end{itemize}
+
+\section{Data Source - Input}\label{apx:data}
+Input data or Data Source is being store under \mintinline{haskell}{input} folder.
 
 \section{Generated Reports}
 All the Generated Reports that has been used to build this document are under \mintinline{haskell}{output} folder.
 
-
 \section{Report PDF Document}
 This report document is under \mintinline{haskell}{doc} folder alongside images that are embedded in this report.
 
-
-\bibliographystyle{alpha}
-\bibliography{report}
-
-\printglossary[type=\acronymtype]
 
 \end{document}
 

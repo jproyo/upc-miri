@@ -51,6 +51,7 @@
 \newacronym{haskell}{Haskell}{Haskell Programming Language}
 \newacronym{kde}{KDE}{Kernel Density Estimate}
 \newacronym{lrm}{LRM}{Linear Regression Model}
+\newacronym{cod}{CoD}{Curse of dimensionality}
 
 \begin{document}
 
@@ -156,7 +157,7 @@ The benchmarking experiments are going to be focus on the following comparisons:
 \subsection{Qualitative}
 Qualitative analysis is basically load the training data, and after that for each row of the Testing Data Set, run \acrshort{nns} in order to see and analyze each result.
 
-\subsection{Randomized Benchmark}
+\subsection{Randomized Benchmark}\label{sub:sec:exp:random}
 Randomized Benchmark is the same kind of experiment as Benchmark~\ref{sub:sec:bench} but the difference is that I am using randomized generated data to train and search in the model.
 
 This experiment I have done in order to test the performance of the Data Structures with a lot of data since $1000$ records it is not too much.
@@ -164,8 +165,148 @@ This experiment I have done in order to test the performance of the Data Structu
 In order to see details about randomized data generation check subsection~\ref{sub:sec:random:data}
 
 \section{Results}
+\subsection{Benchmark}
+This are the graphics after running the benchmark analysis.
+
+\subsubsection{Overview}
+In the overview analysis, in terms of time we can appreciate that in general training data, which is loading into the structure, is much more efficient in \acrshort{lsh} rather than in \acrshort{kdt}.
+
+On the other hand we can see that searching is more efficient on \acrshort{kdt} in terms of time but the difference is in term of $\mu s$ which is not so significant, but lets analyze this in deep later in following section.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{bench_overview}
+  \captionsetup{type=figure}
+  \captionof{figure}{Overview Benchmark}
+  \label{fig:bench_overview}
+\end{minipage}
+
+
+\subsubsection{Training Data}
+
+\begin{itemize}
+\item \textbf{LSH Training}
+As we can see in the following graph we can appreciate that Data training or load in the case of \acrshort{lsh} behaves normally distributed around $696 \mu s$ as the mean indicates.
+
+On the other hand the \textbf{Outlyings} has only an impact of $21.9\%$ only which indicates that the program behaves equal across the samples.
+
+We can appreciate also a good fit of $0.996$, so the distribution is not too noisy.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{bench_lsh_load_training_ds}
+  \captionsetup{type=figure}
+  \captionof{figure}{LSH Training Data - Benchmark}
+  \label{fig:bench_lsh_load_training_ds}
+\end{minipage}
+
+Regarding the \acrshort{lrm} build by the tool we can see also how the points are near the line which indicates that we can estimate with a good precision the next run of the training, giving us a good program that we can predict how is going to run.
+
+\item \textbf{KDTree Training}
+As I can show in the Overview section, training is taking more time for \acrshort{kdt} but for obvious reason of the structure. Inserting in a Hash Table takes $\theta(1)$ time and in a Balance Tree as \acrshort{kdt} is $\theta(\log{n})$ as I have describe in the previous works.
+
+The \textbf{Outlyings} here are affecting more and it seems that across different samples the tree is behaving slightly different, but not so much.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{bench_kdt_load_training_ds}
+  \captionsetup{type=figure}
+  \captionof{figure}{KDTree Training Data - Benchmark}
+  \label{fig:bench_kdt_load_training_ds}
+\end{minipage}
+
+The fitting of the model is also good in this case with $0.998$ as estimate vale, and the \acrshort{lrm} also good for predicting runs.
+
+\end{itemize}
+
+\subsubsection{NNS Test Data}\label{sub:sub:sec:test:results}
+Lets analyze \acrshort{nns} algorithm for predicting points with the Test Data Set.
+
+\begin{itemize}
+\item \textbf{LSH NNS}
+Regarding searching of points It can be appreciated that in this case the results are also quite good in terms of Fitting with a Good fit of $0.998$, time $191 \mu s$ and also distribution of the samples with only a $18.2\%$ effect of \textbf{Outlyings}.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{bench_lsh_nns_test_ds}
+  \captionsetup{type=figure}
+  \captionof{figure}{LSH NNS Test Data - Benchmark}
+  \label{fig:bench_lsh_nns_test_ds}
+\end{minipage}
+
+Also the \acrshort{lrm} indicates a good prediction on next searches and how the algorithm is going to perform in that sense.
+
+\item \textbf{KDTree NNS}
+Regarding \acrshort{kdt} it can be appreciated here why it is taking much less time to do an \acrshort{nns} rather than \acrshort{lsh}, and that is because the effect of \textbf{Outliers} is high with $89.2\%$, therefore the sample is too much noisy and the algorithm is not behaving stable as expected.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{bench_kdt_nns_test_ds}
+  \captionsetup{type=figure}
+  \captionof{figure}{KDTree NNS Test Data - Benchmark}
+  \label{fig:bench_kdt_nns_test_ds}
+\end{minipage}
+
+As I have stated in my previous deliverable \cite{hmw2}, \acrshort{kdt} suffers from what is called the \textbf{\acrfull{cod}}, and we are dealing with $15$ dimensions here and for the data structure is complicate to handle that and the cost of searching increase more than linear.
+
+This can be seen also in the \acrshort{lrm} where we can the see the pints outlying the line.
+\end{itemize}
+
+\subsection{Qualitative Results}\label{sub:sec:qual:results}
+As you can see on the appendix~\ref{apx:reports}, the results of this analysis can be found in \mintinline{bash}{output} folder and are the files with \mintinline{bash}{.csv} extension.
+
+Also the summary which is the following
+
+\begin{listing}[H]
+\inputminted{text}{../output/data_summary_1587016424.out}
+\caption{Summary Qualitative Analysis}
+\label{output:summary}
+\end{listing}
+
+As we can appreciate the level of successful predictions in \acrshort{lsh} is much more higher than \acrshort{kdt}.
+
+This could be explain because of what i stated in the previous section that \acrshort{kdt} suffers from \acrshort{cod}. The real predictions that this kind of structure can do is very low compared with \acrshort{lsh}.
+
+\subsection{Randomized Benchmark}\label{sub:sec:results:random}
+You can check setup of this experiment in~\ref{sub:sec:exp:random}.
+
+In the case of randomized Benchmark we have found the following results:
+
+\begin{itemize}
+  \item \textbf{LSH}:
+
+    As it can be appreciated in the following graph, training with much more data decreased the time spent on loading the Hashtable but we can appreciate that there is no \textbf{outliers} affecting the distribution and the structure behave stable across run.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{random_bench_lsh}
+  \captionsetup{type=figure}
+  \captionof{figure}{Randomized LSH - Benchmark}
+  \label{fig:random_bench_lsh}
+\end{minipage}
+
+Also in searching we can appreciate extremely good results in terms of time, distribution and Good fit.
+
+  \item \textbf{KDTree}:
+
+In the case of this structure we are seeing the same behavior that with the regular benchmark analysis.
+
+It is more costly to load and train the structure because of the amount of records, but on searching we start seeing the effect of \textbf{outliers} as we experience in the regular benchmark results with a high percentage of them $74.4\%$.
+
+ \begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{random_bench_kdt}
+  \captionsetup{type=figure}
+  \captionof{figure}{Randomized KDTree - Benchmark}
+  \label{fig:random_bench_kdt}
+ \end{minipage}
+
+
+\end{itemize}
+
+In general both structure follow the same pattern for randomized data than with specific transactional data, which indicates that there is empirical evidence that show us both structure are deterministic in their behavior.
 
 \section{Conclusions}
+In conclusion we have shown through this experimental analysis that \textbf{\acrlong{lsh}} behaves better for predicting and dealing with high dimensions, rather than \textbf{\acrlong{kdt}}.
+
+This can be seen on results here~\ref{sub:sub:sec:test:results} very clearly and also if we randomized data here~\ref{sub:sec:results:random}.
+
+All the results obtain through the experiments are showing that the theoretical difference presented in \cite{hmw1} and \cite{hmw2} can be proved empirically.
+
+Dealing with higher dimensional data could lead to inefficient structures if it is required to perform Ranged Queries or \acrlong{nns} algorithms for predictions. Having clever structures and algorithms like \acrfull{lsh} has shown that is an excellent alternative to deal with this problem.
 
 \bibliographystyle{alpha}
 \bibliography{report}
@@ -235,8 +376,14 @@ This is going to print a summarized result, but it is going to left \textbf{csv}
 \section{Data Source - Input}\label{apx:data}
 Input data or Data Source is being store under \mintinline{haskell}{input} folder.
 
-\section{Generated Reports}
-All the Generated Reports that has been used to build this document are under \mintinline{haskell}{output} folder.
+\section{Generated Outputs}\label{apx:reports}
+All the Generated Outputs that has been used to build this document are under \mintinline{haskell}{output} folder.
+
+\begin{itemize}
+  \item \textbf{html}: HTML files on this folder are Benchmark graphics and report generated by \cite{criterion} tool.
+  \item \textbf{csv}: CSV files on this folder have been generated by Qualitative analysis and contains for each searched value the response of the algorithm.
+  \item \textbf{out}: Files whose extension is \mintinline{bash}{.out} is a summary of the successful findings in Qualitative analysis.
+\end{itemize}
 
 \section{Report PDF Document}
 This report document is under \mintinline{haskell}{doc} folder alongside images that are embedded in this report.

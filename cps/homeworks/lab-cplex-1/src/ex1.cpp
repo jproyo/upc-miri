@@ -142,21 +142,21 @@ int main () {
     cout << "Min = " << cplex.getObjValue() << endl;
     cout << "--- Type 1 ---" << endl;
     for(int i = 0; i < 12; i++){
-      for(int j = 0; j < 24; j++){
-        cout << "Generator " << i+1 << " - Hour: " << j << " - Power: " << cplex.getValue(mw_1[i][j]) << " MW" << endl;
-      }
+      IloNumArray v(env);
+      cplex.getValues(mw_1[i],v);
+      cout << "Generator " << i+1 << " - Power: " << v << endl;
     }
     cout << "--- Type 2 ---" << endl;
     for(int i = 0; i < 10; i++){
-      for(int j = 0; j < 24; j++){
-        cout << "Generator " << i+1 << " - Hour: " << j << " - Power: " << cplex.getValue(mw_2[i][j]) << " MW" << endl;
-      }
+      IloNumArray v(env);
+      cplex.getValues(mw_2[i],v);
+      cout << "Generator " << i+1 << " - Power: " << v << endl;
     }
     cout << "--- Type 3 ---" << endl;
     for(int i = 0; i < 5; i++){
-      for(int j = 0; j < 24; j++){
-        cout << "Generator " << i+1 << " - Hour: " << j << " - Power: " << cplex.getValue(mw_3[i][j]) << " MW" << endl;
-      }
+      IloNumArray v(env);
+      cplex.getValues(mw_3[i],v);
+      cout << "Generator " << i+1 << " - Power: " << v << endl;
     }
     env.end();
   } catch (IloAlgorithm::CannotExtractException &e) {

@@ -1,0 +1,158 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=true]{minted}
+\usemintedstyle{default}
+\graphicspath{{./images/}}
+\newminted{cpp}{frame=lines,framerule=2pt}
+
+\tikzstyle{bag} = [align=center]
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  stepnumber=1,
+  escapechar=!
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\title{%
+      Combinatorial Problem Solving \\
+      Final Project - Box Wrapping \\
+      Linear Programming
+}
+\author{%
+  Juan Pablo Royo Sales \\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{CPS - Final Project - LP}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
+
+\newacronym{lp}{LP}{Linear Programming}
+\newacronym{cp}{CP}{Constraint Programming}
+
+\begin{document}
+
+\maketitle
+
+\section{Linear Programming}
+
+\subsection{Predefinitions}
+Values given by the state the of the program.
+
+\begin{itemize}
+  \item $1 \leq W \leq 11$ maximum width paper roll
+  \item $L$ maximum length paper roll. By definition is infinite
+  \item $B = \{1, \dots, n\}$ total number of Boxes
+  \item $w_b$ Width of the Box $b, b \in B$
+  \item $h_b$ Height of the Box $b, b \in B$
+\end{itemize}
+
+\subsection{Formal Definition}
+Given the statement of the problem proposed, we are going to define the following variables for our \acrfull{lp} solution.
+
+\subsubsection{Variables}
+\begin{itemize}
+  \item $x_b^{tl}$: Top \textbf{left} corner $x$. Means the box $b$ is on the top left $x$-coordinate.
+  \item $y_b^{tl}$: Top \textbf{left} corner $y$. Means the box $b$ is on the top left $y$-coordinate.
+  \item $x_b^{br}$: Bottom \textbf{right} corner $x$. Means the box $b$ is on the bottom right $x$-coordinate.
+  \item $y_b^{br}$: Bottom \textbf{right} corner $y$. Means the box $b$ is on the bottom right $y$-coordinate.
+  \item $r_b$: Boolean Array that indicates if the Box $b$ is rotated or not.
+
+  \item $l_b$: Boolean Array that indicates if the Box $b$ is in left most position or not.
+\end{itemize}
+
+As we can see I am reusing some variables that I have used in \acrfull{cp} deliverable. I am going to do the same for Bounding and Constraints. Some of them are going to be equal to previous solution in \acrshort{cp} because they are expressed linearly.
+
+\subsubsection{Variable Bounds}
+\begin{itemize}
+  \item $x_b^{tl} \in \mathbb{Z}, 0 \leq x_b^{tl} \leq W-1, b \in B$
+  \item $y_b^{tl} \in \mathbb{Z}, 0 \leq y_b^{tl} \leq L-1, b \in B$
+  \item $x_b^{rb} \in \mathbb{Z}, 0 \leq x_b^{rb} \leq W-1, b \in B$
+  \item $y_b^{rb} \in \mathbb{Z}, 0 \leq y_b^{rb} \leq L-1, b \in B$
+  \item $r_b \in \{0,1\}, b \in B$
+  \item $l_b \in \{0,1\}, b \in B$
+\end{itemize}
+
+
+\subsubsection{Constraints}
+
+\begin{enumerate}
+
+  \item $x_b^{tl} + l_b \leq 1,\ \forall b \in B$: Restriction to check if the box $b$ is in the most left position.
+
+  \item $x_b^{tl} + (1 - l_b) > 1,\ \forall b \in B$: Restriction to see if box $b$ is in the most left position, but counterpart in case $l_b = 0$.
+
+  \item $x_b^{tl} \leq x_b^{br},\ \forall b \in B$: Each top left $x$ coordinate must be less or equal than the bottom right $x$-coordinate in each Box.
+
+  \item $y_b^{tl} \leq y_b^{br},\ \forall b \in B$: Each top left $y$-coordinate must be less or equal than the bottom right $y$-coordinate in each Box.
+
+  \item\label{c:3} $x_b^{br} \leq W-1,\ \forall b \in B$: There is no bottom right $x$-coordinate that is longer that the maximum width of paper roll $W$.
+
+  \item\label{c:4} $x_b^{tl} + r_b \times (w_b-1) + (1 - r_b) \times (h_b-1) = x_b^{rb},\ \forall b \in B$: The amount of $x$ coordinates that occupies each box is the width or height of that box depends on its rotation.
+
+  \item\label{c:5} $y_b^{tl} + r_b \times (h_b-1) + (1 - r_b) \times (w_b-1) = y_b^{rb},\ \forall b \in B$: The amount of $y$ coordinates that occupies each box is the width or height of that box depends on its rotation.
+
+  \item\label{c:6} $x_{b_j}^{tl} - x_{b_i}^{tl} + r_i \times (w_i - 1) + (1-r_i) \times (h_i - 1) > 0,\ \forall i,j | i \neq j,\ w_{b_i} * h_{b_i} \leq w_{b_j} * h_{b_j}$: Not overlap $x_b^{tl}$ coordinate boxes for all pair of boxes rotated or not, when area box $i$ is less or equal than area on box $j$.
+
+  \item\label{c:7} $y_{b_j}^{tl} - y_{b_i}^{tl} + r_i \times (h_i - 1) + (1-r_i) \times (w_i - 1) > 0,\ \forall i,j | i \neq j,\ w_{b_i} * h_{b_i} \leq w_{b_j} * h_{b_j}$: Not overlap $y_b^{tl}$ coordinate boxes for all pair of boxes rotated or not, when area box $i$ is less or equal than area on box $j$.
+
+  \item\label{c:8} $x_{b_i}^{tl} < x_{b_j}^{tl}\ \forall b_i, b_j \in B,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: For each pair of boxes try to put first the bigger box.
+
+  \item $y_{b_i}^{tl} < y_{b_j}^{tl}\ \forall b_i, b_j \in N,\ i \neq j,\ w_{b_i} \times h_{b_i} \geq w_{b_j} \times h_{b_j}$: Same as~\ref{c:8} But for $y$ coordinates.
+
+\end{enumerate}
+
+\subsubsection{Objective Function}
+
+Minimize the total length of each box. Remember that $l_b = 1$ only if the box $b$ is in the $x_b^{tl} = 0$ position. So we are only summing up boxes that are one bellow the other.
+
+\begin{subequations}
+  \begin{align}
+    \min \sum_{i=0}^B l_b \times (x_b^{br} - x_b^{tl}) + 1
+  \end{align}
+\end{subequations}
+
+\end{document}
+

@@ -25,7 +25,7 @@ CCLNFLAGS = -L$(CPLEXLIBDIR) -lilocplex -lcplex -L$(CONCERTLIBDIR) -lconcert -lm
 CONCERTINCDIR = $(CONCERTDIR)/include
 CPLEXINCDIR   = $(CPLEXDIR)/include
 
-CCFLAGS = $(CCOPT) -I$(CPLEXINCDIR) -I$(CONCERTINCDIR) -g
+CCFLAGS = $(CCOPT) -I$(CPLEXINCDIR) -I$(CONCERTINCDIR)
 
 
 BIN_DIR = bin
@@ -37,8 +37,8 @@ all: checker main
 clean:
 	rm -rf $(BIN_DIR)/*
 
-main.o: $(SRC_DIR)/main.cpp
-	$(CCC) $(CCFLAGS) $(SRC_DIR)/main.cpp -o $(BIN_DIR)/boxw.o
+main.o:
+	$(CCC) $(CCFLAGS) -c $(SRC_DIR)/main.cc -o $(BIN_DIR)/boxw.o
 
 main: main.o
 	$(CCC) $(CCFLAGS) $(BIN_DIR)/boxw.o -o $(BIN_DIR)/boxw $(CCLNFLAGS)
@@ -48,5 +48,4 @@ checker.o:
 
 checker: checker.o
 	$(CCC) $(CCFLAGS) $(BIN_DIR)/checker.o -o $(BIN_DIR)/checker
-
 

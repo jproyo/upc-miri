@@ -1,0 +1,271 @@
+Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Found incumbent of value 0.000000 after 0.00 sec. (0.00 ticks)
+Tried aggregator 1 time.
+MIP Presolve eliminated 0 rows and 5 columns.
+MIP Presolve added 10 rows and 5 columns.
+Reduced MIP has 15 rows, 15 columns, and 30 nonzeros.
+Reduced MIP has 15 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (0.01 ticks)
+Probing fixed 5 vars, tightened 0 bounds.
+Probing time = 0.00 sec. (0.01 ticks)
+Tried aggregator 1 time.
+MIP Presolve eliminated 15 rows and 15 columns.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (3.86 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (3.86 ticks)
+Min = 0
+Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Found incumbent of value 0.000000 after 0.00 sec. (0.00 ticks)
+Tried aggregator 1 time.
+MIP Presolve eliminated 10 rows and 15 columns.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = 0
+Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Tried aggregator 1 time.
+MIP Presolve eliminated 15 rows and 15 columns.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = 0
+Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Tried aggregator 1 time.
+MIP Presolve eliminated 20 rows and 25 columns.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.02 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.02 ticks)
+Min = 0
+Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Infeasibility row 'c8':  0 <= -1.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.02 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.02 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c6' infeasible, all entries at implied bounds.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Row 'c2' implies binary variable 'x2' is negative.
+Presolve time = 0.00 sec. (0.00 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.01 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.01 ticks)
+Min = Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Tried aggregator 2 times.
+MIP Presolve eliminated 28 rows and 25 columns.
+MIP Presolve added 1 rows and 1 columns.
+Aggregator did 4 substitutions.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.03 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.04 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.04 ticks)
+Min = 0
+Version identifier: 12.10.0.0 | 2019-11-26 | 843d4de
+Tried aggregator 2 times.
+MIP Presolve eliminated 41 rows and 24 columns.
+Aggregator did 4 substitutions.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.04 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.00 sec. (0.04 ticks)
+Parallel b&c, 12 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.00 sec. (0.04 ticks)
+Min = 0

@@ -10,7 +10,6 @@
  *
  */
 
-#include <ilcplex/ilocplex.h>
 #include <cstdlib>
 
 #ifndef BOX_WRAPPER
@@ -19,7 +18,7 @@
 #endif
 
 using namespace std;
-ILOSTLBEGIN
+
 namespace utils {
 
   void show_help(int argc, char* argv[]){

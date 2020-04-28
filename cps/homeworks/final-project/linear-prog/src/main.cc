@@ -50,9 +50,6 @@ int main(int argc, char* argv[]) {
     //For applying big-M method i
     const int M_x = boxes.getWidth();
     const int M_y = boxes.getMaxLength();
-    //big-M for on overlap constraint
-    IloBoolVarArray bigm_overlap_1(env, boxes.size()*(boxes.size()-1));
-    IloBoolVarArray bigm_overlap_2(env, boxes.size()*(boxes.size()-1));
     //big-M for bigger boxes
     IloBoolVarArray bigm_area(env, boxes.size()*boxes.size()-1);
 
@@ -65,7 +62,7 @@ int main(int argc, char* argv[]) {
       int height = boxes.boxHeight(i);
 
       //Constraint 1 according to report.pdf
-      model.add(l >= y_tl[i] + (1-r[i])*height + r[i]*width);
+      model.add(l >= y_br[i] + 1);
       //Constraint 2 according to report.pdf
       model.add(x_tl[i] <= x_br[i]);
       //Constraint 3 according to report.pdf
@@ -79,20 +76,11 @@ int main(int argc, char* argv[]) {
         int width_j = boxes.boxWidth(j);
         int height_j = boxes.boxHeight(j);
 
-        // Not overlaping
-        model.add(x_tl[i] + (1-r[i])*width + r[i]*height <= x_tl[j] + M_x*bigm_overlap_1[i+j] + M_x*bigm_overlap_2[i+j]);
-        model.add(y_tl[i] + (1-r[i])*height + r[i]*width <= y_tl[j] + M_y*(1-bigm_overlap_1[i+j]) + M_y*bigm_overlap_2[i+j]);
-        model.add(x_tl[j] + (1-r[j])*width_j + r[j]*height_j <= x_tl[i] + M_x*bigm_overlap_1[i+j] + M_x*(1-bigm_overlap_2[i+j]));
-        model.add(y_tl[j] + (1-r[j])*height_j + r[j]*width_j <= y_tl[i] + M_y*(1-bigm_overlap_1[i+j]) + M_y*(1-bigm_overlap_2[i+j]));
-
-
-        int area_i = boxes.boxArea(i);
-        int area_j = boxes.boxArea(j);
-        //Try put first bigger boxes
-        if(area_i < area_j){
-          model.add(x_tl[j] > x_br[i] + M_x*bigm_area[i+j]);
-          model.add(y_tl[j] > y_br[i] + M_y*(1-bigm_area[i+j]));
-        }
+        model.add( x_br[i] + 1 <= x_tl[j] ||
+                   y_br[i] + 1 <= y_tl[j] ||
+                   x_br[j] + 1 <= x_tl[i] ||
+                   y_br[j] + 1 <= y_tl[i]
+                 );
 
       }
     }

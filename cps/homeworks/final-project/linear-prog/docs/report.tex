@@ -19,6 +19,7 @@
 \usemintedstyle{default}
 \graphicspath{{./images/}}
 \newminted{cpp}{frame=lines,framerule=2pt}
+\allowdisplaybreaks[2]
 
 \tikzstyle{bag} = [align=center]
 
@@ -67,7 +68,8 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\st}{st}
 
 \newacronym{lp}{LP}{Linear Programming}
 \newacronym{cp}{CP}{Constraint Programming}
@@ -92,6 +94,34 @@ Values given by the state the of the program.
 \subsection{Formal Definition}
 Given the statement of the problem proposed, we are going to define the following variables for our \acrfull{lp} solution.
 
+\begin{subequations}
+\begin{align}
+  \min \quad & \sum_{b=0}^B l_b \\\label{eq:0}
+ \st  \quad & \\
+ \quad & x_{b=0}^{tl} = 0 \\\label{c:1}
+ \quad & y_{b=0}^{tl} = 0 \\\label{c:2}
+ \quad & y_b^{br} + 1 \leq l_b \quad & \forall b, 0 \leq b \leq B \\\label{c:3}
+ \quad & x_b^{tl} \leq x_b^{br} \quad & \forall b, 0 \leq b \leq B \\\label{c:4}
+ \quad & y_b^{tl} \leq y_b^{br} \quad & \forall b, 0 \leq b \leq B \\\label{c:5}
+ \quad & x_b^{tl} + (1-r_b) \times (w_b - 1) + r_b \times (h_b-1) = x_b^{br} \quad & \forall b, 0 \leq b \leq B \\\label{c:6}
+ \quad & y_b^{tl} + (1-r_b) \times (h_b - 1) + r_b \times (w_b-1) = y_b^{br} \quad & \forall b, 0 \leq b \leq B \\\label{c:7}
+ \quad & b_i^{x^{br}} + b_i^{y^{br}} + b_j^{x^{tl}} + b_j^{y^{tl}} \leq 1 \quad & \forall i,j | 0 \leq i \leq j \leq B \\\label{c:8}
+ \quad & x_{b=i}^{br} + 1 <= x_{b=j}^{tl} + b_i^{x^{br}} \times w_b \quad & \forall i,j\ |\ 0 \leq i \leq j \leq B \\\label{c:9}
+ \quad & y_{b=i}^{br} + 1 <= y_{b=j}^{tl} + b_i^{y^{br}} \times h_b \quad & \forall i,j\ |\ 0 \leq i \leq j \leq B \\\label{c:10}
+ \quad & x_{b=j}^{br} + 1 <= x_{b=i}^{tl} + b_j^{x^{tl}} \times w_b \quad & \forall i,j\ |\ 0 \leq i \leq j \leq B \\\label{c:11}
+ \quad & y_{b=j}^{br} + 1 <= y_{b=i}^{tl} + b_j^{y^{tl}} \times h_b \quad & \forall i,j\ | 0 \leq i \leq j \leq B \\\label{c:12}
+ \quad & 0 \leq x_b^{tl} \leq W-1 \quad & \forall b, 0 \leq b \leq B \\\label{b:1}
+ \quad & 0 \leq y_b^{tl} \leq L-1 \quad & \forall b, 0 \leq b \leq B \\\label{b:2}
+ \quad & 0 \leq x_b^{br} \leq W-1 \quad & \forall b, 0 \leq b \leq B \\\label{b:3}
+ \quad & 0 \leq y_b^{br} \leq L-1 \quad & \forall b, 0 \leq b \leq B \\\label{b:4}
+ \quad & 0 \leq l_b \leq \quad & \forall b, 0 \leq b \leq B \\\label{b:5}
+ \quad & 1 \leq w_b \leq W \quad & \forall b, 0 \leq b \leq B \\\label{b:6}
+ \quad & 1 \leq h_b \leq L \quad & \forall b, 0 \leq b \leq B \\\label{b:7}
+ \quad & r_b \in \{0,1\} \quad & \forall b, 0 \leq b \leq B \\\label{b:8}
+ \quad & b^{x^{br}}, b^{y^{br}}, b^{x^{tl}}, b^{y^{tl}} \in \{0,1\} \\\label{b:9}
+\end{align}
+\end{subequations}
+
 \subsubsection{Variables}
 \begin{itemize}
   \item $x_b^{tl}$: Top \textbf{left} corner $x$. Means the box $b$ is on the top left $x$-coordinate.
@@ -99,59 +129,43 @@ Given the statement of the problem proposed, we are going to define the followin
   \item $x_b^{br}$: Bottom \textbf{right} corner $x$. Means the box $b$ is on the bottom right $x$-coordinate.
   \item $y_b^{br}$: Bottom \textbf{right} corner $y$. Means the box $b$ is on the bottom right $y$-coordinate.
   \item $r_b$: Boolean Array that indicates if the Box $b$ is rotated or not.
-  \item $l$: Total length of the roll used at the end of the minimization problem.
+  \item $l_b$: Length in the roll occupied by box $b$.
+  \item $w_b$ and $h_b$ are width and height of each box $b$ and it is given by the input of the program.
+  \item $b^{x^{br}}, b^{y^{br}}, b^{x^{tl}}, b^{y^{tl}}$: Boolean variable for each pair of boxes to construct exclusive OR in constrains~\ref{c:9},~\ref{c:10},~\ref{c:11} and~\ref{c:12}.
 \end{itemize}
 
 As we can see I am reusing some variables that I have used in \acrfull{cp} deliverable. I am going to do the same for Bounding and Constraints. Some of them are going to be equal to previous solution in \acrshort{cp} because they are expressed linearly.
 
-\subsubsection{Variable Bounds}
-\begin{itemize}
-  \item $x_b^{tl} \in \mathbb{Z}, 0 \leq x_b^{tl} \leq W-1, b \in B$
-  \item $y_b^{tl} \in \mathbb{Z}, 0 \leq y_b^{tl} \leq L-1, b \in B$
-  \item $x_b^{rb} \in \mathbb{Z}, 0 \leq x_b^{rb} \leq W-1, b \in B$
-  \item $y_b^{rb} \in \mathbb{Z}, 0 \leq y_b^{rb} \leq L-1, b \in B$
-  \item $r_b \in \{0,1\}, b \in B$
-  \item $l \in \mathbb{Z}, 1 \leq L-1$
-\end{itemize}
-
 
 \subsubsection{Constraints}
-
 \begin{enumerate}
 
-  \item $l >= y_b^{tl} + r_b \times h_b + (1-r_b) \times w_b,\ \forall b \in B$: Height of the box should be $y_b^{tl}$ coordinate plus its height or width depending on if it is rotated or not.
-
-  \item $x_b^{tl} \leq x_b^{br},\ \forall b \in B$: Each top left $x$ coordinate must be less or equal than the bottom right $x$-coordinate in each Box.
-
-  \item $y_b^{tl} \leq y_b^{br},\ \forall b \in B$: Each top left $y$-coordinate must be less or equal than the bottom right $y$-coordinate in each Box.
-
-  \item\label{c:4} $x_b^{tl} + (1-r_b) \times (w_b-1) + r_b \times (h_b-1) = x_b^{rb},\ \forall b \in B$: The amount of $x$ coordinates that occupies each box is the width or height of that box depends on its rotation.
-
-  \item\label{c:5} $y_b^{tl} + (1-r_b) \times (h_b-1) + r_b \times (w_b-1) = y_b^{rb},\ \forall b \in B$: The amount of $y$ coordinates that occupies each box is the width or height of that box depends on its rotation.
-
-  \item\label{c:6} $x_{b=i}^{tl} + r_{b=i} \times w_{b=i} + (1-r_{b=i}) \times h_{b=i} < x_{b=j}^{tl} + My_1 + M(1-y_2),\ \forall i,j | i \neq j$: Not overlap $x_b^{tl}$ coordinate boxes for all pair of boxes rotated or not. Using big $M$ method for linearizing OR
-
-  \item\label{c:7} $y_{b=i}^{tl} + r_{b=i} \times h_{b=i} + (1-r_{b=i}) \times w_{b=i} < y_{b=j}^{tl} + M(1-y_1) + M(1-y_2),\ \forall i,j | i \neq j$: Not overlap $y_b^{tl}$ coordinate boxes for all pair of boxes rotated or not.
-
-  \item $x_{b=j}^{tl} + r_{b=j} \times w_{b=j} + (1-r_{b=j}) \times h_{b=j} < x_{b=i}^{tl} + M(1 - y_1) + My_2,\ \forall i,j | i \neq j$: Idem~\ref{c:6} but in the other way
-
-  \item $y_{b=j}^{tl} + r_{b=j} \times h_{b=j} + (1-r_{b=j}) \times w_{b=j} < y_{b=i}^{tl} + M(1- y_1) + M(1-y_2),\ \forall i,j | i \neq j$: Idem~\ref{c:7} but in the other way
-
-  \item\label{c:11} $x_{b=0}^{tl} = 0$: Breaking column symmetry and set bounds for the first element in the first position.
-
-  \item $y_{b=0}^{tl} = 0$: Idem~\ref{c:11} but for row symmetry.
-
+  \item Constraint~\ref{c:1}: To break column symmetry. We can set it in $0$ because I have ordered the boxes according to its area in descendant order previous the optimization.
+  \item Constraint~\ref{c:2}: To break row symmetry.
+  \item Constraint~\ref{c:3}: Length of the box $b$ should be greater than the bottom right coordinate.
+  \item Constraint~\ref{c:4}: Top left $x$ coordinate should be less or equal than the bottom right in each $b$.
+  \item Constraint~\ref{c:5}: Same~\ref{c:4} but for $y$ coordinates.
+  \item Constraint~\ref{c:6}: The amount of $x$ coordinates a box $b$ occupies is its top left $x$ coordinate plus its width or height depending if the box is rotated or not.
+  \item Constraint~\ref{c:7}: Same~\ref{c:6} but for $y$ coordinates
+  \item Constraint~\ref{c:8}: Linear boolean restriction to ensure exclusive OR constraints~\ref{c:9},~\ref{c:10},~\ref{c:11} and~\ref{c:12}.
+  \item Constraint~\ref{c:9}: Not overlap $x$ top left coordinates with bottom rights for each pair of boxes.
+  \item Constraint~\ref{c:10}: Idem~\ref{c:9} but for $y$ coordinates.
+  \item Constraint~\ref{c:11}: Idem~\ref{c:9} but considering that the pair is in the opposite position.
+  \item Constraint~\ref{c:12}: Idem~\ref{c:11} but for $y$ coordinates.
 \end{enumerate}
 
-\subsubsection{Objective Function}
+\subsection{Implementation Detail}
+All the code is a one to one matching with the mathematical formulation exposed before. In the only case that I haven't done this was in the case of the exclusive OR in constrains~\ref{c:9},~\ref{c:10},~\ref{c:11} and~\ref{c:12}, because expressing an OR in CPLEX is much more easier and better optimized by the engine rather than doing with \textbf{big-M} technique.
 
-Minimize the total length of each box. Remember that $l_b > 0$ only if the box $b$ is in the $x_b^{tl} = 0$ position. So we are only summing up boxes that are one bellow the other.
+\begin{listing}[H]
+  \inputminted[firstline=75, lastline=85, breaklines]{cpp}{../src/main.cc}
+  \caption{Extracted from source code src/main.cc}
+  \label{src:main}
+\end{listing}
 
-\begin{subequations}
-  \begin{align}
-   \min \sum_{i=0}^B l_b
-  \end{align}
-\end{subequations}
+As we can see here~\ref{src:main}, the traditional short circuit OR does the optimization in the code.
+
+Order are guarantee beforehand running the optimization.
 
 \end{document}
 

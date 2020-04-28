@@ -30,9 +30,4 @@ namespace utils {
     }
   }
 
-//  void show_result(Boxes boxes, * result){
-//    boxes.show();
-//    result->show();
-//  }
-
 }

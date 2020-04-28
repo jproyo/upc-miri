@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
         int width_j = boxes.boxWidth(j);
         int height_j = boxes.boxHeight(j);
 
-        //Constraint 6 according to report.pdf
+        //Constraint 6,7,8 and 9 according to report.pdf. I have rewritten this for convinience in the code
         model.add(
             (x_tl[i] + (1-r[i])*width + r[i]*height <= x_tl[j]) ||
             (y_tl[i] + (1-r[i])*height + r[i]*width <= y_tl[j]) ||
@@ -89,14 +89,15 @@ int main(int argc, char* argv[]) {
     model.add(IloMinimize(env, l));
 
     IloCplex cplex(model);
-    cplex.exportModel("model.lp");
+    cplex.setOut(env.getNullStream());
+//    cplex.exportModel("model.lp");
     if(!cplex.solve()){
       cerr << "NO SOLUTION" << endl;
       env.end();
       return 1;
     }
-    cerr << "Min = " << cplex.getObjValue() << endl;
-    cerr << "--- Detailed ---" << endl;
+    boxes.show();
+    cout << cplex.getObjValue() << endl;
     IloNumArray x_tl_v(env);
     IloNumArray y_tl_v(env);
     IloNumArray x_br_v(env);
@@ -106,12 +107,9 @@ int main(int argc, char* argv[]) {
     cplex.getValues(x_br, x_br_v);
     cplex.getValues(y_br, y_br_v);
     for(int i = 0; i<boxes.size(); i++){
-      cerr << "-------  Box " << i+1 << "-------" << endl;
-      cerr << lrint(x_tl_v[i]) << " " << lrint(y_tl_v[i]) << "  " << lrint(x_br_v[i]) << " " << lrint(y_br_v[i]) << endl;
+      cout << lrint(x_tl_v[i]) << " " << lrint(y_tl_v[i]) << "  " << lrint(x_br_v[i]) << " " << lrint(y_br_v[i]) << endl;
     }
     env.end();
-
-//    show_result(boxes, newSol);
 
 
   } catch (IloAlgorithm::CannotExtractException &e) {

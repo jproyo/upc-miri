@@ -10,7 +10,7 @@ CHECK_EXEC=`pwd`/bin/checker
 echo "COMPILING"
 make clean && make
 
-echo "----------------- STARTING !!!! BOX WRAPPING CP PROGRAM ---------------------"
+echo "----------------- STARTING !!!! BOX WRAPPING LP PROGRAM ---------------------"
 
 for ifile in $INST_DIR/*.$INST_EXT; do
     output=$(basename $ifile .$INST_EXT).out
@@ -19,5 +19,5 @@ for ifile in $INST_DIR/*.$INST_EXT; do
     	echo "Instance $ifile has TIMED OUT"
     fi
 done
-echo "----------------- FINISHED !!!! BOX WRAPPING CP PROGRAM ---------------------"
+echo "----------------- FINISHED !!!! BOX WRAPPING LP PROGRAM ---------------------"
 

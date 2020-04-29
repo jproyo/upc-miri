@@ -44,38 +44,28 @@ int main(int argc, char* argv[]) {
     //Length of roll
     IloNumVar l(env, 1, boxes.getMaxLength(), ILOINT);
 
-    //Area occupied by all the boxes
-    IloNumVar area(env, 1, boxes.getWidth()*boxes.getMaxLength(), ILOINT);
-
-    //For applying big-M method i
-    const int M_x = boxes.getWidth();
-    const int M_y = boxes.getMaxLength();
-    //big-M for bigger boxes
-    IloBoolVarArray bigm_area(env, boxes.size()*boxes.size()-1);
-
-    //Constraint 10 according to report.pdf
+    //Constraint 1 according to report.pdf
     x_tl[0].setBounds(0,0);
-    //Constraint 12 according to report.pdf
+    //Constraint 2 according to report.pdf
     y_tl[0].setBounds(0,0);
     for(int i = 0; i < boxes.size(); i++){
       int width = boxes.boxWidth(i);
       int height = boxes.boxHeight(i);
 
-      //Constraint 1 according to report.pdf
-      model.add(l >= y_br[i] + 1);
-      //Constraint 2 according to report.pdf
-      model.add(x_tl[i] <= x_br[i]);
       //Constraint 3 according to report.pdf
-      model.add(y_tl[i] <= y_br[i]);
+      model.add(l >= y_br[i] + 1);
       //Constraint 4 according to report.pdf
-      model.add(x_tl[i]+(1-r[i])*(width-1)+r[i]*(height-1) == x_br[i]);
+      model.add(x_tl[i] <= x_br[i]);
       //Constraint 5 according to report.pdf
+      model.add(y_tl[i] <= y_br[i]);
+      //Constraint 6 according to report.pdf
+      model.add(x_tl[i]+(1-r[i])*(width-1)+r[i]*(height-1) == x_br[i]);
+      //Constraint 7 according to report.pdf
       model.add(y_tl[i]+(1-r[i])*(height-1)+r[i]*(width-1) == y_br[i]);
 
       for(int j = i+1;j<boxes.size();j++){
-        int width_j = boxes.boxWidth(j);
-        int height_j = boxes.boxHeight(j);
 
+        //Constraints 9, 10, 11 and 12 accroding to report.pdf
         model.add( x_br[i] + 1 <= x_tl[j] ||
                    y_br[i] + 1 <= y_tl[j] ||
                    x_br[j] + 1 <= x_tl[i] ||

@@ -1,0 +1,189 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+
+\title{%
+  Computational Complexity \\
+  Homework 3 - Solutions
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{CC - Homework 3}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newacronym{bpp}{BPP}{BPP}
+
+\begin{document}
+
+\maketitle
+
+\section{Oracles in BPP}\label{ex:1}
+\newtheorem{obpp}{Oracles in BPP}
+\newtheorem{proofpart}{Part}
+\begin{obpp}
+$BPP^{BPP} = BPP$
+\end{obpp}
+
+\begin{proof}
+For probing that $BPP^{BPP} = BPP$ we can do it using double inclusion probe, basically if we can probe that $BPP \subseteq BPP^{BPP} \land BPP^{BPP} \subseteq BPP$ they are equal.
+
+\begin{proofpart}
+$BPP \subseteq BPP^{BPP}$
+
+Let $M'$ be a $TM$ machine that is in $BPP$ which makes oracle calls to some Oracle machine $A \in BPP$. Let $M$ be a TM machine that is in $BPP$.
+
+By definition we now that for $M$:
+
+\begin{itemize}
+  \item $x \in L \implies P[M(x) = 1] \geq 3/4$
+  \item $x \notin L \implies P[M(x) = 0] \leq 1/4$
+\end{itemize}
+
+Therefore since oracle $A \in BPP$ we can see that $M'$:
+
+\begin{subequations}
+  \begin{align}
+    x \notin L \implies P[M'(x) = 0] &\geq 1/4 + 1/4 \times |x|^n \\\label{sub:eq:1}
+                                     &= 1/4 + \frac{1}{4|x|^n}\\
+                                     &= \frac{1}{4|x|^n}
+  \end{align}
+\end{subequations}
+
+By equation~\ref{sub:eq:1} we are saying that the error probability of $M'$ is the error probability of machine $M' \in BPP$ that by definition is $1/4$ plus all the error probabilities calls that we do to the oracle machine $A$ which is also in $BPP$ and by definition also each oracle call has an error probability of $1/4$. This oracle calls are done by the polynomial length of $x$, $|x|^n$ times.
+
+Therefore $x \notin L \implies P[M'(x) = 0] \leq \frac{1}{4|x|^n}$ which is much more less than $1/4$. Also this applies for the $P[M'(x) = 1] \geq 1 - \frac{1}{4|x|^n}$.
+
+Therefore $M \subseteq M'$, then $BPP \subseteq BPP^{BPP}$.
+\end{proofpart}
+
+\begin{proofpart}
+$BPP^{BPP} \subseteq BPP$
+
+By the previous section we know that if we have a machine $M' \in BPP^{BPP}$ the probabilities are the following:
+
+\begin{itemize}
+  \item $x \in L \implies P[M(x) = 1] \geq 1 - \frac{1}{4|x|^n}$
+  \item $x \notin L \implies P[M(x) = 0] \leq \frac{1}{4|x|^n}$
+\end{itemize}
+
+Let define a $M$ machine that is in $BPP$, by error reduction in $m$ repetitions where $m = |x|^n$ we can obtain the same probabilities than $M'$ as before exposed.
+
+Therefore $M' \subseteq M$, so $BPP^{BPP} \subseteq BPP$\qedhere
+\end{proofpart}
+\end{proof}
+
+\section{Co-classes and the hierarchy}
+\newtheorem{phcol}{Theorem}
+\begin{phcol}
+  $\Sigma_i^p = \Pi_i^p \text{ for some } i \geq 1  \implies \Sigma_i^p = \Pi_i^p = PH$ The polynomial-time hierarchy collapses to its $i$-th level.
+\end{phcol}
+
+\begin{proof}
+  By definition we know that $PH = \cup_{i>0} \Sigma_i^p$, so $\Sigma_i^p = \Sigma_{i+1}^p$.
+
+  Lets define $L \in \Sigma_{i+1}^p$ then:
+
+  \begin{equation}
+  x \in L \iff \exists u_1 \in \{0,1\}^n \underbrace{\forall u_2 \dots Q_{i+1} u_{i+1} \in \{0,1\}^n M(x, u_1, \dots, u_{i+1})=1}_{L'}
+  \end{equation}
+
+  As we can see the part without the $\exists u_1 \dots$ and removing the certificate $u_1$ from the $M(x, u_2, \dots, u_{i+1}) = 1$ we have $L' \in \Pi_i^p$. Therefore:
+
+  \begin{equation}
+    x \in L \iff \exists u_1 \in \{0,1\}^n (x,u_1) \in L'\label{sub:eq:2}
+  \end{equation}
+
+  As we know by assumption of the problem that $\Sigma_i^p = \Pi_i^p$ then:
+
+  \begin{equation}
+    (x,u_1) \in L' \iff \exists v_1 \in \{0,1\}^n \forall v_2 \in \{0,1\}^n \dots Q_i v_i M((x,u_1), v_1, \dots, v_i)=1\label{sub:eq:3}
+  \end{equation}
+
+  Therefore if we plug~\ref{sub:eq:2} and~\ref{sub:eq:3}
+
+ \begin{equation}
+    x \in L \iff \exists (u_1,v_1)
+\in \{0,1\}^n \forall v_2 \in \{0,1\}^n \dots Q_i v_i M((x,u_1), v_1, \dots, v_i)=1
+  \end{equation}
+
+  So we have that $L \in \Sigma_i^p$ and therefore $\Sigma_{i+1}^p = \Sigma_i^p = \Pi_i^p$, then the hierarchy collapses.
+
+\end{proof}
+
+
+\section{Circuits and the hierarchy}
+\newtheorem{npnp}{Theorem}
+\begin{npnp}
+ $\\if\ NP \subseteq P/\text{poly} \implies NP^{NP} \subseteq P/\text{poly}$
+\end{npnp}
+
+\begin{proof}
+  If $NP \subseteq P/\text{poly}$ then there exists a polynomial $p$ size circuit family $\{C_n\}_{n \in N}$ such that for every Boolean formula $\varphi$ and $u \in \{0,1\}^n, C_n(\varphi, u) = 1$ if and only if there exists $v \in \{0,1\}^n$ such that $\varphi(u, v) = 1$. That circuit solves the decision problem for $SAT$.
+
+  We can extend each $\varphi$ Boolean formula to be a Circuit $C'$ that belongs to another circuit family $\{C'_n\}_{n \in N}$ such that for every boolean formula $\phi$ and $w \in \{0,1\}^n, C'_n(\phi, w) = 1$ if and only if there exists a $z \in \{0,1\}^n$ such that $\phi(w,z) = 1$. That $C'$ circuit family represents the Oracle Machine that is in $NP$.
+
+  Having those, on each boolean formula $\varphi$ the circuit $C$ branches on the other circuit $C'$ which is the oracle for having an answer.
+
+  Therefore $NP^{NP} \subseteq P/\text{poly}$
+
+\end{proof}
+
+\subsection{Karp-Lipton Theorem}
+$NP \subseteq P/\text{poly} \implies \Sigma_2^p = \Pi_2^p$ known as a \textbf{Karp-Lipton} Theorem was state for the first time here \cite{karp} on section 6 where it is described the \textbf{Method of Recursive Definition}.
+
+\newtheorem{polycollapse}{Theorem}
+\begin{polycollapse}
+  $\\if NP \subseteq P/\text{poly} \implies \Sigma_2^p = \Pi_2^p$
+\end{polycollapse}
+
+\begin{proof}
+  The proof is done in the paper stating that for proving the collapse, it is sufficient to prove that $A_3 \in \Sigma_2^p$. By Lemma 6.2 on the same paper $A_3 \in \Pi_3^p$, so proving the former is enough for showing that $\Pi_3^p \subseteq \Sigma_2^p$.
+
+  The prove as we have said it is based on the recursive definition method with the form:
+
+  $C_{A_3}(y) = R(y, C_{A_3}(y'), C_{A_3}(y''))$, where $y'$ and $y''$ are $QBF$ with the alternation of quantifiers. Then,
+
+  \begin{equation}
+    C_{A_3}(y) = (\\if Q_1 = \forall\ \text{then}\ C_{A_3}(y') \land C_{A_3}(y'')\ \text{else}\ C_{A_3}(y') \cup C_{A_3}(y''))
+  \end{equation}
+
+  The membership of $y$ in $A_3$ is giving by the formula:
+
+  \begin{equation}
+    \exists w \forall z \underbrace{[f_w(y) = 1 \land f_w(z) = R(z, f_w(z'), f_w(z''))]}_B \label{sub:eq:4}
+  \end{equation}
+
+  Here~\ref{sub:eq:4} can be tested in polynomial-time. Therefore $A_3 \in \Sigma_2^p$.
+
+\end{proof}
+
+The idea of the proof is that with that recursive definition we can transform all the clauses in the $QBF$ to quantifiers with the form $\exists\forall$, since we are evaluating $y'$ and $y''$ depending on the first quantifier if it is $\forall$ or not, we are reducing the evaluation to $\Sigma_2^p$ collapsing the class.
+
+\bibliographystyle{alpha}
+\bibliography{Homework3_jproyo_solution}
+
+\end{document}
+

@@ -1,4 +1,5 @@
 .DS_Store
+*.fna
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

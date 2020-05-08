@@ -1,0 +1,7 @@
+!_TAG_FILE_SORTED	1	//
+Program	Program.hs	1;"	m
+RanGen	RanGen.hs	1;"	m
+main	Program.hs	6;"	f
+main	RanGen.hs	17;"	f
+rollDNADice	RanGen.hs	7;"	f
+toGene	RanGen.hs	11;"	f

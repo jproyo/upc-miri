@@ -1,0 +1,17 @@
+!_TAG_FILE_SORTED	1	//
+Experiments	cukoo-hash/src/Experiments.hs	4;"	m
+Main	cukoo-hash/app/Main.hs	1;"	m
+Meassure	cukoo-hash/src/Experiments.hs	19;"	t
+TST	cukoo-hash/src/Data/Tree/TST.hs	1;"	m
+avg	cukoo-hash/src/Experiments.hs	23;"	f
+avgRehashes	cukoo-hash/src/Experiments.hs	37;"	f
+avgRehashes'	cukoo-hash/src/Experiments.hs	42;"	f
+hashtableSize	cukoo-hash/src/Experiments.hs	22;"	f
+insertWithoutRehash	cukoo-hash/src/Experiments.hs	64;"	f
+insertWithoutRehash'	cukoo-hash/src/Experiments.hs	71;"	f
+main	cukoo-hash/Setup.hs	2;"	f
+main	cukoo-hash/app/Main.hs	8;"	f
+runAvgRehashes	cukoo-hash/src/Experiments.hs	30;"	f
+runInsertWithoutRehash	cukoo-hash/src/Experiments.hs	54;"	f
+sizeList	cukoo-hash/src/Experiments.hs	21;"	f
+toNano	cukoo-hash/src/Experiments.hs	92;"	f

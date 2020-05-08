@@ -1,16 +1,18 @@
 module Main where
 
-import           Data.Time.Clock.POSIX
+import           Criterion.Main
 import           Experiments
 import           Protolude
-import           System.Directory
 
 main :: IO ()
-main = undefined
---main = do
---  time' <- round <$> getPOSIXTime
---  createDirectoryIfMissing True "output/"
---  writeFile ("output/result_insert_without_rehash_" <> show time' <> ".csv") =<<
---    runInsertWithoutRehash
---  writeFile ("output/result_avg_rehashes_" <> show time' <> ".csv") =<<
---    runAvgRehashes
+main =
+  defaultMain
+    [ env setupEnvLogN $ \ ~(input, test) ->
+        bgroup
+          "Experiments Ternary Search Tree"
+          [ bgroup
+              "Searching"
+              [ runEmpiricalSearchLogN (input, test)
+              ]
+          ]
+    ]

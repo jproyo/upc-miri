@@ -13,7 +13,7 @@ extra-source-files:
 
 dependencies:
   - base
-  - protolude
+  - protolude >= 0.3
 
 default-extensions:
   - ConstraintKinds
@@ -21,6 +21,7 @@ default-extensions:
   - DeriveFunctor
   - DeriveGeneric
   - DeriveLift
+  - DeriveAnyClass
   - DerivingStrategies
   - DerivingVia
   - EmptyCase
@@ -67,7 +68,7 @@ library:
     - -fdiagnostics-color=always
 
   dependencies:
-    - time >= 1.9.1
+    - criterion
     - QuickCheck
 
 executables:
@@ -99,4 +100,5 @@ tests:
       - -with-rtsopts=-N
       - -fdiagnostics-color=always
     dependencies:
+      - containers
       - QuickCheck

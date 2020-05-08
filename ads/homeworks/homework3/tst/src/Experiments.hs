@@ -2,17 +2,28 @@ module Experiments where
 
 ----------------------------------------------------------------------------------
 --import           Control.Monad
---import           Control.Monad.ST
---import           Data.Hash.Cukoo       as C
---import           Data.List
 --import           Data.Maybe
 --import           Data.Time
---import           Data.Time.Clock.POSIX
---import           Prelude               as P
---import           System.IO.Unsafe
+import           Data.Tree.TST
+
+import           Criterion.Main
+
 --import           Test.QuickCheck       as T
---
+import           Protolude
+
 ----------------------------------------------------------------------------------
+
+
+setupEnvLogN :: IO (TST, [[Char]])
+setupEnvLogN = do
+  xs <- lines <$> readFile "data/words.txt"
+  return . (,) (fromList $ map toS xs) . (map toS . snd) $ splitAt (length xs `div` 2) xs
+
+runEmpiricalSearchLogN :: (TST, [[Char]]) -> Benchmark
+runEmpiricalSearchLogN (input, test) =
+  bench
+    "Experiment Empirical O(logn +k) in Searching 117943 words in 235886 dataset" $
+  nf (map (search input)) test
 --data Meassure =
 --  Meassure
 --    { sizeList :: !Int
@@ -33,6 +44,7 @@ module Experiments where
 --
 --avgRehashes :: Int -> IO Meassure
 --avgRehashes n = do
+  --
 --  (l, r) <- avgRehashes' n
 --  return $ Meassure {hashtableSize = l, sizeList = n, avg = fromIntegral r}
 --

@@ -1,0 +1,3 @@
+Name,Mean,MeanLB,MeanUB,Stddev,StddevLB,StddevUB
+Experiments Ternary Search Tree/Searching/Experiment Empirical O(logn +k) in Searching 117943 words in 235886 dataset,8.97224988976398e-2,8.942357222894706e-2,9.036900316270476e-2,7.431742059686153e-4,3.3274053271318925e-4,1.1495687237895052e-3
+Experiments HashMap for comparing Searching/Searching/Experiment Empirical Searching 117943 words in 235886 dataset,0.11095692990481713,0.11031098384992219,0.11175454602718154,1.1667088689195197e-3,8.259894067135038e-4,1.5748121335349777e-3

@@ -69,16 +69,31 @@ library:
 
   dependencies:
     - criterion
-    - QuickCheck
+    - containers
+    - ghc-datasize
+    - hashable
 
 executables:
-  tst:
+  tst-bench:
     main: Main.hs
-    source-dirs: app
+    source-dirs: app/bench
     dependencies:
       - directory
       - criterion
       - time
+      - tst
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -fdiagnostics-color=always
+
+  tst-profile:
+    main: Main.hs
+    source-dirs: app/profile
+    dependencies:
+      - directory
       - tst
     ghc-options:
       - -threaded

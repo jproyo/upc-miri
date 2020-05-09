@@ -15,4 +15,12 @@ main =
               [ runEmpiricalSearchLogN (input, test)
               ]
           ]
+    , env setupMap $ \ ~(input, test) ->
+        bgroup
+          "Experiments HashMap for comparing Searching"
+          [ bgroup
+              "Searching"
+              [ runEmpiricalSearchMap (input, test)
+              ]
+          ]
     ]

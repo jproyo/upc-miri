@@ -36,6 +36,7 @@ packages:
 #
 extra-deps:
 - protolude-0.3.0@sha256:8361b811b420585b122a7ba715aa5923834db6e8c36309bf267df2dbf66b95ef,2693
+- ghc-datasize-0.2.2@sha256:3c2afb582a1cf0702c2ccdb0465dad090695e397179848b78b24cc24f02351bd,1140
 # - acme-missiles-0.3
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a

@@ -11,6 +11,13 @@ packages:
       sha256: babf32b414f25f790b7a4ce6bae5c960bc51a11a289e7c47335b222e6762560c
   original:
     hackage: protolude-0.3.0@sha256:8361b811b420585b122a7ba715aa5923834db6e8c36309bf267df2dbf66b95ef,2693
+- completed:
+    hackage: ghc-datasize-0.2.2@sha256:3c2afb582a1cf0702c2ccdb0465dad090695e397179848b78b24cc24f02351bd,1140
+    pantry-tree:
+      size: 216
+      sha256: f4993b300a3c23c9b7efef2f21aee737ce0570e20e958f10bb732e076255971b
+  original:
+    hackage: ghc-datasize-0.2.2@sha256:3c2afb582a1cf0702c2ccdb0465dad090695e397179848b78b24cc24f02351bd,1140
 snapshots:
 - completed:
     size: 524789

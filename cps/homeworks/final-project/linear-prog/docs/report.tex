@@ -155,10 +155,10 @@ As we can see I am reusing some variables that I have used in \acrfull{cp} deliv
 \end{enumerate}
 
 \subsection{Implementation Detail}
-All the code is a one to one matching with the mathematical formulation exposed before. In the only case that I haven't done this was in the case of the exclusive OR in constrains~\ref{c:9},~\ref{c:10},~\ref{c:11} and~\ref{c:12}, because expressing an OR in CPLEX is much more easier and better optimized by the engine rather than doing with \textbf{big-M} technique.
+All the code is a one to one mapping with the mathematical formulation exposed before. In the only case that I haven't done this was in the case of the exclusive OR in constrains~\ref{c:9},~\ref{c:10},~\ref{c:11} and~\ref{c:12}, because expressing an OR in CPLEX is much more easier and better optimized by the engine rather than doing with \textbf{big-M} technique.
 
 \begin{listing}[H]
-  \inputminted[firstline=75, lastline=85, breaklines]{cpp}{../src/main.cc}
+  \inputminted[firstline=68, lastline=75, breaklines]{cpp}{../src/main.cc}
   \caption{Extracted from source code src/main.cc}
   \label{src:main}
 \end{listing}

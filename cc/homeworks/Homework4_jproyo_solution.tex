@@ -1,0 +1,241 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+
+\title{%
+  Computational Complexity \\
+  Homework 4 - Solutions
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{CC - Homework 4}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newacronym{bpp}{BPP}{BPP}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 1 - More on hash functions}
+\newtheorem{3wise}{3-wise independent}
+\begin{3wise}
+  $Pr_{a,b,c \in \mathbb{Z}_p} \left[ P_{a,b,c}(x_i) = y_i, for\ i = 1,2,3 \right] = \frac{1}{p^3}$
+\end{3wise}
+
+\begin{proof}
+  Let $x_1 \neq x_2 \neq x_3 \in \mathbb{Z}_p$ and $y_1 \neq y_2 \neq y_3 \in \mathbb{Z}_p$.
+  \begin{subequations}
+    \begin{align}
+      Pr_{a,b,c \in \mathbb{Z}_p} &= Pr \left[ \begin{bmatrix}
+        x_{1}^2 & x_1 & 1\\
+        x_{2}^2 & x_2 & 1\\
+        x_{3}^2 & x_3 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+        a\\
+        b\\
+        c
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        y_1\\
+        y_2\\
+        y_3
+        \end{bmatrix}
+      \right] \\
+      &= Pr \left[ \frac{1}{det(A)}Adj(A) \times \begin{bmatrix}
+        x_{1}^2 & x_1 & 1\\
+        x_{2}^2 & x_2 & 1\\
+        x_{3}^2 & x_3 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+        a\\
+        b\\
+        c
+        \end{bmatrix}
+        = \frac{1}{det(A)}Adj(A) \times
+        \begin{bmatrix}
+        y_1\\
+        y_2\\
+        y_3
+        \end{bmatrix}
+      \right] \label{eq:1}\\
+      &= Pr \left[\begin{bmatrix}
+        a\\
+        b\\
+        c
+        \end{bmatrix}
+        = \frac{1}{det(A)}Adj(A) \times
+        \begin{bmatrix}
+        y_1\\
+        y_2\\
+        y_3
+        \end{bmatrix}
+      \right] \label{eq:2}\\
+      &= \frac{1}{p^3}\label{eq:3}
+    \end{align}
+  \end{subequations}
+
+  Since we know that the $det(A) \neq 0$~\ref{eq:1} because $x_1 \neq x_2 \neq x_3$, where
+
+  \begin{equation}
+    A = \begin{bmatrix}
+        x_{1}^2 & x_1 & 1\\
+        x_{2}^2 & x_2 & 1\\
+        x_{3}^2 & x_3 & 1
+      \end{bmatrix}
+  \end{equation}
+
+  , we can compute the inverse of $A$.
+  Because $a, b, c$ are choose \textit{u.a.r.} and are in $\mathbb{Z}_p$, therefore each option has a probability $\frac{1}{p}$, so the total probability by independence is~\ref{eq:3}
+\end{proof}
+
+\section{Exercise 2 - More on estimating size of set}\label{sec:2}
+
+\newtheorem{2k}{Problem}
+\begin{2k}
+  If $|S| > 2^{2k} \implies Pr_{h \in_r U} = \left[ I(S,h) = 1 \right] = 1$
+\end{2k}
+
+\begin{proof}
+  \begin{subequations}
+    \begin{align}
+      P[I =  1] &= P \left[ \frac{\text{Number of pre-images in $h$ that collides}}{\text{Number of elements in } S} \right]\\
+      &= \frac{2^{2k}}{2^{2k}}\label{eq:4}\\
+      &= 1
+    \end{align}
+  \end{subequations}
+
+  We know that the number of possible pre-images in $h$ is at most the numerator~\ref{eq:4}. As long as $|S|$ is greater than this number we are going to have a collision.
+
+\end{proof}
+
+\begin{2k}
+  If $|S| < 2^k \implies Pr_{h \in_r U} = \left[ I(S,h) = 1 \right] = 1 - 2^{-k}$
+\end{2k}
+
+\begin{proof}
+  Let $A_x$ be the event that denotes that $h(x)$. So the probability that $P[I = 1] = P[ \exists x,y \in S, h(x) = h(y)] = P[ \bigwedge_{x,y \in S}  A_x \cup A_y]$, therefore
+
+  \begin{subequations}
+    \begin{align}
+      P[ \bigwedge_{x,y \in S}  A_x \cup A_y] &\leq \sum_{x \in S} P[A_x] - \sum_{x \neq y \in S} P[A_x \cup A_y] \label{eq:5}\\
+      &= |S| \times \frac{1}{2^k} - |S| \times \frac{1}{2^{2k}}\\
+      &= 1 - \frac{1}{2^k} \label{eq:6}
+    \end{align}
+  \end{subequations}
+
+  This~\ref{eq:5} is by union bound and since we know that $|S| < 2^k$ then we get~\ref{eq:6}.
+
+  Therefore $Pr_{h \in_r U} = \left[ I(S,h) = 1 \right] = 1 - 2^{-k}$.
+
+\end{proof}
+
+\section{Exercise 3 - Approximate counting up to square}
+\newtheorem{a-counting}{Problem}
+\begin{a-counting}
+  For any $\#P$ function $f$ there exists a \textit{deterministic} polynomial time algorithm that given an $n$-bit input $x$ and access to an $NP$-oracle outputs a number of $t$ satisfying that $t \leq f(x) \leq t^2$
+\end{a-counting}
+
+\begin{proof}
+  Lets do the proof for $\#3SAT$ with access to $NP$-oracle and this can be state for any $\#P$ by parsimonious reduction.
+
+  Let $A$ be the approximation algorithm with a constant factor $c$ such that:
+
+  \begin{equation}
+    \frac{1}{c}\#3SAT(\varphi) \leq A(\varphi) \leq c\#3SAT(\varphi)
+  \end{equation}
+
+  $\varphi$ is constructed with doing a copy of each $\phi$, $\varphi^t = \phi_1 \land \phi_2 \land \dots \phi_t$, so if $\phi$ has a $k$ number of satisfying assignments $\varphi^t$ is going to have a $k^2$, then:
+
+Moreover,
+
+$$
+\begin{cases}
+  \textit{if} \quad \#3SAT(\varphi) \geq 2^{k+1} \implies A(\varphi,k) = 1 \quad \textit{w.h.p.}\\
+  \textit{if} \quad \#3SAT(\varphi) < 2^k \implies A(\varphi,k) = 0 \quad \textit{w.h.p.}
+\end{cases}
+$$
+
+Using this approximation algorithm $A$ we can construct a function $f \in \#3SAT$ that has access to an $NP$-oracle machine in the following way:
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{$\varphi$}
+  \Output{$2^k$}
+  Let $k \leftarrow 0$;\\
+  Let $t \leftarrow 0$;\\
+  Let $c \leftarrow 0$;\tcp*[f]{Indicate that evaluation on $A$ changed}\\
+  \For{$i \leftarrow 0$ \KwTo $n+1$}
+  {$r \leftarrow A(\varphi, i)$;\\
+    \eIf{$r = 1 \land c = 0$}{$t \leftarrow t + 1$}{$c \leftarrow 1$}
+  }
+  \eIf{output is $0$ for each computation from $i = 0$ to the end}
+  {Query $NP$-oracle for exact value to output;
+  }{Output $2^t$}
+ \caption{$\#3SAT$ with access to $NP$-oracle}
+\end{algorithm}
+
+With this we have that:
+
+\begin{equation}
+  \frac{1}{c}2^k \leq \#3SAT(\varphi) \leq c2^{k}
+\end{equation}
+
+Lets find a good $A$ approximation algorithm to square upper bound.
+
+Given the previous exercise~\ref{sec:2}, we are going to use a big set $|S|$ to evaluate $\varphi \land h(x) = 0$ and applying \textit{Valiant-Vazirani Theorem} we are going to be sure that we have a good probability that $\varphi$ has a satisfying assignment.
+
+The algorithm with proceeds as follows:
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{$\varphi, k$}
+  \Output{$1$ if there is $k$ valid assignments, $0$ otherwise}
+  \eIf{$k < 5$ is small}
+  {Check $\#3SAT(\varphi) \geq 2^{k}$
+  }
+  {Pick $h$ from a set of pairwise independent hash function as~\ref{sec:2};\\
+    Output $1$ if $\varphi(a) = 1 \land h(a) = 0$
+  }
+  \caption{$A(\varphi, k)$ algorithm}
+\end{algorithm}
+
+Taking $\varphi^2 = \phi \land \phi$ we can enlarge the Set $|S|$ having a probability $1$ of collision as it is referred~\ref{sec:2}.
+
+Therefore,
+
+\begin{equation}
+  ct \leq A(\varphi^2,k) \leq ct^2
+\end{equation}
+
+\end{proof}
+
+\end{document}
+

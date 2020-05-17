@@ -1,0 +1,23 @@
+1st. Lab Session
+
+The purpose of this lab is to check if the theory explained in class, about the search algorithms for only one pattern, also holds for really large files. For this goal you will run the four algorithms (brute force, horspool, BNDM and BOM) over  a DNA alphabet file with, at least 10Gb, and random patterns.
+
+You can find the code of the algorithms in the web page
+http://www-igm.univ-mlv.fr/~lecroq/string/index.html
+and for every algorithm there is a usefull applet that can help you to
+understand the algorithm. Also you can download from my web page the
+code of brute force and Horspool algorithms.
+
+You should deliver a report with the answers:
+
+1.- How many times you will run an algorithm to be sure that the running time is significant? How do you decide that? Apply to the next questions.
+
+2. Find the the optimum buffer size for all 4 search algorithms and apply this size to the next questions. Explain how do you decide it. 
+
+3. - Construct 5 graphs (running time/buffer size) with the running
+time of the four algorithms, if they can be applied,  for five patterns of length 12, 24, 48, 96, 192 bases. Note that the running time nowadays compress the time to read data.
+
+4. The most efficient algorithm in the previus question is the one predicted by the theory?
+
+5. The running time depends on the size of the pattern? Why?
+

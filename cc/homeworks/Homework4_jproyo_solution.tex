@@ -116,21 +116,21 @@
 
 \section{Exercise 2 - More on estimating size of set}\label{sec:2}
 
-\newtheorem{2k}{Problem}
+\newtheorem{2k}{Problem}\label{th:1}
 \begin{2k}
-  If $|S| > 2^{2k} \implies Pr_{h \in_r U} = \left[ I(S,h) = 1 \right] = 1$
+  If $|S| > 2^k \implies Pr_{h \in_r U} = \left[ I(S,h) = 1 \right] = 1$
 \end{2k}
 
 \begin{proof}
+  Knowing that $2$-Universal hashing is $P_{h \in_r U} [h(x) = h(y)] = \frac{1}{2^k}, \forall x,y \in \{0,1\}^k$.
   \begin{subequations}
     \begin{align}
-      P[I =  1] &= P \left[ \frac{\text{Number of pre-images in $h$ that collides}}{\text{Number of elements in } S} \right]\\
-      &= \frac{2^{2k}}{2^{2k}}\label{eq:4}\\
+      P[I =  1] &= P \left[ \cup_{x,y \in S} I(S,h) = 1 \right]\\
+      &= \sum_{x \neq y \in S} P[I(S,h) = 1] \\
+      &= 2^k \times \frac{1}{2^k}\\
       &= 1
     \end{align}
   \end{subequations}
-
-  We know that the number of possible pre-images in $h$ is at most the numerator~\ref{eq:4}. As long as $|S|$ is greater than this number we are going to have a collision.
 
 \end{proof}
 
@@ -139,20 +139,18 @@
 \end{2k}
 
 \begin{proof}
-  Let $A_x$ be the event that denotes that $h(x)$. So the probability that $P[I = 1] = P[ \exists x,y \in S, h(x) = h(y)] = P[ \bigwedge_{x,y \in S}  A_x \cup A_y]$, therefore
+  Taking the same as~\ref{th:1}, but we know that $|S| < 2^k$, therefore
 
   \begin{subequations}
     \begin{align}
-      P[ \bigwedge_{x,y \in S}  A_x \cup A_y] &\leq \sum_{x \in S} P[A_x] - \sum_{x \neq y \in S} P[A_x \cup A_y] \label{eq:5}\\
-      &= |S| \times \frac{1}{2^k} - |S| \times \frac{1}{2^{2k}}\\
-      &= 1 - \frac{1}{2^k} \label{eq:6}
+      P[I =  1] &= P \left[ \cup_{x,y \in S} I(S,h) = 1 \right]\\
+      &= \sum_{x \neq y \in S} P[I(S,h) = 1] \\
+      &\leq (2^k - 1) \times \frac{1}{2^k}\label{eq:4}\\
+      &\leq 1 - \frac{1}{2^k}
     \end{align}
   \end{subequations}
 
-  This~\ref{eq:5} is by union bound and since we know that $|S| < 2^k$ then we get~\ref{eq:6}.
-
-  Therefore $Pr_{h \in_r U} = \left[ I(S,h) = 1 \right] = 1 - 2^{-k}$.
-
+  We can state this~\ref{eq:4} inequality because we don't know how less is $|S|$ respect to $2^k$ but it is at most that.
 \end{proof}
 
 \section{Exercise 3 - Approximate counting up to square}

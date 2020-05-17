@@ -123,10 +123,12 @@
 
 \begin{proof}
   Knowing that $2$-Universal hashing is $P_{h \in_r U} [h(x) = h(y)] = \frac{1}{2^k}, \forall x,y \in \{0,1\}^k$.
+
+  Let $A$ be the event when 2 different $x, y \in \{0,1\}^k, h(x) = h(y)$
   \begin{subequations}
     \begin{align}
-      P[I =  1] &= P \left[ \cup_{x,y \in S} I(S,h) = 1 \right]\\
-      &= \sum_{x \neq y \in S} P[I(S,h) = 1] \\
+      P[I =  1] &= P \left[ \cup_{x,y \in S} A_{x,y} \right]\\
+      &= \sum_{x \neq y \in S} P[A_{x,y}] \\
       &= 2^k \times \frac{1}{2^k}\\
       &= 1
     \end{align}
@@ -143,8 +145,8 @@
 
   \begin{subequations}
     \begin{align}
-      P[I =  1] &= P \left[ \cup_{x,y \in S} I(S,h) = 1 \right]\\
-      &= \sum_{x \neq y \in S} P[I(S,h) = 1] \\
+      P[I =  1] &= P \left[ \cup_{x,y \in S} A_{x,y} \right]\\
+      &= \sum_{x \neq y \in S} P[A_{x,y}] \\
       &\leq (2^k - 1) \times \frac{1}{2^k}\label{eq:4}\\
       &\leq 1 - \frac{1}{2^k}
     \end{align}

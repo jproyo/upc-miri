@@ -1,0 +1,23 @@
+# Haskell
+*.cabal
+.stack-work/
+dist-newstyle/
+
+# Other
+*.log
+*.plain
+*.txt
+TAGS
+tags
+temp/
+.DS_Store
+
+# IDE stuff
+hie.yaml
+
+# Profiling
+*.hp
+*.prof
+*.html
+
+*.ist

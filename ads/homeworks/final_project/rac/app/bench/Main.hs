@@ -1,6 +1,5 @@
 module Main where
 
-import           Criterion.Main
 import           Experiments
 import           Protolude
 

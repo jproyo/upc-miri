@@ -85,8 +85,8 @@ viewList _ (Cons x _)  = x
 viewList d (Level _ l) = viewList d l
 viewList d t           = viewList d (trim d t)
 
-alterC :: a -> Raz a -> Raz a
-alterC x (Raz (l, _, r)) = Raz (l, x, r)
+replaceC :: a -> Raz a -> Raz a
+replaceC x (Raz (l, _, r)) = Raz (l, x, r)
 
 alter :: Dir -> a -> Raz a -> Raz a
 alter d x (Raz (l, e, r))

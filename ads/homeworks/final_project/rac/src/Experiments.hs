@@ -2,11 +2,6 @@ module Experiments where
 
 ----------------------------------------------------------------------------------
 
---import           Control.Arrow
---import           Criterion.Main
---import           Data.Hashable
---import qualified Data.Map       as M
---import           Data.Tree.TST
 --import           Protolude
 
 ----------------------------------------------------------------------------------

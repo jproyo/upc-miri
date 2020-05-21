@@ -70,10 +70,8 @@ library:
     - -fdiagnostics-color=always
 
   dependencies:
-    - criterion
     - containers
-    - ghc-datasize
-    - hashable
+    - fingertree
     - MonadRandom
 
 executables:
@@ -82,22 +80,8 @@ executables:
     source-dirs: app/bench
     dependencies:
       - directory
-      - criterion
       - rac
       - time
-    ghc-options:
-      - -threaded
-      - -O2
-      - -rtsopts
-      - -with-rtsopts=-N
-      - -fdiagnostics-color=always
-
-  tst-profile:
-    main: Main.hs
-    source-dirs: app/profile
-    dependencies:
-      - directory
-      - rac
     ghc-options:
       - -threaded
       - -O2
@@ -119,4 +103,5 @@ tests:
       - -fdiagnostics-color=always
     dependencies:
       - containers
+      - MonadRandom
       - QuickCheck

@@ -72,8 +72,8 @@ library:
 
   dependencies:
     - containers
+    - deepseq
     - fingertree
-    - MonadRandom
     - random-shuffle
     - random
     - time
@@ -85,7 +85,7 @@ executables:
     source-dirs: app/bench
     dependencies:
       - directory
-      - MonadRandom
+      - optparse-applicative
       - rac
       - time
     ghc-options:
@@ -108,5 +108,5 @@ tests:
       - -fdiagnostics-color=always
     dependencies:
       - rac
-      - MonadRandom
+      - random
       - QuickCheck

@@ -1,13 +1,36 @@
 module Main where
 
-import           Experiments
-import           Protolude
-import           Control.Monad.Random
 import           Control.Monad
 import           Data.Time.Clock.POSIX
+import           Experiments
+import           Options.Applicative
+import           Protolude
 import           System.Directory
 
-main = do
+
+data Options = Experiment1
+             | Experiment2
+
+
+options :: Parser (IO ())
+options = hsubparser
+  ( command "exp-1" (info
+                      (pure expermient1)
+                      (fullDesc <> briefDesc <> progDesc "Experiment that builds each structure RAC and FingerTree from 10k elements up to 1M and register building time in nanoseconds" <> header "exp-1")
+                    )
+ <> command "exp-2" (info
+                      (pure $ return ())
+                      (fullDesc <> briefDesc <> progDesc "Experiment that builds each structure RAC and FingerTree with an initial 1M elements and insert another additional 10M up to 100M insertion time in nanoseconds" <> header "exp-2")
+                    )
+
+  )
+
+commands :: ParserInfo (IO ())
+commands = info (options <**> helper)
+  ( briefDesc <> progDesc "RAC - Random Access Zipper Experiments. See help with --help"
+  )
+
+expermient1 = do
   time' <- round <$> getPOSIXTime
   let
     init
@@ -15,8 +38,20 @@ main = do
   result <- foldM
     (\str elem -> fmap (str <>) (experimentSeq elem))
     init
-    [100000]
---    [64, 128, 256, 512, 1024, 4096, 8192, 9000, 9500, 10000, 12000, 20000, 40000, 60000, 100000, 200000, 500000, 1000000, 10000000]
---  createDirectoryIfMissing True "output/"
---  writeFile ("output/result_" <> show time' <> ".csv") result
-  putText result
+    [10000,20000..1000000]
+  createDirectoryIfMissing True "output/"
+  writeFile ("output/result_exp1_" <> show time' <> ".csv") result
+
+expermient2 = do
+  time' <- round <$> getPOSIXTime
+  let
+    init
+      = "size,rac time,fingertree time\n"
+  result <- foldM
+    (\str elem -> fmap (str <>) (experimentSeq elem))
+    init
+    [1000000,20000000..100000000]
+  createDirectoryIfMissing True "output/"
+  writeFile ("output/result_exp2_" <> show time' <> ".csv") result
+
+main = join $ execParser commands

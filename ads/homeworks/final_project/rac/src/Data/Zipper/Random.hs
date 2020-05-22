@@ -1,10 +1,10 @@
 module Data.Zipper.Random where
 
-import           Control.Monad.Random hiding (fromList)
-import           Data.Bits
-import           Data.Foldable        (toList)
-import           Prelude              (Show, error, showParen, showString, shows, showsPrec)
-import           Protolude            hiding (fold)
+import           Control.DeepSeq
+import           Data.Foldable   (toList)
+import           Prelude         (Show, error, showParen, showString, shows, showsPrec)
+import           Protolude       hiding (fold)
+import           System.Random
 
 type NLev = Int
 
@@ -36,6 +36,17 @@ data TList a
 
 type Raz a = (TList a, a, TList a)
 
+instance NFData a => NFData (Tree a) where
+  rnf Empty         = ()
+  rnf (Leaf a)      = rnf a
+  rnf (Bin _ _ l r) = rnf l `seq` rnf r
+
+instance NFData a => NFData (TList a) where
+  rnf Nil         = ()
+  rnf (Cons a l)      = rnf l `seq` rnf a
+  rnf (Level lv l) = rnf l `seq` rnf lv
+  rnf (LTree t l) = rnf l `seq` rnf t
+
 instance Eq a => Eq (Tree a) where
   (==) = (==) `on` toList
 
@@ -45,18 +56,20 @@ instance Ord a => Ord (Tree a) where
 instance Show a => Show (Tree a) where
   showsPrec d t = showParen (d > 10) $ showString "fromList " . shows (toList t)
 
-randomLevel :: MonadRandom m => m NLev
-randomLevel = fmap (\n -> countTrailingZeros (n :: Word)) getRandom
+randomLevel :: RandomGen g => g -> (NLev, g)
+randomLevel g = let (w, g') = next g
+                 in (countTrailingZeros w, g')
 {-# INLINE randomLevel #-}
-{-# SPECIALISE randomLevel :: IO NLev #-}
+{-# SPECIALISE randomLevel :: StdGen -> (NLev, StdGen) #-}
 
 singleton :: a -> Raz a
 singleton a = (Nil, a, Nil)
 
-empty :: MonadRandom m => a -> m (Raz a)
-empty a = randomLevel <&> \lv -> (Level lv ((Cons a) Nil), a, Nil)
+empty :: RandomGen g => g -> a -> (Raz a, g)
+empty g a = let (lv, g') = randomLevel g
+             in ((Level lv ((Cons a) Nil), a, Nil), g')
 {-# INLINE empty #-}
-{-# SPECIALISE Data.Zipper.Random.empty :: Int -> IO (Raz Int) #-}
+{-# SPECIALISE Data.Zipper.Random.empty :: StdGen -> Int -> (Raz Int, StdGen) #-}
 
 size :: Tree a -> Cnt
 size Empty           = 0
@@ -102,14 +115,14 @@ alterList x _ (Cons _ l)   = Cons x l
 alterList x d (Level lv l) = Level lv (alterList x d l)
 alterList x d t            = alterList x d (trim d t)
 
-insert :: MonadRandom m => Dir -> a -> Raz a -> m (Raz a)
-insert d x (l, e, r) =
-  randomLevel <&> \lv ->
-    case d of
-      L -> (Level lv (Cons x l), e, r)
-      R -> (l, e, Level lv (Cons x r))
+insert :: RandomGen g => g -> Dir -> a -> Raz a -> (Raz a, g)
+insert g d x (l, e, r) = let (lv, g') = randomLevel g
+                             r' = case d of
+                                L -> (Level lv (Cons x l), e, r)
+                                R -> (l, e, Level lv (Cons x r))
+                          in (r', g')
 {-# INLINE insert #-}
-{-# SPECIALISE insert :: Dir -> Int -> Raz Int -> IO (Raz Int) #-}
+{-# SPECIALISE insert :: StdGen -> Dir -> Int -> Raz Int -> (Raz Int, StdGen) #-}
 
 
 remove :: Dir -> Raz a -> Raz a
@@ -157,7 +170,7 @@ focusL = focusL' Nil
 {-# INLINE focusL #-}
 
 focusL' :: TList a -> Tree a -> Raz a
-focusL' _ Empty            = error "internal Empty"
+focusL' _ Empty             = error "internal Empty"
 focusL' !r (Leaf a)         = (Nil, a, r)
 focusL' !r (Bin lv _ bl br) = focusL' (Level lv (LTree br r)) bl
 {-# INLINE focusL' #-}
@@ -167,7 +180,7 @@ focusR = focusR' Nil
 {-# INLINE focusR #-}
 
 focusR' :: TList a -> Tree a -> Raz a
-focusR' _ Empty            = error "internal Empty"
+focusR' _ Empty             = error "internal Empty"
 focusR' !l (Leaf a)         = (l, a, Nil)
 focusR' !l (Bin lv _ bl br) = focusR' (Level lv (LTree bl l)) br
 {-# INLINE focusR' #-}
@@ -222,34 +235,11 @@ unfocus (l, e, r) = let !gr = grow R r
                      in joinSides gl . joinSides (Leaf e) $ gr
 {-# INLINE unfocus #-}
 
-fromList :: MonadRandom m => [a] -> m (Tree a)
-fromList []     = return Empty
-fromList (a:as) = fromList' (LTree (Leaf a) Nil) as
-
-fromList' :: MonadRandom m => TList a -> [a] -> m (Tree a)
-fromList' !ls [] = return (fold ls)
-fromList' !ls (a:as) =
-  randomLevel >>= \lv -> fromList' (LTree (Leaf a) (push lv ls)) as
-
-push :: NLev -> TList a -> TList a
-push lv (LTree t (Level lv' (LTree t' ls)))
-  | lv > lv' = push lv (LTree (bin lv' t' t) ls)
-push lv ls = Level lv ls
-
-fold :: TList a -> Tree a
-fold (LTree t (Level lv (LTree t' ls))) = fold (LTree (bin lv t' t) ls)
-fold (LTree t _)                        = t
-fold _                                  = error "internal error"
-
-bin :: NLev -> Tree a -> Tree a -> Tree a
-bin lv l r = Bin lv tot l r
-  where
-    tot = size l + size r
-
-insertAt' :: MonadRandom m => Dir -> Int -> a -> Tree a -> m (Tree a)
-insertAt' d i a = fmap unfocus . insert d a . focus i
+insertAt' :: RandomGen g => g -> Dir -> Int -> a -> Tree a -> (Tree a, g)
+insertAt' g d i a t = let (r, g') = insert g d a $ focus i t
+                       in (unfocus r, g')
 {-# INLINE insertAt' #-}
-{-# SPECIALISE insertAt' :: Dir -> Int -> Int -> Tree Int -> IO (Tree Int) #-}
+{-# SPECIALISE insertAt' :: StdGen -> Dir -> Int -> Int -> Tree Int -> (Tree Int, StdGen) #-}
 
 
 showRaz :: Show a => Raz a -> Text
@@ -282,20 +272,19 @@ showTree (Bin lv _ l r) =
 lengthR :: Raz a -> Int
 lengthR = size . unfocus
 
-fromListToRaz :: MonadRandom m => [a] -> m (Raz a)
-fromListToRaz (x:xs) = insertL' xs 0 (singleton x)
-fromListToRaz []     = error "Cannot build an empty list"
+fromListToRaz :: RandomGen g => g -> [a] -> (Raz a, g)
+fromListToRaz g (x:xs) = insertL' g xs 0 (singleton x)
+fromListToRaz _ []     = error "Cannot build an empty list"
 {-# INLINE fromListToRaz #-}
-{-# SPECIALISE fromListToRaz :: [Int] -> IO (Raz Int) #-}
+{-# SPECIALISE fromListToRaz :: StdGen -> [Int] -> (Raz Int, StdGen) #-}
 
 
-insertL' :: MonadRandom m => [a] -> Int -> Raz a -> m (Raz a)
-insertL' [] _ !r = return r
-insertL' (x:xs) sz !r = do
-  p <- getRandomR (0, sz)
-  r' <- (insert L x . focus p . unfocus) $ r
-  insertL' xs (sz + 1) r'
+insertL' :: RandomGen g => g -> [a] -> Int -> Raz a -> (Raz a, g)
+insertL' g [] _ !r = (r, g)
+insertL' g (x:xs) sz !r = let (p, g') = randomR (0, sz) g
+                              (r', g'') = (insert g' L x . focus p . unfocus) $ r
+                           in insertL' g'' xs (sz + 1) r'
 {-# INLINE insertL' #-}
-{-# SPECIALISE insertL' :: [Int] -> Int -> Raz Int -> IO (Raz Int) #-}
+{-# SPECIALISE insertL' :: StdGen -> [Int] -> Int -> Raz Int -> (Raz Int, StdGen) #-}
 
 

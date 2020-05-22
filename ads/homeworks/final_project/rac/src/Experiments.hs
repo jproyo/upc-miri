@@ -42,13 +42,27 @@ initFMillion = do
   g <- newStdGen
   return $ fromListToFinger g ls
 
-experimentMillion :: R.Raz Int -> F.FingerTree (Sum Int) Int -> Int -> IO Text
-experimentMillion initR initF n = do
+experimentMillion :: R.Raz Int -> F.FingerTree (Sum Int) Int -> IO Text
+experimentMillion initR initF = do
   number <- (generate $ choose (0, 10000000)) :: IO Int
-  ls <- shuffleM [number .. number + n - 1]
-  (time', _) <- withTimeInMs $ \g -> fst $ insertFinger' g ls 0 initF
-  (time, _) <- withTimeInMs $ \g -> fst $  R.insertL' g ls 0 initR
-  return $ show $ Meassure n time time'
+  ls <- shuffleM [number .. number + 100000000 - 1]
+  g <- newStdGen
+  (result, _, _, _, _) <- flip foldM ("", initR, initF, g, 0) (\(b, r, f, g2, c) n -> do
+     (time', (f', g'')) <- withTimeInMs' g2 $ \g' -> insertFinger'' g' n c f
+     (time, (r', g''')) <- withTimeInMs' g'' $ \g' -> insertR g' n c r
+     return $ ((show $ Meassure (c + 1 + 1000000) time time') <> b, r', f', g''', c+1)
+     ) ls
+  return result
+
+withTimeInMs' :: NFData a => StdGen -> (StdGen -> (a, StdGen)) -> IO (Int, (a, StdGen))
+withTimeInMs' g action = do
+  let current = (fromInteger . round . (* 1000) . (* 1000)) <$> liftIO getPOSIXTime
+                                      -- ^ ns       ^ ms
+  before <- current
+  let (r, g') = action g
+  _ <- r `seq` return ()
+  after <- current
+  return ((after - before), (r, g'))
 
 experimentSeq :: Int -> IO Text
 experimentSeq n = do
@@ -85,3 +99,15 @@ insertFinger' g (x:xs) sz sq = let (p, g') = randomR (0, sz) g
                                    (left, right) = F.split ((>) p . getSum) sq
                                    sq' = (left F.|> x) F.>< right
                                 in insertFinger' g' xs (sz+1) sq'
+
+
+
+insertFinger'' :: F.Measured (Sum Int) a => StdGen -> a -> Int -> F.FingerTree (Sum Int) a -> (F.FingerTree (Sum Int) a, StdGen)
+insertFinger'' g x sz sq = let (p, g') = randomR (0, sz) g
+                               (left, right) = F.split ((>) p . getSum) sq
+                            in ((left F.|> x) F.>< right, g')
+
+insertR :: RandomGen g => g -> a -> Int -> R.Raz a -> (R.Raz a, g)
+insertR g x sz !r = let (p, g') = randomR (0, sz) g
+                     in (R.insert g' R.L x . R.focus p . R.unfocus) $ r
+

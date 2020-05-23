@@ -91,12 +91,9 @@ executables:
     ghc-options:
       - -threaded
       - -O2
-      - -rtsopts
-      - -with-rtsopts=-N
-      - -fdiagnostics-color=always
 
 tests:
-  tst-test:
+  rac-test:
     main: Spec.hs
     source-dirs:
       - test

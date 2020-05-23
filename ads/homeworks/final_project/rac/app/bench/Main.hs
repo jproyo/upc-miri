@@ -6,6 +6,7 @@ import           Experiments
 import           Options.Applicative
 import           Protolude
 import           System.Directory
+import           System.IO              as S
 
 
 data Options = Experiment1
@@ -30,29 +31,26 @@ commands = info (options <**> helper)
   ( briefDesc <> progDesc "RAC - Random Access Zipper Experiments. See help with --help"
   )
 
+
+headCsv :: Text
+headCsv = "size,rac time,fingertree time"
+
 expermient1 :: IO ()
 expermient1 = do
   time' <- round <$> getPOSIXTime
-  let
-    init
-      = "size,rac time,fingertree time\n"
-  result <- foldM
-    (\s e -> fmap (s <>) (experimentSeq e))
-    init
-    [10000,20000..1000000]
+
   createDirectoryIfMissing True "output/"
-  writeFile ("output/result_exp1_" <> show time' <> ".csv") result
+  withFile ("output/result_exp1_" <> show time' <> ".csv") WriteMode $ \h -> do
+    S.hPutStrLn h $ toS headCsv
+    experimentSeq h
+
 
 expermient2 :: IO ()
 expermient2 = do
   time' <- round <$> getPOSIXTime
-  initR <- initRMillion
-  initF <- initFMillion
-  let
-    init
-      = "size,rac time,fingertree time\n"
-  result <- fmap (init <>) $ experimentMillion initR initF
   createDirectoryIfMissing True "output/"
-  writeFile ("output/result_exp2_" <> show time' <> ".csv") result
+  withFile ("output/result_exp2_" <> show time' <> ".csv") WriteMode $ \h -> do
+    S.hPutStrLn h $ toS headCsv
+    experimentMillion h
 
 main = join $ execParser commands

@@ -273,18 +273,18 @@ lengthR :: Raz a -> Int
 lengthR = size . unfocus
 
 fromListToRaz :: RandomGen g => g -> [a] -> (Raz a, g)
-fromListToRaz g (x:xs) = insertL' g xs 0 (singleton x)
+fromListToRaz g (x:xs) = insertL' g xs 0 0 (singleton x)
 fromListToRaz _ []     = error "Cannot build an empty list"
 {-# INLINE fromListToRaz #-}
 {-# SPECIALISE fromListToRaz :: StdGen -> [Int] -> (Raz Int, StdGen) #-}
 
 
-insertL' :: RandomGen g => g -> [a] -> Int -> Raz a -> (Raz a, g)
-insertL' g [] _ !r = (r, g)
-insertL' g (x:xs) sz !r = let (p, g') = randomR (0, sz) g
-                              (r', g'') = (insert g' L x . focus p . unfocus) $ r
-                           in insertL' g'' xs (sz + 1) r'
+insertL' :: RandomGen g => g -> [a] -> Int -> Int -> Raz a -> (Raz a, g)
+insertL' g [] _ _ !r = (r, g)
+insertL' g (x:xs) lowBound sz !r = let (p, g') = randomR (lowBound, sz) g
+                                       (r', g'') = (insert g' L x . focus p . unfocus) $ r
+                                    in insertL' g'' xs lowBound (sz + 1) r'
 {-# INLINE insertL' #-}
-{-# SPECIALISE insertL' :: StdGen -> [Int] -> Int -> Raz Int -> (Raz Int, StdGen) #-}
+{-# SPECIALISE insertL' :: StdGen -> [Int] -> Int -> Int -> Raz Int -> (Raz Int, StdGen) #-}
 
 

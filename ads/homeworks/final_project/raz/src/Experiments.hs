@@ -10,7 +10,6 @@ import           Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Data.Zipper.Random    as R
 import qualified GHC.Show              as S
 import           Protolude
-import           System.IO             as SI
 import           System.Random
 import           System.Random.Shuffle
 import           Test.QuickCheck
@@ -32,6 +31,9 @@ instance S.Show Meassure where
 oneMillion :: Int
 oneMillion = 1000000
 
+toSMeasure :: Int -> Int -> Int -> Text
+toSMeasure n r f = show $ Meassure n r f
+
 experimentGeneric :: Handle -> Int -> R.Raz Int -> F.FingerTree (Sum Int) Int -> IO (R.Raz Int, F.FingerTree (Sum Int) Int, Int)
 experimentGeneric h num initR initF = do
   number <- (generate $ choose (1, 10000000)) :: IO Int
@@ -39,8 +41,7 @@ experimentGeneric h num initR initF = do
   let actualSize = oneMillion+num
   (time', f) <- withTimeInMs $ \g -> fst $ insertFinger' g ls num 0 initF
   (time, r) <- withTimeInMs $ \g -> fst $  R.insertL' g ls num 0 initR
-  SI.hPutStrLn h $ show $ Meassure actualSize time time'
-  SI.hFlush h
+  hPutStrLn h $ toSMeasure actualSize time time'
   return (r, f, actualSize)
 
 experimentMillion :: Handle -> IO ()
@@ -53,8 +54,7 @@ experimentSeq h = forM_ [10000,20000..1000000] $ \n -> do
   ls <- shuffleM [number .. number + n - 1]
   (time', _) <- withTimeInMs $ flip fromListToFinger ls
   (time, _) <- withTimeInMs $ fst . flip R.fromListToRaz ls
-  SI.hPutStrLn h $ show $ Meassure n time time'
-  SI.hFlush h
+  hPutStrLn h $ toSMeasure n time time'
 
 withTimeInMs :: NFData a => (StdGen -> a) -> IO (Int, a)
 withTimeInMs action = do

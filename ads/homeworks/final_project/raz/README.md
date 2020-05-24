@@ -1,4 +1,4 @@
-# Random Access Zipper - RAC
+# Random Access Zipper - RAZ
 
 This README file only contains instruction to running the program and does NOT contain specifications about the problem or the solution.
 
@@ -6,7 +6,6 @@ This README file only contains instruction to running the program and does NOT c
 
 - **`app`**: Folder containing `main` programs for running the different experiments.
 - **`docs`**: Latex and PDF generated report with the formal specification of the solution.
-- **`data`**: Input Static data for experiments that are not random.
 - **`output`**: Raw output files like csv or screenshot gathered from experiments run
 - **`src`**: Haskell Source Code with solutions and experiments
 - **`test`**: Property based testing on the Data Structure.
@@ -28,10 +27,10 @@ Once you did that, you can just run:
 
 ### Running
 
-For running the benchmark program just do:
+For running the program just do the following and you will the see the different experiments to run:
 
 ```shell
-> stack exec rac-bench -- --output MY_OUTPUT_FILE.html
+> stack exec raz -- --help
 ```
 
 

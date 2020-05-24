@@ -1,8 +1,8 @@
-name:                rac
+name:                raz
 version:             0.1.0.0
 synopsis:            Random Access Zippers
 #description:
-homepage:            https://github.com/jproyo/upc-miri/ads/homeworks/final_project/rac#readme
+homepage:            https://github.com/jproyo/upc-miri/ads/homeworks/final_project/raz#readme
 license:             BSD3
 author:              Juan Pablo Royo Sales
 maintainer:          juanpablo.royo@gmail.com
@@ -80,20 +80,21 @@ library:
     - QuickCheck
 
 executables:
-  rac-bench:
+  raz:
     main: Main.hs
-    source-dirs: app/bench
+    source-dirs: app
     dependencies:
+      - criterion
       - directory
       - optparse-applicative
-      - rac
+      - raz
       - time
     ghc-options:
       - -threaded
       - -O2
 
 tests:
-  rac-test:
+  raz-test:
     main: Spec.hs
     source-dirs:
       - test
@@ -104,6 +105,6 @@ tests:
       - -with-rtsopts=-N
       - -fdiagnostics-color=always
     dependencies:
-      - rac
+      - raz
       - random
       - QuickCheck

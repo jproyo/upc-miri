@@ -78,15 +78,15 @@ runBench = do
   let conf = defaultConfig { reportFile = Just $ "output/report_benchmark_" <> time' <> ".html" }
   runMode (Run conf Glob ["*/*"])
 --  defaultMainWith conf
-    [ bgroup "alter"
+    [ bgroup "replaceC"
        [ bench "10" $ nf (alterT r10) s10
        , bench "100" $ nf (alterT r100) s100
        , bench "1000" $ nf (alterT r1000) s1000
        ],
       bgroup "insert"
-       [ bench "10" $ nf (insertT) s10
-       , bench "100" $ nf (insertT) s100
-       , bench "1000" $ nf (insertT) s1000
+       [ bench "10" $ nf (insertT r10) s10
+       , bench "100" $ nf (insertT r100) s100
+       , bench "1000" $ nf (insertT r1000) s1000
        ],
       bgroup "remove"
        [ bench "10" $ nf (removeT) s10
@@ -103,7 +103,7 @@ runBench = do
        , bench "100" $ nf (moveT) s100
        , bench "1000" $ nf (moveT) s1000
        ],
-      bgroup "focus/unfocus"
+      bgroup "focus_unfocus"
        [ bench "10" $ nf (focusT) s10
        , bench "100" $ nf (focusT) s100
        , bench "1000" $ nf (focusT) s1000
@@ -120,7 +120,7 @@ moveT :: (Raz Int, StdGen) -> Raz Int
 moveT = safeApplyT S.move
 
 viewT :: (Raz Int, StdGen) -> [Int]
-viewT (r, g) = foldr viewEach [] $ shuffle' [0..(lengthR r)-1] (lengthR r) g
+viewT (r, _) = foldr viewEach [] [0..(lengthR r)-1]
   where
     viewEach x l = let x' = if x == 0 then S.viewC r else (S.view L $ S.focus x $ S.unfocus r)
                     in x' : l
@@ -140,13 +140,11 @@ safeApplyT f (r, g) = foldr safeEach r [0..(lengthR r)-1]
                           _ -> f L r''
 
 
-insertT :: (Raz Int, StdGen) -> Raz Int
-insertT (r, g) = let (n, _) = randomR (lengthR r, 100) g
-                     rn100  = [n .. n+101]
-                  in fst $ foldr (\x (r', g') -> S.insert g' L x r') (r,g) rn100
+insertT :: [Int] -> (Raz Int, StdGen) -> Raz Int
+insertT xs r = fst $ foldr (\x (r', g') -> S.insert g' L x r') r xs
 
 alterT :: [Int] -> (Raz Int, StdGen) -> Raz Int
-alterT xs (r, _) = foldr (\x r' -> S.alter L x r') r xs
+alterT xs (r, _) = foldr (\x r' -> S.replaceC x r') r xs
 
 main :: IO ()
 main = join $ execParser commands

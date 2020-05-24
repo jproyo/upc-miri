@@ -87,6 +87,8 @@ executables:
       - criterion
       - directory
       - optparse-applicative
+      - random
+      - random-shuffle
       - raz
       - time
     ghc-options:

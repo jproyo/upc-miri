@@ -108,12 +108,16 @@ alter :: Dir -> a -> Raz a -> Raz a
 alter d x (l, e, r)
   | d == L = (alterList x d l, e, r)
   | otherwise = (l, e, alterList x d r)
+{-# INLINE alter #-}
+
 
 alterList :: a -> Dir -> TList a -> TList a
 alterList _ _ Nil          = error "Cannot alter here"
 alterList x _ (Cons _ l)   = Cons x l
 alterList x d (Level lv l) = Level lv (alterList x d l)
 alterList x d t            = alterList x d (trim d t)
+{-# INLINE alterList #-}
+
 
 insert :: RandomGen g => g -> Dir -> a -> Raz a -> (Raz a, g)
 insert g d x (l, e, r) = let (lv, g') = randomLevel g
@@ -129,12 +133,14 @@ remove :: Dir -> Raz a -> Raz a
 remove d (l, e, r)
   | d == L = (removeList d l, e, r)
   | otherwise = (l, e, removeList d r)
+{-# INLINE remove #-}
 
 removeList :: Dir -> TList a -> TList a
 removeList _ Nil          = error "Nothing to remove here"
 removeList _ (Cons _ l)   = l
 removeList d (Level _ l') = removeList d l'
 removeList d t            = removeList d (trim d t)
+{-# INLINE removeList #-}
 
 move :: Dir -> Raz a -> Raz a
 move d (l, e, r)

@@ -162,7 +162,7 @@ class BoxWrapping : public Space {
 
   virtual void constrain(const Space& boxWrap) {
     const BoxWrapping& oldBox = static_cast<const BoxWrapping&>(boxWrap);
-    rel(*this, length < oldBox.length);
+    rel(*this, length < oldBox.length.min());
   }
 
   void printDebug(){
@@ -186,4 +186,4 @@ class BoxWrapping : public Space {
 };
 
 // Domain Propagation
-IntPropLevel BoxWrapping::PROP_LEVEL = IPL_DOM;
+IntPropLevel BoxWrapping::PROP_LEVEL = IPL_BND;

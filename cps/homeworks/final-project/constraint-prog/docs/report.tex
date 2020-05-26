@@ -140,9 +140,9 @@ Regarding constraint optimization I am implemented the \textbf{length} optimizat
 
 \begin{listing}[H]
 \begin{cppcode*}{}
-  virtual void constrain(const Space& boxWrap) {
+  virtual void constrain(const Space& boxWrap){
     const BoxWrapping& oldBox = static_cast<const BoxWrapping&>(boxWrap);
-    rel(*this, length < oldBox.length);
+    rel(*this, length < oldBox.length.min());
   }
 \end{cppcode*}
 \caption{Branch and Bound Constraint Optimization}
@@ -184,7 +184,7 @@ I have implemented the following strategies for the variable and value selection
 
 \begin{listing}[H]
 \begin{cppcode*}{}
-  int value_aux(IntVar x, int i) const {
+  int value_aux(IntVar x, int i) const{
     int max = 0;
     for(int i = 0; i<boxes.size(); i++){
       if(x_br[i].assigned()){
@@ -194,7 +194,7 @@ I have implemented the following strategies for the variable and value selection
       }
     }
     int r = x.min();
-    for (IntVarValues k(x); k( ) ; ++k) {
+    for (IntVarValues k(x); k( ) ; ++k){
       int j  = k.val();
       if(max < boxes.getWidth()-1 && j > max && j < r){
         r = j;

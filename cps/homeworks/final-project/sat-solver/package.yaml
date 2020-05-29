@@ -1,0 +1,105 @@
+name:                sat
+version:             0.1.0.0
+synopsis:            Sat Solver for CPS - UPC
+#description:
+homepage:            https://github.com/jproyo/upc-miri/cps/homeworks/final_project/sal-solver#readme
+license:             BSD3
+author:              Juan Pablo Royo Sales
+maintainer:          juanpablo.royo@gmail.com
+copyright:           2020 Juan Pablo Royo Sales
+category:            Educational
+extra-source-files:
+- README.md
+
+dependencies:
+  - base
+  - protolude >= 0.3
+
+default-extensions:
+  - BangPatterns
+  - ConstraintKinds
+  - DataKinds
+  - DeriveFunctor
+  - DeriveFoldable
+  - DeriveTraversable
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveAnyClass
+  - DerivingStrategies
+  - DerivingVia
+  - EmptyCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MonadFailDesugaring
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeOperators
+  - TypeFamilies
+
+library:
+  exposed-modules:
+    - Solver
+
+  source-dirs:
+    - src
+
+  ghc-options:
+    - -Wall
+    - -fconstraint-solver-iterations=0
+    - -fno-warn-orphans
+    - -fno-warn-partial-type-signatures
+    - -O2
+    - -Werror
+    - -fdiagnostics-color=always
+
+  dependencies:
+    - containers
+    - deepseq
+    - mios
+    - safe-exceptions
+    - time
+    - QuickCheck
+
+executables:
+  sat:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - criterion
+      - optparse-applicative
+      - sat
+    ghc-options:
+      - -threaded
+      - -O2
+
+tests:
+  sat-test:
+    main: Spec.hs
+    source-dirs:
+      - test
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -fdiagnostics-color=always
+    dependencies:
+      - sat
+      - QuickCheck

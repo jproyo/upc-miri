@@ -6,4 +6,4 @@ import           Solver
 import           Protolude
 
 main :: IO ()
-main = fromInput >>= putLText . show
+main = fromInput >>= putLText . show . rollMaxLength

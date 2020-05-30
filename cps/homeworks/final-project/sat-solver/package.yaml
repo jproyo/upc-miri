@@ -73,6 +73,7 @@ library:
     - containers
     - deepseq
     - mios
+    - mtl
     - safe-exceptions
     - time
     - QuickCheck

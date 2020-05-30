@@ -1,12 +1,9 @@
 module Data.Box
   ( fromInput
-  , Boxes
-  , Box
+  , Boxes(..)
+  , Box(..)
   , Solution(..)
   , ProposedBox(..)
-  , rollWidth
-  , boxes
-  , rollMaxLength
   ) where
 
 import           Control.Exception.Safe
@@ -19,10 +16,16 @@ data Box =
     { amount :: !Int
     , cordX  :: !Int
     , cordY  :: !Int
-    }
+    } deriving Eq
 
 instance Show Box where
   show Box {..} = P.show amount <> "   " <> P.show cordX <> " " <> P.show cordY
+
+area :: Box -> Int
+area Box{..} = cordX * cordY
+
+instance Ord Box where
+  compare b1 b2 = compare (area b2) (area b1)
 
 data Boxes =
   Boxes
@@ -30,6 +33,7 @@ data Boxes =
     , amountBoxes   :: !Int
     , rollMaxLength :: !Int
     , boxes         :: ![Box]
+    , expandedBoxes :: ![(Int, Int)]
     }
 
 instance Show Boxes where
@@ -79,7 +83,9 @@ fromInput = do
   [width, amountBoxes] <- safeCheck . lineToHeader <$> getLine
   boxes <- safeCheck . traverse lineBox . lines <$> getContents
   checkInput amountBoxes boxes
-  return $ Boxes width (length boxes) (maxLength boxes) boxes
+  let boxSorted = sort boxes
+  let expandedBoxes = foldr (\Box{..} b -> replicate amount (cordX, cordY) ++ b) [] boxSorted
+  return $ Boxes width (length boxes) (maxLength boxes) boxSorted expandedBoxes
 
 safeCheck :: MonadThrow m => Either String (m a) -> m a
 safeCheck = either throwString identity
@@ -93,3 +99,4 @@ lineBox = join . fmap toBox . traverse (first toS . readEither . toS) . words
 toBox :: [Int] -> Either String Box
 toBox [amount, width, height] = Right $ Box amount width height
 toBox _                       = Left "Error Parsing Box"
+

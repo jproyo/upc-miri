@@ -22,9 +22,6 @@ import           Protolude
 
 type Clause = [Lit]
 
-empty :: Clause
-empty = []
-
 type Clauses = [Clause]
 
 type Lit = Int

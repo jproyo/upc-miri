@@ -15,6 +15,9 @@ module SAT.Encoder
   , exactlyOne
   , addClause
   , addClauses
+  , (\/)
+  , (#-)
+  , zeroC
   )where
 
 --------------------------------------------------------------------------------
@@ -24,6 +27,21 @@ import           SAT.Types
 
 --------------------------------------------------------------------------------
 
+-- Compose clause
+(\/) :: Applicative f => f Lit -> f Clause -> f Clause
+(\/) l c = (:) <$> l <*> c
+
+infixr 4 \/
+
+-- Negate Lit
+(#-) :: Applicative f => f Lit -> f Lit
+( #- ) = fmap negate
+
+infixl 3 #-
+
+zeroC :: WithEncoder m => m Clause
+zeroC = pure []
+
 atLeastOne :: WithEncoder m => Clause -> m ()
 atLeastOne = addClause . map (\l -> if l < 0 then negate l else l)
 
@@ -32,19 +50,19 @@ atMostOne :: WithEncoder m => Clause -> m ()
 atMostOne clause = do
   let logNVars = ceiling $ logBase @Double 2 (fromIntegral $ length clause)
   yVars <- newVars logNVars
-  traverse_ (addClause . clauseWithYVar) [(xs,ys) | xs <- zip [0..] clause, ys <- zip [0..] yVars]
+  traverse_ (addClause <=< clauseWithYVar) [(xs,ys) | xs <- zip [0..] clause, ys <- zip [0..] yVars]
 
   where
-    clauseWithYVar :: ((Int, Lit), (Int, Lit)) -> Clause
-    clauseWithYVar ((i, xi), (j, yj)) | testBit i j = [negate xi, yj]
-                                      | otherwise = [negate xi, negate yj]
+    clauseWithYVar :: WithEncoder m => ((Int, Lit), (Int, Lit)) -> m Clause
+    clauseWithYVar ((i, xi), (j, yj)) | testBit i j = (#-) (pure xi) \/ pure yj \/ zeroC
+                                      | otherwise = (#-) (pure xi) \/ (#-) (pure yj) \/ zeroC
 
 exactlyOne :: WithEncoder m => Clause -> m ()
-exactlyOne = forM_ [atLeastOne, atMostOne] . flip ($)
+exactlyOne = forM_ [atMostOne, atLeastOne] . flip ($)
 
 addClause :: WithEncoder m => Clause -> m ()
 addClause [] = pure ()
-addClause c = modifyClauses ((:) c)
+addClause c  = modifyClauses ((:) c)
 
 addClauses :: WithEncoder m => [Clause] -> m ()
 addClauses = mapM_ addClause . filter (not . null)

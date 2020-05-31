@@ -9,7 +9,6 @@ Portability : POSIX
 
 This module contains the model of Data Types for the Input and Output data of the problem
 -}
-
 module Data.Box
   ( fromInput
   , Box(..)
@@ -24,14 +23,12 @@ module Data.Box
   ) where
 
 --------------------------------------------------------------------------------
-
 import           Control.Exception.Safe
 import           GHC.Base               (String)
 import           GHC.Show               as S
 import           Protolude              as P
 
 --------------------------------------------------------------------------------
-
 data Box =
   Box
     { num    :: !Int
@@ -41,20 +38,22 @@ data Box =
   deriving (Eq, Show)
 
 isSquare :: Box -> Bool
-isSquare Box{..} | width == height = True
+isSquare Box {..}
+  | width == height = True
   | otherwise = False
 
 insideOfRoll :: Boxes -> Box -> (Int, Int) -> Bool
 insideOfRoll bxs b pos
   | isSquare b = insideNormal bxs b pos
-  | otherwise = insideNormal bxs b pos || insideRotated bxs b pos
+  | otherwise = insideNormal bxs b pos || insideRotated bxs b pos
 
 insideNormal :: Boxes -> Box -> (Int, Int) -> Bool
-insideNormal Boxes{..} Box{..} (x, y) = x + width - 1 < rollWidth && y + height - 1 < rollMaxLength
+insideNormal Boxes {..} Box {..} (x, y) =
+  x + width - 1 < rollWidth && y + height - 1 < rollMaxLength
 
 insideRotated :: Boxes -> Box -> (Int, Int) -> Bool
-insideRotated Boxes{..} Box{..} (x, y) = x + width - 1 < rollMaxLength && y + height - 1 < rollWidth
-
+insideRotated Boxes {..} Box {..} (x, y) =
+  x + height - 1 < rollWidth && y + width - 1 < rollMaxLength
 
 data BoxInfo =
   BoxInfo
@@ -111,7 +110,6 @@ instance Show Solution where
   show Solution {..} =
     toS $ unlines $ (P.show lengthRoll) : (P.show <$> propBoxes)
 
-
 maxLength :: [BoxInfo] -> Int
 maxLength = getSum . foldMap (Sum . maxLengthB)
 
@@ -139,8 +137,7 @@ fromInput = do
           boxSorted
   let expandedWithIdx =
         zipWith (\idx (x, y) -> Box idx x y) [0 ..] expandedBoxes
-  return $
-    Boxes width amountBoxes (maxLength boxes) boxSorted expandedWithIdx
+  return $ Boxes width amountBoxes (maxLength boxes) boxSorted expandedWithIdx
 
 safeCheck :: MonadThrow m => Either String (m a) -> m a
 safeCheck = either throwString identity

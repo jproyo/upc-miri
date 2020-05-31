@@ -9,7 +9,6 @@ Portability : POSIX
 
 -}
 
-
 module SAT.Solver
   ( solve
   ) where
@@ -23,7 +22,7 @@ import           Protolude
 import           Protolude.Partial
 import           SAT.Clause
 import           SAT.Mios
-import           SAT.Mios.Util.DIMACS.Writer as W
+--import           SAT.Mios.Util.DIMACS.Writer as W
 import           SAT.Types
 
 --------------------------------------------------------------------------------
@@ -32,8 +31,7 @@ import           SAT.Types
 solve :: Boxes -> IO Solution
 solve bxs = do
   let (builder, conf) = mkState bxs
-  print builder
-  print conf
+  print $ rollMaxLength $ boxesConf conf
   (sol, _) <- runStateT (runReaderT (runEncoder solver) conf) builder
   return sol
 
@@ -42,9 +40,9 @@ solver = do
   buildClaues
   clausesList <- clauses <$> get
   let cnfDesc = cnfDescription clausesList
-  liftIO $ W.toFile "./dump.cnf" clausesList
+  --liftIO $ W.toFile "./dump.cnf" clausesList
   sol <- liftIO $ solveSAT cnfDesc clausesList
-  return =<< fromSolver sol
+  return =<< toSolution sol
 
 cnfDescription :: Clauses -> CNFDescription
 cnfDescription clausesList = let amountVars = last . nub . sort . map abs . concat $ clausesList
@@ -52,7 +50,7 @@ cnfDescription clausesList = let amountVars = last . nub . sort . map abs . conc
                               in CNFDescription amountVars clausesLength ""
 
 buildClaues :: WithEncoder m => m ()
-buildClaues = addXtlVars >> addOnePerCell >> addConsecutiveCells
+buildClaues = addXtlVars >> addOnePerCell >> addConsecutiveCells >> addControlBounds
 
 mkState :: Boxes -> (ClausesBuilder, ClausesConf)
 mkState bxs@Boxes{..} =

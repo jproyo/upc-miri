@@ -29,7 +29,7 @@ import           SAT.Types
 --------------------------------------------------------------------------------
 
 
-solve :: Boxes -> IO [Int]
+solve :: Boxes -> IO Solution
 solve bxs = do
   let (builder, conf) = mkState bxs
   print builder
@@ -37,17 +37,19 @@ solve bxs = do
   (sol, _) <- runStateT (runReaderT (runEncoder solver) conf) builder
   return sol
 
-solver :: ClausesEncoderApp IO [Int]
+solver :: ClausesEncoderApp IO Solution
 solver = do
   buildClaues
   clausesList <- clauses <$> get
-  let cnfDesc = CNFDescription (amountVars clausesList) (length clausesList) ""
-  --liftIO $ W.toFile "./dump.cnf" clausesList
+  let cnfDesc = cnfDescription clausesList
+  liftIO $ W.toFile "./dump.cnf" clausesList
   sol <- liftIO $ solveSAT cnfDesc clausesList
-  return $ sol
+  return =<< fromSolver sol
 
-amountVars :: Clauses -> Int
-amountVars = last . nub . sort . map abs . concat
+cnfDescription :: Clauses -> CNFDescription
+cnfDescription clausesList = let amountVars = last . nub . sort . map abs . concat $ clausesList
+                                 clausesLength = length clausesList
+                              in CNFDescription amountVars clausesLength ""
 
 buildClaues :: WithEncoder m => m ()
 buildClaues = addXtlVars >> addOnePerCell >> addConsecutiveCells

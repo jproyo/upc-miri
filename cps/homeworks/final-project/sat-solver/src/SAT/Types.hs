@@ -22,6 +22,9 @@ import           Protolude
 
 type Clause = [Lit]
 
+empty :: Clause
+empty = []
+
 type Clauses = [Clause]
 
 type Lit = Int
@@ -41,7 +44,7 @@ data ClausesConf =
 
 type ClausesState = StateT ClausesBuilder
 
-type WithEncoder m = (MonadState ClausesBuilder m, MonadReader ClausesConf m)
+type WithEncoder m = (MonadIO m, MonadState ClausesBuilder m, MonadReader ClausesConf m)
 
 newtype ClausesEncoderApp m a =
   ClausesEncoderApp

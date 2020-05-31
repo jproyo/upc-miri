@@ -18,6 +18,9 @@ module Data.Box
   , Solution(..)
   , ProposedBox(..)
   , insideOfRoll
+  , insideNormal
+  , insideRotated
+  , isSquare
   ) where
 
 --------------------------------------------------------------------------------
@@ -35,11 +38,23 @@ data Box =
     , width  :: !Int
     , height :: !Int
     }
-  deriving (Eq)
+  deriving (Eq, Show)
 
-insideOfRoll :: Boxes -> Box -> Int -> Int -> Bool
-insideOfRoll Boxes {..} Box {..} x y =
-  x + width - 1 >= rollWidth || y + height - 1 >= rollMaxLength
+isSquare :: Box -> Bool
+isSquare Box{..} | width == height = True
+  | otherwise = False
+
+insideOfRoll :: Boxes -> Box -> (Int, Int) -> Bool
+insideOfRoll bxs b pos
+  | isSquare b = insideNormal bxs b pos
+  | otherwise = insideNormal bxs b pos || insideRotated bxs b pos
+
+insideNormal :: Boxes -> Box -> (Int, Int) -> Bool
+insideNormal Boxes{..} Box{..} (x, y) = x + width - 1 < rollWidth && y + height - 1 < rollMaxLength
+
+insideRotated :: Boxes -> Box -> (Int, Int) -> Bool
+insideRotated Boxes{..} Box{..} (x, y) = x + width - 1 < rollMaxLength && y + height - 1 < rollWidth
+
 
 data BoxInfo =
   BoxInfo
@@ -95,6 +110,7 @@ data Solution =
 instance Show Solution where
   show Solution {..} =
     toS $ unlines $ (P.show lengthRoll) : (P.show <$> propBoxes)
+
 
 maxLength :: [BoxInfo] -> Int
 maxLength = getSum . foldMap (Sum . maxLengthB)

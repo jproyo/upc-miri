@@ -1,3 +1,14 @@
+{-|
+Module      : SAT.Encoder
+Description : This module contains different encoders AMO, ALO, EO
+Copyright   : (c) Juan Pablo Royo Sales, 2020
+License     : GPL-3
+Maintainer  : juanpablo.royo@gmail.com
+Stability   : educational
+Portability : POSIX
+
+-}
+
 module SAT.Encoder
   ( atLeastOne
   , atMostOne
@@ -6,14 +17,18 @@ module SAT.Encoder
   , addClauses
   )where
 
+--------------------------------------------------------------------------------
+
 import           Protolude
 import           SAT.Types
 
-atLeastOne :: WithClauses m => Clause -> m ()
+--------------------------------------------------------------------------------
+
+atLeastOne :: WithEncoder m => Clause -> m ()
 atLeastOne = addClause . map (\l -> if l < 0 then negate l else l)
 
 -- Implemented with Logarithmic encoding
-atMostOne :: WithClauses m => Clause -> m ()
+atMostOne :: WithEncoder m => Clause -> m ()
 atMostOne clause = do
   let logNVars = ceiling $ logBase @Double 2 (fromIntegral $ length clause)
   yVars <- newVars logNVars
@@ -24,11 +39,12 @@ atMostOne clause = do
     clauseWithYVar ((i, xi), (j, yj)) | testBit i j = [negate xi, yj]
                                       | otherwise = [negate xi, negate yj]
 
-exactlyOne :: WithClauses m => Clause -> m ()
+exactlyOne :: WithEncoder m => Clause -> m ()
 exactlyOne = forM_ [atLeastOne, atMostOne] . flip ($)
 
-addClause :: WithClauses m => Clause -> m ()
-addClause = modifyClauses . (:)
+addClause :: WithEncoder m => Clause -> m ()
+addClause [] = pure ()
+addClause c = modifyClauses ((:) c)
 
-addClauses :: WithClauses m => [Clause] -> m ()
-addClauses = mapM_ addClause
+addClauses :: WithEncoder m => [Clause] -> m ()
+addClauses = mapM_ addClause . filter (not . null)

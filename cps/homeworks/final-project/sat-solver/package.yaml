@@ -55,7 +55,7 @@ default-extensions:
 
 library:
   exposed-modules:
-    - Solver
+    - BoxWrapping
 
   source-dirs:
     - src

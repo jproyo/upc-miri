@@ -1,65 +1,64 @@
-module SAT.Solver where
+{-|
+Module      : SAT.Solver
+Description : Entry point of solver which combines SAT.Clause module combinators to build the clauses
+Copyright   : (c) Juan Pablo Royo Sales, 2020
+License     : GPL-3
+Maintainer  : juanpablo.royo@gmail.com
+Stability   : educational
+Portability : POSIX
+
+-}
+
+
+module SAT.Solver
+  ( solve
+  ) where
+
+
+--------------------------------------------------------------------------------
 
 import           Data.Box
-import           Prelude     (zip3)
+import           Data.List                   (nub, sort)
 import           Protolude
-import           SAT.Encoder
+import           Protolude.Partial
+import           SAT.Clause
+import           SAT.Mios
+import           SAT.Mios.Util.DIMACS.Writer as W
 import           SAT.Types
 
---import           SAT.Mios
---solve :: Box -> IO Solution
---solve = undefined
-mkState :: Boxes -> ClausesBuilder
-mkState bxs =
-  let matrix = amountVars bxs -- ^ N*W*L
-      nBoxes = amountBoxes bxs -- ^ For rotated Boxes
-      reservedVarsCount = matrix + matrix + nBoxes -- ^ Reserve this slots and add new vars for log encoding or others
-   in ClausesBuilder
-        { clauses = []
-        , xtlVars = matrix
-        , cellVars = matrix
-        , rotVars = nBoxes
-        , countVars = reservedVarsCount
-        }
-
-amountVars :: Boxes -> Int
-amountVars Boxes {..} = amountBoxes * rollWidth * rollMaxLength
-
-baseLit :: Boxes -> (Int, Int, Int) -> Lit
-baseLit Boxes{..} (b, x, y) = b*rollWidth*rollMaxLength + x*rollWidth + y*rollMaxLength
-
-toXtlLit :: Boxes -> (Int, Int, Int) -> Lit
-toXtlLit = baseLit
-
-toCellLit :: Int -> Boxes -> (Int, Int, Int) -> Lit
-toCellLit xtlVars bxs pos = xtlVars + toXtlLit bxs pos
-
-buildForEach :: Boxes -> (Boxes -> (Int,Int,Int) -> Clause -> Clause) -> Clause
-buildForEach bxs@Boxes{..} f = foldr (f bxs) [] (zip3 [1..amountBoxes] [0..rollWidth] [0..rollMaxLength])
+--------------------------------------------------------------------------------
 
 
---Add positive x_tl for each possible box
-addXtlVars :: WithClauses m => Boxes -> m ()
-addXtlVars bxs = do
-  addClause $ xtlFirstBox bxs
-  let clause = buildForEach bxs addXtlForRest
-  addClause clause >> exactlyOne clause
+solve :: Boxes -> IO [Int]
+solve bxs = do
+  let (builder, conf) = mkState bxs
+  print builder
+  print conf
+  (sol, _) <- runStateT (runReaderT (runEncoder solver) conf) builder
+  return sol
 
--- Put first box which is the greates in the first xtl coordinate
-xtlFirstBox :: Boxes -> Clause
-xtlFirstBox = flip (:) [] . flip toXtlLit (1,0,0)
+solver :: ClausesEncoderApp IO [Int]
+solver = do
+  buildClaues
+  clausesList <- clauses <$> get
+  let cnfDesc = CNFDescription (amountVars clausesList) (length clausesList) ""
+  --liftIO $ W.toFile "./dump.cnf" clausesList
+  sol <- liftIO $ solveSAT cnfDesc clausesList
+  return $ sol
 
-addXtlForRest :: Boxes -> (Int, Int, Int) -> Clause -> Clause
-addXtlForRest bxs box@(b,_,_) clxs | b > 1 = toXtlLit bxs box : clxs
-                                   | otherwise = clxs
+amountVars :: Clauses -> Int
+amountVars = last . nub . sort . map abs . concat
 
-addOnePerCell :: WithClauses m => Boxes -> m ()
-addOnePerCell bxs = do
-  xtls <- xtlVars <$> get
-  let clause = buildForEach bxs $ addCellPerEach xtls
-  addClause clause >> exactlyOne clause
+buildClaues :: WithEncoder m => m ()
+buildClaues = addXtlVars >> addOnePerCell >> addConsecutiveCells
 
-addCellPerEach :: Int -> Boxes -> (Int, Int, Int) -> Clause -> Clause
-addCellPerEach xtls bxs box clxs = toCellLit xtls bxs box : clxs
+mkState :: Boxes -> (ClausesBuilder, ClausesConf)
+mkState bxs@Boxes{..} =
+  let matrix = amountBoxes * rollWidth * rollMaxLength -- ^ N*W*L
+      nBoxes = amountBoxes -- ^ For rotated Boxes
+      reservedVarsCount = 2 * matrix + nBoxes -- ^ Reserve this slots and add new vars for log encoding or others
+      builder = ClausesBuilder {clauses = [], countVars = reservedVarsCount }
+      conf = ClausesConf bxs matrix nBoxes
+   in (builder, conf)
 
 

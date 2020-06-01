@@ -45,9 +45,36 @@ zeroC = pure []
 atLeastOne :: WithEncoder m => Clause -> m ()
 atLeastOne = addClause . map (\l -> if l < 0 then negate l else l)
 
--- Implemented with Logarithmic encoding
+-- At Most One Encoding
 atMostOne :: WithEncoder m => Clause -> m ()
-atMostOne clause = do
+atMostOne clause = encoder . options <$> get >>= \case
+  Logarithmic -> logaritmicEncoding clause
+  Heule       -> heuleEncoding clause
+
+heuleEncoding :: WithEncoder m => Clause -> m ()
+heuleEncoding clause | length clause <= 3 = quadraticEncoder clause
+                     | otherwise = heuleEncoding' clause
+
+quadraticEncoder :: WithEncoder m => Clause -> m ()
+quadraticEncoder clause = traverse_ (buildQuadratic clause) $ zip [0..] clause
+
+buildQuadratic :: WithEncoder m => Clause -> (Int, Lit) -> m ()
+buildQuadratic clxs (idx, x) = do
+  let (_, rest) = splitAt (idx+1) clxs
+  traverse_ (addClause <=< buildPair x) rest
+    where
+      buildPair xi xj = (#-) (pure xi) \/ (#-) (pure xj) \/ zeroC
+
+heuleEncoding' :: WithEncoder m => Clause -> m ()
+heuleEncoding' clause = do
+  let (clause1, clause2) = splitAt 2 clause
+  yNewVar <- newVar
+  atMostOne =<< pure yNewVar \/ pure clause1
+  atMostOne =<< (#-) (pure yNewVar) \/ pure clause2
+
+
+logaritmicEncoding :: WithEncoder m => Clause -> m ()
+logaritmicEncoding clause = do
   let logNVars = ceiling $ logBase @Double 2 (fromIntegral $ length clause)
   yVars <- newVars logNVars
   traverse_ (addClause <=< clauseWithYVar) [(xs,ys) | xs <- zip [0..] clause, ys <- zip [0..] yVars]

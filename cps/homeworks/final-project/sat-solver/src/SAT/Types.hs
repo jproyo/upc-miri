@@ -8,23 +8,31 @@ Stability   : educational
 Portability : POSIX
 
 -}
-
-
 module SAT.Types where
 
 --------------------------------------------------------------------------------
-
 import           Control.Monad.State.Lazy
 import           Data.Box
+import           Data.Maybe
 import           Protolude
 
 --------------------------------------------------------------------------------
-
 type Clause = [Lit]
 
 type Clauses = [Clause]
 
 type Lit = Int
+
+data ProgOptions =
+  ProgOptions
+    { encoder :: AmoEncoder
+    , dumpCnf :: Bool
+    }
+
+data AmoEncoder
+  = Logarithmic
+  | Heule
+  deriving (Read, Show, Eq)
 
 data ClausesBuilder =
   ClausesBuilder
@@ -34,7 +42,8 @@ data ClausesBuilder =
     , rollMaxLength  :: !Int
     , amountCellVars :: !Int
     , amountRotVars  :: !Int
-    } deriving Show
+    , options        :: ProgOptions
+    }
 
 type ClausesState = StateT ClausesBuilder
 
@@ -54,11 +63,12 @@ newtype ClausesEncoderApp m a =
 modifyClauses :: WithEncoder m => (Clauses -> Clauses) -> m ()
 modifyClauses f = modify $ \c -> c {clauses = f (clauses c)}
 
+newVar :: WithEncoder m => m Int
+newVar = fromJust . head <$> newVars 1
+
 newVars :: WithEncoder m => Int -> m [Int]
 newVars n = do
   st <- get
   let lower = countVars st
   put $ st {countVars = (countVars st) + n}
   return [lower + 1 .. lower + n]
-
-

@@ -72,19 +72,16 @@ library:
 
   dependencies:
     - containers
-    - deepseq
+    - directory
     - mios
     - mtl
     - safe-exceptions
-    - time
-    - QuickCheck
 
 executables:
   sat:
     main: Main.hs
     source-dirs: app
     dependencies:
-      - criterion
       - optparse-applicative
       - sat
     ghc-options:
@@ -92,17 +89,4 @@ executables:
       - -O2
       - -optP-Wno-nonportable-include-path
 
-tests:
-  sat-test:
-    main: Spec.hs
-    source-dirs:
-      - test
-    ghc-options:
-      - -threaded
-      - -O2
-      - -rtsopts
-      - -with-rtsopts=-N
-      - -fdiagnostics-color=always
-    dependencies:
-      - sat
-      - QuickCheck
+

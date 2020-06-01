@@ -13,7 +13,9 @@ Portability : POSIX
 module BoxWrapping
   ( module Data.Box
   , module SAT.Solver
+  , module S
   ) where
 
 import           Data.Box
 import           SAT.Solver
+import           SAT.Types  as S (ProgOptions (..), AmoEncoder(..))

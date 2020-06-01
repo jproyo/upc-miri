@@ -42,13 +42,14 @@ xtlFirstBox = toXtlLit (0, 0, 0) \/ zeroC
 -- Add At most one Box per cell in the matrix
 addOnePerCell :: WithEncoder m => m ()
 addOnePerCell = do
-  Boxes {..} <- boxesConf <$> ask
-  let lst = [(i, j) | i <- [0 .. rollWidth - 1], j <- [0 .. rollMaxLength - 1]]
+  rWidth <- rollWidth . boxesConf <$> get
+  rLength <- rollMaxLength <$> get
+  let lst = [(i, j) | i <- [0 .. rWidth - 1], j <- [0 .. rLength - 1]]
   traverse_ (atMostOne <=< forAllRoll) lst
   where
     forAllRoll :: WithEncoder m => (Int, Int) -> m Clause
     forAllRoll pos = do
-      bxs <- (expandedBoxes . boxesConf) <$> ask
+      bxs <- (expandedBoxes . boxesConf) <$> get
       foldM (buildClausePerCell pos) [] bxs
 
 buildClausePerCell :: WithEncoder m => (Int, Int) -> Clause -> Box -> m Clause
@@ -61,24 +62,19 @@ addConsecutiveCells =
 
 buildConsecutiveClause ::
      WithEncoder m => Box -> Clause -> (Int, Int) -> m Clause
-buildConsecutiveClause b _ p = do
-  bxs <- boxesConf <$> ask
-  whenThen (insideOfRoll bxs b p) $ sliceBox b p
-  zeroC
+buildConsecutiveClause b _ p = whenM (insideOfRoll b p) (sliceBox b p) >> zeroC
 
 -- Slice boxes try to ensure that consecutive cells are ocuppied by box N
 sliceBox :: WithEncoder m => Box -> (Int, Int) -> m ()
 sliceBox b pos
   | isSquare b = do
-    bxs <- boxesConf <$> ask
-    when (insideNormal bxs b pos) $ do
+    whenM (insideNormal b pos) $ do
       traverse_ (addWithoutRotation b pos) $ sliceListNormal b pos
       addClause =<< (#-) (toRotLit $ num b) \/ zeroC
   | otherwise = do
-    bxs <- boxesConf <$> ask
-    when (insideNormal bxs b pos) $
+    whenM (insideNormal b pos) $
       traverse_ (addWithRotation b pos) $ sliceListNormal b pos
-    when (insideRotated bxs b pos) $
+    whenM (insideRotated b pos) $
       traverse_ (addWithRotation b pos) $ sliceListRotated b pos
 
 sliceListNormal :: Box -> (Int, Int) -> [(Int, Int)]
@@ -100,15 +96,16 @@ addWithoutRotation Box {..} (i, j) (coordI, coordJ) =
 -- 2. If the box fix with rotation in the limit rotate. r -> -| xtl \/ cell
 addWithRotation :: WithEncoder m => Box -> (Int, Int) -> (Int, Int) -> m ()
 addWithRotation b@Box {..} (i, j) (coordI, coordJ) = do
-  bxs <- boxesConf <$> ask
-  when (insideNormal bxs b (i, j)) $
+  whenM (insideNormal b (i, j)) $
     addClause =<<
-    (#-) (toXtlLit (num, i, j)) \/
-    toCellLit (num, coordI, coordJ) \/ toRotLit num \/ zeroC
-  when (insideRotated bxs b (i, j)) $
+    (#-) (toXtlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/
+    toRotLit num \/
+    zeroC
+  whenM (insideRotated b (i, j)) $
     addClause =<<
-    (#-) (toXtlLit (num, i, j)) \/
-    toCellLit (num, coordI, coordJ) \/ (#-) (toRotLit num) \/ zeroC
+    (#-) (toXtlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/
+    (#-) (toRotLit num) \/
+    zeroC
 
 -- Control that each xtl position dont exceed limits
 addControlBounds :: WithEncoder m => m ()
@@ -121,36 +118,52 @@ addBounds b _ pos
 
 addBoundsSquare :: WithEncoder m => Box -> (Int, Int) -> m Clause
 addBoundsSquare b@Box {..} (i, j) = do
-  bxs <- boxesConf <$> ask
-  whenThen (not $ insideNormal bxs b (i, j)) $
+  whenM (not <$> insideNormal b (i, j)) $
     addClause =<< (#-) (toXtlLit (num, i, j)) \/ zeroC
   zeroC
 
 addBoundsNormal :: WithEncoder m => Box -> (Int, Int) -> m Clause
 addBoundsNormal b@Box {..} (i, j) = do
-  bxs <- boxesConf <$> ask
-  whenThen (not $ insideNormal bxs b (i, j)) $
+  whenM (not <$> insideNormal b (i, j)) $
     addClause =<< (toRotLit num) \/ (#-) (toXtlLit (num, i, j)) \/ zeroC
-  whenThen (not $ insideRotated bxs b (i, j)) $
+  whenM (not <$> insideRotated b (i, j)) $
     addClause =<< (#-) (toRotLit num) \/ (#-) (toXtlLit (num, i, j)) \/ zeroC
   zeroC
 
 toRotLit :: WithEncoder m => Int -> m Lit
-toRotLit box = amountCellVars <$> ask >>= return . (+) (box + 1) . (2 *)
+toRotLit box = amountCellVars <$> get >>= return . (+) (box + 1) . (2 *)
 
 baseLit :: WithEncoder m => (Int, Int, Int) -> m Lit
-baseLit (b, x, y) =
-  boxesConf <$> ask >>= \Boxes {..} ->
-    return $ 1 + b * rollWidth * rollMaxLength + x + y * rollWidth
+baseLit (b, x, y) = do
+  rWidth <- rollWidth . boxesConf <$> get
+  rLength <- rollMaxLength <$> get
+  return $ 1 + b * rWidth * rLength + x * rLength + y
 
 toXtlLit :: WithEncoder m => (Int, Int, Int) -> m Lit
 toXtlLit = baseLit
 
 toCellLit :: WithEncoder m => (Int, Int, Int) -> m Lit
 toCellLit pos = do
-  amount <- amountCellVars <$> ask
+  amount <- amountCellVars <$> get
   litBase <- toXtlLit pos
   return $ amount + litBase
+
+insideOfRoll :: WithEncoder m => Box -> (Int, Int) -> m Bool
+insideOfRoll b pos
+  | isSquare b = insideNormal b pos
+  | otherwise = insideNormal b pos <||> insideRotated b pos
+
+insideNormal :: WithEncoder m => Box -> (Int, Int) -> m Bool
+insideNormal Box {..} (x, y) = do
+  rWidth <- rollWidth . boxesConf <$> get
+  rLength <- rollMaxLength <$> get
+  return $ x + width - 1 < rWidth && y + height - 1 < rLength
+
+insideRotated :: WithEncoder m => Box -> (Int, Int) -> m Bool
+insideRotated Box {..} (x, y) = do
+  rWidth <- rollWidth . boxesConf <$> get
+  rLength <- rollMaxLength <$> get
+  return $ x + height - 1 < rWidth && y + width - 1 < rLength
 
 encodeForEachClause ::
      forall m. WithEncoder m
@@ -166,7 +179,7 @@ encodeForEachClause' ::
   -> (Box -> Clause -> (Int, Int) -> m Clause)
   -> m ()
 encodeForEachClause' firstBox encoder buildClauses = do
-  bxs <- (expandedBoxes . boxesConf) <$> ask
+  bxs <- (expandedBoxes . boxesConf) <$> get
   let fromBxs =
         if firstBox
           then bxs
@@ -175,27 +188,29 @@ encodeForEachClause' firstBox encoder buildClauses = do
   where
     forAllRoll :: WithEncoder m => Box -> m Clause
     forAllRoll b = do
-      Boxes {..} <- boxesConf <$> ask
+      rWidth <- rollWidth . boxesConf <$> get
+      rLength <- rollMaxLength <$> get
       foldM
         (buildClauses b)
         []
-        [(i, j) | i <- [0 .. rollWidth - 1], j <- [0 .. rollMaxLength - 1]]
+        [(i, j) | i <- [0 .. rWidth - 1], j <- [0 .. rLength - 1]]
 
-toSolution :: WithEncoder m => [Int] -> m Solution
+toSolution :: WithEncoder m => [Int] -> m (Maybe Solution)
 toSolution = toProp . filter (/= 0)
 
-toProp :: WithEncoder m => [Int] -> m Solution
+toProp :: WithEncoder m => [Int] -> m (Maybe Solution)
+toProp [] = return Nothing
 toProp lits = do
-  cellsAmount <- amountCellVars <$> ask
+  cellsAmount <- amountCellVars <$> get
+  bxs  <- boxesConf <$> get
   let (xtls, _) = splitAt cellsAmount lits
   let toBuild = filter (> 0) xtls
-  liftIO $ print toBuild
   proposed <- mapM (buildProposed lits) toBuild
-  let maxL = foldr maxLength 0 proposed
-  return $ Solution maxL proposed
+  let maxL = foldr rollLength 0 proposed
+  return $ Just $ Solution bxs (maxL+1) proposed
 
-maxLength :: ProposedBox -> Int -> Int
-maxLength (ProposedBox _ ytl _ ybr) x = max (max x ytl) ybr
+rollLength :: ProposedBox -> Int -> Int
+rollLength (ProposedBox _ ytl _ ybr) x = max (max x ytl) ybr
 
 buildProposed :: WithEncoder m => [Int] -> Int -> m ProposedBox
 buildProposed lits lit = do
@@ -210,11 +225,13 @@ buildProposed lits lit = do
 
 calculateValues :: WithEncoder m => [Int] -> Int -> m (Int, Int, Box, Int)
 calculateValues lits lit = do
-  cellsAmount <- amountCellVars <$> ask
-  Boxes {..} <- boxesConf <$> ask
-  let box = (lit - 1) `div` (rollWidth * rollMaxLength)
-  let aux = (lit - 1) - (box * rollWidth * rollMaxLength)
-  let (xtl, ytl) = aux `divMod` rollMaxLength
-  let boxInfo = expandedBoxes !! box
+  cellsAmount <- amountCellVars <$> get
+  rWidth <- rollWidth . boxesConf <$> get
+  rLength <- rollMaxLength <$> get
+  bxs <- expandedBoxes . boxesConf <$> get
+  let box = (lit - 1) `div` (rWidth * rLength)
+  let aux = (lit - 1) - (box * rWidth * rLength)
+  let (xtl, ytl) = aux `divMod` rLength
+  let boxInfo = bxs !! box
   let litRot = lits !! (2 * cellsAmount + box)
   return (xtl, ytl, boxInfo, litRot)

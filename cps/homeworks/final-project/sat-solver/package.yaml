@@ -65,6 +65,7 @@ library:
     - -fconstraint-solver-iterations=0
     - -fno-warn-orphans
     - -fno-warn-partial-type-signatures
+    - -optP-Wno-nonportable-include-path
     - -O2
     - -Werror
     - -fdiagnostics-color=always
@@ -89,6 +90,7 @@ executables:
     ghc-options:
       - -threaded
       - -O2
+      - -optP-Wno-nonportable-include-path
 
 tests:
   sat-test:

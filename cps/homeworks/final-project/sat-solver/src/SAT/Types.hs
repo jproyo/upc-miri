@@ -28,29 +28,25 @@ type Lit = Int
 
 data ClausesBuilder =
   ClausesBuilder
-    { clauses   :: Clauses
-    , countVars :: Int
-    } deriving Show
-
-data ClausesConf =
-  ClausesConf
-    { boxesConf         :: !Boxes
-    , amountCellVars    :: !Int
-    , amountRotVars     :: !Int
+    { clauses        :: Clauses
+    , countVars      :: Int
+    , boxesConf      :: !Boxes
+    , rollMaxLength  :: !Int
+    , amountCellVars :: !Int
+    , amountRotVars  :: !Int
     } deriving Show
 
 type ClausesState = StateT ClausesBuilder
 
-type WithEncoder m = (MonadIO m, MonadState ClausesBuilder m, MonadReader ClausesConf m)
+type WithEncoder m = (MonadIO m, MonadState ClausesBuilder m)
 
 newtype ClausesEncoderApp m a =
   ClausesEncoderApp
-    { runEncoder :: ReaderT ClausesConf (ClausesState m) a
+    { runEncoder :: ClausesState m a
     }
   deriving newtype ( Functor
                    , Applicative
                    , Monad
-                   , MonadReader ClausesConf
                    , MonadState ClausesBuilder
                    , MonadIO
                    )
@@ -65,7 +61,4 @@ newVars n = do
   put $ st {countVars = (countVars st) + n}
   return [lower + 1 .. lower + n]
 
-whenThen :: (Applicative f, Monoid a) => Bool -> f a -> f a
-whenThen True x  = x
-whenThen False _ = pure mempty
 

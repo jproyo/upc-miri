@@ -54,7 +54,7 @@ finishSolution Nothing _ _       = True
 finishSolution (Just a) _ count  = (not $ isValid a) && (count >= threshold)
 
 threshold :: Int
-threshold = 50
+threshold = 100
 
 select :: Maybe Solution -> Maybe Solution -> Maybe Solution
 select Nothing b = b

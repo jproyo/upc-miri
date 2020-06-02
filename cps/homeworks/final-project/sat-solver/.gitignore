@@ -8,7 +8,6 @@ dist-newstyle/
 # Other
 *.log
 *.plain
-*.txt
 TAGS
 tags
 temp/

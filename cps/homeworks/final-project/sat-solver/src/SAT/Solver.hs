@@ -31,35 +31,62 @@ solve prog =
   fmap fst . runStateT (runEncoder solver) . mkState prog
 
 solver :: ClausesEncoderApp IO (Maybe Solution)
-solver = solveIter Nothing
+solver = doWhile finishSolution solve' select Nothing
 
-solveIter :: WithEncoder m => Maybe Solution -> m (Maybe Solution)
-solveIter lastSolution = do
-  updateState
-  buildClaues
+solve' :: WithEncoder m => m (Maybe Solution)
+solve' = do
+  updateState >> buildClauses
   clausesList <- clauses <$> get
   let cnfDesc = cnfDescription clausesList
   whenM (dumpCnf . options <$> get) $ dumpToFile clausesList
   sol <- (liftIO $ solveSAT cnfDesc clausesList) >>= toSolution
-  ifM
-    (notValidSolution sol lastSolution)
-    (return lastSolution)
-    (updateLength >> solveIter sol)
+  updateLength
+  return sol
+
+buildClauses :: WithEncoder m => m ()
+buildClauses =
+  addXtlVars >> addOnePerCell >> addConsecutiveCells >> addControlBounds
+
+
+finishSolution :: Maybe Solution -> Maybe Solution -> Int -> Bool
+finishSolution Nothing Nothing _ = True
+finishSolution Nothing _ _       = True
+finishSolution (Just a) _ count  = (not $ isValid a) && (count >= threshold)
+
+threshold :: Int
+threshold = 50
+
+select :: Maybe Solution -> Maybe Solution -> Maybe Solution
+select Nothing b = b
+select a Nothing = a
+select (Just a) (Just b)
+  | isValid a && isValid b =
+    Just $
+    if a `isBetter` b
+      then a
+      else b
+  | isValid a = Just a
+  | otherwise = Just b
+
+
+doWhile ::
+     Monad m => (a -> a -> Int -> Bool) -> m a -> (a -> a -> a) -> a -> m a
+doWhile stop action improve acc = go acc 0
+  where
+    go acc' i = do
+      y <- action
+      if stop y acc' i
+        then return acc'
+        else go (improve y acc') (i + 1)
 
 dumpToFile :: WithEncoder m => Clauses -> m ()
 dumpToFile clausesList = do
-  Boxes{..} <- boxesConf <$> get
-  liftIO $ createDirectoryIfMissing True "dump/"
-  liftIO $ W.toFile ("./dump/dump_" <> show rollWidth <> "_" <> show amountBoxes <> ".cnf") clausesList
-
-notValidSolution :: WithEncoder m => Maybe Solution -> Maybe Solution -> m Bool
-notValidSolution Nothing _ = return True
-notValidSolution (Just newSol) Nothing = do
-  nBoxes <- amountBoxes . boxesConf <$> get
-  return $ nBoxes /= (length . propBoxes $ newSol)
-notValidSolution (Just newSol) (Just oldSol) = do
-  nBoxes <- amountBoxes . boxesConf <$> get
-  return (nBoxes /= (length . propBoxes $ newSol) || (isBetter oldSol newSol))
+  Boxes {..} <- boxesConf <$> get
+  liftIO $ do
+    createDirectoryIfMissing True "dump/"
+    W.toFile
+      ("./dump/dump_" <> show rollWidth <> "_" <> show amountBoxes <> ".cnf")
+      clausesList
 
 cnfDescription :: Clauses -> CNFDescription
 cnfDescription clausesList =
@@ -67,9 +94,6 @@ cnfDescription clausesList =
       clausesLength = length clausesList
    in CNFDescription amountVars clausesLength ""
 
-buildClaues :: WithEncoder m => m ()
-buildClaues =
-  addXtlVars >> addOnePerCell >> addConsecutiveCells >> addControlBounds
 
 mkState :: ProgOptions -> Boxes -> ClausesBuilder
 mkState opts bxs@Boxes {..} =

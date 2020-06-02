@@ -80,7 +80,7 @@ library:
 executables:
   sat:
     main: Main.hs
-    source-dirs: app
+    source-dirs: app/Solver
     dependencies:
       - optparse-applicative
       - sat
@@ -89,4 +89,13 @@ executables:
       - -O2
       - -optP-Wno-nonportable-include-path
 
+  checker:
+    main: Main.hs
+    source-dirs: app/Checker
+    dependencies:
+      - trifecta
+    ghc-options:
+      - -threaded
+      - -O2
+      - -optP-Wno-nonportable-include-path
 

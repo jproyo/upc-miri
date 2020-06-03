@@ -69,8 +69,8 @@ heuleEncoding' :: WithEncoder m => Clause -> m ()
 heuleEncoding' clause = do
   let (clause1, clause2) = splitAt 2 clause
   yNewVar <- newVar
-  atMostOne =<< pure yNewVar \/ pure clause1
-  atMostOne =<< (#-) (pure yNewVar) \/ pure clause2
+  heuleEncoding =<< pure yNewVar \/ pure clause1
+  heuleEncoding =<< (#-) (pure yNewVar) \/ pure clause2
 
 
 logaritmicEncoding :: WithEncoder m => Clause -> m ()

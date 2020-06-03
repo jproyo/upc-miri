@@ -12,9 +12,11 @@ according to results.txt file
 
 -}
 module Main where
+
 import Control.Arrow
 import           Protolude
 import           Text.Trifecta as T
+import System.Directory
 
 isHSpace :: Char -> Bool
 isHSpace c = c == ' ' || c == '\t'
@@ -58,7 +60,8 @@ main :: IO ()
 main = do
   content <- maybe [] identity <$> parseFromFile parseResults "results.txt"
   forM_ content $ \(f, optimum)  -> do
-    result <- maybe 0 identity <$> parseFromFile (parseOutput <* eof) (toS f)
-    if result == optimum
-      then print (f <> ": OK")
-      else print (f <> ": ERROR --> OPTIMUM " <> show optimum <> " ---> MY SOLUTION " <> show result)
+    whenM (doesFileExist $ toS f) $ do
+      result <- maybe 0 identity <$> parseFromFile (parseOutput <* eof) (toS f)
+      if result == optimum
+        then print (f <> ": OK")
+        else print (f <> ": ERROR --> OPTIMUM " <> show optimum <> " ---> MY SOLUTION " <> show result)

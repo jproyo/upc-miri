@@ -15,32 +15,11 @@
 \usepackage{caption}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
-\usepackage[cache=true]{minted}
+\usepackage[cache=false]{minted}
 \usemintedstyle{default}
 \graphicspath{{./images/}}
-\newminted{cpp}{frame=lines,framerule=2pt}
+\newminted{haskell}{frame=lines,framerule=2pt}
 \allowdisplaybreaks[2]
-
-\tikzstyle{bag} = [align=center]
-
-\lstset{frame=tb,
-  language=Haskell,
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\small\ttfamily},
-  numbers=left,
-  numberstyle=\tiny\color{gray},
-  keywordstyle=\color{blue},
-  commentstyle=\color{dkgreen},
-  stringstyle=\color{mauve},
-  breaklines=true,
-  breakatwhitespace=true,
-  tabsize=2,
-  stepnumber=1,
-  escapechar=!
-}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -74,6 +53,14 @@
 \newacronym{lp}{LP}{Linear Programming}
 \newacronym{cp}{CP}{Constraint Programming}
 \newacronym{sat}{SAT}{SAT}
+\newacronym{haskell}{Haskell}{Haskell Programming Language}
+\newacronym{dt}{DT}{Data Types}
+\newacronym{mtl}{mtl}{Monad Transformer}
+\newacronym{amo}{AMO}{At Most One}
+\newacronym{alo}{AMO}{At Least One}
+\newacronym{eo}{EO}{Exactly One}
+\newacronym{heule}{Heule}{Heule Encoding}
+\newacronym{log}{Logarithmic}{Logarithmic Encoding}
 
 \begin{document}
 
@@ -102,7 +89,7 @@ I have defined the following literals:
   \item $r_b \quad \forall b \in B$: One literal per box $b$ indicating rotation or not.\label{var:r}
 \end{itemize}
 
-\subsection{Propositional Formulas}
+\subsection{Propositional Formulas}\label{sub:form}
 
 \begin{enumerate}
   \item $tl_{000} = 1$: Put \textbf{first box}\footnote{I am descendent ordering boxes according their size $width \times height$, before building the clauses}  in the first coordinate.\label{prop:1}
@@ -131,6 +118,84 @@ I have defined the following literals:
 \end{enumerate}
 
 \subsection{Implementation}
+The implementation I did it was done in \acrfull{haskell} using \textbf{mios SAT Solver} \cite{mios} and in this section I will describe different things in the source code to be easy to understand what the formal definition maps to the code.
+
+\subsubsection{Summary}
+These are the following modules in which the code is organized:
+
+\begin{itemize}
+  \item \mintinline{bash}{src/Data}: Contains definitions for modeling boxes, solution, reading from input and formating to output
+  \item \mintinline{bash}{src/SAT}: Contains definitions that are related with \acrshort{sat} solver. Here we can find the following submodules:
+    \begin{itemize}
+      \item \mintinline{bash}{src/SAT/Clause.sh}: This module contains all the combinators needed to build the clauses described in previous section~\ref{sub:form}. In fact in the list of exports we can see that each exported functions maps each propositional formula.
+          \begin{listing}[H]
+            \inputminted[firstline=13, lastline=18, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
+            \caption{Extracted from source code src/SAT/Clause.hs}
+            \label{src:sat:1}
+          \end{listing}
+        \item \mintinline{bash}{src/SAT/Encoder.sh}: This module contains all the different encoders use by the program \acrfull{amo}, \acrfull{alo}, \acrfull{eo}.
+        \item \mintinline{bash}{src/SAT/Solver.hs}: This module contains main logic of the solver which is given a problem build clauses, run mios \cite{mios}, take the result and iterate again if needed.
+        \item \mintinline{bash}{src/SAT/Types.sh}: This contains utility \acrfull{dt} to handle the state of program context through \acrfull{mtl}\cite{mtl} computations.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Encoders}
+By default the program execute the solution using \acrfull{heule}, but I have implemented also \acrfull{log} which can be enable by command line argument\footnote{See \mintinline{bash}{README.md} in root folder of the project to see how this can be done}.
+
+\acrlong{heule} is very easy to implement in \acrshort{haskell} due to the \textbf{Functional Programming} nature of the language in which recursion is a first class citizen.
+
+\begin{listing}[H]
+  \inputminted[firstline=54, lastline=73, linenos, breaklines]{haskell}{../src/SAT/Encoder.hs}
+  \caption{Extracted from source code src/SAT/Encoder.hs}
+  \label{src:sat:2}
+\end{listing}
+
+\acrlong{log} encoding on the other hand also is straightforward to implement.
+
+\begin{listing}[H]
+  \inputminted[firstline=76, lastline=85, linenos, breaklines]{haskell}{../src/SAT/Encoder.hs}
+  \caption{Extracted from source code src/SAT/Encoder.hs}
+  \label{src:sat:3}
+\end{listing}
+
+And this is the part of the code where I decide to use one encoding or the other. This is propagated by a command line option to the program.
+
+\begin{listing}[H]
+  \inputminted[firstline=49, lastline=52, linenos, breaklines]{haskell}{../src/SAT/Encoder.hs}
+  \caption{Extracted from source code src/SAT/Encoder.hs}
+  \label{src:sat:4}
+\end{listing}
+
+\subsubsection{Solver Main Algorithm}
+Basically the solver main algorithm do the following:
+
+\begin{listing}[H]
+  \inputminted[firstline=33, lastline=44, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \caption{Extracted from source code src/SAT/Solver.hs}
+  \label{src:sat:5}
+\end{listing}
+
+As it can be seen here~\ref{src:sat:5} \mintinline{haskell}{doWhile} function simulate a traditional \mintinline{cpp}{do   while(cond)} in other imperative programming language flavor. Since in \acrshort{haskell} does not exist this kind of looping we need to recursively call \mintinline{haskell}{solve'} until we reach to some \textbf{threshold} or the solver is not giving any solution.
+
+Since it is know that we cannot \textbf{minimize} length, the loop is for decreasing the maximum proposed length as in the previous Constraint programming solution, forcing the solver to fit boxes better. This is done by the call to the function \mintinline{haskell}{updateLength} at line $43$.
+
+Another important function is \mintinline{haskell}{finishSolution} which indicate the program that there is not more improvements to do, either because it was reach to an $UNSAT$ solution or because we reach to a invalid solution after several tries.
+
+\begin{listing}[H]
+  \inputminted[firstline=51, lastline=57, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \caption{Extracted from source code src/SAT/Solver.hs}
+  \label{src:sat:6}
+\end{listing}
+
+
+
+\subsection{Disclaimer}
+As It can be found in \mintinline{bas}{README.md} documentation, I have written a little program to compare the solutions generated with the optimum values proposed in \mintinline{bash}{results.txt}.
+
+I have found that some instances does not reach to that optimum value, although most of them does. I tried to improved this but I haven't been able to improve it.
+
+\bibliographystyle{alpha}
+\bibliography{report}
 
 \end{document}
 

@@ -39,7 +39,7 @@ solve' = do
   clausesList <- clauses <$> get
   let cnfDesc = cnfDescription clausesList
   whenM (dumpCnf . options <$> get) $ dumpToFile clausesList
-  sol <- (liftIO $ solveSAT cnfDesc clausesList) >>= toSolution
+  sol <- liftIO (solveSAT cnfDesc clausesList) >>= toSolution
   updateLength
   return sol
 
@@ -51,7 +51,7 @@ buildClauses =
 finishSolution :: Maybe Solution -> Maybe Solution -> Int -> Bool
 finishSolution Nothing Nothing _ = True
 finishSolution Nothing _ _       = True
-finishSolution (Just a) _ count  = (not $ isValid a) && (count >= threshold)
+finishSolution (Just a) _ count  = not (isValid a) && (count >= threshold)
 
 threshold :: Int
 threshold = 100
@@ -109,14 +109,14 @@ mkState opts bxs@Boxes {..} =
 
 updateLength :: WithEncoder m => m ()
 updateLength = do
-  modify $ \c -> c {rollMaxLength = (rollMaxLength c) - 1}
+  modify $ \c -> c {rollMaxLength = rollMaxLength c - 1}
   updateState
 
 updateState :: WithEncoder m => m ()
 updateState =
   modify $ \c ->
     let Boxes {..} = boxesConf c
-        cellVars = amountBoxes * rollWidth * (rollMaxLength c) -- ^ N*W*L
+        cellVars = amountBoxes * rollWidth * rollMaxLength c -- ^ N*W*L
         rotVars = amountBoxes
         reservedVarsCount = 2 * cellVars + rotVars -- ^ Reserve this slots and add new vars for log encoding or others
      in c
@@ -124,3 +124,44 @@ updateState =
           , amountCellVars = cellVars
           , clauses = []
           }
+
+toSolution :: WithEncoder m => [Int] -> m (Maybe Solution)
+toSolution = toProp . filter (/= 0)
+
+toProp :: WithEncoder m => [Int] -> m (Maybe Solution)
+toProp [] = return Nothing
+toProp lits = do
+  cellsAmount <- amountCellVars <$> get
+  bxs  <- boxesConf <$> get
+  let (tls, _) = splitAt cellsAmount lits
+  let toBuild = filter (> 0) tls
+  proposed <- mapM (buildProposed lits) toBuild
+  let maxL = foldr rollLength 0 proposed
+  return $ Just $ Solution bxs (maxL+1) proposed
+
+rollLength :: ProposedBox -> Int -> Int
+rollLength (ProposedBox _ ytl _ ybr) x = max (max x ytl) ybr
+
+buildProposed :: WithEncoder m => [Int] -> Int -> m ProposedBox
+buildProposed lits lit = do
+  (xtl, ytl, Box {..}, litRot) <- calculateValues lits lit
+  let (wd, ln) =
+        if litRot > 0
+          then (height - 1, width - 1)
+          else (width - 1, height - 1)
+  let xbr = xtl + wd
+  let ybr = ytl + ln
+  return $ ProposedBox xtl ytl xbr ybr
+
+calculateValues :: WithEncoder m => [Int] -> Int -> m (Int, Int, Box, Int)
+calculateValues lits lit = do
+  cellsAmount <- amountCellVars <$> get
+  rWidth <- rollWidth . boxesConf <$> get
+  rLength <- rollMaxLength <$> get
+  bxs <- expandedBoxes . boxesConf <$> get
+  let box = (lit - 1) `div` (rWidth * rLength)
+  let aux = (lit - 1) - (box * rWidth * rLength)
+  let (xtl, ytl) = aux `divMod` rLength
+  let boxInfo = bxs !! box
+  let litRot = lits !! (2 * cellsAmount + box)
+  return (xtl, ytl, boxInfo, litRot)

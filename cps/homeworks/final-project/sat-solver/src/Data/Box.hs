@@ -95,7 +95,7 @@ data Solution =
 
 instance Show Solution where
   show Solution {..} =
-    toS $ unlines $ (P.show boxesC) : (P.show lengthRoll) : (P.show <$> propBoxes)
+    toS $ unlines $ P.show boxesC : P.show lengthRoll : (P.show <$> propBoxes)
 
 instance Ord Solution where
   (<=) = flip isBetter
@@ -116,7 +116,7 @@ maxLength :: Boxes -> Int
 maxLength = getSum . foldMap (Sum . maxLengthB) . boxes
 
 maxLengthB :: BoxInfo -> Int
-maxLengthB BoxInfo {..} = amount * (max cordX cordY)
+maxLengthB BoxInfo {..} = amount * max cordX cordY
 
 amountB :: [BoxInfo] -> Int
 amountB = getSum . foldMap (Sum . amount)
@@ -148,7 +148,7 @@ lineToHeader :: Text -> Either String [Int]
 lineToHeader = traverse (first toS . readEither . toS) . words
 
 lineBox :: Text -> Either String BoxInfo
-lineBox = join . fmap toBox . traverse (first toS . readEither . toS) . words
+lineBox = (toBox =<<) . traverse (first toS . readEither . toS) . words
 
 toBox :: [Int] -> Either String BoxInfo
 toBox [amount, width, height] = Right $ BoxInfo amount width height

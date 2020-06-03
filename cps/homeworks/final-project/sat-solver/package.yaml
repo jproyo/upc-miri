@@ -94,6 +94,7 @@ executables:
     source-dirs: app/Checker
     dependencies:
       - trifecta
+      - directory
     ghc-options:
       - -threaded
       - -O2

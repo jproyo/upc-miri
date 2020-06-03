@@ -70,5 +70,5 @@ newVars :: WithEncoder m => Int -> m [Int]
 newVars n = do
   st <- get
   let lower = countVars st
-  put $ st {countVars = (countVars st) + n}
+  put $ st {countVars = countVars st + n}
   return [lower + 1 .. lower + n]

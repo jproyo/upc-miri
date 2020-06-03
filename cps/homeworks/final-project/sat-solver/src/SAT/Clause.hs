@@ -11,7 +11,7 @@ If you check the export list which is between lines 15-17 bellow you can see the
 combinators for building the clauses for this particular problem
 -}
 module SAT.Clause
-  ( addXtlVars
+  ( addTlVars
   , addOnePerCell
   , addConsecutiveCells
   , addControlBounds
@@ -27,17 +27,17 @@ import           SAT.Types
 
 --------------------------------------------------------------------------------
 --Add positive x_tl for each possible box
-addXtlVars :: WithEncoder m => m ()
-addXtlVars = do
-  addClause =<< xtlFirstBox
-  encodeForEachClause' False exactlyOne xtlRest
+addTlVars :: WithEncoder m => m ()
+addTlVars = do
+  addClause =<< tlFirstBox
+  encodeForEachClause' False exactlyOne tlRest
 
-xtlRest :: WithEncoder m => Box -> Clause -> (Int, Int) -> m Clause
-xtlRest b clxs (i, j) = toXtlLit (num b, i, j) \/ pure clxs
+tlRest :: WithEncoder m => Box -> Clause -> (Int, Int) -> m Clause
+tlRest b clxs (i, j) = toTlLit (num b, i, j) \/ pure clxs
 
--- Put first box which is the greates in the first xtl coordinate
-xtlFirstBox :: WithEncoder m => m Clause
-xtlFirstBox = toXtlLit (0, 0, 0) \/ zeroC
+-- Put first box which is the greates in the first top left coordinate
+tlFirstBox :: WithEncoder m => m Clause
+tlFirstBox = toTlLit (0, 0, 0) \/ zeroC
 
 -- Add At most one Box per cell in the matrix
 addOnePerCell :: WithEncoder m => m ()
@@ -55,59 +55,59 @@ addOnePerCell = do
 buildClausePerCell :: WithEncoder m => (Int, Int) -> Clause -> Box -> m Clause
 buildClausePerCell (i, j) clxs b = toCellLit (num b, i, j) \/ pure clxs
 
--- Add Consecutive cells for boxes that start in certain xtl position in order to not overlap with other boxes xtl
+-- Add Consecutive cells for boxes that start in certain top left position in order to not overlap with other boxes top left
 addConsecutiveCells :: WithEncoder m => m ()
 addConsecutiveCells =
   encodeForEachClause (const $ pure ()) buildConsecutiveClause
 
 buildConsecutiveClause ::
      WithEncoder m => Box -> Clause -> (Int, Int) -> m Clause
-buildConsecutiveClause b _ p = whenM (insideOfRoll b p) (sliceBox b p) >> zeroC
+buildConsecutiveClause b _ p = whenM (insideOfRoll b p) (extendBox b p) >> zeroC
 
--- Slice boxes try to ensure that consecutive cells are ocuppied by box N
-sliceBox :: WithEncoder m => Box -> (Int, Int) -> m ()
-sliceBox b pos
+-- Extend boxes try to ensure that consecutive cells are ocuppied by box N
+extendBox :: WithEncoder m => Box -> (Int, Int) -> m ()
+extendBox b pos
   | isSquare b = do
     whenM (insideNormal b pos) $ do
-      traverse_ (addWithoutRotation b pos) $ sliceListNormal b pos
+      traverse_ (addWithoutRotation b pos) $ extendListNormal b pos
       addClause =<< (#-) (toRotLit $ num b) \/ zeroC
   | otherwise = do
     whenM (insideNormal b pos) $
-      traverse_ (addWithRotation b pos) $ sliceListNormal b pos
+      traverse_ (addWithRotation b pos) $ extendListNormal b pos
     whenM (insideRotated b pos) $
-      traverse_ (addWithRotation b pos) $ sliceListRotated b pos
+      traverse_ (addWithRotation b pos) $ extendListRotated b pos
 
-sliceListNormal :: Box -> (Int, Int) -> [(Int, Int)]
-sliceListNormal Box {..} (i, j) =
+extendListNormal :: Box -> (Int, Int) -> [(Int, Int)]
+extendListNormal Box {..} (i, j) =
   [(x, y) | x <- [i .. (i + width - 1)], y <- [j .. (j + height - 1)]]
 
-sliceListRotated :: Box -> (Int, Int) -> [(Int, Int)]
-sliceListRotated Box {..} (i, j) =
+extendListRotated :: Box -> (Int, Int) -> [(Int, Int)]
+extendListRotated Box {..} (i, j) =
   [(x, y) | x <- [i .. (i + height - 1)], y <- [j .. (j + width - 1)]]
 
--- Slice without rotation because is an square area box
+-- Extend without rotation because is an square area box
 addWithoutRotation :: WithEncoder m => Box -> (Int, Int) -> (Int, Int) -> m ()
 addWithoutRotation Box {..} (i, j) (coordI, coordJ) =
   addClause =<<
-  (#-) (toXtlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/ zeroC
+  (#-) (toTlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/ zeroC
 
 -- Take into consideration 2 possible scenarios
--- 1. If the box fix without rotation in the limit no need to rotate. -| r -> -| xtl \/ cell
--- 2. If the box fix with rotation in the limit rotate. r -> -| xtl \/ cell
+-- 1. If the box fix without rotation in the limit no need to rotate. -| r -> -| tl \/ cell
+-- 2. If the box fix with rotation in the limit rotate. r -> -| tl \/ cell
 addWithRotation :: WithEncoder m => Box -> (Int, Int) -> (Int, Int) -> m ()
 addWithRotation b@Box {..} (i, j) (coordI, coordJ) = do
   whenM (insideNormal b (i, j)) $
     addClause =<<
-    (#-) (toXtlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/
+    (#-) (toTlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/
     toRotLit num \/
     zeroC
   whenM (insideRotated b (i, j)) $
     addClause =<<
-    (#-) (toXtlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/
+    (#-) (toTlLit (num, i, j)) \/ toCellLit (num, coordI, coordJ) \/
     (#-) (toRotLit num) \/
     zeroC
 
--- Control that each xtl position dont exceed limits
+-- Control that each top left position won't exceed limits if we take into consideration box dimentions and rotations
 addControlBounds :: WithEncoder m => m ()
 addControlBounds = encodeForEachClause (const $ pure ()) addBounds
 
@@ -119,15 +119,15 @@ addBounds b _ pos
 addBoundsSquare :: WithEncoder m => Box -> (Int, Int) -> m Clause
 addBoundsSquare b@Box {..} (i, j) = do
   whenM (not <$> insideNormal b (i, j)) $
-    addClause =<< (#-) (toXtlLit (num, i, j)) \/ zeroC
+    addClause =<< (#-) (toTlLit (num, i, j)) \/ zeroC
   zeroC
 
 addBoundsNormal :: WithEncoder m => Box -> (Int, Int) -> m Clause
 addBoundsNormal b@Box {..} (i, j) = do
   whenM (not <$> insideNormal b (i, j)) $
-    addClause =<< (toRotLit num) \/ (#-) (toXtlLit (num, i, j)) \/ zeroC
+    addClause =<< (toRotLit num) \/ (#-) (toTlLit (num, i, j)) \/ zeroC
   whenM (not <$> insideRotated b (i, j)) $
-    addClause =<< (#-) (toRotLit num) \/ (#-) (toXtlLit (num, i, j)) \/ zeroC
+    addClause =<< (#-) (toRotLit num) \/ (#-) (toTlLit (num, i, j)) \/ zeroC
   zeroC
 
 toRotLit :: WithEncoder m => Int -> m Lit
@@ -139,13 +139,13 @@ baseLit (b, x, y) = do
   rLength <- rollMaxLength <$> get
   return $ 1 + b * rWidth * rLength + x * rLength + y
 
-toXtlLit :: WithEncoder m => (Int, Int, Int) -> m Lit
-toXtlLit = baseLit
+toTlLit :: WithEncoder m => (Int, Int, Int) -> m Lit
+toTlLit = baseLit
 
 toCellLit :: WithEncoder m => (Int, Int, Int) -> m Lit
 toCellLit pos = do
   amount <- amountCellVars <$> get
-  litBase <- toXtlLit pos
+  litBase <- toTlLit pos
   return $ amount + litBase
 
 insideOfRoll :: WithEncoder m => Box -> (Int, Int) -> m Bool
@@ -203,8 +203,8 @@ toProp [] = return Nothing
 toProp lits = do
   cellsAmount <- amountCellVars <$> get
   bxs  <- boxesConf <$> get
-  let (xtls, _) = splitAt cellsAmount lits
-  let toBuild = filter (> 0) xtls
+  let (tls, _) = splitAt cellsAmount lits
+  let toBuild = filter (> 0) tls
   proposed <- mapM (buildProposed lits) toBuild
   let maxL = foldr rollLength 0 proposed
   return $ Just $ Solution bxs (maxL+1) proposed

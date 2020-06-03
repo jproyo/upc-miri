@@ -45,7 +45,7 @@ solve' = do
 
 buildClauses :: WithEncoder m => m ()
 buildClauses =
-  addXtlVars >> addOnePerCell >> addConsecutiveCells >> addControlBounds
+  addTlVars >> addOnePerCell >> addConsecutiveCells >> addControlBounds
 
 
 finishSolution :: Maybe Solution -> Maybe Solution -> Int -> Bool

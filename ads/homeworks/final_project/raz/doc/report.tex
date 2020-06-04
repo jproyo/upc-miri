@@ -14,6 +14,7 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{caption}
+\usepackage{authblk}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
@@ -27,10 +28,8 @@
       Final Homework\\
       Analysis of Random Access Zippers
 }
-\author{%
-  Juan Pablo Royo Sales \\
-  \small{Universitat Politècnica de Catalunya}
-}
+\author{Juan Pablo Royo Sales}
+\affil{Universitat Politècnica de Catalunya}
 \date\today
 
 \pagestyle{fancy}
@@ -60,6 +59,8 @@
 \begin{document}
 
 \maketitle
+
+\tableofcontents
 
 \section{Introduction}\label{sec:intro}
 The propose of this work is to Analyzed and reproduced the work and experiments of \textbf{\acrfull{raz}} written for the first time here \cite{raz}. Additionally the original work has been done with \acrfull{ocaml} and the idea of this work was to first give an efficient \acrfull{haskell} implementation and secondly using that implementation reproduced the experiments.

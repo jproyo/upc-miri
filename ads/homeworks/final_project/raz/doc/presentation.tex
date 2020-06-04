@@ -1,0 +1,109 @@
+\documentclass{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[linguistics]{forest}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\graphicspath{{./images/}}
+\setbeamertemplate{frametitle}{%
+  \usebeamerfont{frametitle}\insertframetitle%
+  \vphantom{g}% To avoid fluctuations per frame
+  % \hrule% Uncomment to see desired effect, without a full-width hrule
+  \par\hspace*{-\dimexpr0.5\paperwidth-0.5\textwidth}\rule[0.5\baselineskip]{\paperwidth}{0.4pt}
+  \par\vspace*{-\baselineskip}% <-- reduce vertical space after rule
+}
+
+\usetheme{Boadilla}
+\title{Analysis on Random Access Zippers}
+
+\author{Juan Pablo Royo Sales}
+\institute{Universitat Politècnica de Catalunya}
+\date{June $11^{th}$, 2020}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+  \tableofcontents
+\end{frame}
+
+\begin{frame}{Agenda}
+  \section{Preliminaries}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Preliminaries}
+
+  \begin{block}{Why I choose this structure?}
+    \begin{itemize}
+      \item Interested on Zippers as \textbf{FP} Data Structure
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{Preliminaries}
+
+  \begin{block}{Why I choose this structure?}
+    \begin{itemize}
+      \item Interested on Zippers as \textbf{FP} Data Structure
+      \item Type Level correspondence with Derivatives - \textbf{Math reasoning!!!}
+      \end{itemize}
+  \end{block}
+
+\end{frame}
+
+
+
+\begin{frame}{Agenda}
+  \section{RAZ - Structure and Features}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Haskell Implementation}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Experiments Reproduction}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Overall Analysis}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Conclusions}
+  \tableofcontents[currentsection]
+\end{frame}
+
+
+\begin{frame}
+  \begin{center}
+    \textbf{\huge{Thank you!!}}
+    \end{center}
+\end{frame}
+
+\end{document}
+

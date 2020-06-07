@@ -33,6 +33,12 @@ addTlVars = do
 
 tlRest :: WithEncoder m => Box -> Clause -> (Int, Int) -> m Clause
 tlRest b clxs (i, j) = toTlLit (num b, i, j) \/ pure clxs
+--  b1 <- Protolude.head . expandedBoxes . boxesConf <$> get
+--  maybe (pure clxs) addLitRest b1
+--    where
+--      addLitRest :: WithEncoder m => Box -> m Clause
+--      addLitRest b1' | i > (width b1' - 1) && j > (height b1' - 1) = toTlLit (num b, i, j) \/ pure clxs
+--                     | otherwise = pure clxs
 
 -- Put first box which is the greates in the first top left coordinate
 tlFirstBox :: WithEncoder m => m Clause

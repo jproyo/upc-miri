@@ -37,6 +37,8 @@ solve' :: WithEncoder m => m (Maybe Solution)
 solve' = do
   updateState >> buildClauses
   clausesList <- clauses <$> get
+  print =<< boxesConf <$> get
+  print =<< rollMaxLength <$> get
   let cnfDesc = cnfDescription clausesList
   whenM (dumpCnf . options <$> get) $ dumpToFile clausesList
   sol <- liftIO (solveSAT cnfDesc clausesList) >>= toSolution
@@ -48,17 +50,20 @@ buildClauses =
   addTlVars >> addOnePerCell >> addConsecutiveCells >> addControlBounds
 
 
-finishSolution :: Maybe Solution -> Maybe Solution -> Int -> Bool
-finishSolution Nothing Nothing _ = True
-finishSolution Nothing _ _       = True
-finishSolution (Just a) _ count  = not (isValid a) && (count >= threshold)
+finishSolution :: WithEncoder m => Maybe Solution -> Maybe Solution -> Int -> m Bool
+--finishSolution _ _ _ = (<14) . rollMaxLength <$> get
+finishSolution Nothing _ _ = pure True
+finishSolution _ _ _ = pure False
+--finishSolution _ (Just a) _  =
+--  lengthRoll a == 5
+--finishSolution (Just a) _ _  = lengthRoll a == 5
 
-threshold :: Int
-threshold = 100
+--threshold :: Int
+--threshold = 100000
 
 select :: Maybe Solution -> Maybe Solution -> Maybe Solution
-select Nothing b = b
 select a Nothing = a
+select Nothing b = b
 select (Just a) (Just b)
   | isValid a && isValid b =
     Just $
@@ -70,14 +75,14 @@ select (Just a) (Just b)
 
 
 doWhile ::
-     Monad m => (a -> a -> Int -> Bool) -> m a -> (a -> a -> a) -> a -> m a
+     Monad m => (a -> a -> Int -> m Bool) -> m a -> (a -> a -> a) -> a -> m a
 doWhile stop action improve acc = go acc 0
   where
     go acc' i = do
       y <- action
-      if stop y acc' i
-        then return acc'
-        else go (improve y acc') (i + 1)
+      ifM (stop y acc' i)
+        (return acc')
+        (go (improve y acc') (i + 1))
 
 dumpToFile :: WithEncoder m => Clauses -> m ()
 dumpToFile clausesList = do

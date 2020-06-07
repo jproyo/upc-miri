@@ -95,7 +95,7 @@ data Solution =
 
 instance Show Solution where
   show Solution {..} =
-    toS $ unlines $ P.show boxesC : P.show lengthRoll : (P.show <$> propBoxes)
+    P.show boxesC <> (toS $ unlines $ P.show lengthRoll : (P.show <$> propBoxes))
 
 instance Ord Solution where
   (<=) = flip isBetter
@@ -104,7 +104,7 @@ instance Eq Solution where
   (==) a b = lengthRoll a == lengthRoll b
 
 isBetter :: Solution -> Solution -> Bool
-isBetter a b = lengthRoll a <= lengthRoll b
+isBetter a b = lengthRoll a < lengthRoll b
 
 isValid :: Solution -> Bool
 isValid sol =

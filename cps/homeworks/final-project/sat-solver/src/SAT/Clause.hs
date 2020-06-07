@@ -29,22 +29,11 @@ import           SAT.Types
 addTlVars :: WithEncoder m => m ()
 addTlVars = do
   addClause =<< tlFirstBox
- -- rWidth <- rollWidth . boxesConf <$> get
- -- let ix = if rWidth `mod` 2 == 0 then rWidth `div` 2 else (rWidth `div` 2) - 1
- -- rLength <- rollMaxLength <$> get
- -- let jy = if rLength `mod` 2 == 0 then rLength `div` 2 else (rLength `div` 2) - 1
- -- exactlyOne =<< foldM (\b (i,j) -> toTlLit(0,i,j) \/ pure b) [] [(i, j) | i <- [0 .. jy], j <- [0 .. ix]]
   encodeForEachClause' False exactlyOne tlRest
 
 
 tlRest :: WithEncoder m => Box -> Clause -> (Int, Int) -> m Clause
 tlRest b clxs (i, j) = toTlLit (num b, i, j) \/ pure clxs
---  b1 <- Protolude.head . expandedBoxes . boxesConf <$> get
---  maybe (pure clxs) addLitRest b1
---    where
---      addLitRest :: WithEncoder m => Box -> m Clause
---      addLitRest b1' | i > (width b1' - 1) && j > (height b1' - 1) = toTlLit (num b, i, j) \/ pure clxs
---                     | otherwise = pure clxs
 
 -- Put first box which is the greates in the first top left coordinate
 tlFirstBox :: WithEncoder m => m Clause
@@ -87,11 +76,11 @@ extendBox b pos
 
 extendListNormal :: Box -> (Int, Int) -> [(Int, Int)]
 extendListNormal Box {..} (i, j) =
-  [(x, y) | x <- [i .. (i + height - 1)], y <- [j .. (j + width - 1)]]
+  [(x, y) | x <- [i .. (i + width - 1)], y <- [j .. (j + height - 1)]]
 
 extendListRotated :: Box -> (Int, Int) -> [(Int, Int)]
 extendListRotated Box {..} (i, j) =
-  [(x, y) | x <- [i .. (i + width - 1)], y <- [j .. (j + height - 1)]]
+  [(x, y) | x <- [i .. (i + height - 1)], y <- [j .. (j + width - 1)]]
 
 -- Extend without rotation because is an square area box
 addWithoutRotation :: WithEncoder m => Box -> (Int, Int) -> (Int, Int) -> m ()
@@ -101,7 +90,6 @@ addWithoutRotation Box {..} (i, j) (coordI, coordJ) =
 
 -- Take into consideration 2 possible scenarios
 -- 1. If the box fix without rotation in the limit no need to rotate. -| r -> -| tl \/ cell
--- 2. If the box fix with rotation in the limit rotate. r -> -| tl \/ cell
 addNoRotation :: WithEncoder m => Box -> (Int, Int) -> (Int, Int) -> m ()
 addNoRotation Box {..} (i, j) (coordI, coordJ) =
     addClause =<<
@@ -110,6 +98,7 @@ addNoRotation Box {..} (i, j) (coordI, coordJ) =
       toRotLit num \/
       zeroC
 
+-- 2. If the box fix with rotation in the limit rotate. r -> -| tl \/ cell
 addRotation :: WithEncoder m => Box -> (Int, Int) -> (Int, Int) -> m ()
 addRotation Box{..} (i,j) (coordI, coordJ) =
     addClause =<<
@@ -147,7 +136,7 @@ baseLit :: WithEncoder m => (Int, Int, Int) -> m Lit
 baseLit (b, x, y) = do
   rWidth <- rollWidth . boxesConf <$> get
   rLength <- rollMaxLength <$> get
-  return $ 1 + b * rWidth * rLength + x * rWidth + y
+  return $ 1 + b * rWidth * rLength + x * rLength + y
 
 toTlLit :: WithEncoder m => (Int, Int, Int) -> m Lit
 toTlLit = baseLit
@@ -167,13 +156,13 @@ insideNormal :: WithEncoder m => Box -> (Int, Int) -> m Bool
 insideNormal Box {..} (x, y) = do
   rWidth <- rollWidth . boxesConf <$> get
   rLength <- rollMaxLength <$> get
-  return $ x + height - 1 < rLength && y + width - 1 < rWidth
+  return $ x + width - 1 < rWidth && y + height - 1 < rLength
 
 insideRotated :: WithEncoder m => Box -> (Int, Int) -> m Bool
 insideRotated Box {..} (x, y) = do
   rWidth <- rollWidth . boxesConf <$> get
   rLength <- rollMaxLength <$> get
-  return $ x + width - 1 < rLength && y + height - 1 < rWidth
+  return $ x + height - 1 < rWidth && y + width - 1 < rLength
 
 encodeForEachClause ::
      forall m. WithEncoder m
@@ -205,5 +194,5 @@ matrix :: WithEncoder m => m [(Int, Int)]
 matrix = do
   rWidth <- rollWidth . boxesConf <$> get
   rLength <- rollMaxLength <$> get
-  return [(i, j) | i <- [0 .. rLength - 1], j <- [0 .. rWidth - 1]]
+  return [(i, j) | i <- [0 .. rWidth - 1], j <- [0 .. rLength - 1]]
 

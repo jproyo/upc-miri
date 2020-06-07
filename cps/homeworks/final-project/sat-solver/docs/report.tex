@@ -170,29 +170,35 @@ And this is the part of the code where I decide to use one encoding or the other
 Basically the solver main algorithm do the following:
 
 \begin{listing}[H]
-  \inputminted[firstline=33, lastline=44, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \inputminted[firstline=30, lastline=50, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
   \caption{Extracted from source code src/SAT/Solver.hs}
   \label{src:sat:5}
 \end{listing}
 
 As it can be seen here~\ref{src:sat:5} \mintinline{haskell}{doWhile} function simulate a traditional \mintinline{cpp}{do   while(cond)} in other imperative programming language flavor. Since in \acrshort{haskell} does not exist this kind of looping we need to recursively call \mintinline{haskell}{solve'} until we reach to some \textbf{threshold} or the solver is not giving any solution.
 
-Since it is know that we cannot \textbf{minimize} length, the loop is for decreasing the maximum proposed length as in the previous Constraint programming solution, forcing the solver to fit boxes better. This is done by the call to the function \mintinline{haskell}{updateLength} at line $43$.
-
-Another important function is \mintinline{haskell}{finishSolution} which indicate the program that there is not more improvements to do, either because it was reach to an $UNSAT$ solution or because we reach to a invalid solution after several tries.
+Since it is know that we cannot \textbf{minimize} length, the loop is for decreasing the maximum proposed length as in the previous Constraint programming solution, forcing the solver to fit boxes better. This is done by the call to the function \mintinline{haskell}{updateLength} at line $45$.
 
 \begin{listing}[H]
-  \inputminted[firstline=51, lastline=57, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \inputminted[firstline=110, lastline=116, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
   \caption{Extracted from source code src/SAT/Solver.hs}
   \label{src:sat:6}
 \end{listing}
 
+As we can see here~\ref{src:sat:6} I am selecting between the minimum length of the current \textbf{Max Length $-1$} and the length returned by the last solution. If there was NO last solution with \mintinline{haskell}{maxBound} function we are setting \textit{MAX INTEGER} value to select previous length minus $1$.
 
+Another important function is \mintinline{haskell}{select} which try to \textbf{select} the best solution between the last run and the previous loop.
+
+\begin{listing}[H]
+  \inputminted[firstline=55, lastline=73, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \caption{Extracted from source code src/SAT/Solver.hs}
+  \label{src:sat:7}
+\end{listing}
+
+As we can see here~\ref{src:sat:7} I am only taking valid solutions and discarding \textbf{NOT} valid ones. Also if there are 2 solutions, the one from the previous run and the current one I am checking which is better of both in case both are valid.
 
 \subsection{Disclaimer}
-As It can be found in \mintinline{bas}{README.md} documentation, I have written a little program to compare the solutions generated with the optimum values proposed in \mintinline{bash}{results.txt}.
-
-I have found that some instances does not reach to that optimum value, although most of them does. I tried to improved this but I haven't been able to improve it.
+As It can be found in \mintinline{bash}{README.md} documentation, I have written a little program to compare the solutions generated with the optimum values proposed in \mintinline{bash}{results.txt}.
 
 \bibliographystyle{alpha}
 \bibliography{report}

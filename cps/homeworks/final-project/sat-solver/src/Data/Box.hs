@@ -19,7 +19,6 @@ module Data.Box
   , maxLength
   , isSquare
   , isBetter
-  , isValid
   ) where
 
 --------------------------------------------------------------------------------
@@ -80,7 +79,8 @@ data ProposedBox =
     , ytl :: Int
     , xbr :: Int
     , ybr :: Int
-    } deriving Eq
+    }
+  deriving (Eq)
 
 instance Show ProposedBox where
   show ProposedBox {..} =
@@ -95,7 +95,8 @@ data Solution =
 
 instance Show Solution where
   show Solution {..} =
-    P.show boxesC <> (toS $ unlines $ P.show lengthRoll : (P.show <$> propBoxes))
+    P.show boxesC <>
+    (toS $ unlines $ P.show lengthRoll : (P.show <$> propBoxes))
 
 instance Ord Solution where
   (<=) = flip isBetter
@@ -105,21 +106,6 @@ instance Eq Solution where
 
 isBetter :: Solution -> Solution -> Bool
 isBetter a b = lengthRoll a < lengthRoll b
-
-isValid :: Solution -> Int -> Bool
-isValid Solution{..} mLength =
-  let b = length propBoxes
-      c = amountBoxes boxesC
-   in (b == c && lengthRoll <= mLength && validateBoxes propBoxes mLength (rollWidth boxesC))
-
-validateBoxes :: [ProposedBox] -> Int -> Int -> Bool
-validateBoxes ta mL wD = let notOver = all notOverlap . filter (\(a,b) -> a /= b) $ liftM2 (,) ta ta
-                             withinBounds = all (\x -> ybr x < mL && xbr x < wD) ta
-                          in notOver && withinBounds
-
-
-notOverlap :: (ProposedBox, ProposedBox) -> Bool
-notOverlap (a, b) = xtl b > xbr a && ytl b > ybr a
 
 maxLength :: Boxes -> Int
 maxLength = getSum . foldMap (Sum . maxLengthB) . boxes

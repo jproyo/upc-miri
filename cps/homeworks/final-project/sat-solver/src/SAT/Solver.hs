@@ -13,16 +13,16 @@ module SAT.Solver
   ) where
 
 --------------------------------------------------------------------------------
-import           Control.Exception.Safe
-import           Data.Box
-import           Data.List                   (nub, sort)
-import           Protolude
-import           Protolude.Partial
-import           SAT.Clause
-import           SAT.Mios
-import           SAT.Mios.Util.DIMACS.Writer as W
-import           SAT.Types
-import           System.Directory
+import Control.Exception.Safe
+import Data.Box
+import Data.List (nub, sort)
+import Protolude
+import Protolude.Partial
+import SAT.Clause
+import SAT.Mios
+import SAT.Mios.Util.DIMACS.Writer as W
+import SAT.Types
+import System.Directory
 
 --------------------------------------------------------------------------------
 solve :: ProgOptions -> Boxes -> IO Solution
@@ -37,52 +37,60 @@ solve' :: WithEncoder m => m (Maybe Solution)
 solve' = do
   updateState >> buildClauses
   clausesList <- clauses <$> get
-  print =<< boxesConf <$> get
-  print =<< rollMaxLength <$> get
+  --print =<< boxesConf <$> get
+  --print =<< rollMaxLength <$> get
   let cnfDesc = cnfDescription clausesList
   whenM (dumpCnf . options <$> get) $ dumpToFile clausesList
-  sol <- liftIO (solveSAT cnfDesc clausesList) >>= toSolution
-  updateLength
+  p <- liftIO (solveSAT cnfDesc clausesList)
+  when (null p) $ do print =<< rollMaxLength <$> get
+  sol <- toSolution p
+  print sol
+  updateLength sol
   return sol
 
 buildClauses :: WithEncoder m => m ()
 buildClauses =
   addTlVars >> addOnePerCell >> addConsecutiveCells >> addControlBounds
 
-
-finishSolution :: WithEncoder m => Maybe Solution -> Maybe Solution -> Int -> m Bool
+finishSolution ::
+     WithEncoder m => Maybe Solution -> Maybe Solution -> Int -> m Bool
 --finishSolution _ _ _ = (<14) . rollMaxLength <$> get
 finishSolution Nothing _ _ = pure True
 finishSolution _ _ _ = pure False
+
 --finishSolution _ (Just a) _  =
 --  lengthRoll a == 5
 --finishSolution (Just a) _ _  = lengthRoll a == 5
-
 --threshold :: Int
 --threshold = 100000
-
-select :: Maybe Solution -> Maybe Solution -> Maybe Solution
-select a Nothing = a
-select Nothing b = b
-select (Just a) (Just b)
-  | isValid a && isValid b =
-    Just $
-    if a `isBetter` b
-      then a
-      else b
-  | isValid a = Just a
-  | otherwise = Just b
-
+select ::
+     WithEncoder m => Maybe Solution -> Maybe Solution -> m (Maybe Solution)
+select a Nothing = pure a
+select Nothing b = pure b
+select (Just a) (Just b) = do
+  mL <- rollMaxLength <$> get
+  let r1 = testR1 (a, b) mL
+  let r2 = isValid a mL && isValid b mL
+  if r1
+    then return $ Just a
+    else if r2
+           then return $ Just b
+           else if isValid a mL
+                  then return $ Just a
+                  else if isValid b mL
+                         then return $ Just b
+                         else return Nothing
+  where
+    testR1 (x, y) mL =
+      getAll $ foldMap All [isValid x mL, isValid y mL, isBetter x y]
 
 doWhile ::
-     Monad m => (a -> a -> Int -> m Bool) -> m a -> (a -> a -> a) -> a -> m a
+     Monad m => (a -> a -> Int -> m Bool) -> m a -> (a -> a -> m a) -> a -> m a
 doWhile stop action improve acc = go acc 0
   where
     go acc' i = do
       y <- action
-      ifM (stop y acc' i)
-        (return acc')
-        (go (improve y acc') (i + 1))
+      ifM (stop y acc' i) (return acc') ((improve y acc') >>= flip go (i + 1))
 
 dumpToFile :: WithEncoder m => Clauses -> m ()
 dumpToFile clausesList = do
@@ -99,7 +107,6 @@ cnfDescription clausesList =
       clausesLength = length clausesList
    in CNFDescription amountVars clausesLength ""
 
-
 mkState :: ProgOptions -> Boxes -> ClausesBuilder
 mkState opts bxs@Boxes {..} =
   ClausesBuilder
@@ -112,9 +119,12 @@ mkState opts bxs@Boxes {..} =
     , options = opts
     }
 
-updateLength :: WithEncoder m => m ()
-updateLength = do
-  modify $ \c -> c {rollMaxLength = rollMaxLength c - 1}
+updateLength :: WithEncoder m => Maybe Solution -> m ()
+updateLength sol = do
+  modify $ \c -> let rL = rollMaxLength c - 1
+                     rL' = maybe (maxBound @Int) ((flip (-) 1) . lengthRoll) sol
+                     newL = min rL rL'
+                     in c { rollMaxLength = newL }
   updateState
 
 updateState :: WithEncoder m => m ()
@@ -137,12 +147,12 @@ toProp :: WithEncoder m => [Int] -> m (Maybe Solution)
 toProp [] = return Nothing
 toProp lits = do
   cellsAmount <- amountCellVars <$> get
-  bxs  <- boxesConf <$> get
+  bxs <- boxesConf <$> get
   let (tls, _) = splitAt cellsAmount lits
   let toBuild = filter (> 0) tls
   proposed <- mapM (buildProposed lits) toBuild
   let maxL = foldr rollLength 0 proposed
-  return $ Just $ Solution bxs (maxL+1) proposed
+  return $ Just $ Solution bxs (maxL + 1) proposed
 
 rollLength :: ProposedBox -> Int -> Int
 rollLength (ProposedBox _ ytl _ ybr) x = max (max x ytl) ybr

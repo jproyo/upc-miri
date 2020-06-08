@@ -27,7 +27,6 @@ CPLEXINCDIR   = $(CPLEXDIR)/include
 
 CCFLAGS = $(CCOPT) -I$(CPLEXINCDIR) -I$(CONCERTINCDIR)
 
-
 BIN_DIR = bin
 SRC_DIR = src
 
@@ -37,11 +36,11 @@ all: checker main
 clean:
 	rm -rf $(BIN_DIR)/*
 
-main.o:
-	$(CCC) $(CCFLAGS) -c $(SRC_DIR)/main.cc -o $(BIN_DIR)/boxw.o
+bin/main.o:
+	$(CCC) $(CCFLAGS) -c $(SRC_DIR)/main.cc -o $(BIN_DIR)/main.o
 
-main: main.o
-	$(CCC) $(CCFLAGS) $(BIN_DIR)/boxw.o -o $(BIN_DIR)/boxw $(CCLNFLAGS)
+main: bin/main.o
+	$(CCC) $(CCFLAGS) $(BIN_DIR)/main.o -o $(BIN_DIR)/boxw $(CCLNFLAGS)
 
 checker.o:
 	$(CCC) $(CCFLAGS) -c $(SRC_DIR)/checker.cc -o $(BIN_DIR)/checker.o

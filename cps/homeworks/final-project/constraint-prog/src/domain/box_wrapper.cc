@@ -58,6 +58,7 @@ class Boxes {
     int boxWidth(int index) const;
     int boxHeight(int index) const;
     int boxArea(int index) const;
+    int isSquare(int index) const;
     void printDebug();
     void show() const;
 
@@ -112,6 +113,10 @@ int Boxes::boxHeight(int index) const{
 
 int Boxes::boxArea(int index) const{
   return this->boxWidth(index)*this->boxHeight(index);
+}
+
+int Boxes::isSquare(int index) const{
+  return this->boxWidth(index) == this->boxHeight(index);
 }
 
 void Boxes::printDebug(){

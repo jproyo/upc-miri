@@ -19,5 +19,8 @@ for ifile in $INST_DIR/*.$INST_EXT; do
     	echo "Instance $ifile has TIMED OUT"
     fi
 done
+
+find $OUTPUT_DIR -empty -ls -exec rm -rf {} \;
+
 echo "----------------- FINISHED !!!! BOX WRAPPING CP PROGRAM ---------------------"
 

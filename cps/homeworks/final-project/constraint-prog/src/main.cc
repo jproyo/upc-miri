@@ -49,9 +49,10 @@ int main(int argc, char* argv[]) {
     }
     if(newSol) {
       newSol->printDebug();
+      show_result(boxes, newSol);
+    }else{
+      return 1;
     }
-
-    show_result(boxes, newSol);
 
     delete newSol;
 

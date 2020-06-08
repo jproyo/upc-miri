@@ -25,7 +25,7 @@ import           SAT.Mios
 import           SAT.Mios.Util.DIMACS.Writer as W
 import           SAT.Types
 import           System.Directory
-
+import System.Timeout
 --------------------------------------------------------------------------------
 solve :: ProgOptions -> Boxes -> IO Solution
 solve prog =
@@ -40,7 +40,8 @@ solve' = do
   updateState >> buildClauses
   clausesList <- clauses <$> get
   let cnfDesc = cnfDescription clausesList
-  sol <- liftIO (solveSAT cnfDesc clausesList) >>= toSolution
+  s <- liftIO $ timeout 5000000 (solveSAT cnfDesc clausesList)
+  sol <- maybe (pure Nothing) toSolution s
   whenM (dumpCnf . options <$> get <&&> pure (isJust sol)) $ dumpToFile clausesList
   updateLength sol
   return sol

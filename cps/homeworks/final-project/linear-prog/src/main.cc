@@ -63,6 +63,16 @@ int main(int argc, char* argv[]) {
       //Constraint 7 according to report.pdf
       model.add(y_tl[i]+(1-r[i])*(height-1)+r[i]*(width-1) == y_br[i]);
 
+      //Constraint 13 according to report.pdf
+      if (i > 0) {
+        int box_before_width = boxes.boxWidth(i-1);
+        int box_before_height = boxes.boxHeight(i-1);
+
+        if (box_before_width == width && box_before_height == height)
+          model.add(y_tl[i-1] <= y_tl[i]);
+
+      }
+
       for(int j = i+1;j<boxes.size();j++){
 
         //Constraints 9, 10, 11 and 12 accroding to report.pdf

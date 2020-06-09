@@ -110,6 +110,7 @@ Given the statement of the problem proposed, we are going to define the followin
  \quad & y_{b=i}^{br} + 1 <= y_{b=j}^{tl} + b_i^{y^{br}} \times h_b \quad & \forall i,j\ |\ 0 \leq i \leq j \leq B \\\label{c:10}
  \quad & x_{b=j}^{br} + 1 <= x_{b=i}^{tl} + b_j^{x^{tl}} \times w_b \quad & \forall i,j\ |\ 0 \leq i \leq j \leq B \\\label{c:11}
  \quad & y_{b=j}^{br} + 1 <= y_{b=i}^{tl} + b_j^{y^{tl}} \times h_b \quad & \forall i,j\ | 0 \leq i \leq j \leq B \\\label{c:12}
+ \quad & y_{b=i}^{tl} <= y_{b=j}^{tl} \\\quad & \forall i,j\ | 1 \leq i \leq j \leq B | w_{bj} = w_{bi} \land h_{bj} = h_{bi} \\\label{c:13}
  \quad & 0 \leq x_b^{tl} \leq W-1 \quad & \forall b, 0 \leq b \leq B \\\label{b:1}
  \quad & 0 \leq y_b^{tl} \leq L-1 \quad & \forall b, 0 \leq b \leq B \\\label{b:2}
  \quad & 0 \leq x_b^{br} \leq W-1 \quad & \forall b, 0 \leq b \leq B \\\label{b:3}
@@ -152,6 +153,7 @@ As we can see I am reusing some variables that I have used in \acrfull{cp} deliv
   \item Constraint~\ref{c:10}: Idem~\ref{c:9} but for $y$ coordinates.
   \item Constraint~\ref{c:11}: Idem~\ref{c:9} but considering that the pair is in the opposite position.
   \item Constraint~\ref{c:12}: Idem~\ref{c:11} but for $y$ coordinates.
+  \item Constraint~\ref{c:13}: Breaking symmetry for boxes that are contiguous of the same size.
 \end{enumerate}
 
 \subsection{Implementation Detail}

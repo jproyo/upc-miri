@@ -66,6 +66,8 @@
 
 \maketitle
 
+\tableofcontents
+
 \section{Predefinitions}
 Values given by the state the of the program.
 
@@ -99,10 +101,10 @@ I have defined the following literals:
 
    \begin{equation}
     \begin{cases}
-      (\lnot tl_{bxy} \lor cl_{bxy}) \land \lnot r_b \ \\
-        \forall b \in B, x \in {i, \dots, i + w_b - 1}, y \in {y, \dots, y + h_b - 1}  & w_b = h_b \\\\
-      (\lnot tl_{bxy} \lor cl_{bxy} \lor r_b) \land (\lnot tl_{bxy} \lor cl_{bxy} \lor \lnot r_b) \ \\
-        \forall b \in B, x \in {i, \dots, i + w_b - 1}, y \in {y, \dots, y + h_b - 1} & w_b \neq h_b
+      \bigwedge\limits_{b=0}^N (\lnot tl_{bxy} \lor cl_{bxy}) \land \lnot r_b \\
+        \forall x \in {i, \dots, i + w_b - 1}, y \in {y, \dots, y + h_b - 1}  & w_b = h_b \\\\
+      \bigwedge\limits_{b=0}^N (\lnot tl_{bxy} \lor cl_{bxy} \lor r_b) \land (\lnot tl_{bxy} \lor cl_{bxy} \lor \lnot r_b) \ \\
+        \forall x \in {i, \dots, i + w_b - 1}, y \in {y, \dots, y + h_b - 1} & w_b \neq h_b
     \end{cases}
   \end{equation}
 
@@ -110,17 +112,17 @@ I have defined the following literals:
 
    \begin{equation}
     \begin{cases}
-      \lnot tl_{bij} \ \forall b \in B, i \in W, j \in L & w_b = h_b, i+w_b > W \lor j+h_b > L \\\\
-      (r_b \lor \lnot tl_{bij}) \land (\lnot r_b \lor \lnot tl_{bij}) \ \forall b \in B, i \in W, j \in L & w_b \neq h_b, i+w_b > W \lor j+h_b > L
+      \bigwedge\limits_{b=0}^N \lnot tl_{bij} \ i \in W, j \in L & w_b = h_b, i+w_b > W \lor j+h_b > L \\\\
+      \bigwedge\limits_{b=0}^N (r_b \lor \lnot tl_{bij}) \land (\lnot r_b \lor \lnot tl_{bij}) \ \forall i \in W, j \in L & w_b \neq h_b, i+w_b > W \lor j+h_b > L
     \end{cases}
   \end{equation}
 
 \end{enumerate}
 
-\subsection{Implementation}
+\section{Implementation}
 The implementation I did it was done in \acrfull{haskell} using \textbf{mios SAT Solver} \cite{mios} and in this section I will describe different things in the source code to be easy to understand what the formal definition maps to the code.
 
-\subsubsection{Summary}
+\subsection{Summary}
 These are the following modules in which the code is organized:
 
 \begin{itemize}
@@ -139,7 +141,99 @@ These are the following modules in which the code is organized:
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Encoders}
+
+\subsection{Solver Main Algorithm}
+Basically the solver main algorithm do the following:
+
+\begin{listing}[H]
+  \inputminted[firstline=30, lastline=54, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \caption{Extracted from source code src/SAT/Solver.hs}
+  \label{src:sat:5}
+\end{listing}
+
+As it can be seen here~\ref{src:sat:5} \mintinline{haskell}{doWhile} function simulate a traditional \mintinline{cpp}{do   while(cond)} in other imperative programming language flavor. Since in \acrshort{haskell} does not exist this kind of looping we need to recursively call \mintinline{haskell}{solve'} until we reach to some \textbf{threshold} or the solver is not giving any solution.
+
+On the one hand, \mintinline{haskell}{timeout} function in line $42$ is not the general timeout of $60$ seconds that the it is required in the project. $3000000$ is in microseconds and I took the decision to put that there because this solver got stuck some times for \textbf{UNSAT} instances. So if there is some instance that is stuck and not move forward I am taking the last result as the optimum. I have tested running the solution several times and it worked for all cases with best optimum.
+
+All the combinators regarding building the clauses that are in line $48$ are going to be described in following section~\ref{sec:clause:builder}.
+
+Since it is know that we cannot \textbf{minimize} length, the loop is for decreasing the maximum proposed length as in the previous Constraint programming solution, forcing the solver to fit boxes better. This is done by the call to the function \mintinline{haskell}{updateLength} at line $45$.
+
+\begin{listing}[H]
+  \inputminted[firstline=108, lastline=114, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \caption{Extracted from source code src/SAT/Solver.hs}
+  \label{src:sat:6}
+\end{listing}
+
+As we can see here~\ref{src:sat:6} I am selecting between the minimum length of the current \textbf{Max Length $-1$} and the length returned by the last solution. If there was NO last solution with \mintinline{haskell}{maxBound} function we are setting \textit{MAX INTEGER} value to select previous length minus $1$.
+
+Another important function is \mintinline{haskell}{select} which try to \textbf{select} the best solution between the last run and the previous loop.
+
+\begin{listing}[H]
+  \inputminted[firstline=55, lastline=74, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \caption{Extracted from source code src/SAT/Solver.hs}
+  \label{src:sat:7}
+\end{listing}
+
+As we can see here~\ref{src:sat:7} I am only taking valid solutions and discarding \textbf{NOT} valid ones. Also if there are 2 solutions, the one from the previous run and the current one I am checking which is better of both in case both are valid.
+
+\subsection{Clause Builder}\label{sec:clause:builder}
+
+Each of the clauses that I am building of course correspond to the formal definition on section~\ref{sub:form}.
+
+\subsubsection{Top Left Positions}
+
+The first propositional formulas that we encode is the $x, y$ top left position of each box.
+
+\begin{listing}[H]
+  \inputminted[firstline=29, lastline=40, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
+  \caption{Extracted from source code src/SAT/Clause.hs}
+  \label{src:sat:cl:1}
+\end{listing}
+
+The \mintinline{haskell}{encodeForEachClause'} combinator is a folding with traverse over all coordinates and boxes.
+
+\subsubsection{One Box Per Cell}
+
+On the second hand, I am putting all the positions of the box in each possible cell, and each cell can be occupied only by one box.
+
+\begin{listing}[H]
+  \inputminted[firstline=43, lastline=53, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
+  \caption{Extracted from source code src/SAT/Clause.hs}
+  \label{src:sat:cl:2}
+\end{listing}
+
+\subsubsection{Extending Boxes}
+
+The next clauses that we add is the extension of the boxes that corresponds to~\ref{prop:4}.
+
+\begin{listing}[H]
+  \inputminted[firstline=56, lastline=83, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
+  \caption{Extracted from source code src/SAT/Clause.hs}
+  \label{src:sat:cl:3}
+\end{listing}
+
+And this is the clauses builder for extended cell that take into consideration rotation.
+
+\begin{listing}[H]
+  \inputminted[firstline=86, lastline=107, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
+  \caption{Extracted from source code src/SAT/Clause.hs}
+  \label{src:sat:cl:4}
+\end{listing}
+
+\subsubsection{Control Bounds}
+
+On the final round we have the control of the bounds that corresponds to~\ref{prop:5}.
+
+\begin{listing}[H]
+  \inputminted[firstline=110, lastline=130, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
+  \caption{Extracted from source code src/SAT/Clause.hs}
+  \label{src:sat:cl:5}
+\end{listing}
+
+
+
+\subsection{Encoders}
 By default the program execute the solution using \acrfull{heule}, but I have implemented also \acrfull{log} which can be enable by command line argument\footnote{See \mintinline{bash}{README.md} in root folder of the project to see how this can be done}.
 
 \acrlong{heule} is very easy to implement in \acrshort{haskell} due to the \textbf{Functional Programming} nature of the language in which recursion is a first class citizen.
@@ -166,40 +260,7 @@ And this is the part of the code where I decide to use one encoding or the other
   \label{src:sat:4}
 \end{listing}
 
-\subsubsection{Solver Main Algorithm}
-Basically the solver main algorithm do the following:
-
-\begin{listing}[H]
-  \inputminted[firstline=30, lastline=54, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
-  \caption{Extracted from source code src/SAT/Solver.hs}
-  \label{src:sat:5}
-\end{listing}
-
-As it can be seen here~\ref{src:sat:5} \mintinline{haskell}{doWhile} function simulate a traditional \mintinline{cpp}{do   while(cond)} in other imperative programming language flavor. Since in \acrshort{haskell} does not exist this kind of looping we need to recursively call \mintinline{haskell}{solve'} until we reach to some \textbf{threshold} or the solver is not giving any solution.
-
-On the one hand, \mintinline{haskell}{timeout} function in line $42$ is not the general timeout of $60$ seconds that the it is required in the project. $3000000$ is in microseconds and I took the decision to put that there because this solver got stuck some times for \textbf{UNSAT} instances. So if there is some instance that is stuck and not move forward I am taking the last result as the optimum. I have tested running the solution several times and it worked for all cases with best optimum.
-
-Since it is know that we cannot \textbf{minimize} length, the loop is for decreasing the maximum proposed length as in the previous Constraint programming solution, forcing the solver to fit boxes better. This is done by the call to the function \mintinline{haskell}{updateLength} at line $45$.
-
-\begin{listing}[H]
-  \inputminted[firstline=108, lastline=114, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
-  \caption{Extracted from source code src/SAT/Solver.hs}
-  \label{src:sat:6}
-\end{listing}
-
-As we can see here~\ref{src:sat:6} I am selecting between the minimum length of the current \textbf{Max Length $-1$} and the length returned by the last solution. If there was NO last solution with \mintinline{haskell}{maxBound} function we are setting \textit{MAX INTEGER} value to select previous length minus $1$.
-
-Another important function is \mintinline{haskell}{select} which try to \textbf{select} the best solution between the last run and the previous loop.
-
-\begin{listing}[H]
-  \inputminted[firstline=55, lastline=74, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
-  \caption{Extracted from source code src/SAT/Solver.hs}
-  \label{src:sat:7}
-\end{listing}
-
-As we can see here~\ref{src:sat:7} I am only taking valid solutions and discarding \textbf{NOT} valid ones. Also if there are 2 solutions, the one from the previous run and the current one I am checking which is better of both in case both are valid.
-
-\subsection{Disclaimer}
+\section{Disclaimer}
 As It can be found in \mintinline{bash}{README.md} documentation, I have written a little program to compare the solutions generated with the optimum values proposed in \mintinline{bash}{results.txt}.
 
 \bibliographystyle{alpha}

@@ -13,7 +13,6 @@ module SAT.Solver
   ) where
 
 --------------------------------------------------------------------------------
-
 import           Control.Arrow               ((&&&))
 import           Control.Exception.Safe
 import           Data.Box
@@ -25,7 +24,7 @@ import           SAT.Mios
 import           SAT.Mios.Util.DIMACS.Writer as W
 import           SAT.Types
 import           System.Directory
-import System.Timeout
+import           System.Timeout
 --------------------------------------------------------------------------------
 solve :: ProgOptions -> Boxes -> IO Solution
 solve prog =
@@ -40,7 +39,7 @@ solve' = do
   updateState >> buildClauses
   clausesList <- clauses <$> get
   let cnfDesc = cnfDescription clausesList
-  s <- liftIO $ timeout 5000000 (solveSAT cnfDesc clausesList)
+  s <- liftIO $ timeout 3000000 (solveSAT cnfDesc clausesList)
   sol <- maybe (pure Nothing) toSolution s
   whenM (dumpCnf . options <$> get <&&> pure (isJust sol)) $ dumpToFile clausesList
   updateLength sol
@@ -77,9 +76,7 @@ doWhile ::
      (Show a, MonadIO m) => (a -> m Bool) -> m a -> (a -> a -> m a) -> a -> m a
 doWhile stop action improve acc = go acc
   where
-    go acc' = do
-      y <- action
-      ifM (stop y) (return acc') (go =<< (improve y acc'))
+    go acc' = action >>= \y -> ifM (stop y) (return acc') (go =<< (improve y acc'))
 
 dumpToFile :: WithEncoder m => Clauses -> m ()
 dumpToFile clausesList = do
@@ -110,10 +107,10 @@ mkState opts bxs@Boxes {..} =
 
 updateLength :: WithEncoder m => Maybe Solution -> m ()
 updateLength sol = do
-  modify $ \c -> let rL = rollMaxLength c - 1
-                     rL' = maybe (maxBound @Int) ((flip (-) 1) . lengthRoll) sol
+  modify $ \c -> let rL = rollMaxLength c
+                     rL' = maybe (maxBound @Int) lengthRoll sol
                      newL = min rL rL'
-                     in c { rollMaxLength = newL }
+                     in c { rollMaxLength = newL-1 }
   updateState
 
 updateState :: WithEncoder m => m ()
@@ -139,9 +136,12 @@ toProp lits = do
   bxs <- boxesConf <$> get
   let (tls, _) = splitAt cellsAmount lits
   let toBuild = filter (> 0) tls
-  proposed <- mapM (buildProposed lits) toBuild
-  let maxL = foldr rollLength 0 proposed
-  return $ Just $ Solution bxs (maxL + 1) proposed
+  if length toBuild /= amountBoxes bxs
+    then return Nothing
+    else do
+      proposed <- mapM (buildProposed lits) toBuild
+      let maxL = foldr rollLength 0 proposed
+      return $ Just $ Solution bxs (maxL + 1) proposed
 
 rollLength :: ProposedBox -> Int -> Int
 rollLength (ProposedBox _ ytl _ ybr) x = max (max x ytl) ybr

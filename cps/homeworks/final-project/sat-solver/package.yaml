@@ -75,6 +75,7 @@ library:
     - directory
     - mios
     - mtl
+    - time
     - safe-exceptions
 
 executables:

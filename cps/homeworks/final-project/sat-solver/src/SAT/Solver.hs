@@ -39,7 +39,7 @@ solve' = do
   updateState >> buildClauses
   clausesList <- clauses <$> get
   let cnfDesc = cnfDescription clausesList
-  s <- liftIO $ timeout 3000000 (solveSAT cnfDesc clausesList)
+  s <- liftIO $ timeout 5000000 (solveSAT cnfDesc clausesList)
   sol <- maybe (pure Nothing) toSolution s
   whenM (dumpCnf . options <$> get <&&> pure (isJust sol)) $ dumpToFile clausesList
   updateLength sol

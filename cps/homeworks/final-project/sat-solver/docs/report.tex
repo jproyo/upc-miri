@@ -146,14 +146,14 @@ These are the following modules in which the code is organized:
 Basically the solver main algorithm do the following:
 
 \begin{listing}[H]
-  \inputminted[firstline=30, lastline=54, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
+  \inputminted[firstline=29, lastline=54, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
   \caption{Extracted from source code src/SAT/Solver.hs}
   \label{src:sat:5}
 \end{listing}
 
 As it can be seen here~\ref{src:sat:5} \mintinline{haskell}{doWhile} function simulate a traditional \mintinline{cpp}{do   while(cond)} in other imperative programming language flavor. Since in \acrshort{haskell} does not exist this kind of looping we need to recursively call \mintinline{haskell}{solve'} until we reach to some \textbf{threshold} or the solver is not giving any solution.
 
-On the one hand, \mintinline{haskell}{timeout} function in line $42$ is not the general timeout of $60$ seconds that the it is required in the project. $3000000$ is in microseconds and I took the decision to put that there because this solver got stuck some times for \textbf{UNSAT} instances. So if there is some instance that is stuck and not move forward I am taking the last result as the optimum. I have tested running the solution several times and it worked for all cases with best optimum.
+On the one hand, \mintinline{haskell}{timeout} function in line $42$ is not the general timeout of $60$ seconds that the it is required in the project. $5000000$ is in microseconds and I took the decision to put that there because this solver got stuck some times for \textbf{UNSAT} instances. So if there is some instance that is stuck and not move forward I am taking the last result as the optimum. I have tested running the solution several times and it worked for all cases with best optimum.
 
 All the combinators regarding building the clauses that are in line $48$ are going to be described in following section~\ref{sec:clause:builder}.
 

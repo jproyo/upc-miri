@@ -1,0 +1,51 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
+\graphicspath{{./images/}}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\allowdisplaybreaks[2]
+
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\st}{st}
+
+\begin{document}
+
+\begin{itemize}
+  \item Question 1: 
+  \begin{itemize}
+    \item $p_1 = 0$
+    \item $p_2 = 1$
+    \item $p_3 = 0.25$
+  \end{itemize}
+  \item Question 2: We can use Greedy Algorithm to solve this. 
+  \begin{itemize}
+    \item First sort descending by $\frac{v_i}{s_i}$
+    \item Adding current $i$ if there is capacity
+    \item If at the end the knapsack cannot fit the entire last item we take a fraction of it, which is $p_i$.
+    \item End when we reach $B$
+  \end{itemize}
+  \item Question 3: By contradiction lets assume previous algorithm won't output an $OPT$ solution. By definition of the algorithm all items are sorted descending and are distinct in their ratio $\frac{v_i}{s_i}$. According to that our outcome should be the fractions $\{p_1, p_2, \dots, p_n\}$ with $OPT = \{o_1, o_2, \dots, o_n\}$ for each item. 
+  We have that $\sum_S p_iv_i < \sum_S o_1v_i$ where $p_i > o_i$. According to $OPT$ there should be a item $j > i$ such that $p_j < o_j$. If we have another solution $OPT' = \{o'_1, o'_2, \dots, o'_n\}$, where $o'_k = o_k, \forall k \neq i,j$, then $o'$ will consider a fraction more than item $i$ and less than item $j$, such that $o'_i = o_i + \epsilon$ and $o'_j = o_j + \epsilon \frac{s_i}{s_j}$. Then $\sum_S o'_is_i = \sum_S o_is_i$ and increases $\sum_S o'_iv_i = \sum_S o_iv_i + \epsilon v_i - \epsilon \frac{s_i}{s_j} v_j > \sum_S o_iv_i$. But $o'$ being better than $OPT$ is a contradiction. Therefore solution to the algorithm is optimal.
+  \item Question 4: It is known that this algorithm takes $O(n \log{n})$, since we need to sort we can do it in $O(\log{n})$ and we are adding $n$ items if there is capacity in worst case.
+\end{itemize}
+
+
+\end{document}
+

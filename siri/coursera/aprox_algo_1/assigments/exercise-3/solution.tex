@@ -1,0 +1,65 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usepackage{mathtools}
+\usemintedstyle{default}
+\graphicspath{{./images/}}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\allowdisplaybreaks[2]
+
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\st}{st}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\begin{document}
+
+\begin{enumerate}
+  \item The number of possible configurations is $13$. Let $x,y$ be the number of items of size $6$ and $10$, respectively, in a configuration. The capacity of the bins is $30$, and then, the number of possible configurations corresponds to the non-negative integer solutions of $6x+10y \leq 30$, $x \geq 0$ and $y \geq 0$. To count the number of solutions of this system one can fix the value of yy and then find the possible values for xx.
+
+  \begin{itemize}
+    \item If $y=0$, then $x \in \{0,1,2,3,4,5\}$
+    \item If $y=1$, then $x \in \{0,1,2,3\}$
+    \item If $y=2$, then $x \in \{0,1\}$
+    \item If $y=3$, then $x = 0$
+  \end{itemize}
+
+  \item $x_{C_1} = 2,8$, so we can store $10$ items of size $6$ in $2$ bins and the remaining $4$ in another bin which is going to occupy $24/30 = 0.8$ of the new bin. Then we have the $2.8$ of the LP solution for $C_1$.\\
+  In the case of $x_{C_2} = 2.6666666667$ we store $6$ items of size $10$, and the remaning $2$ items in another bin which is going to occupy $20/30 = 0.6666666667$ of the new bin. Then we have the $2.6666666667$ of the LP solution for $C_2$.\\
+  Therefore it is feasiable.
+  \item Yes, because $t = 2$ and all the bins ends ups with $\text{\#entries} \geq t$.
+  \item $2$ in each configuration
+  \item \begin{itemize}
+    \item $4$ of size $6$
+    \item $2$ of size $10$
+  \end{itemize}
+  \item $1$ for each configuration
+  \item $2$ no matter the order of the remaining entries of different sizes.
+  \item \begin{itemize}
+    \item If we sum up all the sizes we have $164$ in total.
+    \item $164/30 = 5,4666666667$, so the Optimal fractional should be $5.46$ bins.
+    \item Since we are working with integer number of bins the optimal is $6$. 
+    \item In the algorithm we are using as i state in the answer 2, $2$ bins for $C_1$ and $2$ bins for $C_2$ plus $2$ bins more as I stated in answer $7$. There fore we are using $6$ bins according to the algorithm and it is Optimal.
+  \end{itemize}
+  
+\end{enumerate}
+
+
+\end{document}
+

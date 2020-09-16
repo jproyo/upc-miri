@@ -1,0 +1,65 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
+\graphicspath{{./images/}}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\allowdisplaybreaks[2]
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\title{%
+      Approximation Algorithms - Part 1 \\
+      4-Colouring Graph Approximation
+}
+\author{%
+  Juan Pablo Royo Sales
+}
+\date\today
+
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\newacronym[]{vc}{VC}{Vertex Cover}
+\newacronym[]{mm}{MM}{Maximum Matching}
+
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\st}{st}
+
+\begin{document}
+
+\begin{itemize}
+  \item Question 1: $val(X) \leq |V^{1/2}| + \frac{|V^1|}{2}$
+  \item Question 2: $|V_{3}^{1/2}| \geq \frac{|V^{1/2}|}{4}$
+  \item Question 3: $|V_{0}^{1/2}| + |V_{1}^{1/2}| + |V_{2}^{1/2}| \leq \frac{3}{4}|V^{1/2}|$
+  \item Question 4: $|S| \leq \frac{3}{4}|V^{1/2}| + |V^1|$
+  \item Question 5: $|S| \leq \frac{3}{4}|V^{1/2}| + |V^1| \leq val(X) \leq |V^{1/2}| + \frac{|V^1|}{2} \leq \frac{3}{2}OPT$
+  \item Question 6: $V^{1/2}$ when $C(v) = 3$
+  \item Question 7: $V^{1/2}$
+  \item Question 8: $V_3^{1/2}$
+  \item Question 9: If both of them belongs to colour $3$ with value $1/2$ it means that either $u$ or $v$ are sharing an edge with other vertices at least. But this is not possible because if it was it wouldnt be both in $V_3^{1/2}$
+  \item Question 10: Any planar graph. For example a square with 4 vertices $\{A,B,C,D\}$ which edges are $\{(A,B), (B,C), (C,D), (D,A)\}$ 
+\end{itemize}
+
+
+\end{document}
+

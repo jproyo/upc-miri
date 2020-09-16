@@ -1,0 +1,48 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usepackage{mathtools}
+\usemintedstyle{default}
+\graphicspath{{./images/}}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\allowdisplaybreaks[2]
+
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\st}{st}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\begin{document}
+
+\begin{enumerate}
+    \item $\frac{1}{10}*\frac{1}{9}*\dots*1 = 2.92$
+    \item Lets define an indicator random variable $X$ that takes $1$ if the friend receives the coin or $0$ otherwise. 
+    \begin{subequations}
+      \begin{align}
+        E[\sum X] &= \sum E[X]\\
+        &= \sum P[\text{Friend receives the coin}]\\
+        &= \sum \frac{1}{10}\\
+        &= 1
+      \end{align}
+    \end{subequations}
+    \item $E[\sum_{i\leq 9} X_i]=\sum_i E[X_i]=0.9$
+  \end{enumerate}
+
+\end{document}
+

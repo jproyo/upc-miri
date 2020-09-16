@@ -1,0 +1,49 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usepackage{mathtools}
+\usemintedstyle{default}
+\graphicspath{{./images/}}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\allowdisplaybreaks[2]
+
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\st}{st}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\begin{document}
+
+\begin{enumerate}
+  \item For $i = 1$ we have that $P_{i-1} = P_0 = V$
+  \item $(i-2) + 1 = i - 1$. 
+  \item Since $\Gamma$ is valid and contains $i$ parts and $P_{i-2}$ contains $i - 1$ parts, there must be 2 terminals in the same part of $P_{i-2}$ but different parts of $\Gamma$.
+  \item The algorithm considers splitting $B$ into $B \cap \Gamma_h$ and $B - \Gamma_h$ when creating part $P_i$. Since it picks the cut of minimum wieight it follows that $w(P_{i-1}) - w(P_{i-2}) \leq w(\Gamma_h)$.
+  \item We can conclude that by previous point $w(P_{i-1})$ is the greatest cost of all iterations. On the other hand each $w(\Gamma_h) \geq w(B \cap \Gamma_h)$ and $w(\Gamma_h) \geq w(B - \Gamma_h)$. Then for sure we know that $\sum_{j=1}^{i-1} w(\Gamma_j) \geq B$. Therefore $w(P_{i-1}) \leq \sum_{j=1}^{i-1} w(\Gamma_j)$
+  \item Cost of MinCut is at least $2(1-\frac{1}{k})OPT$ as we have seen on lectures.\newline
+  Repeating the process over $k-1$ iterations accoring to the partitions order, we have that the cost is at least $\sum_{j=1}^{k-1} w(F_j) \leq 2k(1-\frac{1}{k})OPT$. Therefore with Lemma 1 we can conclude that $w(P_{k-1}) \leq \sum_{j=1}^{k-1} w(F_j) \leq 2k(1-\frac{1}{k})OPT$
+  \item Since each part contains at least one terminal and since there are at most $k$ parts, the cut produced by the algorithm is a valid solution to the multicut problem.
+  \item $O(poly(k)T)$ 
+  \item Cardinality is at most $k$
+  \item $poly(k,n)$ In this particular case would be $O(kn2T)$
+\end{enumerate}
+
+
+\end{document}
+

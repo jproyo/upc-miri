@@ -136,51 +136,35 @@ In this case $P(A) = 1/10$ because at each time are equally likely.
 
 \section{Problem 1.6}
 \subsection{1.6.A}
-Let 
-\[
-  A = \begin{cases}
-      1, & \text{ if wining 10 euros}\\
-      0, & \text{ otherwise }
-      \end{cases}
-\].
+Let $A = \text{ If the gambler win 10 euros}$.\newline
+Let $B = \text{ If the gambler win 25 euros}$.
 
-Let 
-\[
-  B = \begin{cases}
-      1, & \text{ if wining 25 euros}\\
-      0, & \text{ otherwise }
-      \end{cases}
-\].
-
-Knowing that $P(A) = \frac{5}{12}$ and $P(B) = \frac{1}{216}$.
+Knowing that $P(A) = \frac{5}{12}$ and $P(B) = \frac{1}{18}$.
 
 \begin{subequations}
   \begin{align}
-    E[A+B] &= P(A) + P(B)\\
-           &= \frac{91}{216}
+    E[A+B] &= 10 \times P(A) + 25 \times P(B)\\
+           &= 10 \times \frac{5}{12} + 25 \times \frac{1}{18}\\
+           &= \frac{50}{9}
   \end{align}
 \end{subequations}
 
-Expected benefit is $5-\frac{91}{216}*10 = 0.78$
+Expected benefit is $5.56$
 
 \subsection{1.6.B}
-Let $C$ be the event where the gamer doesnt have a prize.
-Therefore $P(C)=1-P(A)+P(B)=\frac{125}{216}$
+Let be $W = A+B$ the event of wining.
 
-Let $W$ be the r.v. representing event $A+B$
+This is a Geometric distribuion $G(p)$.
 
-Applyings Wald's Equation
+Knowning that $E[X]$ of a Geometric distribution is $1/p$ and being $p = \frac{19}{36}$, where $p$ is the probability of not wining.
 
 \begin{subequations}
   \begin{align}
-    E[\sum_{n=1}^N W_n] &= E[W]E[N]\\
-                        &= \frac{91}{216}*\sum_{k=0}P(N > k)\\
-                        &= \frac{91}{216}*N*\frac{125}{216}\\
-                        &= N*0.24
+    E[W] = \frac{36}{19}
   \end{align}
 \end{subequations}
 
-Expected benefit will be $5*N - N*0.24 = 4.76N$
+Expected benefit will be the expected amount of wining in the last try $\frac{50}{9}$ minus all the $5$ euros for rolling the dice and lose, $\frac{50}{9} - 5(\frac{36}{19}) = -9.44$.
 
 \end{document}
 

@@ -116,16 +116,18 @@ Not sure about this...
                  &= -e^{-7x_2}
     \end{align}
   \end{subequations}
-  \item $E[X_2]$ does it mean the conditional $E[X_2]$?
 \end{itemize}
 
 \section{}
 \subsection{}
 \begin{subequations}
   \begin{align}
-    F(X > Y) = P(X > Y | X < 1) &= \int_y^1 3(1 - x) dx \\
-               &= 3(x - \frac{x^2}{2})\Bigm|_y^1\\
-               &= \frac{3}{2} - 3(y - \frac{y^2}{2})
+    F(X > Y) = P(X > Y | X + Y < 1) &= \int_{1-y}^1 3(1 - x) dx \\
+               &= 3(x - \frac{x^2}{2})\Bigm|_{1-y}^1\\
+               &= \frac{3}{2} - 3((1-y) - \frac{(1-y)^2}{2})\\
+               &= \frac{3}{2} - 3(\frac{1+y^2}{2})\\
+               &= \frac{3}{2} - \frac{3}{2} + \frac{3}{2}y^2\\
+               &= \frac{3}{2}y^2
   \end{align}
 \end{subequations}
 
@@ -150,19 +152,37 @@ Not sure about this...
 \section{}
 \begin{subequations}
   \begin{align}
-    P[X < Y] + P[Y < X] = \int_0^1 f(x)dx \int_y^x f(y)dy + \int_0^1 f(y)dy \int_x^y f(x)dx
+    F_U(u) &= P[U \leq u]\\
+           &= P[min(X,Y) \leq u]\\
+           &= 1 - P[min(X,Y) > u]\\
+           &= 1 - P[X > u, Y > u]\\
+           &= 1 - P[X > u]P[Y > u]\\
+           &= 1 - (1 - F_x(u))(1 - F_y(u)\\
+           &= F_x(u)+F_y(u)-F_x(u)F_y(u)
+  \end{align}
+\end{subequations}
+
+
+\section{}
+\begin{subequations}
+  \begin{align}
+    F_V(v) &= P[V \leq v]\\
+           &= P[max(X,Y) \leq v]\\
+           &= P[max(X,Y) \leq v]\\
+           &= P[X \leq v, Y \leq v]\\
+           &= P[X \leq v]P[Y \leq v]\\
+           &= F_x(v)F_y(v)
   \end{align}
 \end{subequations}
 
 \section{}
 \begin{subequations}
   \begin{align}
-    P[X > Y] + P[Y > X] = \int_0^1 f(x)dx \int_x^y f(y)dy + \int_0^1 f(y)dy \int_y^x f(x)dx
+    P(U > u, V \leq v) &= P(U > u)P(V \leq v)\\
+                       &= (F_x(v)F_y(v))(F_x(u)+F_y(u)-F_x(u)F_y(u))\\
+                       &= F_x(v)F_y(v)F_x(u)+F_x(v)F_y(v)F_y(u)-F_x(v)F_y(v)F_x(u)F_y(u)
   \end{align}
 \end{subequations}
-
-\section{}
-Since the previous 2 i dont think there are ok, and it seems intuitively that this is a composition of previous 2.
 
 \section{}
 Let $P[X=7] = \frac{6}{36}$ be the probability of wining a 7 in first shot.

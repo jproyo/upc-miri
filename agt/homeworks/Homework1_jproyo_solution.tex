@@ -1,0 +1,114 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+\usepackage{titlesec}
+  
+
+\title{%
+  Algorithmic Game Theory \\
+  Homework 1 - Solutions
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AGT - Homework 1}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newacronym{bpp}{BPP}{BPP}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 6}
+Given the following definition of the problem:
+
+Let $G=(V,E)$ be the graph representing with $V$ the number of players as vertices and $E$ the set of edges such as $\forall_{i,j \in V}\ (i,j) \in E$ if it is a bad pairing.
+
+\subsection{Formal Characterization}
+
+$N = V$.
+
+$\forall_{i \in N}, A_i = \{1,0\}$ $1$ if it is in Group 1, $0$ if it is in Group 2.
+
+\[
+u_i(v_2,\dots,v_n) = 
+    \begin{cases}
+      1 & \exists\ j \neq i, (i,j) \in E \text{ and $j$ is in the other group of $i$} \\
+      0 & otherwise 
+    \end{cases} 
+\]
+
+\[
+BR_i(v_{-i}) = 
+    \begin{cases}
+      \{1\} & \forall_{j \neq i}, (i,j) \in E \implies \sum_j 1 - v_j > \sum_j v_j\\ 
+      \{0\} & \forall_{j \neq i}, (i,j) \in E \implies \sum_j v_j > \sum_j 1 - v_j\\
+      \{0,1\} & otherwise
+    \end{cases}
+\]
+
+\newtheorem{npe}{NPE Analysis}
+\newtheorem{proofpart}{Part}
+\begin{npe}
+  $v=(v_1,\dots,v_n)$ is a $NPE \iff \forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j$
+\end{npe}
+
+\begin{proof}
+
+\begin{proofpart}
+$\impliedby$
+$\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j \implies$
+\begin{subequations}
+  \begin{align}
+     &\implies \forall_{i,j}, (i,j) \in E\ \sum_{j \neq i} 1 - v_i > \sum_{j \neq i} v_i \implies \{1\} \in BR_i\\
+     &\implies \forall_{i,j}, (i,j) \in E\ \sum_{j \neq i} 1 - v_i < \sum_{j \neq i} v_i \implies \{0\} \in BR_i
+  \end{align}
+\end{subequations}
+\end{proofpart}
+
+\begin{proofpart}
+$\implies$\\
+$\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i \neq \sum_{i=1}^n v_j$ if this holds, then \newline
+\begin{subequations}
+  \begin{align}
+     \exists j &, v_j = 1 \iff (i,j) \in E\ \land \sum_{j \neq i} 1 - v_i < \sum_{j \neq i} v_i + v_j\\
+               &, v_j = 0 \iff (i,j) \in E\ \land \sum_{j \neq i} (1 - v_i)+v_j > \sum_{j \neq i} v_i\\
+  \end{align}
+\end{subequations}
+
+But if this is true $i$ changes to other group.\newline
+Therefore $\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j$
+\end{proofpart}
+
+\end{proof}
+
+\subsection{Complexity Analysis}
+As we can see by the definition of the problem, the complexity is polinomial in the size of $V$ by the size of $E$, because we only need to sum over the vertices that have
+an edge over other vertex. Also this problem characterization matches the \textbf{\textit{Strategy General Form}}, which we have seen in the theory that it is polynomial.
+Therefore the complexity is $O(|V||E|)$ worst case.
+
+\end{document}
+

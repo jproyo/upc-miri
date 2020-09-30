@@ -158,7 +158,6 @@ Therefore $a = 0.33$ and $b = -0.33$.
 Then $\pi_s(n) = 0.33 - 0.33 * 0.7^n, n \geq 0$
 
 \section{}
-I couldnt follow this exercise, because it says it has to be solve with the general form for a defective matrix, but this determinant can be calculated and also the eigen values for the determinant like this.
 
 First we need to calculate the eigen values.
 \begin{subequations}
@@ -174,11 +173,15 @@ And the roots are $\lambda_0 = 1, \lambda_1 = 0.55555, \lambda_2 = 0.99999$
     \pi_2(n) &= a \lambda_0^n + b \lambda_1^n + c \lambda_2^n\\
     \pi_2(0) &= a + b + c = (\pi(0)P^0)_2 = 0\\
     \pi_2(1) &= a + 0.55 b + 0.99 c = (\pi(0)P^1)_2 = P_{12}^1 = \frac{15}{36}\\
-    \pi_2(2) &= a + 0.55 b + 0.99 c = (\pi(0)P^2)_2 = P_{12}^2 = \frac{20}{36}\frac{15}{36}\\
+    \pi_2(2) &= a + 0.55^2 b + 0.99^2 c = (\pi(0)P^2)_2 = P_{12}^2 = \frac{20}{36}\frac{15}{36} + \frac{15}{36} = \frac{35}{54}\\
   \end{align}
 \end{subequations}
+Solving the equation system we have that $a = \frac{25}{27}, b = -\frac{25}{27}, c = 0$.
 
-Here I dont know how to continue..
+Therefore, $\pi_2(n) = \frac{25}{27} - \frac{25}{27} * 0.55^n $. When $n \rightarrow \infty$ Probability is $\frac{25}{27}$ because second term tends to $0$.
+
+\subsection{}
+If $\pi_2(\infty) = \frac{25}{27} = 0.94$. In the previous exercise we have obtained the same number but with other fraction which is $\frac{15}{16}$ but the decimal number representation is the same.
 
 \end{document}
 

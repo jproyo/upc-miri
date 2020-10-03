@@ -1,0 +1,130 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{multirow}
+
+
+\title{%
+  Algorithmic Game Theory \\
+  Homework 2 - Solutions
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AGT - Homework 2}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 10}
+\begin{center}
+  \begin{tabular}{p{5pt}c|cc }
+  \multicolumn{2}{}{} & \multicolumn{2}{c}{P2}\\
+  & & A & B\\
+  \multirow{2}{*}{\rotatebox[origin=c]{90}{P1}}
+  & A & 6,6 & 2,7 \\
+  & B & 7,2 & 0,0 \\
+\end{tabular}
+\end{center}
+
+$PNE$ can be easily seen when $u_1(B) \land u_2(A)$ or $u_1(A) \land u_2(B)$ where $\{(7,2), (2,7)\}$.
+
+In the case of \textit{mixed Nash Equilibrium} we need to divide the problem in two parts.
+
+Lets fix the probability of Mixed Nash Equilibrium Game for $P2$ as $p$ if $P2$ chooses $A$ or $1-p$ if it chooses $B$. Then if $P1$ plays a mixed game we have that
+
+\begin{subequations}
+  \begin{align}
+    u_1(A) & = u_1(B)\\
+    6p + 2(1-p) &= 7p + 0(1-p)\\
+    p &= \frac{2}{11}
+  \end{align}
+\end{subequations}
+
+And therefore $1-p = \frac{9}{11}$.
+
+Given the case of $P1$ chooses some $q$ probability for playing $A$ and $1-q$ for playing $B$, then we can analyze $P2$ playing a mixed game:
+
+
+\begin{subequations}
+  \begin{align}
+    u_2(A) & = u_2(B)\\
+    6p + 2(1-p) &= 7p + 0(1-p)\\
+    p &= \frac{2}{11}
+  \end{align}
+\end{subequations}
+And therefore $1-q = \frac{9}{11}$.
+
+Therefore there is a \textit{mixed Nash Equilibrium} with probabilities $\{(\frac{2}{11},\frac{9}{11}),(\frac{2}{11},\frac{9}{11}) \}$
+
+\section{Problem 12}
+There is no $NE$ for the mixed game. Lets show why.
+Given the following table:
+
+\begin{center}
+  \begin{tabular}{p{5pt}c|cc }
+  \multicolumn{2}{}{} & \multicolumn{2}{c}{P2}\\
+  & & A & B\\
+  \multirow{3}{*}{\rotatebox[origin=c]{90}{P1}}
+  & C & 1,1 & 4,2 \\
+  & D & 3,3 & 1,1 \\
+  & E & 2,2 & 2,3
+\end{tabular}
+\end{center}
+
+We can set for example for $P2$ probabilities $p$ and $1-p$ for choosing $A$ or $B$ response.
+If there was a $NE$ then $P1$ should have a distribution probability for choosing $C, D \text{or } E$ being indifferent one choose over the other as we shown in Problem 10. If that the case we should have the following equality.
+
+\begin{subequations}
+  \begin{align}
+    u_1(C) &= u_1(D) &= u_1(E)\\
+    p + 4(1-p) &= 3p + (1-p) &= 2p + 2(1-p)\\
+    4 - 3p &= 2p + 1 &= 2\label{eq:8}
+  \end{align}
+\end{subequations}
+
+But we can see that that is \textbf{false}. Therefore there is an incentive to choose one strategy over the other greater than 1 which indicates that in this game there is not a Pure Nash Equilibrium.
+
+\section{Problem 13}
+Lets analyze the utility after applying the distribution $(0.6,0.4), (0.2,0.4,0.4)$
+
+\begin{center}
+  \begin{tabular}{p{5pt}c|ccc }
+  \multicolumn{2}{}{} & \multicolumn{3}{c}{P2}\\
+  & & R & S & T\\
+  \multirow{2}{*}{\rotatebox[origin=c]{90}{P1}}
+  & A & 3.6,1.2 & 1.2,2.8 & 1.2,2.4 \\
+  & B & 2.8,0.4 & 0.8,2.8 & 0.8,2.4 \\
+\end{tabular}
+\end{center}
+
+As we can see there is a $NE$ when $P2$ chooses $S$ and $P1$ chooses $A$ since non of them has any incentive to change.
+
+\end{document}
+

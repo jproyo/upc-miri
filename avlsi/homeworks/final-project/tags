@@ -1,0 +1,5 @@
+!_TAG_FILE_SORTED	1	//
+RTLSolver	rtl-pb-sat-optimizer/src/RTLSolver.hs	1;"	m
+Solver	rtl-pb-sat-optimizer/src/Internal/Solver.hs	1;"	m
+fn	rtl-pb-sat-optimizer/src/RTLSolver.hs	5;"	f
+main	rtl-pb-sat-optimizer/Setup.hs	2;"	f

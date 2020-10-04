@@ -1,8 +1,8 @@
-name:                boolean-relations-solver
+name:                rtl-pb-sat-optimizer
 version:             0.1.0.0
-synopsis:            Boolean Relations Solver with Sat
+synopsis:            Register Transfer Level(RTL) Optimizer using PB-SAT
 #description:
-homepage:            https://github.com/jproyo/upc-miri/avlsi/homeworks/final-project/boolean-relations-solver#readme
+homepage:            https://github.com/jproyo/upc-miri/avlsi/homeworks/final-project/rtl-pb-sat-optimizer#readme
 license:             BSD3
 author:              Juan Pablo Royo Sales
 maintainer:          juanpablo.royo@gmail.com
@@ -70,7 +70,7 @@ ghc-options:
 
 library:
   exposed-modules:
-    - BoxWrapping
+    - RTLSolver
 
   source-dirs:
     - src
@@ -78,33 +78,23 @@ library:
   dependencies:
     - containers
     - directory
-    - mios
     - mtl
+    - safe-exceptions
     - text
     - time
-    - safe-exceptions
+    - toysolver
 
-executables:
-  solver:
-    main: Main.hs
-    source-dirs: app/Solver
-    dependencies:
-      - optparse-applicative
-      - boolean-relations-solver
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N
-      - -O3
-
-  checker:
-    main: Main.hs
-    source-dirs: app/Checker
-    dependencies:
-      - trifecta
-      - directory
-    ghc-options:
-      - -threaded
-      - -O2
-      - -optP-Wno-nonportable-include-path
+      #executables:
+      #  solver:
+      #    main: Main.hs
+      #    source-dirs: app/Solver
+      #    dependencies:
+      #      - optparse-applicative
+      #      - rtl-pb-sat-optimizer
+      #    ghc-options:
+      #      - -threaded
+      #      - -rtsopts
+      #      - -with-rtsopts=-N
+      #      - -O3
+      #
 

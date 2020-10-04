@@ -1,9 +1,0 @@
-resolver: lts-16.16
-
-packages:
-- .
-
-extra-deps:
-- mios-1.6.2@sha256:18cfd492792cf4f0fbd8664aee8717fe75771355921d47d69f23b67eed1280a4,5077
-
-

@@ -1,0 +1,7 @@
+language file
+exponent_2 ./data/sample_of_zeta_with_parameter_2.txt
+exponent_2.5 ./data/sample_of_zeta_with_parameter_2.5.txt
+exponent_3 ./data/sample_of_zeta_with_parameter_3.txt
+exponent_3.5 ./data/sample_of_zeta_with_parameter_3.5.txt
+
+

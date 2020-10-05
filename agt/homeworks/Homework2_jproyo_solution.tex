@@ -53,39 +53,146 @@
 \end{tabular}
 \end{center}
 
-$PNE$ can be easily seen when $u_1(B) \land u_2(A)$ or $u_1(A) \land u_2(B)$ where $\{(7,2), (2,7)\}$.
+Given $\sigma^{*} = \{(x, 1-x), (y, 1-y)\}$
 
-In the case of \textit{mixed Nash Equilibrium} we need to divide the problem in two parts.
+For $P1$ we know that
+\begin{itemize}
+  \item If $x \neq 0 \land x \neq 1 \implies \text{ supp}(\sigma_{p1})=\{A,B\}$.\\
+       Therefore $\mu_1((1,0),(y,1-y)) = \mu_1((0,1), (y, 1-y))$
+  \item If $x \neq 0 \land x \neq 1 \implies \text{ supp}(\sigma_{p1})=\{A,B\}$.\\
+       Therefore $\mu_1((1,0),(y,1-y)) = \mu_1((0,1), (y, 1-y))$
+  \item If $x = 1 \implies \text{ supp}(\sigma_{p1})=\{A\}$.\\
+       Therefore $\mu_1((1,0),(y,1-y)) > \mu_1((0,1), (y, 1-y))$
+  \item If $x = 0 \implies \text{ supp}(\sigma_{p1})=\{B\}$.\\
+       Therefore $\mu_1((1,0),(y,1-y)) < \mu_1((0,1), (y, 1-y))$
+\end{itemize}
 
-Lets fix the probability of Mixed Nash Equilibrium Game for $P2$ as $p$ if $P2$ chooses $A$ or $1-p$ if it chooses $B$. Then if $P1$ plays a mixed game we have that
 
-\begin{subequations}
+And for $P2$ we know that
+\begin{itemize}
+  \item If $y \neq 0 \land y \neq 1 \implies \text{ supp}(\sigma_{p2})=\{A,B\}$.\\
+       Therefore $\mu_2((x,1-x),(1,0)) = \mu_2((x, 1-x),(0,1))$
+  \item If $y \neq 0 \land y \neq 1 \implies \text{ supp}(\sigma_{p2})=\{A,B\}$.\\
+       Therefore $\mu_2((x,1-x),(1,0)) = \mu_2((x, 1-x),(0,1))$
+  \item If $y = 1 \implies \text{ supp}(\sigma_{p2})=\{A\}$.\\
+       Therefore $\mu_2((x,1-x),(1,0)) > \mu_2((x, 1-x),(0,1))$
+  \item If $y = 0 \implies \text{ supp}(\sigma_{p2})=\{B\}$.\\
+       Therefore $\mu_2((x,1-x),(1,0)) < \mu_2((x, 1-x),(0,1))$
+\end{itemize}
+
+Lets analyze case by case:
+
+\begin{enumerate}
+  \item $P1 = A, P2 = A$\\
+ \begin{subequations}
   \begin{align}
-    u_1(A) & = u_1(B)\\
-    6p + 2(1-p) &= 7p + 0(1-p)\\
-    p &= \frac{2}{11}
+    \mu_1((1,0),(1,0)) &> \mu_1((0,1),(1,0))\\
+    6 &> 7
   \end{align}
 \end{subequations}
+Therefore, this \textbf{IS NOT $NE$}
 
-And therefore $1-p = \frac{9}{11}$.
-
-Given the case of $P1$ chooses some $q$ probability for playing $A$ and $1-q$ for playing $B$, then we can analyze $P2$ playing a mixed game:
-
-
-\begin{subequations}
+ \item $P1 = A, P2 = B$\\
+ \begin{subequations}
   \begin{align}
-    u_2(A) & = u_2(B)\\
-    6p + 2(1-p) &= 7p + 0(1-p)\\
-    p &= \frac{2}{11}
+    \mu_1((1,0),(0,1)) &> \mu_1((0,1),(0,1))\\
+    2 &> 0
   \end{align}
 \end{subequations}
-And therefore $1-q = \frac{9}{11}$.
+Therefore, this \textbf{IS $NE$}
 
-Therefore there is a \textit{mixed Nash Equilibrium} with probabilities $\{(\frac{2}{11},\frac{9}{11}),(\frac{2}{11},\frac{9}{11}) \}$
+\item $P1 = A, P2 = \{A,B\}$\\
+ \begin{subequations}
+  \begin{align}
+    6y &= 2(1-y)\\
+    8y &= 2\\
+     y &= \frac{1}{4}\\
+    1-y &= \frac{3}{4}
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS MIXED $NE$}
+
+
+ \item $P1 = B, P2 = A$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((0,1),(1,0)) &> \mu_1((1,0),(1,0))\\
+    7 &> 6
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS $NE$}
+
+ \item $P1 = B, P2 = B$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((0,1),(0,1)) &> \mu_1((1,0),(0,1))\\
+    0 &> 2
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT $NE$}
+
+\item $P1 = B, P2 = \{A,B\}$\\
+ \begin{subequations}
+  \begin{align}
+    7y &= 0(1-y)\\
+     y &= 0\\
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT MIXED $NE$}
+
+\item $P1 = \{A,B\}, P2 = A$\\
+ \begin{subequations}
+  \begin{align}
+    6x &= 2(1-x)\\
+    x &= \frac{1}{4}\\
+    1 - x &= \frac{3}{4}
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS MIXED $NE$}
+
+
+\item $P1 = \{A,B\}, P2 = B$\\
+ \begin{subequations}
+  \begin{align}
+    7x &= 0(1-x)\\
+     x &= 0\\
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT MIXED $NE$}
+
+
+\item $P1 = \{A,B\}, P2 = \{A,B\}$\\
+
+When $\mu_1((1,0),(y, 1-y)) = \mu_1((0,1),(y,1-y))$
+ \begin{subequations}
+  \begin{align}
+    6y + 7y &= 2(1-y) + 0(1-y)\\
+    13y &= 2 - 2-y\\
+    y &= \frac{2}{11}\\
+    1-y &= \frac{9}{11}
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS MIXED $NE$}\\
+
+When $\mu_2((x,1-x),(1,0)) = \mu_2((x,1-x),(0,1))$
+ \begin{subequations}
+  \begin{align}
+    6x + 7x &= 2(1-x) + 0(1-x)\\
+    13x &= 2 - 2-x\\
+    x &= \frac{2}{11}\\
+    1-x &= \frac{9}{11}
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS MIXED $NE$}
+\end{enumerate}
+
+Therefore the following are the $NE$ and MIXED $NE$ found:
+
+$NE = \{((0,1),(1,0)), ((1,0),(0,1))\}$
+
+$\text{MIXED NE} = \{((0,1),(\frac{1}{4},\frac{3}{4})), ((\frac{1}{4},\frac{3}{4}),(1,0)), ((\frac{2}{11},\frac{9}{11}),(\frac{2}{11},\frac{9}{11}))\}$
 
 \section{Problem 12}
-There is no $NE$ for the mixed game. Lets show why.
-Given the following table:
 
 \begin{center}
   \begin{tabular}{p{5pt}c|cc }
@@ -98,18 +205,138 @@ Given the following table:
 \end{tabular}
 \end{center}
 
-We can set for example for $P2$ probabilities $p$ and $1-p$ for choosing $A$ or $B$ response.
-If there was a $NE$ then $P1$ should have a distribution probability for choosing $C, D \text{or } E$ being indifferent one choose over the other as we shown in Problem 10. If that the case we should have the following equality.
+Given $\sigma^{*} = \{(x_1, x_2, x_3), (y, 1-y)\}$
 
-\begin{subequations}
+For $P1$ we know that
+\begin{itemize}
+  \item If $x_1,x_2,x_3 \notin \{0,1\} \implies \text{ supp}(\sigma_{p1})=\{C,D,E\}$.\\
+    Therefore $\mu_1((1,0,0),(y,1-y)) = \mu_1((0,1,0), (y, 1-y)) = \mu_1((0,0,1), (y, 1-y))$
+  \item If $x_1 = 1 \implies \text{ supp}(\sigma_{p1})=\{C\}$.\\
+    Therefore $\mu_1((1,0,0),(y,1-y)) > \mu_1((0,1,0), (y, 1-y))\ \land\ \mu_1((1,0,0),(y,1-y)) > \mu_1((0,0,1), (y, 1-y))$
+  \item If $x_2 = 1 \implies \text{ supp}(\sigma_{p1})=\{D\}$.\\
+    Therefore $\mu_1((0,1,0),(y,1-y)) > \mu_1((1,0,0), (y, 1-y))\ \land\ \mu_1((0,1,0),(y,1-y)) > \mu_1((0,0,1), (y, 1-y))$
+  \item If $x_3 = 1 \implies \text{ supp}(\sigma_{p1})=\{E\}$.\\
+    Therefore $\mu_1((0,0,1),(y,1-y)) > \mu_1((1,0,0), (y, 1-y))\ \land\ \mu_1((0,0,1),(y,1-y)) > \mu_1((0,1,0), (y, 1-y))$
+\end{itemize}
+
+Lets analyze case by case:
+
+\begin{enumerate}
+  \item $P1 = C, P2 = A$\\
+ \begin{subequations}
   \begin{align}
-    u_1(C) &= u_1(D) &= u_1(E)\\
-    p + 4(1-p) &= 3p + (1-p) &= 2p + 2(1-p)\\
-    4 - 3p &= 2p + 1 &= 2\label{eq:8}
+    \mu_1((1,0,0),(1,0)) &> \mu_1((0,1,0),(1,0))\\
+    1 &> 3
   \end{align}
 \end{subequations}
+Therefore, this \textbf{IS NOT $NE$}
 
-But we can see that that is \textbf{false}. Therefore there is an incentive to choose one strategy over the other greater than 1 which indicates that in this game there is not a Pure Nash Equilibrium.
+  \item $P1 = C, P2 = B$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((1,0,0),(0,1)) &> \mu_1((0,1,0),(0,1))\\
+    4 &> 1
+  \end{align}
+\end{subequations}
+ \begin{subequations}
+  \begin{align}
+    \mu_1((1,0,0),(0,1)) &> \mu_1((0,0,1),(0,1))\\
+    4 &> 2
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS $NE$}
+
+
+\item $P1 = C, P2 = \{A,B\}$\\
+ \begin{subequations}
+  \begin{align}
+    y &= 4(1-y)\\
+     y &= \frac{4}{5}\\
+    1-y &= \frac{1}{5}
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS MIXED $NE$}
+
+\item $P1 = D, P2 = A$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((0,1,0),(1,0)) &> \mu_1((1,0,0),(1,0))\\
+    3 &> 1
+  \end{align}
+\end{subequations}
+ \begin{subequations}
+  \begin{align}
+    \mu_1((0,1,0),(1,0)) &> \mu_1((0,0,1),(1,0))\\
+    3 &> 2
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS $NE$}
+
+\item $P1 = D, P2 = B$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((0,1,0),(0,1)) &> \mu_1((1,0,0),(0,1))\\
+    1 &> 4
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT $NE$}
+
+\item $P1 = D, P2 = \{A,B\}$\\
+ \begin{subequations}
+  \begin{align}
+    3y &= 1-y\\
+     y &= \frac{1}{4}\\
+    1-y &= \frac{3}{4}
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS MIXED $NE$}
+
+\item $P1 = E, P2 = A$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((0,0,1),(1,0)) &> \mu_1((0,1,0),(1,0))\\
+    2 &> 3
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT $NE$}
+
+
+\item $P1 = E, P2 = B$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((0,0,1),(0,1)) &> \mu_1((1,0,0),(0,1))\\
+    2 &> 4
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT $NE$}
+
+\item $P1 = E, P2 = \{A,B\}$\\
+ \begin{subequations}
+  \begin{align}
+    2y &= 2-2y\\
+     y &= 0\\
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT MIXED $NE$}
+
+\item $P1 = \{C,D,E\}, P2 = \{A,B\}$\\
+ \begin{subequations}
+  \begin{align}
+    \mu_1((1,0,0),(y,1-y)) &= \mu_1((0,1,0), (y, 1-y)) &= \mu_1((0,0,1), (y, 1-y))\\
+    y+4-4y &= 3y+1-y &= 2y + 2-2y\label{eq:1}\\
+  \end{align}
+\end{subequations}
+Therefore, this \textbf{IS NOT MIXED $NE$} because~\ref{eq:1} leads to inequality.
+
+\end{enumerate}
+
+Therefore the following are the $NE$ and MIXED $NE$ found:
+
+$NE = \{((1,0,0),(0,1)), ((0,1,0),(1,0))\}$
+
+$\text{MIXED NE} = \{((1,0,0),(\frac{4}{5},\frac{1}{5})), ((0,1,0),(\frac{1}{4},\frac{3}{4}))\}$
+
+
 
 \section{Problem 13}
 Lets analyze the utility after applying the distribution $(0.6,0.4), (0.2,0.4,0.4)$

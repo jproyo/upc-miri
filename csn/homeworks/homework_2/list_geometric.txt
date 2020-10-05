@@ -1,0 +1,7 @@
+language file
+probability_0.05 ./data/sample_of_geometric_with_parameter_0.05.txt
+probability_0.1 ./data/sample_of_geometric_with_parameter_0.1.txt
+probability_0.2 ./data/sample_of_geometric_with_parameter_0.2.txt
+probability_0.4 ./data/sample_of_geometric_with_parameter_0.4.txt
+probability_0.8 ./data/sample_of_geometric_with_parameter_0.8.txt
+

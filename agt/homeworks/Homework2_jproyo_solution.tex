@@ -211,132 +211,21 @@ For $P1$ we know that
 \begin{itemize}
   \item If $x_1,x_2,x_3 \notin \{0,1\} \implies \text{ supp}(\sigma_{p1})=\{C,D,E\}$.\\
     Therefore $\mu_1((1,0,0),(y,1-y)) = \mu_1((0,1,0), (y, 1-y)) = \mu_1((0,0,1), (y, 1-y))$
-  \item If $x_1 = 1 \implies \text{ supp}(\sigma_{p1})=\{C\}$.\\
-    Therefore $\mu_1((1,0,0),(y,1-y)) > \mu_1((0,1,0), (y, 1-y))\ \land\ \mu_1((1,0,0),(y,1-y)) > \mu_1((0,0,1), (y, 1-y))$
-  \item If $x_2 = 1 \implies \text{ supp}(\sigma_{p1})=\{D\}$.\\
-    Therefore $\mu_1((0,1,0),(y,1-y)) > \mu_1((1,0,0), (y, 1-y))\ \land\ \mu_1((0,1,0),(y,1-y)) > \mu_1((0,0,1), (y, 1-y))$
-  \item If $x_3 = 1 \implies \text{ supp}(\sigma_{p1})=\{E\}$.\\
-    Therefore $\mu_1((0,0,1),(y,1-y)) > \mu_1((1,0,0), (y, 1-y))\ \land\ \mu_1((0,0,1),(y,1-y)) > \mu_1((0,1,0), (y, 1-y))$
 \end{itemize}
 
-Lets analyze case by case:
+Lets analyze the case where we can have a \textbf{fully mixed strategy}:
 
-\begin{enumerate}
-  \item $P1 = C, P2 = A$\\
+$P1 = \{C,D,E\}, P2 = \{A,B\}$\\
  \begin{subequations}
   \begin{align}
-    \mu_1((1,0,0),(1,0)) &> \mu_1((0,1,0),(1,0))\\
-    1 &> 3
+    \mu_1((1,0,0),(y,1-y)) = \mu_1((0,1,0), (y, 1-y)) = \mu_1((0,0,1), (y, 1-y))\\
+    y+4-4y = 3y+1-y = 2y + 2-2y\\
+    4 - 3y = 2y + 1 = 2y + 2 - 2y\label{eq:1}
   \end{align}
 \end{subequations}
-Therefore, this \textbf{IS NOT $NE$}
+Therefore, this \textbf{IS NO FULLY MIXED $NE$} because~\ref{eq:1} leads to inequality since $2y + 1 \neq 2y + 2 - 2y$.
 
-  \item $P1 = C, P2 = B$\\
- \begin{subequations}
-  \begin{align}
-    \mu_1((1,0,0),(0,1)) &> \mu_1((0,1,0),(0,1))\\
-    4 &> 1
-  \end{align}
-\end{subequations}
- \begin{subequations}
-  \begin{align}
-    \mu_1((1,0,0),(0,1)) &> \mu_1((0,0,1),(0,1))\\
-    4 &> 2
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS $NE$}
-
-
-\item $P1 = C, P2 = \{A,B\}$\\
- \begin{subequations}
-  \begin{align}
-    y &= 4(1-y)\\
-     y &= \frac{4}{5}\\
-    1-y &= \frac{1}{5}
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS MIXED $NE$}
-
-\item $P1 = D, P2 = A$\\
- \begin{subequations}
-  \begin{align}
-    \mu_1((0,1,0),(1,0)) &> \mu_1((1,0,0),(1,0))\\
-    3 &> 1
-  \end{align}
-\end{subequations}
- \begin{subequations}
-  \begin{align}
-    \mu_1((0,1,0),(1,0)) &> \mu_1((0,0,1),(1,0))\\
-    3 &> 2
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS $NE$}
-
-\item $P1 = D, P2 = B$\\
- \begin{subequations}
-  \begin{align}
-    \mu_1((0,1,0),(0,1)) &> \mu_1((1,0,0),(0,1))\\
-    1 &> 4
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS NOT $NE$}
-
-\item $P1 = D, P2 = \{A,B\}$\\
- \begin{subequations}
-  \begin{align}
-    3y &= 1-y\\
-     y &= \frac{1}{4}\\
-    1-y &= \frac{3}{4}
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS MIXED $NE$}
-
-\item $P1 = E, P2 = A$\\
- \begin{subequations}
-  \begin{align}
-    \mu_1((0,0,1),(1,0)) &> \mu_1((0,1,0),(1,0))\\
-    2 &> 3
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS NOT $NE$}
-
-
-\item $P1 = E, P2 = B$\\
- \begin{subequations}
-  \begin{align}
-    \mu_1((0,0,1),(0,1)) &> \mu_1((1,0,0),(0,1))\\
-    2 &> 4
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS NOT $NE$}
-
-\item $P1 = E, P2 = \{A,B\}$\\
- \begin{subequations}
-  \begin{align}
-    2y &= 2-2y\\
-     y &= 0\\
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS NOT MIXED $NE$}
-
-\item $P1 = \{C,D,E\}, P2 = \{A,B\}$\\
- \begin{subequations}
-  \begin{align}
-    \mu_1((1,0,0),(y,1-y)) &= \mu_1((0,1,0), (y, 1-y)) &= \mu_1((0,0,1), (y, 1-y))\\
-    y+4-4y &= 3y+1-y &= 2y + 2-2y\label{eq:1}\\
-  \end{align}
-\end{subequations}
-Therefore, this \textbf{IS NOT MIXED $NE$} because~\ref{eq:1} leads to inequality.
-
-\end{enumerate}
-
-Therefore the following are the $NE$ and MIXED $NE$ found:
-
-$NE = \{((1,0,0),(0,1)), ((0,1,0),(1,0))\}$
-
-$\text{MIXED NE} = \{((1,0,0),(\frac{4}{5},\frac{1}{5})), ((0,1,0),(\frac{1}{4},\frac{3}{4}))\}$
-
-
+Therefore there is not exist a \textbf{FULLY MIXED NE}.
 
 \section{Problem 13}
 Lets analyze the utility after applying the distribution $(0.6,0.4), (0.2,0.4,0.4)$

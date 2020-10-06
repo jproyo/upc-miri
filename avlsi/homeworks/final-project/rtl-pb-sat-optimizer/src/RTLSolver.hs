@@ -15,7 +15,9 @@ solve = do
             pbNumVars = 992,
             pbNumConstraints = 31
           }
-  S.solvePB solver formula
+  result <- S.solvePB solver formula
+  print result
+
 
 constraints :: [PBFile.Constraint]
 constraints =

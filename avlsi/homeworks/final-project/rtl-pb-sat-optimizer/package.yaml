@@ -76,25 +76,35 @@ library:
     - src
 
   dependencies:
+    - array
+    - bytestring
+    - clock
     - containers
+    - data-default
+    - data-default-class
     - directory
+    - filepath
     - mtl
+    - pseudo-boolean
     - safe-exceptions
+    - scientific
+    - temporary
     - text
     - time
     - toysolver
+    - vector
 
-      #executables:
-      #  solver:
-      #    main: Main.hs
-      #    source-dirs: app/Solver
-      #    dependencies:
-      #      - optparse-applicative
-      #      - rtl-pb-sat-optimizer
-      #    ghc-options:
-      #      - -threaded
-      #      - -rtsopts
-      #      - -with-rtsopts=-N
-      #      - -O3
-      #
+executables:
+  solver:
+    main: Main.hs
+    source-dirs: app/Solver
+    dependencies:
+      - optparse-applicative
+      - rtl-pb-sat-optimizer
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -O3
+
 

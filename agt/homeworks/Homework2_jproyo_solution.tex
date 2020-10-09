@@ -102,15 +102,13 @@ Therefore, this \textbf{IS NOT $NE$}
 Therefore, this \textbf{IS $NE$}
 
 \item $P1 = A, P2 = \{A,B\}$\\
- \begin{subequations}
+  \begin{subequations}
   \begin{align}
-    6y &= 2(1-y)\\
-    8y &= 2\\
-     y &= \frac{1}{4}\\
-    1-y &= \frac{3}{4}
+    \mu_2((1,0),(1,0)) &= \mu_2((1,0),(0,1))\\
+    6 &\neq 7
   \end{align}
 \end{subequations}
-Therefore, this \textbf{IS MIXED $NE$}
+Therefore, this \textbf{IS NOT MIXED $NE$}
 
 
  \item $P1 = B, P2 = A$\\
@@ -134,29 +132,29 @@ Therefore, this \textbf{IS NOT $NE$}
 \item $P1 = B, P2 = \{A,B\}$\\
  \begin{subequations}
   \begin{align}
-    7y &= 0(1-y)\\
-     y &= 0\\
-  \end{align}
+    \mu_2((0,1),(1,0)) &= \mu_2((0,1),(0,1))\\
+    2 &\neq 0
+   \end{align}
 \end{subequations}
 Therefore, this \textbf{IS NOT MIXED $NE$}
 
 \item $P1 = \{A,B\}, P2 = A$\\
  \begin{subequations}
   \begin{align}
-    6x &= 2(1-x)\\
-    x &= \frac{1}{4}\\
-    1 - x &= \frac{3}{4}
+    \mu_1((1,0),(1,0)) &= \mu_1((0,1),(1,0))\\
+    6 &\neq 7
   \end{align}
 \end{subequations}
-Therefore, this \textbf{IS MIXED $NE$}
+Therefore, this \textbf{IS NOT MIXED $NE$}
 
 
 \item $P1 = \{A,B\}, P2 = B$\\
  \begin{subequations}
-  \begin{align}
-    7x &= 0(1-x)\\
-     x &= 0\\
+   \begin{align}
+     \mu_1((1,0),(0,1)) &= \mu_1((0,1),(0,1))\\
+    2 &\neq 0
   \end{align}
+\
 \end{subequations}
 Therefore, this \textbf{IS NOT MIXED $NE$}
 
@@ -189,7 +187,7 @@ Therefore the following are the $NE$ and MIXED $NE$ found:
 
 $NE = \{((0,1),(1,0)), ((1,0),(0,1))\}$
 
-$\text{MIXED NE} = \{((0,1),(\frac{1}{4},\frac{3}{4})), ((\frac{1}{4},\frac{3}{4}),(1,0)), ((\frac{2}{3},\frac{1}{3}),(\frac{2}{3},\frac{1}{3}))\}$
+$\text{MIXED NE} = \{((\frac{2}{3},\frac{1}{3}),(\frac{2}{3},\frac{1}{3}))\}$
 
 \section{Problem 12}
 
@@ -234,12 +232,29 @@ Lets analyze the utility after applying the distribution $(0.6,0.4), (0.2,0.4,0.
   \multicolumn{2}{}{} & \multicolumn{3}{c}{P2}\\
   & & R & S & T\\
   \multirow{2}{*}{\rotatebox[origin=c]{90}{P1}}
-  & A & 3.6,1.2 & 1.2,2.8 & 1.2,2.4 \\
-  & B & 2.8,0.4 & 1.2,1.6 & 0,0 \\
+  & A & 6,6 & 2,7 & 2,6 \\
+  & B & 7,2 & 3,4 & 0,0 \\
 \end{tabular}
 \end{center}
 
-As we can see there is a $NE$ when $P2$ chooses $S$ and $P1$ chooses $A$ since non of them has any incentive to change.
+For Player 1
+ \begin{subequations}
+  \begin{align}
+    \mu_1((1,0),(0.2,0.4,0.4)) &= \mu((0,1),(0.2,0.4,0.4))\\
+    1.2+0.8+0.8 &\neq 1.4+1.2+0
+  \end{align}
+\end{subequations}
+
+
+For Player 2
+ \begin{subequations}
+  \begin{align}
+    \mu_2((0.6,0.4),(1,0,0)) &= \mu_2((0.6,0.4),(0,1,0)) &= \mu_2((0.6,0.4),(0,0,1))\\
+    3.6+0.8 &\neq 4.2+1.6 &\neq 3.6
+  \end{align}
+\end{subequations}
+
+Therefore there is \textbf{NO NE}
 
 \end{document}
 

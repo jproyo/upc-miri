@@ -1,8 +1,6 @@
 module Internal.Solver where
 
 import Control.Monad
-import Data.Array.IArray
-import Data.List
 import qualified Data.PseudoBoolean as PBFile
 import Relude
 import qualified ToySolver.SAT as SAT
@@ -11,51 +9,30 @@ import qualified ToySolver.SAT.Encoder.Tseitin as Tseitin
 import qualified ToySolver.SAT.PBO as PBO
 import qualified ToySolver.SAT.Types as SAT
 
-solvePB :: SAT.Solver -> PBFile.Formula -> IO (Either Text (SAT.Model, Integer))
-solvePB solver formula = do
+solvePB :: SAT.Solver -> PBFile.Formula -> IO (Maybe (SAT.Model, Integer))
+solvePB solver formula = runMaybeT $ do
   let nv = PBFile.pbNumVars formula
+  liftIO $ SAT.newVars_ solver nv
+  enc <- liftIO $ Tseitin.newEncoderWithPBLin solver
+  liftIO $ Tseitin.setUsePB enc False
+  pbnlc <- liftIO $ PBNLC.newEncoder solver enc
 
-  SAT.newVars_ solver nv
-  enc <- Tseitin.newEncoderWithPBLin solver
-  Tseitin.setUsePB enc False
-  pbnlc <- PBNLC.newEncoder solver enc
+  liftIO $
+    forM_ (PBFile.pbConstraints formula) $ \(lhs, op, rhs) ->
+      case op of
+        PBFile.Ge -> PBNLC.addPBNLAtLeast pbnlc lhs rhs
+        PBFile.Eq -> PBNLC.addPBNLExactly pbnlc lhs rhs
 
-  forM_ (PBFile.pbConstraints formula) $ \(lhs, op, rhs) -> do
-    case op of
-      PBFile.Ge -> PBNLC.addPBNLAtLeast pbnlc lhs rhs
-      PBFile.Eq -> PBNLC.addPBNLExactly pbnlc lhs rhs
+  obj' <- MaybeT $ pure $ PBFile.pbObjectiveFunction formula
+  obj'' <- liftIO $ PBNLC.linearizePBSumWithPolarity pbnlc Tseitin.polarityNeg obj'
 
-  initialModel <- return Nothing
-  case PBFile.pbObjectiveFunction formula of
-    Nothing -> return $ Left "UNSATISFIABLE"
-    Just obj' -> do
-      obj'' <- PBNLC.linearizePBSumWithPolarity pbnlc Tseitin.polarityNeg obj'
+  _ <- liftIO $ SAT.getNVars solver
+  _ <- liftIO $ Tseitin.getDefinitions enc
 
-      nv' <- SAT.getNVars solver
-      defs <- Tseitin.getDefinitions enc
-      let extendModel :: SAT.Model -> SAT.Model
-          extendModel m = array (1, nv') (assocs a)
-            where
-              -- Use BOXED array to tie the knot
-              a :: Array SAT.Var Bool
-              a = array (1, nv') $ assocs m ++ [(v, Tseitin.evalFormula a phi) | (v, phi) <- defs]
-
-      pbo <- PBO.newOptimizer2 solver obj'' (\m -> SAT.evalPBSum m obj')
-      setupOptimizer pbo
-
-      case initialModel of
-        Nothing -> return mempty
-        Just m -> PBO.addSolution pbo (extendModel m)
-
-      PBO.optimize pbo
-      ret <- PBO.getBestSolution pbo
-      case ret of
-        Nothing -> do
-          b <- PBO.isUnsat pbo
-          if b
-            then return $ Left "UNSATISFIABLE"
-            else return $ Left "UNKNOWN"
-        Just _ -> maybe (Left "UNSATISFIABLE") Right <$> PBO.getBestSolution pbo
+  pbo <- liftIO $ PBO.newOptimizer2 solver obj'' (`SAT.evalPBSum` obj')
+  liftIO $ setupOptimizer pbo
+  liftIO $ PBO.optimize pbo
+  MaybeT $ PBO.getBestSolution pbo
 
 setupOptimizer :: PBO.Optimizer -> IO ()
 setupOptimizer pbo = do

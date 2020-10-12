@@ -1,6 +1,6 @@
 module Main where
 
-import RTLSolver
+import RTLOptimizer
 import Relude
 
 main :: IO ()

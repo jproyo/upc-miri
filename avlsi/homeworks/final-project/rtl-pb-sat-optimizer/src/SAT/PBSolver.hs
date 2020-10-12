@@ -1,5 +1,5 @@
 -- |
--- Module      : Internal.Solver
+-- Module      : SAT.PBSolver
 -- Description : Solver that use several Haskell Libs like pseudo-boolean in order to solve PB-SAT problem
 -- Copyright   : (c) Juan Pablo Royo Sales, 2020
 -- License     : GPL-3
@@ -8,7 +8,7 @@
 -- Portability : POSIX
 --
 -- Solver that use several Haskell Libs like pseudo-boolean in order to solve PB-SAT problem
-module Internal.Solver where
+module SAT.PBSolver where
 
 import Control.Monad
 import qualified Data.PseudoBoolean as PBFile

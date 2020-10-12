@@ -10,6 +10,7 @@
 -- In this module it is defined the different Data Types that support the model of Schedule Optimization Problem
 module Data.Schedule where
 
+import Control.Lens
 import Relude
 
 type Asap = [Node]
@@ -17,27 +18,43 @@ type Asap = [Node]
 type Alap = [Node]
 
 data Schedule = Schedule
-  { asap :: Asap,
-    alap :: Alap,
-    resources :: ResourceList
+  { _sAsap :: Asap,
+    _sAlap :: Alap,
+    _sResources :: ResourceList
   }
   deriving (Eq, Show)
 
 data Node = Node
-  { resource :: Resource,
-    id :: Integer,
-    startStep :: Integer,
-    toNode :: Maybe Integer
+  { _nResource :: Resource,
+    _nId :: Int,
+    _nStartStep :: Int,
+    _nEndStep :: Int,
+    _nToNode :: Maybe Int
   }
   deriving (Show, Eq)
 
 data Resource
   = Adder
-  | Multplier
+  | Multiplier
   | Substracter
   | Comparator
   deriving (Show, Eq)
 
-newtype ResourceList = ResourceList [(Resource, Integer)]
+data ResourceConf = ResourceConf
+  { _rcResource :: Resource,
+    _rcWeight :: Int,
+    _rcAmount :: Int
+  }
   deriving (Show, Eq)
+
+newtype ResourceList = ResourceList [ResourceConf]
+  deriving (Show, Eq, Generic)
   deriving newtype (Semigroup, Monoid)
+
+makeLenses ''ResourceConf
+makeLenses ''ResourceList
+makeLenses ''Node
+makeLenses ''Schedule
+makePrisms ''Resource
+
+instance Wrapped ResourceList

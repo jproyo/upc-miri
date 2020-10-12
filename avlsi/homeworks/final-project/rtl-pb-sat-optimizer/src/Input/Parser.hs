@@ -15,8 +15,8 @@ import Relude
 --import System.Directory
 import Text.Trifecta as T
 
-skipEOL :: Parser ()
-skipEOL = skipMany (oneOf "\n")
+parseInt :: Parser Int
+parseInt = fromInteger <$> integer
 
 parseAsap :: Parser Asap
 parseAsap = manyTill parseNode (try (string "ALAP"))
@@ -25,16 +25,16 @@ parseAlap :: Parser Alap
 parseAlap = manyTill parseNode (try (string "RESOURCES"))
 
 skipAsapHeader :: Parser ()
-skipAsapHeader = string "ASAP" *> whiteSpace <* integer <* optional newline
+skipAsapHeader = string "ASAP" *> whiteSpace <* optional newline
 
 skipAlapHeader :: Parser ()
-skipAlapHeader = whiteSpace <* integer <* optional newline
+skipAlapHeader = whiteSpace <* optional newline
 
 skipResourceListHeader :: Parser ()
-skipResourceListHeader = whiteSpace <* integer <* optional newline
+skipResourceListHeader = whiteSpace <* optional newline
 
-parseResourceAmount :: Parser (Resource, Integer)
-parseResourceAmount = (,) <$> parseResource <* whiteSpace <*> integer <* optional newline
+parseResourceAmount :: Parser ResourceConf
+parseResourceAmount = ResourceConf <$> parseResource <* whiteSpace <*> parseInt <* whiteSpace <*> parseInt <* optional newline
 
 parseResourceList :: Parser ResourceList
 parseResourceList = ResourceList <$> manyTill parseResourceAmount (try eof)
@@ -46,18 +46,20 @@ fromLetter :: Char -> Resource
 fromLetter = \case
     'A' -> Adder
     'S' -> Substracter
-    'M' -> Multplier
+    'M' -> Multiplier
     'C' -> Comparator
     _   -> error "Failing parsing character"
 
 parseNode :: Parser Node
 parseNode = Node <$> parseResource
                  <* whiteSpace
-                 <*> integer
+                 <*> parseInt
                  <* whiteSpace
-                 <*> integer
+                 <*> parseInt
                  <* whiteSpace
-                 <*> optional integer
+                 <*> parseInt
+                 <* whiteSpace
+                 <*> optional parseInt
                  <* whiteSpace <* optional newline
 
 parseSchedule' :: Parser Schedule

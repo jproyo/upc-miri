@@ -70,7 +70,7 @@ ghc-options:
 
 library:
   exposed-modules:
-    - RTLSolver
+    - RTLOptimizer
 
   source-dirs:
     - src
@@ -84,6 +84,7 @@ library:
     - data-default-class
     - directory
     - filepath
+    - lens
     - mtl
     - pseudo-boolean
     - safe-exceptions

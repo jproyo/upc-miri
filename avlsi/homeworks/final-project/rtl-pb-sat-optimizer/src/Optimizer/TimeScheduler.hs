@@ -29,6 +29,7 @@ encodeUniqueConstraints sc = foldMap nodeUnique $ zip (sc ^. sAsap) (sc ^. sAlap
 encodePrecedenceConstraints :: Schedule -> PB.Sum
 encodePrecedenceConstraints sc = foldMapOf (sAsap . folded) (precedence $ sc ^. sAsap) sc
 
+-- Still needs to do the other list of Nodes (ALAP) and merge with this and after merging build the inequalities which is going to change the signs
 precedence :: [Node] -> Node -> PB.Sum
 precedence nodes n
   | n ^. nToNode . to isJust =

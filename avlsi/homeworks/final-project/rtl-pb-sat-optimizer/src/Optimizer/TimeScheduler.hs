@@ -23,30 +23,63 @@ encodeObjectiveFunction sc = sc ^. sResources . to (runReader resources') & trav
   where
     convertToSum (i, _) = (i,) . flip (:) [] <$> (modify (+ 1) >> get)
 
-encodeUniqueConstraints :: Schedule -> [PB.Constraint]
-encodeUniqueConstraints sc = foldMap nodeUnique $ zip (sc ^. sAsap) (sc ^. sAlap)
+encodeUniqueConstraints :: MonadState Int m => Schedule -> m [PB.Constraint]
+encodeUniqueConstraints = foldMapM (updateState . nodeUnique') . combinedList
 
-encodePrecedenceConstraints :: Schedule -> PB.Sum
-encodePrecedenceConstraints sc = foldMapOf (sAsap . folded) (precedence $ sc ^. sAsap) sc
+encodePrecedenceConstraints :: MonadState Int m => Schedule -> m [PB.Constraint]
+encodePrecedenceConstraints sc = do
+  let maps = runReader toMapNodes sc
+  foldMapM (fmap (filter (not . null . view _1)) . updateState . precedence maps) . combinedList $ sc
 
--- Still needs to do the other list of Nodes (ALAP) and merge with this and after merging build the inequalities which is going to change the signs
-precedence :: [Node] -> Node -> PB.Sum
-precedence nodes n
-  | n ^. nToNode . to isJust =
-    let nodeId1 = n ^. nId
-        toNode = find (\x -> maybe False ((x ^. nId) ==) (n ^. nToNode)) nodes
-        nStartStep1 = n ^. nStartStep
-        bList tN = [(fromIntegral nStartStep1, [(nodeId1 * 10) + nStartStep1]), (fromIntegral $ negate (tN ^. nStartStep), [(tN ^. nId * 10) + tN ^. nStartStep])]
-     in maybe [] bList toNode
-  | otherwise = []
+combinedList :: Schedule -> [(Node, Node)]
+combinedList sc = zip (sc ^. sAsap) (sc ^. sAlap)
 
-nodeUnique :: (Node, Node) -> [PB.Constraint]
-nodeUnique (n1, n2) =
+toMapNodes :: Reader Schedule (Map Int Node, Map Int Node)
+toMapNodes = do
+  asap <- view sAsap
+  alap <- view sAlap
+  return (toMap asap, toMap alap)
+
+toMap :: [Node] -> Map Int Node
+toMap = fromList . fmap (\x -> (x ^. nId, x))
+
+precedence :: (Map Int Node, Map Int Node) -> (Node, Node) -> (Int, [PB.Constraint])
+precedence (asap, alap) (n1, n2) =
+  let nodeId1 = n1 ^. nId
+      nStartStep1 = n1 ^. nStartStep
+      nEndStep2 = n2 ^. nEndStep
+      toNode1 = toNode n1 asap
+      toNode2 = toNode n1 alap
+      toNode node schedule = node ^? nToNode . _Just . to (flip view schedule . at) . folded
+      bList [tN1, tN2] =
+        [ [ (fromIntegral $ negate s, [(nodeId1 * 10) + s]),
+            (fromIntegral sTn, [(tN1 ^. nId * 10) + sTn])
+          ]
+          | s <- [nStartStep1 .. nEndStep2],
+            sTn <- [(tN1 ^. nStartStep) .. (tN2 ^. nEndStep)]
+        ]
+      bList _ = []
+      list = mconcat . bList . catMaybes $ [toNode1, toNode2]
+   in (calculateMaxX list, [(toList $ setOf folded list, PB.Ge, 1)])
+
+nodeUnique' :: (Node, Node) -> (Int, [PB.Constraint])
+nodeUnique' (n1, n2) =
   let nId1 = n1 ^. nId
       nStart1 = n1 ^. nStartStep
       nEnd2 = n2 ^. nEndStep
       list = [(1, [(nId1 * 10) + s]) | s <- [nStart1 .. nEnd2]]
-   in [(toList $ setOf folded list, PB.Eq, 1)]
+   in (calculateMaxX list, [(toList $ setOf folded list, PB.Eq, 1)])
+
+updateState :: MonadState Int m => (Int, [PB.Constraint]) -> m [PB.Constraint]
+updateState fn = do
+  let (x', constraints) = fn
+  modify (max x')
+  return constraints
+
+calculateMaxX :: [PB.WeightedTerm] -> Int
+calculateMaxX list = let maxL = (maximumOf traverse list ^.. folded . _2 . folded) & firstOf traverse
+                      in maybe minInt identity maxL
+
 
 resources' :: Reader ResourceList [(Integer, Resource)]
 resources' =

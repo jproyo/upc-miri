@@ -16,6 +16,7 @@ import Control.Lens
 import qualified Data.PseudoBoolean as PB
 import Data.Schedule
 import Data.Set.Lens
+import Data.List (groupBy)
 import Relude
 
 encodeObjectiveFunction :: MonadState Int m => Schedule -> m PB.Sum
@@ -30,6 +31,16 @@ encodePrecedenceConstraints :: MonadState Int m => Schedule -> m [PB.Constraint]
 encodePrecedenceConstraints sc = do
   let maps = runReader toMapNodes sc
   foldMapM (fmap (filter (not . null . view _1)) . updateState . precedence maps) . combinedList $ sc
+
+encodeResourceConstraints :: MonadState Int m => Schedule -> m [PB.Constraint]
+encodeResourceConstraints = 
+  foldMapM resourceConstraint . combinedListByStep
+
+combinedListByStep :: Schedule -> Map Int [Map Resource [Int]]
+combinedListByStep = error "not implemented"
+
+resourceConstraint :: [Map Resource [Int]] -> m [PB.Constraint]
+resourceConstraint = error "not implemented"
 
 combinedList :: Schedule -> [(Node, Node)]
 combinedList sc = zip (sc ^. sAsap) (sc ^. sAlap)

@@ -16,31 +16,62 @@ import Control.Lens
 import qualified Data.PseudoBoolean as PB
 import Data.Schedule
 import Data.Set.Lens
-import Data.List (groupBy)
+import qualified Data.Map as M
 import Relude
 
-encodeObjectiveFunction :: MonadState Int m => Schedule -> m PB.Sum
+data EncodedState = EncodedState
+  { _esLastLit :: Int
+  , _esResourceSlot :: Map Resource [Int]
+  } deriving (Show, Eq)
+
+makeLenses ''EncodedState
+
+encodeObjectiveFunction :: MonadState EncodedState m => Schedule -> m PB.Sum
 encodeObjectiveFunction sc = sc ^. sResources . to (runReader resources') & traverseOf each convertToSum
   where
-    convertToSum (i, _) = (i,) . flip (:) [] <$> (modify (+ 1) >> get)
+    convertToSum (i, r) = (i,) . flip (:) [] . flip (^.) esLastLit <$> (modify (execState (updateResourceEncodedState r)) >> get)
 
-encodeUniqueConstraints :: MonadState Int m => Schedule -> m [PB.Constraint]
+updateResourceEncodedState :: Resource -> State EncodedState ()
+updateResourceEncodedState r = do 
+  esLastLit += 1 
+  lastLit <- use esLastLit
+  esResourceSlot . at r . non [] %= (:) lastLit
+
+encodeUniqueConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
 encodeUniqueConstraints = foldMapM (updateState . nodeUnique') . combinedList
 
-encodePrecedenceConstraints :: MonadState Int m => Schedule -> m [PB.Constraint]
+encodePrecedenceConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
 encodePrecedenceConstraints sc = do
   let maps = runReader toMapNodes sc
   foldMapM (fmap (filter (not . null . view _1)) . updateState . precedence maps) . combinedList $ sc
 
-encodeResourceConstraints :: MonadState Int m => Schedule -> m [PB.Constraint]
-encodeResourceConstraints = 
-  foldMapM resourceConstraint . combinedListByStep
+encodeResourceConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
+encodeResourceConstraints sc = resourceConstraint (sc^.sResources. to fromResourceList) . combinedListByStep $ sc
 
-combinedListByStep :: Schedule -> Map Int [Map Resource [Int]]
-combinedListByStep = error "not implemented"
+combinedListByStep :: Schedule -> Map Int (Map Resource [Int])
+combinedListByStep = foldl' buildMapNodes M.empty . combinedList
+  where 
+    buildMapNodes m (n1, n2) = foldl' (toMapResource (n1^.nResource) (n1^.nId)) m [(n1^.nStartStep)..(n2^.nEndStep)]
+    toMapResource r i m s = m & at s . non M.empty . at r . non [] %~ (:) i
 
-resourceConstraint :: [Map Resource [Int]] -> m [PB.Constraint]
-resourceConstraint = error "not implemented"
+resourceConstraint :: MonadState EncodedState m => Map Resource ResourceConf -> Map Int (Map Resource [Int]) -> m [PB.Constraint]
+resourceConstraint rs nodes = foldlM addConstraint [] (M.keys nodes)
+  where 
+    addConstraint :: MonadState EncodedState m => [PB.Constraint] -> Int -> m [PB.Constraint]
+    addConstraint xs step = (:xs) . (,PB.Ge,0) <$> foldlM (resourceToConstraint step) [] (M.keys (nodes M.! step))
+
+    resourceToConstraint :: MonadState EncodedState m => Int -> PB.Sum -> Resource -> m PB.Sum
+    resourceToConstraint step rxs resource = do
+      let resWeight = runReader (resourceWeight $ Just 1) (rs M.! resource)
+      encoded <- get
+      return $ [ (toInteger rw, [vr]) | vr <- encoded ^. esResourceSlot . to (M.! resource) . to sort
+                                      , rw <- resWeight^..folded . _1
+               ] 
+               <> [(toInteger $ negate step, [(nodeId * 10) + step]) | nodeId <- nodes M.! step M.! resource] 
+               <> rxs
+
+fromResourceList :: ResourceList -> Map Resource ResourceConf
+fromResourceList (ResourceList l) = fromList . fmap (\x -> (x ^. rcResource, x)) $ l
 
 combinedList :: Schedule -> [(Node, Node)]
 combinedList sc = zip (sc ^. sAsap) (sc ^. sAlap)
@@ -49,10 +80,10 @@ toMapNodes :: Reader Schedule (Map Int Node, Map Int Node)
 toMapNodes = do
   asap <- view sAsap
   alap <- view sAlap
-  return (toMap asap, toMap alap)
+  return (fromNodes asap, fromNodes alap)
 
-toMap :: [Node] -> Map Int Node
-toMap = fromList . fmap (\x -> (x ^. nId, x))
+fromNodes :: [Node] -> Map Int Node
+fromNodes = fromList . fmap (\x -> (x ^. nId, x))
 
 precedence :: (Map Int Node, Map Int Node) -> (Node, Node) -> (Int, [PB.Constraint])
 precedence (asap, alap) (n1, n2) =
@@ -81,10 +112,10 @@ nodeUnique' (n1, n2) =
       list = [(1, [(nId1 * 10) + s]) | s <- [nStart1 .. nEnd2]]
    in (calculateMaxX list, [(toList $ setOf folded list, PB.Eq, 1)])
 
-updateState :: MonadState Int m => (Int, [PB.Constraint]) -> m [PB.Constraint]
+updateState :: MonadState EncodedState m => (Int, [PB.Constraint]) -> m [PB.Constraint]
 updateState fn = do
   let (x', constraints) = fn
-  modify (max x')
+  modify (over esLastLit (max x'))
   return constraints
 
 calculateMaxX :: [PB.WeightedTerm] -> Int
@@ -93,13 +124,16 @@ calculateMaxX list = let maxL = (maximumOf traverse list ^.. folded . _2 . folde
 
 
 resources' :: Reader ResourceList [(Integer, Resource)]
-resources' =
-  magnify (_Wrapped' . folded) $ do
+resources' = magnify (_Wrapped' . folded) $ resourceWeight Nothing
+
+resourceWeight :: Maybe Int -> Reader ResourceConf [(Integer, Resource)]
+resourceWeight maybeWeight = do 
     weight <- view rcWeight
     amount <- view rcAmount
     rType <- view rcResource
-    return $ foldl' (createNode weight rType) [] [0 .. amount -1]
+    let w = maybe weight identity maybeWeight
+    return $ foldl' (createResourceWeight w rType) [] [0 .. amount -1]
 
-createNode :: Int -> Resource -> [(Integer, Resource)] -> Int -> [(Integer, Resource)]
-createNode weight rType pbsum b =
+createResourceWeight :: Int -> Resource -> [(Integer, Resource)] -> Int -> [(Integer, Resource)]
+createResourceWeight weight rType pbsum b =
   (fromIntegral ((2 ^ b) * weight), rType) : pbsum

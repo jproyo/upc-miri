@@ -38,7 +38,7 @@ data Resource
   | Multiplier
   | Substracter
   | Comparator
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord)
 
 data ResourceConf = ResourceConf
   { _rcResource :: Resource,

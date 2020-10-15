@@ -2,7 +2,8 @@ import Input.Parser
 import Text.Trifecta.Parser
 import Control.Lens
 import Optimizer.TimeScheduler
+-- let m = EncodedState 0 Map.empty
 --Just sc <- parseFromFile parseSchedule "app/input.sch"
---runState (encodePrecedenceConstraints sc >> encodeUniqueConstraints sc >> encodeObjectiveFunction sc >> get) 0
+--runState (encodeObjectiveFunction sc >> encodeResourceConstraints sc) m
 
 

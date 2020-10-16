@@ -58,17 +58,18 @@ resourceConstraint :: MonadState EncodedState m => Map Resource ResourceConf -> 
 resourceConstraint rs nodes = foldlM addConstraint [] (M.keys nodes)
   where 
     addConstraint :: MonadState EncodedState m => [PB.Constraint] -> Int -> m [PB.Constraint]
-    addConstraint xs step = (:xs) . (,PB.Ge,0) <$> foldlM (resourceToConstraint step) [] (M.keys (nodes M.! step))
+    addConstraint xs step = (<>xs) <$> foldlM (resourceToConstraint step) [] (M.keys (nodes M.! step))
 
-    resourceToConstraint :: MonadState EncodedState m => Int -> PB.Sum -> Resource -> m PB.Sum
+    resourceToConstraint :: MonadState EncodedState m => Int -> [PB.Constraint] -> Resource -> m [PB.Constraint]
     resourceToConstraint step rxs resource = do
       let resWeight = runReader (resourceWeight $ Just 1) (rs M.! resource)
       encoded <- get
-      return $ [ (toInteger rw, [vr]) | vr <- encoded ^. esResourceSlot . to (M.! resource) . to sort
+      return $ ([ (toInteger rw, [vr]) | vr <- encoded ^. esResourceSlot . to (M.! resource) . to sort
                                       , rw <- resWeight^..folded . _1
                ] 
-               <> [(toInteger $ negate step, [(nodeId * 10) + step]) | nodeId <- nodes M.! step M.! resource] 
-               <> rxs
+               <> [(toInteger $ negate step, [(nodeId * 10) + step]) | nodeId <- nodes M.! step M.! resource]
+               , PB.Ge, 0)
+               : rxs
 
 fromResourceList :: ResourceList -> Map Resource ResourceConf
 fromResourceList (ResourceList l) = fromList . fmap (\x -> (x ^. rcResource, x)) $ l

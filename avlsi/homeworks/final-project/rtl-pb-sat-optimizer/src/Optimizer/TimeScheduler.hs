@@ -42,7 +42,6 @@ encodeConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
 encodeConstraints sc = foldMapM ($ sc) [ encodeUniqueConstraints
                                        , encodePrecedenceConstraints
                                        , encodeResourceConstraints
-                                       , encodeResourceConstraints
                                        ]
 
 encodeObjectiveFunction :: MonadState EncodedState m => Schedule -> m PB.Sum
@@ -83,10 +82,8 @@ resourceConstraint rs nodes = foldlM addConstraint [] (M.keys nodes)
     resourceToConstraint step rxs resource = do
       let resWeight = runReader (resourceWeight $ Just 1) (rs M.! resource)
       encoded <- get
-      return $ ([ (toInteger rw, [vr]) | vr <- encoded ^. esResourceSlot . to (M.! resource) . to sort
-                                      , rw <- resWeight^..folded . _1
-               ] 
-               <> [(toInteger $ negate step, [(nodeId * 10) + step]) | nodeId <- nodes M.! step M.! resource]
+      return $ ([ (toInteger rw, [vr]) | (rw, vr) <- zip (resWeight^..folded . _1) (encoded ^. esResourceSlot . to (M.! resource))] 
+               <> [(negate 1, [(nodeId * 10) + step]) | nodeId <- nodes M.! step M.! resource]
                , PB.Ge, 0)
                : rxs
 
@@ -144,7 +141,7 @@ calculateMaxX list = let maxL = (maximumOf traverse list ^.. folded . _2 . folde
 
 
 resources' :: Reader ResourceList [(Integer, Resource)]
-resources' = magnify (_Wrapped' . folded) $ resourceWeight Nothing
+resources' = magnify (_Wrapped' . folded) $ reverse <$> resourceWeight Nothing
 
 resourceWeight :: Maybe Int -> Reader ResourceConf [(Integer, Resource)]
 resourceWeight maybeWeight = do 

@@ -26,6 +26,25 @@ data EncodedState = EncodedState
 
 makeLenses ''EncodedState
 
+encode :: Schedule -> PB.Formula
+encode = flip evalState (EncodedState 0 M.empty) . encodeFormula
+
+encodeFormula :: MonadState EncodedState m => Schedule -> m PB.Formula
+encodeFormula sc = do 
+  objective   <- Just <$> encodeObjectiveFunction sc
+  constraints <- encodeConstraints sc
+  PB.Formula <$> pure objective
+             <*> pure constraints
+             <*> (view esLastLit <$> get)
+             <*> pure (length constraints)
+
+encodeConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
+encodeConstraints sc = foldMapM ($ sc) [ encodeUniqueConstraints
+                                       , encodePrecedenceConstraints
+                                       , encodeResourceConstraints
+                                       , encodeResourceConstraints
+                                       ]
+
 encodeObjectiveFunction :: MonadState EncodedState m => Schedule -> m PB.Sum
 encodeObjectiveFunction sc = sc ^. sResources . to (runReader resources') & traverseOf each convertToSum
   where

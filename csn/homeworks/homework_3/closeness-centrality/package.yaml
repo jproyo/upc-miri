@@ -1,0 +1,98 @@
+name:                closeness-centrality
+version:             0.1.0.0
+synopsis:            Closeness Centrality Analysis on Language Network
+#description:
+homepage:            https://github.com/jproyo/upc-miri/csn/homeworks/final-project/closeness-centrality#readme
+license:             BSD3
+author:              Juan Pablo Royo Sales
+maintainer:          juanpablo.royo@gmail.com
+copyright:           2020 Juan Pablo Royo Sales
+category:            Educational
+extra-source-files:
+- README.md
+
+dependencies:
+  - base
+  - relude
+
+default-extensions:
+  - BangPatterns
+  - ConstraintKinds
+  - DataKinds
+  - DeriveFunctor
+  - DeriveFoldable
+  - DeriveTraversable
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveAnyClass
+  - DerivingStrategies
+  - DerivingVia
+  - EmptyCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeOperators
+  - TypeFamilies
+
+ghc-options:
+  - -O3
+  - -Wall
+  - -Werror
+  - -fno-warn-partial-type-signatures
+  - -fconstraint-solver-iterations=0
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wredundant-constraints
+  - -Wno-unused-top-binds
+  - -fno-warn-deprecations # allow undefined
+  - -fno-warn-orphans
+  - -optP-Wno-nonportable-include-path
+  - -fwrite-ide-info
+  - -hiedir=.hie
+
+library:
+  exposed-modules:
+    - Closeness
+
+  source-dirs:
+    - src
+
+  dependencies:
+    - bytestring
+    - directory
+    - filepath
+    - mtl
+    - text
+
+executables:
+  solver:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - optparse-applicative
+      - closeness-centrality
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -O3
+
+

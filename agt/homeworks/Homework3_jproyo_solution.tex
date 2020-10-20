@@ -1,0 +1,87 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{multirow}
+
+
+\title{%
+  Algorithmic Game Theory \\
+  Homework 3
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AGT - Homework 3}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 15}
+\newtheorem*{congest}{Singleton Congestion Game}
+
+\begin{congest}
+In singleton congestion games with $n$ players accessing to a set of $m$ resources, all best response sequences have length at most $n^2m$
+\end{congest}
+\begin{proof}
+Having the set of delay functions $V = \{d(e, f(k, e)) | e \in E \land 1 \leq k \leq n \}$, we sort this set in increasing order
+and we define a new delay function such as each value is the index of the ordered previous set $V$.
+
+\begin{equation*}
+  d'(e, f(k,e)) = \text{index of } d(e, f(k, e)) \text{ of sorted set } V
+\end{equation*}
+
+
+Having this, it is trivial to observed that if some the strategy selected $(s_{-i}, s'_i)$ for some player $i$, reduce the cost in $d'_e(k)$ also it is reduced on $d_e(k)$.
+As we are analyzing for a Singleton Congestion game we know that $s_{-i} = {r}$ and $s'_i = {r'}$ by definition, therefore $c(s_{-i}) = d(r,f(s_{-i}, r))$ and $c(s'_i) = d(r',f(s'_i, r'))$.
+Since for player $i$, $(s_{-i}, s'_i)$ is an improvement, we know that $d(r', f(s'_i, r')) < d(r, f(s_{-i}, r))$, and also $d'(r', f(s'_i, r')) < d'(r, f(s_{-i}, r))$.
+
+We also observe that $d'(e, f(k,e)) \leq nm, \forall\ e \in E, k \in N$, since $|V| \leq nm$.
+
+Taking \textbf{Rossenthal's} potential function delay can be upper bound as:
+
+\begin{subequations}
+  \begin{align}
+    \Phi(s) = \sum_{e \in E} \sum_{k = 1}^{f(s,e)} d'(e,f(k,e)) \leq \sum_{e \in E} \sum_{k = 1}^{f(s,e)} nm \leq n^2m
+  \end{align}
+\end{subequations}
+
+$n^2$ is taking because every player uses exactly one resource, therefore $\sum_{e \in E} f(k,e) = n$.
+\end{proof}
+
+\section{Problem 17}
+It can be seen that $PoA = PoS = \frac{k}{k} = 1$ and this is because of the following:
+
+\begin{itemize}
+  \item In order to maximize their utility each player is going to perform the task until $k$ select as strategy perform the task. 
+  \item As we have analyzed this problem before there is a $NE \iff \sum_{i=1}^n x_i \neq k-1$, this indicates that $PoA = \frac{k}{k}$, because when reaching the equilibrium non player has incentive to change its strategy.
+  \item The same happen with $PoS = \frac{k}{k}$
+  \item Therefore it is a stabilized game
+\end{itemize}
+\end{document}
+

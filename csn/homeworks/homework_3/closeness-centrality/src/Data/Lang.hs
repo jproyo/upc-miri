@@ -16,6 +16,12 @@ data Language = Language
 
 newtype Graph = Graph (V.Vector [Int])
 
+to :: Graph -> V.Vector [Int]
+to = coerce
+
+from :: V.Vector [Int] -> Graph 
+from = coerce
+
 nEdges :: Language -> Int
 nEdges = R.length . edges
 
@@ -27,7 +33,7 @@ delta l = fromIntegral (2*nEdges l) / fromIntegral (nVertices l*nVertices l-1)
 
 buildGraph :: Language -> Graph
 buildGraph Language{..} = 
-    Graph $ V.create $ do 
+    from $ V.create $ do 
         v <- M.replicate (fromInteger nVertices) []
         R.forM_ edges (insertNewEdge v)
         A.sortBy (\a b -> if R.length a > R.length b then LT else GT) v
@@ -54,9 +60,13 @@ go seen graph queue distance =
            in R.replicate (R.length neighbors) newDist R.++ go seen' graph queue' newDist
             
 
--- closeness :: U.UGraph Text Int -> Text -> Int
--- closeness g v = 
---     let search = TG.bfsVertices g v
---      in foldl (closeness' g) 0.0 search 
+closeness :: Graph -> Int -> Float
+closeness (Graph v) idx = let vertices = V.length v
+                              sumDist  = getSum . foldMap (Sum . (/) 1 . fromIntegral) $ bfs v idx  
+                           in sumDist * (1 / fromIntegral (vertices - 1)) 
 
+
+closenessCentrality :: Graph -> Float
+closenessCentrality g@(Graph v) = let vertices = V.length v
+                                   in getSum . foldMap (Sum . closeness g) $ [0..vertices-1]
     

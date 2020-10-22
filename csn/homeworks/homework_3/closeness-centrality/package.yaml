@@ -77,10 +77,13 @@ library:
 
   dependencies:
     - bytestring
+    - containers
     - directory
     - filepath
-    - mtl
+    - primitive
     - text
+    - vector
+    - vector-algorithms
 
 executables:
   solver:

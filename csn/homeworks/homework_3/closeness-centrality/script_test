@@ -1,0 +1,7 @@
+import Relude as R
+import Data.Vector as V
+parse
+let l = it
+let (Just x) = R.find ((== "Basque") . language) l
+let g = buildGraph x
+let (Graph v) = g

@@ -1,11 +1,12 @@
 \documentclass[12pt, a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
-\usepackage{amsthm}
 \usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
 \usepackage{graphicx}
 \usepackage{parskip}
-\usepackage{hyperref}
+\usepackage[pdfencoding=auto]{hyperref}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{tikz}
@@ -13,54 +14,44 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{caption}
+\usepackage{authblk}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
 \usemintedstyle{default}
-\graphicspath{{./images/}}
 \newminted{haskell}{frame=lines,framerule=2pt}
-\allowdisplaybreaks[2]
+\newminted{R}{frame=lines,framerule=2pt}
+\graphicspath{{./images/}}
 
-\definecolor{dkgreen}{rgb}{0,0.6,0}
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\definecolor{mauve}{rgb}{0.58,0,0.82}
+\tikzstyle{bag} = [align=center]
 
 \title{%
-      Combinatorial Problem Solving \\
-      Final Project - Box Wrapping \\
-      SAT
+      Homework 3\\
+      Significance of Metrics\\
 }
-\author{%
-  Juan Pablo Royo Sales \\
-  \small{Universitat Politècnica de Catalunya}
-}
+\author{Juan Pablo Royo Sales}
+\affil{Universitat Politècnica de Catalunya}
 \date\today
 
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[C]{}
-\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
-\fancyhead[L]{CPS - Final Project - SAT}
+\fancyhead[R]{UPC MIRI}
+\fancyhead[L]{CSN - Homework 3}
 \fancyfoot[L,C]{}
 \fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
 \setlength{\headheight}{15pt}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\DeclareMathOperator*{\argmax}{argmax}
-\DeclareMathOperator*{\st}{st}
-
-\newacronym{lp}{LP}{Linear Programming}
-\newacronym{cp}{CP}{Constraint Programming}
-\newacronym{sat}{SAT}{SAT}
-\newacronym{haskell}{Haskell}{Haskell Programming Language}
-\newacronym{dt}{DT}{Data Types}
-\newacronym{mtl}{mtl}{Monad Transformer}
-\newacronym{amo}{AMO}{At Most One}
-\newacronym{alo}{AMO}{At Least One}
-\newacronym{eo}{EO}{Exactly One}
-\newacronym{heule}{Heule}{Heule Encoding}
-\newacronym{log}{Logarithmic}{Logarithmic Encoding}
+\newacronym{indegree}{Incomming Degree}{Incomming Degree Language Set}
+\newacronym{dispp}{Displaced Poisson}{Displaced Poisson Model}
+\newacronym{dispg}{Displaced Geometric}{Displaced Geometric Model}
+\newacronym{zeta2}{Zeta-Gamma-2}{Zeta Model with fixed Gamma with value 2}
+\newacronym{zeta}{Zeta}{Zeta Model}
+\newacronym{zetar}{Right-Truncated Zeta}{Right-Truncated Zeta Model}
+\newacronym{aic}{Akaike}{Akaike Information Criterion}
+\newacronym{alt}{Altmann}{Altmann Model}
 
 \begin{document}
 
@@ -68,203 +59,315 @@
 
 \tableofcontents
 
-\section{Predefinitions}
-Values given by the state the of the program.
+\section{Introduction}
+In this homework we have analyzed \acrfull{indegree}~\ref{apx:src:1} which contains the distribution over different natural languages for the incomming connection words frequency.
+
+The goal of this work is to analyzed according to what have been discussing in class, what is the best model that fits (or explain), this distribution over the whole set of languages, taking into consideration
+only \textbf{five} different models: \acrfull{dispp}, \acrfull{dispg}, \acrfull{zeta2}, \acrfull{zeta} and \acrfull{zetar}
+
+Additionally we are going to compare these results using \acrfull{aic} in order to determine what model fits best for each language. 
+
+At the end of the work the we are going to run the distribution against \acrfull{alt}, that has been pointed out during the lectures to fit better. 
+
+This analysis work is going to be done in the following way:
 
 \begin{itemize}
-  \item $1 \leq W \leq 11$ maximum width paper roll
-  \item $L$ maximum length paper roll. By definition is infinite
-  \item $B = \{1, \dots, n\}$ total number of Boxes
-  \item $w_b$ Width of the Box $b, b \in B$
-  \item $h_b$ Height of the Box $b, b \in B$
+    \item \textbf{Results} section: We are going to show the results obtained for each language according to the previous statements.
+    \item \textbf{Discussion and Methods} section: In this section we are going to conclude and give some explanaition based on the results.
+    \item \textbf{Conclusions} section: Finally we are going to give our opinion about the results obtained and what we have learnt.
 \end{itemize}
 
-\section{Propositional Formulas - Formal Definition}
-Given the statement of the problem proposed, we are going to define the following propositions for our \acrfull{sat} solution.
+\section{Results}
+Lets divide the results for each language, but first lets see the Summary of the data that we are analysing.
 
-\subsection{Literals}
-I have defined the following literals:
+\subsection{Distributions}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l l l l l}
+    Language & N & E & $<k>$ & $\delta$ \\
+     \hline
+     Czech     & 69303 & 257254 & 7.4240365 & 0.0001071  \\
+     Hungarian & 36126 & 106681 & 5.9060510 & 0.0001635  \\
+     Catalan   & 36865 & 197075 & 10.6917130 & 0.0002900 \\ 
+     Chinese   & 40298 & 180924 & 8.9793042 & 0.0002228  \\
+     Basque    & 12207 & 25541 & 4.1846482 & 0.0003428  \\
+     Italian   & 14726 & 55954 & 7.5993481 & 0.0005160  \\
+     Greek     & 13283 & 43961 & 6.6191372 & 0.0004983  \\
+     Turkish   & 20409 & 45625 & 4.4710667 & 0.0002191  \\
+     English   & 29634 & 193078 & 13.0308430 & 0.0004397 \\ 
+     Arabic    &   21532 & 68742 & 6.3851012 & 0.0002965 \\ 
+    \end{tabular}
+   \caption{Language List - Paramters}
+   \label{table:1}
+\end{table}
+
+\subsection{Fitting Model Results}
+Lets remind the model classification in the Appendix section~\ref{apx:table:model:clasification}
+
+\begin{table}[H]
+\centering
+    \begin{tabular}{l c c c c}
+             & 1 & 2 & 4 & 5\\
+    Language & $\lambda$ & $q$ & $\gamma$ & $k_{max}$\\
+     \hline
+     Arabic    & 3.216673 & 0.2984176 & 2.104113 & 24065 \\
+     Basque    & 1.830868 & 0.4586489 & 2.358005 & 14868 \\
+     Catalan   & 5.726551 & 0.1740562 & 1.922218 & 38524 \\
+     Chinese   & 5.172914 & 0.1922189 & 1.885594 & 38563 \\
+     Czech     & 3.891029 & 0.2517524 & 2.050873 & 69014 \\
+     English   & 6.850030 & 0.1458301 & 1.799843 & 32172 \\
+     Greek     & 3.407164 & 0.2837741 & 2.131930 & 15704 \\
+     Hungarian & 2.932666 & 0.3228275 & 2.335141 & 37600 \\
+     Italian   & 4.164842 & 0.2363758 & 2.108419 & 16433 \\
+     Turkish   & 1.999577 & 0.4323952 & 2.543344 & 23403 
+    \end{tabular}
+   \caption{Model Fitting by Language}
+   \label{table:3}
+\end{table}
+
+\subsection{AIC Results}
+\begin{table}[H]
+\centering
+    \begin{tabular}{l c c c c c}
+    Language & AIC 1 & AIC 2 & AIC 3 & AIC 4 & AIC 5\\
+     \hline
+     Arabic    & 240318.35 & 24186.041 &  172.3717 & \textbf{0.0000000} & 1.643912\\          
+     Basque    &  50164.36 &  8363.878 &  845.1732 & \textbf{0.0000000} & 1.973784\\          
+     Catalan   & 913866.77 & 61868.421 &  212.5898 & 0.6420711 & \textbf{0.000000}\\          
+     Chinese   & 618335.67 & 48666.087 &  491.2543 & 1.9569369 & \textbf{0.000000}\\          
+     Czech     & 940668.86 & 91090.542 &  138.4353 & \textbf{0.0000000} & 1.354231\\          
+     English   & 739544.11 & 45704.816 & 1432.2985 & 7.6821378 & \textbf{0.000000}\\          
+     Greek     & 157133.81 & 17130.408 &  160.6789 & \textbf{0.0000000} & 1.740389\\          
+     Hungarian & 468252.20 & 53469.625 & 2220.2829 & \textbf{0.0000000} & 1.971684\\          
+     Italian   & 245803.03 & 22877.409 &  117.8825 & \textbf{0.0000000} & 1.668910\\          
+     Turkish   & 193345.03 & 24615.351 & 2740.4657 & \textbf{0.0000000} & 1.996789 
+    \end{tabular}
+   \caption{AIC Results}
+   \label{table:4}
+\end{table}
+
+\subsection{Altmann Results}
+\begin{table}[H]
+    \centering
+        \begin{tabular}{l c c}
+        Language & $\gamma$ & $\delta$ \\
+         \hline
+         Arabic    & 2.086211 & 0.0014726478 \\
+         Basque    & 2.346528 & 0.0017016417 \\
+         Catalan   & 1.907315 & 0.0008281837 \\
+         Chinese   & 1.834734 & 0.0028665707 \\
+         Czech     & 2.035468 & 0.0010169897 \\
+         English   & 1.740599 & 0.0025428652 \\
+         Greek     & 2.131722 & 0.0000010000 \\
+         Hungarian & 2.335120 & 0.0000010000 \\
+         Italian   & 2.108182 & 0.0000010000 \\
+         Turkish   & 2.543335 & 0.0000010000 
+        \end{tabular}
+       \caption{Altmann Results}
+       \label{table:5}
+    \end{table}
+
+\section{Discussion and Methods}
+\subsection{Considerations}
+It is known that all the likelihood functions has been provided and the only thing that need to be adjust it to negate them.
+On the other hand there it is important to point out that the \textbf{lower} and \textbf{upper} bound parameters needs to be adjust for each case.
+The idea here is to explain those consideration that we have taken into account for each Model.
+
+\subsubsection{Zeta Model}
+In this case as we can see $\gamma = 1.0000001$ as lower bound and $\gamma = 2$ as an started point
+\begin{listing}[H]
+    \inputminted[firstline=59, lastline=67, breaklines]{R}{./Solution.R}
+    \caption{Extracted from source Solution.R}
+    \label{apx:src:2}
+\end{listing}  
+
+\subsubsection{Zeta Truncated}
+One of the important setup on this model was start value of $k_{max}$. Since it is known that $k \gg N$ we cannot put as a started value of $k_{max} = N$
+because on some cases, particularly in \textbf{English}, this cannot be optimized. Therefore we have chosen $k_{max} = N + 3000$ as a started value which is $\gg N$. 
+\begin{listing}[H]
+    \inputminted[firstline=70, lastline=83, breaklines]{R}{./Solution.R}
+    \caption{Extracted from source Solution.R}
+    \label{apx:src:3}
+\end{listing}  
+
+\subsubsection{Displaced Poisson and Geometric}
+On those cases we have done the regular setup but taking into consideration that we are calculating $C$ value from the sample.
+\begin{listing}[H]
+    \inputminted[firstline=11, lastline=19, breaklines]{R}{./Solution.R}
+    \caption{Extracted from source Solution.R}
+    \label{apx:src:4}
+\end{listing}  
+\begin{listing}[H]
+    \inputminted[firstline=86, lastline=95, breaklines]{R}{./Solution.R}
+    \caption{Extracted from source Solution.R}
+    \label{apx:src:5}
+\end{listing}  
+
+
+\subsection{General Analysis}
+As we can see in the table~\ref{table:4} the best models are between \acrshort{zeta} and \acrshort{zetar} because 
+are the ones in which the $\Delta = AIC - AIC_{best}$ is the smallest. As long as the $AIC$ value approximates to the
+best possible value that difference approximates to $0$, indicating that the prediction is fitting the model better for all languages
+in general.
+
+If we have to pick only \textbf{one} model which fits better for all languages, according to the \acrshort{aic} results this should be \acrshort{zeta}. This is 
+pretty obvious since in almost all languages $\Delta = 0$. For the rest of the languages which are not $0$, like \textbf{Catalan, Chinese and English}, it is 
+still an small difference and it can be explain that it is also a good model.
+
+In these cases as we can see in the distribution table~\ref{table:1} $M/N$ the average degree frequency is higher for those $3$ languages. In those cases since it is 
+clear that we have more degrees frequencies in few terms the distribution is not straightforward enough to be fitted by a \acrshort{zeta} model and we might be needing more
+parameters to fit better the model. And that the case of \acrshort{zetar}.
+
+Taking into consideration that we are analyzing a \acrshort{indegree} $\{w | (u,w) \in E\}$, this means all the words that have edges from some other words connecting to this.
+Although we cannot give an intuitive explanation for \textit{Chinese}, for the case of the \textit{Catalan and English} it is clear that those words are connectors and/or 
+prepositions in the language like \textit{in, at, of, etc} for \textbf{English} or \textit{a, amb, des, dalt, etc} for \textbf{Catalan}. In that case it is straightforward to 
+see for someone who speak those languages that there are a lot of this kinds of words with high incoming degree, turning the \textbf{power law} like distribution, not so clear 
+on the distribution tail. This would explain that we need extra parameters for fitting the model best when the degree is higher.
+
+On the other hand as well as \acrshort{zeta} is the best function to fit the model, we can appreciate that \acrshort{dispp} is the worst for fitting them. This could be explain
+because \textit{Poisson} distribution approximates well when $p$ probability is low and $m$ the number of elements is big. As we are working with an reduce number of terms of the languages,
+in this case \acrshort{indegree}, the distribution is not fitting accordingly. 
+
+\subsection{Altmann Model}
+One of the topic proposal in the homework was to use an \acrshort{alt} function which it is known that approximates better to the model.
+In order to do that we need first to derive \textbf{Log Likelihood} function.
+
+\begin{subequations}
+    \begin{align}
+        \L &= \sum_{i=o}^N \log{[ck_i^{-\gamma} e^{-\delta k_i}]}\\
+           &= \sum_{i=o}^N \log(c) + \log{k_i^{-\gamma}} + (-\delta k_i) log(e)\\
+           &= \sum_{i=o}^N \log(c) + -\gamma \log(k_i) + (-\delta k_i) \\
+           &= N\log(c) -\gamma M' -\delta M  \\
+    \end{align}
+    \end{subequations}
+
+As we can see in the table of results~\ref{table:5} $\gamma$ parameters fits well regarding \acrshort{zeta} which is the one
+that explain better the model.
+
+\section{Conclusions}
+In conclusion we can say that we have learnt how to pick a good Model for fitting a real network with the tools provided. 
+Although that and taking into consideration that we have \acrshort{aic} for measuring the accuracy of the model, we can notice the big difference
+between the different models such as \acrshort{dispp} and \acrshort{zeta} for example.
+This leads to think to the fact that without proper measuring tools like \acrshort{aic} it is really difficult to determine what is the best model. 
+
+On the other hand, the difference is quite strong which indicates that real networks are difficult to predict because of its particular behavior, as we have
+explained in the previous section for example the case of \textbf{English} or \textbf{Catalan} where some specific details in the language
+can lead to a not straightforward \textbf{Power Law like} distribution.
+
+To sum up we think it has been a great exercise to put in practice the theoretical concepts we have seen in class, but with a real case.
+
+\printglossary[type=\acronymtype]
+
+\appendix\label{apx:org}
+\section{Source Code Considerations}
+If you want to run \mintinline{bash}{./Solution.R} script to compare the results in this technical report with the sample, you need to take into consideration the following:
 
 \begin{itemize}
-  \item $tl_{bwl} \quad \forall b \in B, w \in W, l \in L$: These literals are going to represent where each box has its \textbf{top left $x$} coordinate, where $b$ is the Box, and $w, l$ are the coordinates.\label{var:tl}
-  \item $cl_{bwl} \quad \forall b \in B, w \in W, l \in L$: These literals are going to represent that every cell $w, l$ it is occupied by a box $b$.\label{var:cl}
-  \item $r_b \quad \forall b \in B$: One literal per box $b$ indicating rotation or not.\label{var:r}
+    \item \textbf{stats4} package is required to be installed in your \textbf{R} Studio
+    \item \textbf{VGAM} package is required to be installed in your \textbf{R} Studio
+    \item Unzip \mintinline{bash}{./in-degree_sequences.tar.gz} in the same Root folder of the script. The script is looking for \mintinline{bash}{./data/LANG_in_degree_sequence.txt} 
+    files to be placed in a folder in the same place that the script is running. Sometimes you need to setup as a working directory in your \textbf{R} Studio the folder of the script.
+    \item Place \mintinline{bash}{./list_in.txt} in the same root folder of the script. Same as previous item.
 \end{itemize}
 
-\subsection{Propositional Formulas}\label{sub:form}
-
-\begin{enumerate}
-  \item $tl_{000} = 1$: Put \textbf{first box}\footnote{I am descendent ordering boxes according their size $width \times height$, before building the clauses}  in the first coordinate.\label{prop:1}
-  \item $\sum_{b=1}^{B-1} tl_{bij} = 1 \quad \forall i \in W, j \in L$: \textbf{Exactly One} position for top left box $b$. \label{prop:2}
-  \item $\sum_{i=0}^{W-1} \sum_{j=0}^{L-1} cl_{bij} \geq 1 \quad \forall b \in B$: \textbf{At Most One} box per position in the roll. \label{prop:3}
-  \item \textbf{Extended Cells}: This is for controlling that a particular box expands its position according to its width and height taking into consideration rotation \label{prop:4}
-
-   \begin{equation}
-    \begin{cases}
-      \bigwedge\limits_{b=0}^N (\lnot tl_{bxy} \lor cl_{bxy}) \land \lnot r_b \\
-        \forall x \in {i, \dots, i + w_b - 1}, y \in {y, \dots, y + h_b - 1}  & w_b = h_b \\\\
-      \bigwedge\limits_{b=0}^N (\lnot tl_{bxy} \lor cl_{bxy} \lor r_b) \land (\lnot tl_{bxy} \lor cl_{bxy} \lor \lnot r_b) \ \\
-        \forall x \in {i, \dots, i + w_b - 1}, y \in {y, \dots, y + h_b - 1} & w_b \neq h_b
-    \end{cases}
-  \end{equation}
-
-\item \textbf{Control Cell Bounds}: This is for control that a particular \textbf{top left} cell is not going to out of bound the box according to its width and height taking into consideration possible rotations.\label{prop:5}
-
-   \begin{equation}
-    \begin{cases}
-      \bigwedge\limits_{b=0}^N \lnot tl_{bij} \ i \in W, j \in L & w_b = h_b, i+w_b > W \lor j+h_b > L \\\\
-      \bigwedge\limits_{b=0}^N (r_b \lor \lnot tl_{bij}) \land (\lnot r_b \lor \lnot tl_{bij}) \ \forall i \in W, j \in L & w_b \neq h_b, i+w_b > W \lor j+h_b > L
-    \end{cases}
-  \end{equation}
-
-\end{enumerate}
-
-\section{Implementation}
-The implementation I did it was done in \acrfull{haskell} using \textbf{mios SAT Solver} \cite{mios} and in this section I will describe different things in the source code to be easy to understand what the formal definition maps to the code.
-
-\subsection{Summary}
-These are the following modules in which the code is organized:
-
-\begin{itemize}
-  \item \mintinline{bash}{src/Data}: Contains definitions for modeling boxes, solution, reading from input and formating to output
-  \item \mintinline{bash}{src/SAT}: Contains definitions that are related with \acrshort{sat} solver. Here we can find the following submodules:
-    \begin{itemize}
-      \item \mintinline{bash}{src/SAT/Clause.sh}: This module contains all the combinators needed to build the clauses described in previous section~\ref{sub:form}. In fact in the list of exports we can see that each exported functions maps each propositional formula.
-          \begin{listing}[H]
-            \inputminted[firstline=13, lastline=18, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
-            \caption{Extracted from source code src/SAT/Clause.hs}
-            \label{src:sat:1}
-          \end{listing}
-        \item \mintinline{bash}{src/SAT/Encoder.sh}: This module contains all the different encoders use by the program \acrfull{amo}, \acrfull{alo}, \acrfull{eo}.
-        \item \mintinline{bash}{src/SAT/Solver.hs}: This module contains main logic of the solver which is given a problem build clauses, run mios \cite{mios}, take the result and iterate again if needed.
-        \item \mintinline{bash}{src/SAT/Types.sh}: This contains utility \acrfull{dt} to handle the state of program context through \acrfull{mtl}\cite{mtl} computations.
-    \end{itemize}
-\end{itemize}
-
-
-\subsection{Solver Main Algorithm}
-Basically the solver main algorithm do the following:
-
+\section{Listing with Languages Files}
 \begin{listing}[H]
-  \inputminted[firstline=29, lastline=54, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
-  \caption{Extracted from source code src/SAT/Solver.hs}
-  \label{src:sat:5}
-\end{listing}
+    \inputminted[breaklines]{text}{./list_in.txt}
+    \caption{Extracted from source list\_in.txt}
+    \label{apx:src:1}
+\end{listing}  
 
-As it can be seen here~\ref{src:sat:5} \mintinline{haskell}{doWhile} function simulate a traditional \mintinline{cpp}{do   while(cond)} in other imperative programming language flavor. Since in \acrshort{haskell} does not exist this kind of looping we need to recursively call \mintinline{haskell}{solve'} until we reach to some \textbf{threshold} or the solver is not giving any solution.
+\section{Model Classification}\label{apx:table:model:clasification}
+\begin{table}[H]
+    \centering
+        \begin{tabular}{c c}
+        Model & Function \\
+         \hline
+         1 & Displaced Poisson \\
+         2 & Displaced geometric \\
+         3 & Zeta with $\gamma = 2$\\
+         4 & Zeta \\
+         5 & Right-truncated zeta\\
+        \end{tabular}
+       \caption{Model Classification}
+       \label{table:2}
+    \end{table}
 
-On the one hand, \mintinline{haskell}{timeout} function in line $42$ is not the general timeout of $60$ seconds that the it is required in the project. $5000000$ is in microseconds and I took the decision to put that there because this solver got stuck some times for \textbf{UNSAT} instances. So if there is some instance that is stuck and not move forward I am taking the last result as the optimum. I have tested running the solution several times and it worked for all cases with best optimum.
+\section{Plotting}\label{apx:section:plotting}
+\begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{arabic}
+    \captionsetup{type=figure}
+    \captionof{figure}{Arabic In Degree}
+    \label{fig:arabic}
+  \end{minipage}
 
-All the combinators regarding building the clauses that are in line $48$ are going to be described in following section~\ref{sec:clause:builder}.
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{basque}
+    \captionsetup{type=figure}
+    \captionof{figure}{Basque In Degree}
+    \label{fig:basque}
+  \end{minipage}
 
-Since it is know that we cannot \textbf{minimize} length, the loop is for decreasing the maximum proposed length as in the previous Constraint programming solution, forcing the solver to fit boxes better. This is done by the call to the function \mintinline{haskell}{updateLength} at line $45$.
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{catalan}
+    \captionsetup{type=figure}
+    \captionof{figure}{Catalan In Degree}
+    \label{fig:catalan}
+  \end{minipage}
 
-\begin{listing}[H]
-  \inputminted[firstline=108, lastline=114, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
-  \caption{Extracted from source code src/SAT/Solver.hs}
-  \label{src:sat:6}
-\end{listing}
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{chiniese.jpeg}
+    \captionsetup{type=figure}
+    \captionof{figure}{Chinese In Degree}
+    \label{fig:chinese}
+  \end{minipage}
 
-As we can see here~\ref{src:sat:6} I am selecting between the minimum length of the current \textbf{Max Length $-1$} and the length returned by the last solution. If there was NO last solution with \mintinline{haskell}{maxBound} function we are setting \textit{MAX INTEGER} value to select previous length minus $1$.
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{czech.jpeg}
+    \captionsetup{type=figure}
+    \captionof{figure}{Czech In Degree}
+    \label{fig:czech}
+  \end{minipage}
 
-Another important function is \mintinline{haskell}{select} which try to \textbf{select} the best solution between the last run and the previous loop.
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{English}
+    \captionsetup{type=figure}
+    \captionof{figure}{English In Degree}
+    \label{fig:english}
+  \end{minipage}
 
-\begin{listing}[H]
-  \inputminted[firstline=55, lastline=74, linenos, breaklines]{haskell}{../src/SAT/Solver.hs}
-  \caption{Extracted from source code src/SAT/Solver.hs}
-  \label{src:sat:7}
-\end{listing}
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{greek}
+    \captionsetup{type=figure}
+    \captionof{figure}{Greek In Degree}
+    \label{fig:greek}
+  \end{minipage}
 
-As we can see here~\ref{src:sat:7} I am only taking valid solutions and discarding \textbf{NOT} valid ones. Also if there are 2 solutions, the one from the previous run and the current one I am checking which is better of both in case both are valid.
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{hungarian}
+    \captionsetup{type=figure}
+    \captionof{figure}{Hungarian In Degree}
+    \label{fig:hungarian}
+  \end{minipage}
 
-\subsection{Clause Builder}\label{sec:clause:builder}
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{italian}
+    \captionsetup{type=figure}
+    \captionof{figure}{Italian In Degree}
+    \label{fig:italian}
+  \end{minipage}
 
-Each of the clauses that I am building of course correspond to the formal definition on section~\ref{sub:form}.
-
-\subsubsection{Top Left Positions}
-
-The first propositional formulas that we encode is the $x, y$ top left position of each box.
-
-\begin{listing}[H]
-  \inputminted[firstline=29, lastline=40, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
-  \caption{Extracted from source code src/SAT/Clause.hs}
-  \label{src:sat:cl:1}
-\end{listing}
-
-The \mintinline{haskell}{encodeForEachClause'} combinator is a folding with traverse over all coordinates and boxes.
-
-\subsubsection{One Box Per Cell}
-
-On the second hand, I am putting all the positions of the box in each possible cell, and each cell can be occupied only by one box.
-
-\begin{listing}[H]
-  \inputminted[firstline=43, lastline=53, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
-  \caption{Extracted from source code src/SAT/Clause.hs}
-  \label{src:sat:cl:2}
-\end{listing}
-
-\subsubsection{Extending Boxes}
-
-The next clauses that we add is the extension of the boxes that corresponds to~\ref{prop:4}.
-
-\begin{listing}[H]
-  \inputminted[firstline=56, lastline=83, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
-  \caption{Extracted from source code src/SAT/Clause.hs}
-  \label{src:sat:cl:3}
-\end{listing}
-
-And this is the clauses builder for extended cell that take into consideration rotation.
-
-\begin{listing}[H]
-  \inputminted[firstline=86, lastline=107, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
-  \caption{Extracted from source code src/SAT/Clause.hs}
-  \label{src:sat:cl:4}
-\end{listing}
-
-\subsubsection{Control Bounds}
-
-On the final round we have the control of the bounds that corresponds to~\ref{prop:5}.
-
-\begin{listing}[H]
-  \inputminted[firstline=110, lastline=130, linenos, breaklines]{haskell}{../src/SAT/Clause.hs}
-  \caption{Extracted from source code src/SAT/Clause.hs}
-  \label{src:sat:cl:5}
-\end{listing}
+  \begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{turkish}
+    \captionsetup{type=figure}
+    \captionof{figure}{Turkish In Degree}
+    \label{fig:turksh}
+  \end{minipage}
 
 
+\section{Source code}
+In the source code there are 3 folders with code:
 
-\subsection{Encoders}
-By default the program execute the solution using \acrfull{heule}, but I have implemented also \acrfull{log} which can be enable by command line argument\footnote{See \mintinline{bash}{README.md} in root folder of the project to see how this can be done}.
-
-\acrlong{heule} is very easy to implement in \acrshort{haskell} due to the \textbf{Functional Programming} nature of the language in which recursion is a first class citizen.
-
-\begin{listing}[H]
-  \inputminted[firstline=54, lastline=73, linenos, breaklines]{haskell}{../src/SAT/Encoder.hs}
-  \caption{Extracted from source code src/SAT/Encoder.hs}
-  \label{src:sat:2}
-\end{listing}
-
-\acrlong{log} encoding on the other hand also is straightforward to implement.
-
-\begin{listing}[H]
-  \inputminted[firstline=76, lastline=85, linenos, breaklines]{haskell}{../src/SAT/Encoder.hs}
-  \caption{Extracted from source code src/SAT/Encoder.hs}
-  \label{src:sat:3}
-\end{listing}
-
-And this is the part of the code where I decide to use one encoding or the other. This is propagated by a command line option to the program.
-
-\begin{listing}[H]
-  \inputminted[firstline=49, lastline=52, linenos, breaklines]{haskell}{../src/SAT/Encoder.hs}
-  \caption{Extracted from source code src/SAT/Encoder.hs}
-  \label{src:sat:4}
-\end{listing}
-
-\section{Disclaimer}
-As It can be found in \mintinline{bash}{README.md} documentation, I have written a little program to compare the solutions generated with the optimum values proposed in \mintinline{bash}{results.txt}.
-
-\bibliographystyle{alpha}
-\bibliography{report}
 
 \end{document}
-

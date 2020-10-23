@@ -45,25 +45,28 @@ insertNewEdge :: P.PrimMonad m
               -> m ()
 insertNewEdge v (xInt, yInt) = M.modify v ((:) yInt) xInt >> M.modify v ((:) xInt) yInt 
 
-bfs :: V.Vector [Int] -> Int -> [Int]
-bfs graph start = go IS.empty graph (S.singleton start) 0
+bfsCloseness :: V.Vector [Int] -> Int -> Float
+bfsCloseness graph start = go IS.empty graph (S.singleton start) 0
 
-go :: IS.IntSet -> V.Vector [Int] -> S.Seq Int -> Int -> [Int]
+go :: IS.IntSet -> V.Vector [Int] -> S.Seq Int -> Int -> Float
 go seen graph queue distance = 
   case S.viewl queue of
-      S.EmptyL      -> []
+      S.EmptyL      -> 0.0
       vertex S.:< rest -> 
-          let neighbors = R.filter (not . flip IS.member seen) . (V.!) graph $ vertex
-              seen'     = IS.insert vertex seen
-              queue'    = rest S.>< S.fromList neighbors
-              newDist   = distance + 1
-           in R.replicate (R.length neighbors) newDist R.++ go seen' graph queue' newDist
-            
+          let neighbors  = R.filter (not . flip IS.member seen) . (V.!) graph $ vertex
+              seen'      = IS.insert vertex seen
+              queue'     = rest S.>< S.fromList neighbors
+              newDist    = distance + 1
+              summedDist = sumDist (R.length neighbors) newDist 
+           in summedDist + go seen' graph queue' newDist
+
+sumDist :: Int -> Int -> Float           
+sumDist r i = getSum . foldMap (Sum . (/) 1 . fromIntegral) $ R.replicate r i
 
 closeness :: Graph -> Int -> Float
 closeness (Graph v) idx = let vertices = V.length v
-                              sumDist  = getSum . foldMap (Sum . (/) 1 . fromIntegral) $ bfs v idx  
-                           in sumDist * (1 / fromIntegral (vertices - 1)) 
+                              sumDist'  = bfsCloseness v idx  
+                           in sumDist' * (1 / fromIntegral (vertices - 1)) 
 
 
 closenessCentrality :: Graph -> Float

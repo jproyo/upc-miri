@@ -53,7 +53,6 @@ default-extensions:
   - TypeFamilies
 
 ghc-options:
-  - -O3
   - -Wall
   - -Werror
   - -fno-warn-partial-type-signatures
@@ -80,10 +79,12 @@ library:
     - containers
     - directory
     - filepath
+    - parallel
     - primitive
     - text
     - vector
     - vector-algorithms
+    - time
 
 executables:
   solver:

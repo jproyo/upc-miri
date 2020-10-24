@@ -4,9 +4,9 @@ import Relude as R
 import Data.Vector as V
 import Data.Vector.Mutable as M
 import Control.Monad.Primitive as P
-import Data.Vector.Algorithms.Merge as A
 import Data.IntSet as IS
 import Data.Sequence as S
+import Control.Parallel.Strategies as Par
 
 data Language = Language 
     { language   :: Text
@@ -14,7 +14,9 @@ data Language = Language
     , edges      :: [(Int, Int)]
     } 
 
-newtype Graph = Graph (V.Vector [Int])
+type Edges = Vector [Int]
+
+newtype Graph = Graph Edges
 
 to :: Graph -> V.Vector [Int]
 to = coerce
@@ -36,7 +38,6 @@ buildGraph Language{..} =
     from $ V.create $ do 
         v <- M.replicate (fromInteger nVertices) []
         R.forM_ edges (insertNewEdge v)
-        A.sortBy (\a b -> if R.length a > R.length b then LT else GT) v
         return v
 
 insertNewEdge :: P.PrimMonad m
@@ -45,31 +46,40 @@ insertNewEdge :: P.PrimMonad m
               -> m ()
 insertNewEdge v (xInt, yInt) = M.modify v ((:) yInt) xInt >> M.modify v ((:) xInt) yInt 
 
-bfsCloseness :: V.Vector [Int] -> Int -> Float
-bfsCloseness graph start = go IS.empty graph (S.singleton start) 0
+{-# INLINE bfs #-}
+bfs :: V.Vector [Int] -> Int -> Float
+bfs graph start = R.sum $ R.unfoldr (go graph) (IS.empty, S.singleton start, 0)
 
-go :: IS.IntSet -> V.Vector [Int] -> S.Seq Int -> Int -> Float
-go seen graph queue distance = 
+{-# INLINE go #-}
+go :: V.Vector [Int] -> (IS.IntSet, S.Seq Int, Int) -> Maybe (Float, (IS.IntSet, S.Seq Int, Int))
+go graph (seen, queue, distance) = 
   case S.viewl queue of
-      S.EmptyL      -> 0.0
+      S.EmptyL         -> Nothing
       vertex S.:< rest -> 
-          let neighbors  = R.filter (not . flip IS.member seen) . (V.!) graph $ vertex
-              seen'      = IS.insert vertex seen
-              queue'     = rest S.>< S.fromList neighbors
+          let neighbors'  = R.filter (`IS.notMember` seen) . V.unsafeIndex graph $ vertex
+              seen'       = IS.union (IS.insert vertex seen) ( IS.fromList neighbors')
+              queue'     = rest S.>< S.fromList neighbors'
               newDist    = distance + 1
-              summedDist = sumDist (R.length neighbors) newDist 
-           in summedDist + go seen' graph queue' newDist
+              summedDist = sumDist (R.length neighbors') newDist 
+           in Just (summedDist, (seen', queue', newDist))
 
+
+{-# INLINE sumDist #-}
 sumDist :: Int -> Int -> Float           
-sumDist r i = getSum . foldMap (Sum . (/) 1 . fromIntegral) $ R.replicate r i
+sumDist r i | i == 0    = 0.0
+            | otherwise = getSum . foldMap (Sum . (/) 1 . fromIntegral) $ R.replicate r i
 
+{-# INLINE closeness #-}
 closeness :: Graph -> Int -> Float
 closeness (Graph v) idx = let vertices = V.length v
-                              sumDist'  = bfsCloseness v idx  
+                              !sumDist'  = bfs v idx
                            in sumDist' * (1 / fromIntegral (vertices - 1)) 
 
-
 closenessCentrality :: Graph -> Float
-closenessCentrality g@(Graph v) = let vertices = V.length v
-                                   in getSum . foldMap (Sum . closeness g) $ [0..vertices-1]
+closenessCentrality g = let vertices = V.length $ to g
+                            oneOverN = 1 / fromIntegral vertices
+                         in  (*) oneOverN
+                                . R.sum
+                                . parMap rdeepseq (closeness g)
+                                $ [0..vertices-1]
     

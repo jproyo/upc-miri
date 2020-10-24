@@ -4,4 +4,4 @@ import Closeness
 import Relude
 
 main :: IO ()
-main = solve
+main = solveDeepCentrality

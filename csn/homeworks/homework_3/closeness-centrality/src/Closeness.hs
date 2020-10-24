@@ -10,7 +10,23 @@
 -- Main entry point of the closeness centrality analysis 
 module Closeness where
 
-import Relude
+import Relude as R
+import Input.Parser
+import Data.Lang
+import Output.Report
+import Data.Time.Clock.POSIX (getPOSIXTime)
 
-solve :: IO ()
-solve = undefined
+
+solveDeepCentrality :: IO ()
+solveDeepCentrality = do 
+    languages <- parse
+    R.forM_ (R.filter ((==) "Basque" . language) languages) $ \l -> do 
+    --R.forM_ languages $ \l -> do 
+        start <- currentTimeInSec
+        printRowTable2 . Table2 (language l) . closenessCentrality . buildGraph $ l
+        end <- currentTimeInSec
+        putText $ "Time for language "<> language l <> " - "<>show (end-start)<>" secs \n"
+
+currentTimeInSec :: IO Double
+currentTimeInSec = fromInteger . round <$> getPOSIXTime
+

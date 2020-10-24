@@ -78,7 +78,6 @@ public:
                 inFile >> v1 >> v2;
                 if(v1.compare(v2) != 0) {
                     graph.AddEdgeUnderlying(v1, v2);
-                    graph.AddEdgeUnderlying(v2, v1);
                     c++;
                 }
             }
@@ -145,6 +144,7 @@ void Graph::AddEdgeUnderlying(string v, string w)
         _edges[w] = set<string>(); 
     } 
 	_edges[v].insert(w);
+    _edges[w].insert(v);
 } 
 
 string Graph::GetLanguage(){
@@ -193,7 +193,7 @@ double Graph::Closeness(int s)
 		for (i = adj[s].begin(); i != adj[s].end(); ++i) 
 		{ 
 			if (!visited[*i]) { 
-                closeness = closeness + (1/(1.0*distance));
+                closeness += (1/(1.0*distance));
 				visited[*i] = true; 
 				queue.push_back(*i); 
 			} 

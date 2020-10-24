@@ -16,8 +16,8 @@ all: main
 clean:
 	rm -rf bin/*
 
-bin/aprox.o: src/aprox.cc
-	$(CXX) -I$(DIR)/include -c src/graph/aprox.cc -o bin/aprox.o
+bin/aprox.o: src/main.cc
+	$(CXX) -I$(DIR)/include -I$(DIR)/include/igraph -c src/graph/aprox.cc -o bin/aprox.o
 
 bin/main.o: src/main.cc
 	$(CXX) -I$(DIR)/include -c src/domain/graph.cc -o bin/main.o

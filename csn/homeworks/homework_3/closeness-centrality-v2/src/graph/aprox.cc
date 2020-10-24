@@ -35,7 +35,11 @@ class Montecarlo {
     }
 
     Graph produceNewGraph(){
-        return this->graph;
+        igraph_integer_t diameter;
+        igraph_t graph;
+        igraph_rng_seed(igraph_rng_default(), 42);
+        igraph_erdos_renyi_game(&graph, IGRAPH_ERDOS_RENYI_GNM, this->graph.V, this->graph.E,
+                                 IGRAPH_UNDIRECTED, IGRAPH_NO_LOOPS);
+        igraph_destroy(&graph);
     }
-}
-
+};

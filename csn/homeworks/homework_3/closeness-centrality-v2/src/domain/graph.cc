@@ -17,7 +17,7 @@ typedef pair<string, int> EDGE;
 
 struct cmpByDegreeAsc {
     bool operator()(const EDGE& a, const EDGE& b) const {
-        return a.second < b.second;
+        return a.second <= b.second;
     }
 };
 
@@ -26,10 +26,12 @@ class Graph
     map<string, set<string>> _edges;
     string language;
 	int V;
+    int E;
 	list<int> *adj; 
 
 public: 
 	Graph(string language, int V); 
+    Graph(const Graph& g2);
 
 	void addEdge(int v, int w); 
 
@@ -39,11 +41,21 @@ public:
 
     double ClosenessCentrality(); 
 
+    double ClosenessCentralityReduced();
+
     void CreateAdjOrdered();
 
     void PrintAdjList();
 
+    void PrintTable1Report();
+
     string GetLanguage();
+
+    double GetK();
+
+    double GetDelta();
+
+    void SetEdgesCount(int count);
 
     static Graph fromStdIn(string filepath){
         int vertices;
@@ -61,25 +73,17 @@ public:
             inFile >> vertices >> edges;
             Graph graph(language, vertices);
             string v1, v2;
-            
-            // map<string, int> m;
-            // for(int i = 0; i<=edges; i++){
-            //     inFile >> v1 >> v2;
-            //     if(v1.compare(v2) != 0) {
-            //         graph.AddEdgeUnderlying(v1, v2);
-            //         if(m.find(v1) == m.end()) m[v1] = c++;
-            //         if(m.find(v2) == m.end()) m[v2] = c++;
-            //         graph.addEdge(m[v1], m[v2]);
-            //     }
-            // }
-
-            for(int i = 0; i<=edges; i++){
+            int c = 0;
+            for(int i = 0; i<edges; i++){
                 inFile >> v1 >> v2;
                 if(v1.compare(v2) != 0) {
                     graph.AddEdgeUnderlying(v1, v2);
+                    graph.AddEdgeUnderlying(v2, v1);
+                    c++;
                 }
             }
             inFile.close();
+            graph.SetEdgesCount(c);
             graph.CreateAdjOrdered();
             return graph;
         }
@@ -94,6 +98,12 @@ Graph::Graph(string language, int V)
 	this->V = V; 
 	adj = new list<int>[V]; 
 } 
+
+Graph::Graph(const Graph &g): language(g.language), V(g.V), E(g.E), _edges(g._edges), adj(g.adj) {}
+
+void Graph::SetEdgesCount(int count){
+    this->E = count;
+}
 
 void Graph::CreateAdjOrdered(){
     set<EDGE, cmpByDegreeAsc> ordered;
@@ -113,7 +123,12 @@ void Graph::CreateAdjOrdered(){
 }
 
 void Graph::PrintAdjList(){
-    
+    for(int i = 0;i<V;i++){
+        cout << "Vertex: " << i << endl;
+        for(list<int>::iterator iter = adj[i].begin(); iter != adj[i].end(); ++iter)
+            cout << "Adj List: "<< *iter << "|";
+        cout << endl;
+    }
 }
 
 void Graph::addEdge(int v, int w) 
@@ -126,6 +141,9 @@ void Graph::AddEdgeUnderlying(string v, string w)
     if(_edges.find(v) == _edges.end()){
         _edges[v] = set<string>(); 
     } 
+    if(_edges.find(w) == _edges.end()){
+        _edges[w] = set<string>(); 
+    } 
 	_edges[v].insert(w);
 } 
 
@@ -133,9 +151,29 @@ string Graph::GetLanguage(){
     return this->language;
 }
 
+double Graph::GetK(){
+    return (2*E)/(1.0*V);
+}
+
+double Graph::GetDelta(){
+    return (2*E)/(1.0*V*(V-1));
+}
+
+void Graph::PrintTable1Report(){
+    cout 
+    << this->language << " & "
+    << this->V << " & " 
+    << this->E << " & " 
+    << fixed << std::setprecision(7) 
+    << this->GetK() << " & " 
+    << fixed << std::setprecision(7) 
+    << this->GetDelta() << " \\\\ " 
+    << endl;
+}
+
 double Graph::Closeness(int s) 
 { 
-    float closeness = 0.0;
+    double closeness = 0.0;
 	bool *visited = new bool[V]; 
 	for(int i = 0; i < V; visited[i] = false, i++);
 
@@ -154,15 +192,15 @@ double Graph::Closeness(int s)
 
 		for (i = adj[s].begin(); i != adj[s].end(); ++i) 
 		{ 
-            closeness += 1/(1.0*distance);
 			if (!visited[*i]) { 
+                closeness = closeness + (1/(1.0*distance));
 				visited[*i] = true; 
 				queue.push_back(*i); 
 			} 
 		} 
         distance++;
 	} 
-    return closeness*(1/(1.0*(V-1)));
+    return closeness/(1.0*(V-1));
 } 
 
 double Graph::ClosenessCentrality(){
@@ -171,16 +209,20 @@ double Graph::ClosenessCentrality(){
     return closeness/(1.0*V);
 } 
 
+double Graph::ClosenessCentralityReduced(){
+    return 0.0;
+}
+
 int main(int argc, char* argv[]) {
 
     std::string path = argv[1];
-    for (const auto & entry : fs::directory_iterator(path)){
-        chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-        Graph g = Graph::fromStdIn(entry.path());
-        chrono::steady_clock::time_point end = chrono::steady_clock::now();
-	    cout << "Closeness for Language " << g.GetLanguage() << " " << fixed << std::setprecision(7) << g.ClosenessCentrality() << endl;
-        cout << "Elapsed time: " << fixed << std::setprecision(2) << (chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/(1.0*100000) << "s" << endl;
-    }
+    Graph g = Graph::fromStdIn(path);
+    g.PrintTable1Report();
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+    double closeness = g.ClosenessCentrality();
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << "Closeness for Language " << g.GetLanguage() << " " << fixed << std::setprecision(7) << closeness << endl;
+    cout << "Elapsed time: " << fixed << std::setprecision(2) << (chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) << " microsec " << endl;
 
 	return 0; 
 } 

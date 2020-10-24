@@ -8,8 +8,8 @@ make clean && make
 
 echo "----------------- STARTING !!!! CLOSENESS CENTRALITY ---------------------"
 
-output=$(basename $ifile .$INST_EXT).out
-    time $CLOSE_EXE < $ifile
+for ifile in $DATA_DIR/*.txt; do
+    $CLOSE_EXE $ifile 
 done
 
 echo "----------------- FINISHED !!!! CLOSENESS CENTRALITY ---------------------"

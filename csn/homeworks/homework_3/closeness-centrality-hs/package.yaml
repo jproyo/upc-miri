@@ -79,6 +79,7 @@ library:
     - containers
     - directory
     - filepath
+    - haskell-igraph
     - parallel
     - primitive
     - text

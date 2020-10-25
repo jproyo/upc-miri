@@ -8,16 +8,25 @@
 #include <regex>
 #include <string>
 #include <chrono>
+#include <vector>
+#include <queue>
 
 namespace fs = std::__fs::filesystem;
 
 using namespace std;
 
-typedef pair<string, int> EDGE;
+typedef pair<string, int> EDGE_DEGREE;
+typedef pair<string, string> EDGE;
 
 struct cmpByDegreeAsc {
-    bool operator()(const EDGE& a, const EDGE& b) const {
+    bool operator()(const EDGE_DEGREE& a, const EDGE_DEGREE& b) const {
         return a.second <= b.second;
+    }
+};
+
+struct cmpByDegreeDesc {
+    bool operator()(const EDGE_DEGREE& a, const EDGE_DEGREE& b) const {
+        return a.second >= b.second;
     }
 };
 
@@ -27,7 +36,8 @@ class Graph
     string language;
 	int V;
     int E;
-	list<int> *adj; 
+	vector<int> *adj; 
+    vector<EDGE> inputEdges;
 
 public: 
 	Graph(string language, int V); 
@@ -41,7 +51,9 @@ public:
 
     double ClosenessCentrality(); 
 
-    double ClosenessCentralityReduced();
+    double ClosenessCentralityReduced(int M);
+
+    void TrySwitch(int v1, int v2);
 
     void CreateAdjOrdered();
 
@@ -50,6 +62,10 @@ public:
     void PrintTable1Report();
 
     string GetLanguage();
+
+    int GetV();
+    int GetE();
+    vector<int>* GetAdj();
 
     double GetK();
 
@@ -95,25 +111,46 @@ Graph::Graph(string language, int V)
 { 
     this->language = language;
 	this->V = V; 
-	adj = new list<int>[V]; 
+	adj = new vector<int>[V]; 
 } 
 
-Graph::Graph(const Graph &g): language(g.language), V(g.V), E(g.E), _edges(g._edges), adj(g.adj) {}
+Graph::Graph(const Graph &g){
+    this->language = g.language;
+    this->V = g.V;
+    this->E = g.E;
+    std::map<string, set<string>>::const_iterator it = g._edges.begin();
+    while(it != g._edges.end())
+    {
+        this->_edges[it->first] = it->second;
+        ++it;
+    }
+    this->adj = new vector<int>[V];
+    for (auto i = 0; i<V; i++){
+        this->adj[i] = g.adj[i];
+    }
+}
 
 void Graph::SetEdgesCount(int count){
     this->E = count;
 }
 
 void Graph::CreateAdjOrdered(){
-    set<EDGE, cmpByDegreeAsc> ordered;
+    set<EDGE_DEGREE, cmpByDegreeDesc> ordered;
     for(map<string,set<string>>::iterator iter = _edges.begin(); iter != _edges.end(); ++iter){
-        ordered.insert(EDGE(iter->first, iter->second.size()));
+        ordered.insert(EDGE_DEGREE(iter->first, iter->second.size()));
     }
-    int c = 0;
+
     map<string, int> m;
-    for(set<EDGE>::iterator iter = ordered.begin(); iter != ordered.end(); ++iter){
+    for(set<EDGE_DEGREE>::iterator iter = ordered.begin(); iter != ordered.end(); ++iter){
         m[iter->first] = distance(ordered.begin(), iter);
     }
+
+    // int c = 0;
+    // map<string, int> m;
+    // for(map<string,set<string>>::iterator iter = _edges.begin(); iter != _edges.end(); ++iter){
+    //     m[iter->first] = c++;
+    // }
+
     for(map<string,set<string>>::iterator iter = _edges.begin(); iter != _edges.end(); ++iter){
         for(set<string>::iterator iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2){
             this->addEdge(m[iter->first], m[*iter2]);
@@ -123,10 +160,10 @@ void Graph::CreateAdjOrdered(){
 
 void Graph::PrintAdjList(){
     for(int i = 0;i<V;i++){
-        cout << "Vertex: " << i << endl;
-        for(list<int>::iterator iter = adj[i].begin(); iter != adj[i].end(); ++iter)
-            cout << "Adj List: "<< *iter << "|";
-        cout << endl;
+        cout << "Vertex: " << i << "[";
+        for(vector<int>::iterator iter = adj[i].begin(); iter != adj[i].end(); ++iter)
+            cout << *iter << ((distance( iter, adj[i].end() ) == 1)  ? "" : ",");
+        cout << "]" << endl;
     }
 }
 
@@ -145,6 +182,7 @@ void Graph::AddEdgeUnderlying(string v, string w)
     } 
 	_edges[v].insert(w);
     _edges[w].insert(v);
+    inputEdges.push_back(EDGE(v,w));
 } 
 
 string Graph::GetLanguage(){
@@ -158,6 +196,19 @@ double Graph::GetK(){
 double Graph::GetDelta(){
     return (2*E)/(1.0*V*(V-1));
 }
+
+int Graph::GetV(){
+    return V;
+}
+
+int Graph::GetE(){
+    return E;
+}
+
+vector<int>* Graph::GetAdj(){
+    return this->adj;
+}
+
 
 void Graph::PrintTable1Report(){
     cout 
@@ -173,33 +224,35 @@ void Graph::PrintTable1Report(){
 
 double Graph::Closeness(int s) 
 { 
+    if(adj[s].size()<2) return 0.0;
+    int *d = new int[V];
+    queue<int> q; 
+  	vector<bool> visited;
+    visited.assign(V, false); 
+
+    q.push(s);  
+    d[s] = 0; 
+    visited[s] = true; 
+          
+    while (!q.empty()) 
+    { 
+        int u = q.front(); 
+        q.pop(); 
+
+        for (auto i = adj[u].begin(); i != adj[u].end(); i++) 
+        { 
+            if (!visited[*i]) 
+            { 
+                visited[*i] = true; 
+                d[*i] = d[u] + 1; 
+                q.push(*i);  
+            } 
+        } 
+    } 
     double closeness = 0.0;
-	bool *visited = new bool[V]; 
-	for(int i = 0; i < V; visited[i] = false, i++);
-
-	list<int> queue; 
-
-	visited[s] = true; 
-	queue.push_back(s); 
-
-	list<int>::iterator i; 
-
-    int distance = 1;
-	while(!queue.empty()) 
-	{ 
-		s = queue.front(); 
-		queue.pop_front(); 
-
-		for (i = adj[s].begin(); i != adj[s].end(); ++i) 
-		{ 
-			if (!visited[*i]) { 
-                closeness += (1/(1.0*distance));
-				visited[*i] = true; 
-				queue.push_back(*i); 
-			} 
-		} 
-        distance++;
-	} 
+    for(int i = 0; i<V; i++){
+        if(d[i] > 0) closeness += 1/(1.0*d[i]);
+    }
     return closeness/(1.0*(V-1));
 } 
 
@@ -209,20 +262,57 @@ double Graph::ClosenessCentrality(){
     return closeness/(1.0*V);
 } 
 
-double Graph::ClosenessCentralityReduced(){
-    return 0.0;
+double Graph::ClosenessCentralityReduced(int M){
+    double closeness = 0.0;
+    for(int i = 0; i<M; i++){
+        int idx = ((double) rand() / (RAND_MAX)) * V;
+        closeness += Closeness(idx);
+    }
+    // for(int i = 0; i<M; closeness += Closeness(i), i++);
+    cout << "Closeness here " << fixed << setprecision(7) << closeness << endl;
+    return (closeness/(1.0*V));
 }
 
-int main(int argc, char* argv[]) {
 
-    std::string path = argv[1];
-    Graph g = Graph::fromStdIn(path);
-    g.PrintTable1Report();
-    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    double closeness = g.ClosenessCentrality();
-    chrono::steady_clock::time_point end = chrono::steady_clock::now();
-    cout << "Closeness for Language " << g.GetLanguage() << " " << fixed << std::setprecision(7) << closeness << endl;
-    cout << "Elapsed time: " << fixed << std::setprecision(2) << (chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) << " microsec " << endl;
 
-	return 0; 
-} 
+void Graph::TrySwitch(int v1, int v2){
+    vector<int> _v2 = adj[v2];
+    vector<int> _v1 = adj[v1];
+    auto onlyV1 = [&v2](const int &i){
+        return i != v2;
+    };
+    auto onlyV2 = [&v1](const int &i){
+        return i != v1;
+    };
+    sort(_v1.begin(), _v1.end());
+    sort(_v2.begin(), _v2.end());
+    std::vector<int> diff1;
+    std::vector<int> diff2;
+    std::set_difference(_v1.begin(), _v1.end(), _v2.begin(), _v2.end(), std::inserter(diff1, diff1.begin()));
+    std::set_difference(_v2.begin(), _v2.end(), _v1.begin(), _v1.end(), std::inserter(diff2, diff2.begin()));
+    std::vector<int>::iterator findDiff1 = std::find_if(diff1.begin(), diff1.end(), onlyV1);
+    std::vector<int>::iterator findDiff2 = std::find_if(diff2.begin(), diff2.end(), onlyV2);
+    if(findDiff1 != diff1.end() && findDiff2 != diff2.end()){
+        int val_v1 = *findDiff1;
+        int val_v2 = *findDiff2;
+        std::vector<int>::iterator findPos1 = std::find(adj[v1].begin(), adj[v1].end(), val_v1);
+        std::vector<int>::iterator findPos2 = std::find(adj[v2].begin(), adj[v2].end(), val_v2);
+        if(findPos1 != adj[v1].end() && findPos2 != adj[v2].end()){
+            int idx_1 = std::distance(adj[v1].begin(), findPos1);
+            int idx_2 = std::distance(adj[v2].begin(), findPos2);
+            adj[v1][idx_1] = val_v2;
+            adj[v2][idx_2] = val_v1;
+            std::vector<int>::iterator findOldPos1 = std::find(adj[val_v1].begin(), adj[val_v1].end(), v1);
+            std::vector<int>::iterator findOldPos2 = std::find(adj[val_v2].begin(), adj[val_v2].end(), v2);
+            if(findOldPos1 != adj[val_v1].end() && findOldPos2 != adj[val_v2].end()){
+                int idx_old_1 = std::distance(adj[val_v1].begin(), findOldPos1);
+                int idx_old_2 = std::distance(adj[val_v2].begin(), findOldPos2);
+                adj[val_v1][idx_old_1] = v2;
+                adj[val_v2][idx_old_2] = v1;
+            }
+            cerr << "source " << v1 << " - target " << v2 << endl;
+            cerr << "val " << val_v1 << " - with " << val_v2 << endl;
+            cerr << "change " << idx_1 << " - with " << idx_2 << endl;
+        }
+    }
+}

@@ -13,11 +13,6 @@
 
 #include <cstdlib>
 
-#ifndef BOX_WRAPPER
-#define BOX_WRAPPER
-#include "../domain/box_wrapper.cc"
-#endif
-
 using namespace std;
 
 namespace utils {
@@ -26,7 +21,19 @@ namespace utils {
       // Write help message.
     if (argc != 1 and (string(argv[1]) == "-h" or string(argv[1]) == "--help")) {
       cerr << "Run the Closeness Centrality Metric Significance" << endl;
-      cerr << "Usage: " << argv[0] << " < bwp_W_N_k.CP.inp" << endl;
+      cerr << "Usage: " << argv[0] << " data/Some_Lang.txt" << endl;
+      exit(0);
+    }
+  }
+  void show_help_aprox(int argc, char* argv[]){
+      // Write help message.
+    if (argc != 4 and (string(argv[1]) == "-h" or string(argv[1]) == "--help")) {
+      cerr << "Run the Closeness Centrality Metric Significance" << endl;
+      cerr << "Usage: " << argv[0] << " \"data/Some_Lang.txt\" \"0.7\" 5 5" << endl;
+      cerr << "1 parameter: Path to language file" << endl;
+      cerr << "2 parameter: Closeness Centrality Real model" << endl;
+      cerr << "3 parameter: T for Montecarlo" << endl;
+      cerr << "4 parameter: Q for Switching" << endl;
       exit(0);
     }
   }

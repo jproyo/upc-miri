@@ -3,7 +3,6 @@
 #include <map>
 #include <iomanip>
 #include <string>
-#include <igraph.h>
 
 #ifndef GRAPH
 #define GRAPH
@@ -17,29 +16,74 @@ class Montecarlo {
     private:
         Graph graph;
         int T;
+        int Q;
         double x;
 
-    Montecarlo(const Graph& g, int _T, double _x): 
-    graph(g), x(_x), T(_T) {}
+    public: 
+    Montecarlo(const Graph& g, int _T, int _Q, double _x): 
+    graph(g), x(_x), T(_T), Q(_Q){}
 
-    double calcPValue(){
+    double CalcPValue(){
         int countSuccess = 0;
         double newCloseness = 0.0;
+        int M = graph.GetV()/1000;
         for(int i = 0; i < T; i++){
-            Graph g2 = produceNewGraph();
-            if(g2.ClosenessCentralityReduced() >= this->x){
+            // Graph newG = DoSwitching();
+            Graph newG = DoBinomial(graph.GetV(), graph.GetE());
+            double closeness = newG.ClosenessCentrality();
+            //double closeness = newG.ClosenessCentralityReduced(M);
+            //double closeness = DoBinomial();
+            cout << "Closeness c_mix_hnull " << fixed << setprecision(7) << closeness << endl;
+            if(closeness >= this->x){
                 countSuccess++;
             }
         }
         return countSuccess/(1.0*T);
     }
 
-    Graph produceNewGraph(){
-        igraph_integer_t diameter;
-        igraph_t graph;
-        igraph_rng_seed(igraph_rng_default(), 42);
-        igraph_erdos_renyi_game(&graph, IGRAPH_ERDOS_RENYI_GNM, this->graph.V, this->graph.E,
-                                 IGRAPH_UNDIRECTED, IGRAPH_NO_LOOPS);
-        igraph_destroy(&graph);
+    private:
+    Graph DoSwitching(){
+        Graph newG = Graph(graph);
+        for(int i = 0;i<Q*newG.GetE();i++){
+            int randomVertex1 = ((double) rand() / (RAND_MAX)) * newG.GetV();
+            int randomVertex2 = ((double) rand() / (RAND_MAX)) * newG.GetV();
+            if(randomVertex1 != randomVertex2){
+                newG.TrySwitch(randomVertex1, randomVertex2);
+            }
+        }
+        return newG;
+    }
+
+    // A function to generate random graph.
+    Graph DoBinomial(int V, int E)
+    {
+        Graph g(graph.GetLanguage(), V);
+        int i, j, edge[E][2];
+    
+        i = 0;
+        // Build a connection between two random vertex.
+        while(i < E)
+        {
+            edge[i][0] = (((double) rand() / (RAND_MAX)) * V) +1;
+            edge[i][1] = (((double) rand() / (RAND_MAX)) * V) +1;
+    
+            if(edge[i][0] == edge[i][1])
+                continue;
+            else
+            {
+                for(j = 0; j < i; j++)
+                {
+                    if((edge[i][0] == edge[j][0] && edge[i][1] == edge[j][1]) || (edge[i][0] == edge[j][1] && edge[i][1] == edge[j][0]))
+                        i--;
+                }
+            }
+            i++;
+        }
+
+        for(int i=0; i<E;i++){
+            g.addEdge(edge[i][0], edge[i+1][1]);
+            g.addEdge(edge[i+1][1], edge[i][0]);
+        }
+        return g;
     }
 };

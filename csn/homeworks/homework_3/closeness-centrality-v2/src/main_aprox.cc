@@ -41,8 +41,9 @@ int main(int argc, char* argv[]) {
   double x = atof(argv[2]);
   int t = atoi(argv[3]);
   int q = atoi(argv[4]);
+  int model = atoi(argv[5]);
   Graph g = Graph::fromStdIn(path);
-  Montecarlo m = Montecarlo(g,t,q, x);
+  Montecarlo m = Montecarlo(g,t,q, model, x);
   chrono::steady_clock::time_point begin = chrono::steady_clock::now();
   double pval = m.CalcPValue();
   chrono::steady_clock::time_point end = chrono::steady_clock::now();

@@ -18,30 +18,38 @@ class Montecarlo {
         int T;
         int Q;
         double x;
+        int model;
 
     public: 
-    Montecarlo(const Graph& g, int _T, int _Q, double _x): 
-    graph(g), x(_x), T(_T), Q(_Q){}
+    Montecarlo(const Graph& g, int _T, int _Q, int _model, double _x): 
+    graph(g), x(_x), T(_T), Q(_Q), model(_model){}
 
     double CalcPValue(){
         int countSuccess = 0;
         double newCloseness = 0.0;
         int M = graph.GetV()/1000;
         for(int i = 0; i < T; i++){
-            // Graph newG = DoSwitching();
-            Graph newG = DoBinomial(graph.GetV(), graph.GetE());
-            double closeness = newG.ClosenessCentrality();
-            //double closeness = newG.ClosenessCentralityReduced(M);
-            //double closeness = DoBinomial();
-            cout << "Closeness c_mix_hnull " << fixed << setprecision(7) << closeness << endl;
-            if(closeness >= this->x){
-                countSuccess++;
+            if(model == 1){
+                Graph newG = DoSwitching();
+                double closeness = newG.ClosenessCentrality();
+                cout << "Closeness c_mix_hnull " << fixed << setprecision(7) << closeness << endl;
+                if(closeness >= this->x){
+                    countSuccess++;
+                }
+            }else{
+                Graph newG = DoBinomial(graph.GetV(), graph.GetE());
+                double closeness = newG.ClosenessCentrality();
+                cout << "Closeness c_mix_hnull " << fixed << setprecision(7) << closeness << endl;
+                if(closeness >= this->x){
+                    countSuccess++;
+                }
             }
         }
         return countSuccess/(1.0*T);
     }
 
     private:
+
     Graph DoSwitching(){
         Graph newG = Graph(graph);
         for(int i = 0;i<Q*newG.GetE();i++){

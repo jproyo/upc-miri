@@ -42,6 +42,7 @@ class Graph
 public: 
 	Graph(string language, int V); 
     Graph(const Graph& g2);
+    Graph();
 
 	void addEdge(int v, int w); 
 
@@ -106,6 +107,8 @@ public:
     }
 
 }; 
+
+Graph::Graph(){} 
 
 Graph::Graph(string language, int V) 
 { 
@@ -310,9 +313,6 @@ void Graph::TrySwitch(int v1, int v2){
                 adj[val_v1][idx_old_1] = v2;
                 adj[val_v2][idx_old_2] = v1;
             }
-            cerr << "source " << v1 << " - target " << v2 << endl;
-            cerr << "val " << val_v1 << " - with " << val_v2 << endl;
-            cerr << "change " << idx_1 << " - with " << idx_2 << endl;
         }
     }
 }

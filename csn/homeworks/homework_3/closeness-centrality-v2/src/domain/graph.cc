@@ -1,3 +1,14 @@
+/**
+ *
+ * Class that represent Graph
+ *
+ * @author: Juan Pablo Royo Sales
+ * @date: October 21, 2020
+ * @subject: CSN
+ * @institution: Universitat Politècnica Catalunya
+ * @title: Homework 3
+ *
+ */
 #include <iostream> 
 #include <fstream>
 #include <filesystem>

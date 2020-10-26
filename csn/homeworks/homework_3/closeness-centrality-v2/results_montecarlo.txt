@@ -97,3 +97,4 @@ Closeness c_mix_hnull 0.3316336
 Closeness c_mix_hnull 0.3324176
 Closeness c_mix_hnull 0.3316067
 Closeness c_mix_hnull 0.3305522
+Closeness c_mix_hnull 0.3289528

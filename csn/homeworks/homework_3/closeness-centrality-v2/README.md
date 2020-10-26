@@ -1,4 +1,4 @@
-# Box Wrapping Problem - CP
+# Closeness Centrality - CSN
 
 This README file only contains instruction to running the program and does NOT contain specifications about the problem or the solution.
 
@@ -6,14 +6,14 @@ This README file only contains instruction to running the program and does NOT c
 
 - **`bin`**: Folder with compiled binaries. The content of this folder is deleted on `make clean` task.
 - **`docs`**: Latex and PDF generated report with the formal specification of the solution.
-- **`instances`**: Instances provided to test against the solution. Input of the program.
-- **`out`**: Output with the solution of each instance.
+- **`data`**: Language models that input the program
+- **`reports`**: Output of running the program with raw data
 
     > NOTE: We are delivering the solutions obtained in the best running of the program. If you want to clean up this folder, please first save this outputs files in other place.
 
-- **`src`**: C++ Source Code Solution with the `Space` subclass and all the utilities needed to solve the problem
+- **`src`**: C++ Source Code with the Solution
 - `Makefile`: To build and run the program
-- `run_script.sh`: Scripting file to run all instances under **`instance`** folder.
+- `run_closeness.sh`: Scripting file to run for all Languages Table 1 and Closeness Centrality exact measure.
 
     > NOTE: Running this will overwrite out files and you might lost previous running. Please check Running with Script section.
 
@@ -22,24 +22,6 @@ This README file only contains instruction to running the program and does NOT c
 In order to see the report in which it is described the formal definition of the solution go [here](docs/report.pdf)
 
 ## Running the Program
-
-### OS Configuration
-
-To run the program you are going to need first modify the `Makefile` in order to set the proper environment variables for compiling the program according to you **OS** and **Gecode** instalation.
-
-Open `Makefile` and edit the first 3 lines according to your **Operative System**. In my case which is a **OSX** operative system this is my setup
-
-```text
-CXX  = g++ -std=c++11 -F/Library/Frameworks
-DIR  = /usr/local
-LIBS = -framework gecode
-```
-
-- `CXX` variable contains compiler with flags
-- `DIR` variable contains the location of include libs for linking
-- `LIBS` variable contains additional flag for dynamic linking libraries. In our case geocode.
-
-> NOTE: In OSX Geocode lib is different than other system like Windows or Linux
 
 ### Compiling
 
@@ -55,25 +37,27 @@ All the binaries are going to be place in [bin](bin/) directory
 ### Help
 
 ```shell
-> bin/boxw -h
+> bin/closeness -h
+> bin/montecarlo -h
 ```
 
 ### Running
 
+
 For running the program just do:
 
 ```shell
-> bin/boxw < input
-
+> sh run_closeness.sh
 ```
 
-## Running with Script
+> WARNING: This script might take more than 1 hour to finish
 
-In the root of this project there is a script file called `run_script.sh`. With this file you can run all the instances provided in `instance` folder and it is going to output the results in `out` folder.
-
-> WARNING: Running this script might overwrite the output files already present in out folder if those output has the same name.
+or 
 
 ```shell
-> ./run_script.sh
+> sh run_montecarlo.sh
 ```
+
+> WARNING: This script might take more than 12 HOURS TO FINISH.
+
 

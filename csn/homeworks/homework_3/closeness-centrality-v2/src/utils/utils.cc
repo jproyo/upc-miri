@@ -3,14 +3,12 @@
  * This class continas utilities shuch as printing debug info, preparing output, showing help, etc.
  *
  * @author: Juan Pablo Royo Sales
- * @date: April 8th, 2020
- * @subject: CPS
+ * @date: October 21, 2020
+ * @subject: CSN
  * @institution: Universitat Politècnica Catalunya
- * @title: Final Project
+ * @title: Homework 3
  *
  */
-
-
 #include <cstdlib>
 
 using namespace std;

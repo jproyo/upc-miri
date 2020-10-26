@@ -227,7 +227,6 @@ void Graph::PrintTable1Report(){
 
 double Graph::Closeness(int s) 
 { 
-    if(adj[s].size()<2) return 0.0;
     int *d = new int[V];
     queue<int> q; 
   	vector<bool> visited;

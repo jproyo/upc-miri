@@ -1,0 +1,99 @@
+COMPILING
+rm -rf bin/*
+g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/main_cc.cc -o bin/main.o
+g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/domain/graph.cc -o bin/graph.o
+g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/graph/aprox.cc -o bin/aprox.o
+g++ -std=c++11 -F/Library/Frameworks -L/usr/local/lib -o bin/closeness bin/main.o 
+g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/main_aprox.cc -o bin/main_aprox.o
+g++ -std=c++11 -F/Library/Frameworks -L/usr/local/lib -o bin/montecarlo bin/main_aprox.o 
+----------------- STARTING !!!! CLOSENESS CENTRALITY MONTECARLO APROX ---------------------
+EXCUTING SWITCHING APROXIMATION....
+
+Executing Montecarlo for Language Basque_syntactic_dependency - T 20 - Q 15 - Model Switching
+Closeness c_mix_hnull 0.2593486
+Closeness c_mix_hnull 0.2612865
+Closeness c_mix_hnull 0.2595960
+Closeness c_mix_hnull 0.2600164
+Closeness c_mix_hnull 0.2621780
+Closeness c_mix_hnull 0.2609514
+Closeness c_mix_hnull 0.2628124
+Closeness c_mix_hnull 0.2628683
+Closeness c_mix_hnull 0.2633076
+Closeness c_mix_hnull 0.2575014
+Closeness c_mix_hnull 0.2595857
+Closeness c_mix_hnull 0.2603012
+Closeness c_mix_hnull 0.2577127
+Closeness c_mix_hnull 0.2589757
+Closeness c_mix_hnull 0.2608768
+Closeness c_mix_hnull 0.2603951
+Closeness c_mix_hnull 0.2589823
+Closeness c_mix_hnull 0.2579476
+Closeness c_mix_hnull 0.2585174
+Closeness c_mix_hnull 0.2605289
+PValue for Language Basque_syntactic_dependency 0.0000000
+Elapsed time: 926828431 microsec 
+Executing Montecarlo for Language Arabic_syntactic_dependency - T 20 - Q 15 - Model Switching
+Closeness c_mix_hnull 0.3366944
+Closeness c_mix_hnull 0.3342686
+Closeness c_mix_hnull 0.3361111
+Closeness c_mix_hnull 0.3368342
+Closeness c_mix_hnull 0.3367615
+Closeness c_mix_hnull 0.3355484
+Closeness c_mix_hnull 0.3327671
+Closeness c_mix_hnull 0.3329506
+Closeness c_mix_hnull 0.3329686
+Closeness c_mix_hnull 0.3388797
+Closeness c_mix_hnull 0.3351890
+Closeness c_mix_hnull 0.3344294
+Closeness c_mix_hnull 0.3352258
+Closeness c_mix_hnull 0.3370737
+Closeness c_mix_hnull 0.3367034
+Closeness c_mix_hnull 0.3385965
+Closeness c_mix_hnull 0.3341776
+Closeness c_mix_hnull 0.3350815
+Closeness c_mix_hnull 0.3360705
+Closeness c_mix_hnull 0.3327608
+PValue for Language Arabic_syntactic_dependency 1.0000000
+Elapsed time: 3921448227 microsec 
+Executing Montecarlo for Language Catalan_syntactic_dependency - T 20 - Q 15 - Model Switching
+Closeness c_mix_hnull 0.3518167
+Closeness c_mix_hnull 0.3526043
+Closeness c_mix_hnull 0.3556373
+Closeness c_mix_hnull 0.3528779
+Closeness c_mix_hnull 0.3516541
+Closeness c_mix_hnull 0.3521048
+Closeness c_mix_hnull 0.3519422
+Closeness c_mix_hnull 0.3508102
+Closeness c_mix_hnull 0.3524367
+Closeness c_mix_hnull 0.3512671
+Closeness c_mix_hnull 0.3500373
+Closeness c_mix_hnull 0.3503508
+Closeness c_mix_hnull 0.3508236
+Closeness c_mix_hnull 0.3523527
+Closeness c_mix_hnull 0.3524212
+Closeness c_mix_hnull 0.3535476
+Closeness c_mix_hnull 0.3513849
+Closeness c_mix_hnull 0.3527326
+Closeness c_mix_hnull 0.3498700
+Closeness c_mix_hnull 0.3546834
+PValue for Language Catalan_syntactic_dependency 1.0000000
+Elapsed time: 20589814700 microsec 
+Executing Montecarlo for Language Chinese_syntactic_dependency - T 20 - Q 15 - Model Switching
+Closeness c_mix_hnull 0.3293334
+Closeness c_mix_hnull 0.3320403
+Closeness c_mix_hnull 0.3313849
+Closeness c_mix_hnull 0.3314040
+Closeness c_mix_hnull 0.3333908
+Closeness c_mix_hnull 0.3357551
+Closeness c_mix_hnull 0.3307237
+Closeness c_mix_hnull 0.3304683
+Closeness c_mix_hnull 0.3259787
+Closeness c_mix_hnull 0.3300099
+Closeness c_mix_hnull 0.3313593
+Closeness c_mix_hnull 0.3325167
+Closeness c_mix_hnull 0.3298965
+Closeness c_mix_hnull 0.3327664
+Closeness c_mix_hnull 0.3316336
+Closeness c_mix_hnull 0.3324176
+Closeness c_mix_hnull 0.3316067
+Closeness c_mix_hnull 0.3305522

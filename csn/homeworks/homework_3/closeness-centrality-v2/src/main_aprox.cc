@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
   int model = atoi(argv[5]);
   Graph g = Graph::fromStdIn(path);
   Montecarlo m = Montecarlo(g,t,q, model, x);
+  cout << "Executing Montecarlo for Language " << g.GetLanguage() << " - T " << t << " - Q " << q << " - Model " << (model == 1?"Switching":"Binomial") <<endl;
   chrono::steady_clock::time_point begin = chrono::steady_clock::now();
   double pval = m.CalcPValue();
   chrono::steady_clock::time_point end = chrono::steady_clock::now();

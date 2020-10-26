@@ -98,3 +98,12 @@ Closeness c_mix_hnull 0.3324176
 Closeness c_mix_hnull 0.3316067
 Closeness c_mix_hnull 0.3305522
 Closeness c_mix_hnull 0.3289528
+Closeness c_mix_hnull 0.3303655
+PValue for Language Chinese_syntactic_dependency 0.9500000
+Elapsed time: 19616489983 microsec 
+Executing Montecarlo for Language Czech_syntactic_dependency - T 20 - Q 15 - Model Switching
+Closeness c_mix_hnull 0.3123254
+Closeness c_mix_hnull 0.3093488
+Closeness c_mix_hnull 0.3078704
+Closeness c_mix_hnull 0.3111004
+Closeness c_mix_hnull 0.3094587

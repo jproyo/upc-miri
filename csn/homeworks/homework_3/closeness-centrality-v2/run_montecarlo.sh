@@ -14,7 +14,7 @@ echo "----------------- STARTING !!!! CLOSENESS CENTRALITY MONTECARLO APROX ----
    $CLOSE_EXE $DATA_DIR/Arabic_syntactic_dependency_network.txt "0.3264580" 20 15 1 
    $CLOSE_EXE $DATA_DIR/Catalan_syntactic_dependency_network.txt "0.3410102" 20 15 1 
    $CLOSE_EXE $DATA_DIR/Chinese_syntactic_dependency_network.txt "0.3264540" 20 15 1 
-   $CLOSE_EXE $DATA_DIR/Czech_syntactic_dependency_network.txt "0.3059482" 20 15 1 
+   $CLOSE_EXE $DATA_DIR/Czech_syntactic_dependency_network.txt "0.3059482" 12 15 1 
    $CLOSE_EXE $DATA_DIR/English_syntactic_dependency_network.txt "0.3435094" 20 15 1 
    $CLOSE_EXE $DATA_DIR/Greek_syntactic_dependency_network.txt "0.3147174" 20 15 1 
    $CLOSE_EXE $DATA_DIR/Hungarian_syntactic_dependency_network.txt "0.2883464" 20 15 1 

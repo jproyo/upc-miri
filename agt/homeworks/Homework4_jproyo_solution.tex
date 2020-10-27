@@ -1,0 +1,96 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{multirow}
+
+
+\title{%
+  Algorithmic Game Theory \\
+  Homework 4
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AGT - Homework 4}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 4}
+\subsection{(a) Valuation Function}
+Lets define a variable $x_i$ in which 
+\[
+x_{ij} = 
+\begin{cases}
+  1 \text{ if a copy of album } j \text{ is provided by player } i\\
+  0 \text{ otherwise } 
+\end{cases}
+\]
+
+Therefore, 
+
+\begin{equation*}
+  v(C) = \Biggr|\biggr\{j \mid \sum_{i \in C} x_{ij} \geq k \biggl\}\Biggl|\\
+\end{equation*}
+
+\subsection{(b) Is the game convex?}
+% This problem can be represent as a \textbf{subgraph} game in which each edge is the contribution of player $i$ with album $j$ 
+% to the next player $i'$ that contribute as well with another copy of $j$.
+% This can be represented with an adjacency matrix. In this matrix each edge it is a positive 
+% weighted edge with value $1$ if there is a contribution or not.
+
+% Since this is a \textbf{subgraph game} with \textbf{non-negative} edges, therefore it is convex.
+
+\textbf{Yes, it is convex}.
+
+A way to probe this is this is establishing is the game is \textbf{super modular}.
+If the game is \textbf{super modular} then it is \textbf{convex}.
+
+A game is \textbf{super modular} if $v(C \cup D) + v(C \cap D) \geq v(C) + v(D)$.
+
+Lets take $2$ partitions $C$ and $D$ and analyze if this is true:
+
+\begin{itemize}
+  \item By the valuation function we know that $v(C) \geq 0 \land v(D) \geq 0$
+  \item Lets suppose that partition $v(C) = 0$ and $v(D) > 0$ then $v(C \cup D) > 0$ and $V(C \cap D) = 0$, therefore $v(C \cup D) + v(C \cap D) \geq v(C) + v(D)$
+  \item Lets suppose that both partitions are greater than 0 $v(C) > 0$ and $v(D) > 0$ then $v(C \cup D) > 0$ and $V(C \cap D) \geq 0$, therefore $v(C \cup D) + v(C \cap D) \geq v(C) + v(D)$ 
+\end{itemize}
+
+\subsection{(c) Shapley values}
+An accurate representation could be:
+
+\begin{equation}
+  \Phi(\Gamma) = \frac{1}{n!}\Biggr|\biggr\{j \mid \sum_{\pi \in \Pi(n)} x_{(\pi)j} \geq k \biggl\}\Biggl|
+\end{equation}
+
+It \textbf{cannot be computed in Polynomial} time because there are $n!$ number of ways to combine the configurations for which
+we can have different Shapley values depending on the order on how the players want to contribute to the game.
+
+\end{document}
+

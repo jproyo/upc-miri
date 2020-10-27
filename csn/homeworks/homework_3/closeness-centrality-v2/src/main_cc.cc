@@ -1,15 +1,14 @@
 /**
  *
- * This class contains the main entry point of the program and the Space subclass with constraint
+ * Main for calculting General Report. Table 1 and Closeness for table 2
  *
  * @author: Juan Pablo Royo Sales
- * @date: October 2020
+ * @date: October 21, 2020
  * @subject: CSN
  * @institution: Universitat Politècnica Catalunya
- * @title: Closeness Centrality
+ * @title: Homework 3
  *
  */
-
 #include <cstdlib>
 #include <vector>
 #include <iostream>

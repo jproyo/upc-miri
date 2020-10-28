@@ -21,6 +21,7 @@
 \usemintedstyle{default}
 \newminted{haskell}{frame=lines,framerule=2pt}
 \newminted{R}{frame=lines,framerule=2pt}
+\newminted{cpp}{frame=lines,framerule=2pt}
 \graphicspath{{./images/}}
 
 \tikzstyle{bag} = [align=center]
@@ -44,14 +45,12 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\newacronym{indegree}{Incomming Degree}{Incomming Degree Language Set}
-\newacronym{dispp}{Displaced Poisson}{Displaced Poisson Model}
-\newacronym{dispg}{Displaced Geometric}{Displaced Geometric Model}
-\newacronym{zeta2}{Zeta-Gamma-2}{Zeta Model with fixed Gamma with value 2}
-\newacronym{zeta}{Zeta}{Zeta Model}
-\newacronym{zetar}{Right-Truncated Zeta}{Right-Truncated Zeta Model}
-\newacronym{aic}{Akaike}{Akaike Information Criterion}
-\newacronym{alt}{Altmann}{Altmann Model}
+\newacronym{lang}{Language Set}{Provided Language Set}
+\newacronym{switching}{Switching Model}{Null Model based on Switching}
+\newacronym{binomial}{Binomial Model}{Null Model based on Binomial Erdos Renyi}
+\newacronym{cc}{Closeness Centratlity}{Closeness Centratlity Measure}
+\newacronym{nh}{Null Hypothesis}{Null Hypothesis}
+\newacronym{mc}{Montecarlo}{Montecarlo Approximation Algorithm}
 
 \begin{document}
 
@@ -60,20 +59,18 @@
 \tableofcontents
 
 \section{Introduction}
-In this homework we have analyzed \acrfull{indegree}~\ref{apx:src:1} which contains the distribution over different natural languages for the incomming connection words frequency.
+In this work I have been analyzing the significance of \acrfull{cc} metric over a \acrfull{lang} provided for such case.
+Basically the idea of the work is the following: Giving this set of Languages with some set of connected terms, determine 
+the \acrshort{cc} accurately measured. Hypothesis
 
-The goal of this work is to analyzed according to what have been discussing in class, what is the best model that fits (or explain), this distribution over the whole set of languages, taking into consideration
-only \textbf{five} different models: \acrfull{dispp}, \acrfull{dispg}, \acrfull{zeta2}, \acrfull{zeta} and \acrfull{zetar}
+After that we want to measure the Significance of that metric against different \acrshort{nh}, in particular against \acrfull{switching} and \acrfull{binomial}.
 
-Additionally we are going to compare these results using \acrfull{aic} in order to determine what model fits best for each language. 
-
-At the end of the work the we are going to run the distribution against \acrfull{alt}, that has been pointed out during the lectures to fit better. 
-
-This analysis work is going to be done in the following way:
+Using \acrfull{mc} 
 
 \begin{itemize}
     \item \textbf{Results} section: We are going to show the results obtained for each language according to the previous statements.
-    \item \textbf{Discussion and Methods} section: In this section we are going to conclude and give some explanaition based on the results.
+    \item \textbf{Discussion} section: In this section we are going to conclude and give some explanaition based on the results.
+    \item \textbf{Methods}
     \item \textbf{Conclusions} section: Finally we are going to give our opinion about the results obtained and what we have learnt.
 \end{itemize}
 
@@ -119,108 +116,12 @@ Lets divide the results for each language, but first lets see the Summary of the
    Turkish & 0.3603335  & & \\
      \end{tabular}
  \caption{Language List - Paramters}
- \label{table:1}
+ \label{table:2}
 \end{table}
 
-% Czech & 3251.7310000 \nTime for language Czech - 10409.0 secs
-% Hungarian & 1383.1193000 \nTime for language Hungarian - 2275.0 secs
-% Catalan & 2356.7395000 \nTime for language Catalan - 3183.0 secs
-% Chinese & Infinity \nTime for language Chinese - 2687.0 secs
-% Basque & 1636.7568000 \nTime for language Basque - 129.0 secs
-% Italian & 714.3620600 \nTime for language Italian - 341.0 secs
-% Greek & 698.2102700 \nTime for language Greek - 247.0 secs
-% Turkish & 950.4526400 \nTime for language Turkish - 480.0 secs
-% English & 1934.0182000 \nTime for language English - 2181.0 secs
-% Arabic & Infinity \nTime for language Arabic - 611.0 secs
 
-\subsection{Fitting Model Results}
-Lets remind the model classification in the Appendix section~\ref{apx:table:model:clasification}
-
-\begin{table}[H]
-\centering
-    \begin{tabular}{l c c c c}
-             & 1 & 2 & 4 & 5\\
-    Language & $\lambda$ & $q$ & $\gamma$ & $k_{max}$\\
-     \hline
-     Arabic    & 3.216673 & 0.2984176 & 2.104113 & 24065 \\
-     Basque    & 1.830868 & 0.4586489 & 2.358005 & 14868 \\
-     Catalan   & 5.726551 & 0.1740562 & 1.922218 & 38524 \\
-     Chinese   & 5.172914 & 0.1922189 & 1.885594 & 38563 \\
-     Czech     & 3.891029 & 0.2517524 & 2.050873 & 69014 \\
-     English   & 6.850030 & 0.1458301 & 1.799843 & 32172 \\
-     Greek     & 3.407164 & 0.2837741 & 2.131930 & 15704 \\
-     Hungarian & 2.932666 & 0.3228275 & 2.335141 & 37600 \\
-     Italian   & 4.164842 & 0.2363758 & 2.108419 & 16433 \\
-     Turkish   & 1.999577 & 0.4323952 & 2.543344 & 23403 
-    \end{tabular}
-   \caption{Model Fitting by Language}
-   \label{table:3}
-\end{table}
-
-\subsection{AIC Results}
-\begin{table}[H]
-\centering
-    \begin{tabular}{l c c c c c}
-    Language & AIC 1 & AIC 2 & AIC 3 & AIC 4 & AIC 5\\
-     \hline
-     Arabic    & 240318.35 & 24186.041 &  172.3717 & \textbf{0.0000000} & 1.643912\\          
-     Basque    &  50164.36 &  8363.878 &  845.1732 & \textbf{0.0000000} & 1.973784\\          
-     Catalan   & 913866.77 & 61868.421 &  212.5898 & 0.6420711 & \textbf{0.000000}\\          
-     Chinese   & 618335.67 & 48666.087 &  491.2543 & 1.9569369 & \textbf{0.000000}\\          
-     Czech     & 940668.86 & 91090.542 &  138.4353 & \textbf{0.0000000} & 1.354231\\          
-     English   & 739544.11 & 45704.816 & 1432.2985 & 7.6821378 & \textbf{0.000000}\\          
-     Greek     & 157133.81 & 17130.408 &  160.6789 & \textbf{0.0000000} & 1.740389\\          
-     Hungarian & 468252.20 & 53469.625 & 2220.2829 & \textbf{0.0000000} & 1.971684\\          
-     Italian   & 245803.03 & 22877.409 &  117.8825 & \textbf{0.0000000} & 1.668910\\          
-     Turkish   & 193345.03 & 24615.351 & 2740.4657 & \textbf{0.0000000} & 1.996789 
-    \end{tabular}
-   \caption{AIC Results}
-   \label{table:4}
-\end{table}
-
-\subsection{Altmann Results}
-\begin{table}[H]
-    \centering
-        \begin{tabular}{l c c}
-        Language & $\gamma$ & $\delta$ \\
-         \hline
-         Arabic    & 2.086211 & 0.0014726478 \\
-         Basque    & 2.346528 & 0.0017016417 \\
-         Catalan   & 1.907315 & 0.0008281837 \\
-         Chinese   & 1.834734 & 0.0028665707 \\
-         Czech     & 2.035468 & 0.0010169897 \\
-         English   & 1.740599 & 0.0025428652 \\
-         Greek     & 2.131722 & 0.0000010000 \\
-         Hungarian & 2.335120 & 0.0000010000 \\
-         Italian   & 2.108182 & 0.0000010000 \\
-         Turkish   & 2.543335 & 0.0000010000 
-        \end{tabular}
-       \caption{Altmann Results}
-       \label{table:5}
-    \end{table}
-
-\section{Discussion and Methods}
-\subsection{Considerations}
-It is known that all the likelihood functions has been provided and the only thing that need to be adjust it to negate them.
-On the other hand there it is important to point out that the \textbf{lower} and \textbf{upper} bound parameters needs to be adjust for each case.
-The idea here is to explain those consideration that we have taken into account for each Model.
-
-\subsubsection{Zeta Model}
-In this case as we can see $\gamma = 1.0000001$ as lower bound and $\gamma = 2$ as an started point
-\begin{listing}[H]
-    \inputminted[firstline=59, lastline=67, breaklines]{R}{./Solution.R}
-    \caption{Extracted from source Solution.R}
-    \label{apx:src:2}
-\end{listing}  
-
-\subsubsection{Zeta Truncated}
-One of the important setup on this model was start value of $k_{max}$. Since it is known that $k \gg N$ we cannot put as a started value of $k_{max} = N$
-because on some cases, particularly in \textbf{English}, this cannot be optimized. Therefore we have chosen $k_{max} = N + 3000$ as a started value which is $\gg N$. 
-\begin{listing}[H]
-    \inputminted[firstline=70, lastline=83, breaklines]{R}{./Solution.R}
-    \caption{Extracted from source Solution.R}
-    \label{apx:src:3}
-\end{listing}  
+\section{Discussion}
+\section{Methods}
 
 \subsubsection{Displaced Poisson and Geometric}
 On those cases we have done the regular setup but taking into consideration that we are calculating $C$ value from the sample.
@@ -236,169 +137,25 @@ On those cases we have done the regular setup but taking into consideration that
 \end{listing}  
 
 
-\subsection{General Analysis}
-As we can see in the table~\ref{table:4} the best models are between \acrshort{zeta} and \acrshort{zetar} because 
-are the ones in which the $\Delta = AIC - AIC_{best}$ is the smallest. As long as the $AIC$ value approximates to the
-best possible value that difference approximates to $0$, indicating that the prediction is fitting the model better for all languages
-in general.
-
-If we have to pick only \textbf{one} model which fits better for all languages, according to the \acrshort{aic} results this should be \acrshort{zeta}. This is 
-pretty obvious since in almost all languages $\Delta = 0$. For the rest of the languages which are not $0$, like \textbf{Catalan, Chinese and English}, it is 
-still an small difference and it can be explain that it is also a good model.
-
-In these cases as we can see in the distribution table~\ref{table:1} $M/N$ the average degree frequency is higher for those $3$ languages. In those cases since it is 
-clear that we have more degrees frequencies in few terms the distribution is not straightforward enough to be fitted by a \acrshort{zeta} model and we might be needing more
-parameters to fit better the model. And that the case of \acrshort{zetar}.
-
-Taking into consideration that we are analyzing a \acrshort{indegree} $\{w | (u,w) \in E\}$, this means all the words that have edges from some other words connecting to this.
-Although we cannot give an intuitive explanation for \textit{Chinese}, for the case of the \textit{Catalan and English} it is clear that those words are connectors and/or 
-prepositions in the language like \textit{in, at, of, etc} for \textbf{English} or \textit{a, amb, des, dalt, etc} for \textbf{Catalan}. In that case it is straightforward to 
-see for someone who speak those languages that there are a lot of this kinds of words with high incoming degree, turning the \textbf{power law} like distribution, not so clear 
-on the distribution tail. This would explain that we need extra parameters for fitting the model best when the degree is higher.
-
-On the other hand as well as \acrshort{zeta} is the best function to fit the model, we can appreciate that \acrshort{dispp} is the worst for fitting them. This could be explain
-because \textit{Poisson} distribution approximates well when $p$ probability is low and $m$ the number of elements is big. As we are working with an reduce number of terms of the languages,
-in this case \acrshort{indegree}, the distribution is not fitting accordingly. 
-
-\subsection{Altmann Model}
-One of the topic proposal in the homework was to use an \acrshort{alt} function which it is known that approximates better to the model.
-In order to do that we need first to derive \textbf{Log Likelihood} function.
-
-\begin{subequations}
-    \begin{align}
-        \L &= \sum_{i=o}^N \log{[ck_i^{-\gamma} e^{-\delta k_i}]}\\
-           &= \sum_{i=o}^N \log(c) + \log{k_i^{-\gamma}} + (-\delta k_i) log(e)\\
-           &= \sum_{i=o}^N \log(c) + -\gamma \log(k_i) + (-\delta k_i) \\
-           &= N\log(c) -\gamma M' -\delta M  \\
-    \end{align}
-    \end{subequations}
-
-As we can see in the table of results~\ref{table:5} $\gamma$ parameters fits well regarding \acrshort{zeta} which is the one
-that explain better the model.
-
 \section{Conclusions}
-In conclusion we can say that we have learnt how to pick a good Model for fitting a real network with the tools provided. 
-Although that and taking into consideration that we have \acrshort{aic} for measuring the accuracy of the model, we can notice the big difference
-between the different models such as \acrshort{dispp} and \acrshort{zeta} for example.
-This leads to think to the fact that without proper measuring tools like \acrshort{aic} it is really difficult to determine what is the best model. 
-
-On the other hand, the difference is quite strong which indicates that real networks are difficult to predict because of its particular behavior, as we have
-explained in the previous section for example the case of \textbf{English} or \textbf{Catalan} where some specific details in the language
-can lead to a not straightforward \textbf{Power Law like} distribution.
-
-To sum up we think it has been a great exercise to put in practice the theoretical concepts we have seen in class, but with a real case.
 
 \printglossary[type=\acronymtype]
 
 \appendix\label{apx:org}
-\section{Source Code Considerations}
-If you want to run \mintinline{bash}{./Solution.R} script to compare the results in this technical report with the sample, you need to take into consideration the following:
+\section{Source Code and Assets}
+The source code and different assets that are contained in these folders are classified in the following way.
 
 \begin{itemize}
-    \item \textbf{stats4} package is required to be installed in your \textbf{R} Studio
-    \item \textbf{VGAM} package is required to be installed in your \textbf{R} Studio
-    \item Unzip \mintinline{bash}{./in-degree_sequences.tar.gz} in the same Root folder of the script. The script is looking for \mintinline{bash}{./data/LANG_in_degree_sequence.txt} 
-    files to be placed in a folder in the same place that the script is running. Sometimes you need to setup as a working directory in your \textbf{R} Studio the folder of the script.
-    \item Place \mintinline{bash}{./list_in.txt} in the same root folder of the script. Same as previous item.
+    \item \textbf{bin} This folder contains the compiled binary files for the code that implements the requirements suggested by the lab work.
+    \item \textbf{data} This folder contains the input \acrshort{lang} provided.
+    \item \textbf{docs} This folder contains this report in Latex and PDF compiled format.
+    \item \textbf{out} This folder contains the standar output results after executing each program over the \acrshort{lang}
+    \item \textbf{src} This folder contains the \mintinline{bash}{cpp} files with the source code implementation.
+    \item \textbf{\mintinline{bash}{./Makefile}} Makefile to compile programs
+    \item \textbf{\mintinline{bash}{./README.md}} Markdown file with the instructions to run the program.
+    \item \textbf{\mintinline{bash}{./run_closeness.sh}} Script file for running the algorithm over the \acrshort{lang} in order to calculate \textit{Closeness Centrality} and 
+    main features of each language.
+    \item \textbf{\mintinline{bash}{./run_montecarlo.sh}} Script file for running the aproximation algorithms for each language with null models.
 \end{itemize}
-
-\section{Listing with Languages Files}
-\begin{listing}[H]
-    \inputminted[breaklines]{text}{./list_in.txt}
-    \caption{Extracted from source list\_in.txt}
-    \label{apx:src:1}
-\end{listing}  
-
-\section{Model Classification}\label{apx:table:model:clasification}
-\begin{table}[H]
-    \centering
-        \begin{tabular}{c c}
-        Model & Function \\
-         \hline
-         1 & Displaced Poisson \\
-         2 & Displaced geometric \\
-         3 & Zeta with $\gamma = 2$\\
-         4 & Zeta \\
-         5 & Right-truncated zeta\\
-        \end{tabular}
-       \caption{Model Classification}
-       \label{table:2}
-    \end{table}
-
-\section{Plotting}\label{apx:section:plotting}
-\begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{arabic}
-    \captionsetup{type=figure}
-    \captionof{figure}{Arabic In Degree}
-    \label{fig:arabic}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{basque}
-    \captionsetup{type=figure}
-    \captionof{figure}{Basque In Degree}
-    \label{fig:basque}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{catalan}
-    \captionsetup{type=figure}
-    \captionof{figure}{Catalan In Degree}
-    \label{fig:catalan}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{chiniese.jpeg}
-    \captionsetup{type=figure}
-    \captionof{figure}{Chinese In Degree}
-    \label{fig:chinese}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{czech.jpeg}
-    \captionsetup{type=figure}
-    \captionof{figure}{Czech In Degree}
-    \label{fig:czech}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{English}
-    \captionsetup{type=figure}
-    \captionof{figure}{English In Degree}
-    \label{fig:english}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{greek}
-    \captionsetup{type=figure}
-    \captionof{figure}{Greek In Degree}
-    \label{fig:greek}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{hungarian}
-    \captionsetup{type=figure}
-    \captionof{figure}{Hungarian In Degree}
-    \label{fig:hungarian}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{italian}
-    \captionsetup{type=figure}
-    \captionof{figure}{Italian In Degree}
-    \label{fig:italian}
-  \end{minipage}
-
-  \begin{minipage}[t]{\linewidth}
-    \includegraphics[width=\textwidth]{turkish}
-    \captionsetup{type=figure}
-    \captionof{figure}{Turkish In Degree}
-    \label{fig:turksh}
-  \end{minipage}
-
-
-\section{Source code}
-In the source code there are 3 folders with code:
-
 
 \end{document}

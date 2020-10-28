@@ -60,30 +60,61 @@ Therefore,
 \end{equation*}
 
 \subsection{(b) Is the game convex?}
-\textbf{Yes, it is convex}.
+\textbf{No, it is not convex because it is not super modular}.
 
-A way to probe this is this is establishing is the game is \textbf{super modular}, because 
-we know that if the game is \textbf{super modular} then it is \textbf{convex}.
-
+Lets probe it by assuming that the game is super modular.
 A game is \textbf{super modular} if $v(C \cup D) + v(C \cap D) \geq v(C) + v(D)$.
 
-Lets take $2$ partitions $C$ and $D$ and analyze if this is true:
+Lets take $2$ partitions $C$ and $D$ and lets assume that both partitions by itself has $ \geq k$ copies of some album $j$ but not each player by itself, therefore:
 
-\begin{itemize}
-  \item By the valuation function we know that $v(C) \geq 0 \land v(D) \geq 0$
-  \item Lets suppose that partition $v(C) = 0$ and $v(D) > 0$ then $v(C \cup D) > 0$ and $V(C \cap D) = 0$, therefore $v(C \cup D) + v(C \cap D) \geq v(C) + v(D)$
-  \item Lets suppose that both partitions are greater than 0 $v(C) > 0$ and $v(D) > 0$ then $v(C \cup D) > 0$ and $V(C \cap D) \geq 0$, therefore $v(C \cup D) + v(C \cap D) \geq v(C) + v(D)$ 
-\end{itemize}
+\begin{enumerate}
+  \item $v(C) \geq 1 \land v(D) \geq 1$ because at least both partition can re-recording at least the album $j$.
+  \item It can be seen by previous that $v(C \cup D) \geq 1$ because we are going to have at least 1 album recording of $j$ because one of the 2 partition group can provide at least $k$ copies and more if we join both.
+  \item Lets suppose that the combination of both partition $C \cap D$ leads to a partition in which some players don't contribute copy of album $j$ because some of them contribute with players of partition $C$ and some other move to form coalition with players of partition $D$. In this case coalition $C \cap D$ is not reaching to at least $k$ of album $j$.
+  \item By previous statement the only thing we can assure is that $v(C \cap D) \geq 0$ by non-negative condition on Cooperative Games.
+  \item So we have that $v(C \cup D) + v(C \cap D) \geq 1$ and $v(C) + v(D) \geq 2$
+\end{enumerate}
+
+Therefore $v(C \cup D) + v(C \cap D) \ngeq v(C) + v(D)$
+
+Then, \textbf{it is not convex.}
 
 \subsection{(c) Shapley values}
-An accurate representation could be:
+Knowing that Shapley value is additive we can think on splitting up the game as the sum of several
+Shaply values if they were different games. 
 
-\begin{equation}
-  \Phi(\Gamma) = \frac{1}{n!}\Biggr|\biggr\{j \mid \sum_{\pi \in \Pi(n)} x_{(\pi)j} \geq k \biggl\}\Biggl|
-\end{equation}
+Lets define that a game $\Gamma_j$ as the recording of $j$ album type. So,
+\[
+  v(C) = \begin{cases}
+    1 \text{ if } \sum_{i \in C} x_i \geq k\\
+    0 \text{ otherwise}
+  \end{cases}
+  \]
 
-It \textbf{cannot be computed in Polynomial} time because there are $n!$ number of ways to combine the configurations for which
-we can have different Shapley values depending on the order on how the players want to contribute to the game.
+where $x_i$ is the amount of copies of album $j$ that player $i$ contributes.
+
+The Shapley value for this game should be:
+
+\begin{subequations}
+  \begin{align}    
+    \Phi_i(\Gamma_j) &= \frac{1}{N!} \sum_{C \subseteq N \setminus \{i\}} v(C \cup \{i\}) - v(C)\\
+                     &= \frac{1}{N!}\label{eq:1}
+  \end{align}
+\end{subequations}
+
+This~\ref{eq:1} because once we have $1$ we are not summing up anything.
+
+Using additivity property of Shapley values if we telescope this to the sum of all games of different albums
+
+\begin{subequations}
+  \begin{align}    
+  \Phi_i(\Gamma) &= \Phi_i\bigr(\sum_{j=1}^m \Gamma_j\bigl)\\
+                 &= \sum_{j=1}^n \Phi_i(\Gamma_j)\\
+                 &= \frac{m}{N!}
+\end{align}
+\end{subequations}
+
+It can be easily calculate in \textit{Poly-time} because of the simplicity of the final expression.
 
 \end{document}
 

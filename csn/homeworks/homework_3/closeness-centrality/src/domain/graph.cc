@@ -48,7 +48,9 @@ class Graph
 	int V;
     int E;
 	vector<int> *adj; 
+    int **distances;
     vector<EDGE> inputEdges;
+    vector<bool> distCalculated;
 
 public: 
 	Graph(string language, int V); 
@@ -59,7 +61,13 @@ public:
 
     void AddEdgeUnderlying(string v, string w); 
 
-	double Closeness(int s); 
+    double Closeness(int s); 
+	
+    void ClosenessBFS(int s); 
+    
+    void ClosenessLowDegree(int s); 
+
+    void CopyDistancesPlus1(int s, int t);
 
     double ClosenessCentrality(); 
 
@@ -126,12 +134,16 @@ Graph::Graph(string language, int V)
     this->language = language;
 	this->V = V; 
 	adj = new vector<int>[V]; 
+    distances = new int*[V];
+    distCalculated.assign(V, false); 
 } 
 
 Graph::Graph(const Graph &g){
     this->language = g.language;
     this->V = g.V;
     this->E = g.E;
+    this->distances = new int*[V];
+    this->distCalculated.assign(V, false); 
     std::map<string, set<string>>::const_iterator it = g._edges.begin();
     while(it != g._edges.end())
     {
@@ -230,15 +242,54 @@ void Graph::PrintTable1Report(){
     << endl;
 }
 
-double Graph::Closeness(int s) 
+double Graph::Closeness(int s){
+    if(adj[s].size()<2){
+        ClosenessLowDegree(s);
+    }else{
+        ClosenessBFS(s);
+    }
+    double closeness = 0.0;
+    for(int i = 0; i<V; i++){
+        if(distances[s][i] > 0) closeness += 1/(1.0*distances[s][i]);
+    }
+    return closeness/(1.0*(V-1));
+}
+
+void Graph::ClosenessLowDegree(int s){
+    if(!distCalculated[s]){
+        int node = adj[s].front();
+        distances[s] = new int[V];
+        for(int i = 0; i<V; i++) distances[s][i] = 0;
+        if(adj[node].size()<2 && adj[node].front() == s){
+            distances[node] = new int[V];
+            distances[s][node] = 1;
+            distances[node][s] = 1;
+            distCalculated[node] = true;        
+        }else{
+            CopyDistancesPlus1(node, s);
+        }
+        distCalculated[s] = true;
+    }
+}
+
+void Graph::CopyDistancesPlus1(int sourceNode, int targetNode){
+    for(int i = 0; i < V;i++){
+        if(distances[sourceNode][i] != targetNode && distances[sourceNode][i] > 0){
+            distances[targetNode][i] = distances[sourceNode][i] + 1;
+        }
+    }
+    distances[targetNode][sourceNode] = 1;
+}
+
+void Graph::ClosenessBFS(int s) 
 { 
-    int *d = new int[V];
     queue<int> q; 
   	vector<bool> visited;
     visited.assign(V, false); 
 
     q.push(s);  
-    d[s] = 0; 
+    distances[s] = new int[V];
+    for(int i = 0; i<V; i++) distances[s][i] = 0;
     visited[s] = true; 
           
     while (!q.empty()) 
@@ -251,31 +302,19 @@ double Graph::Closeness(int s)
             if (!visited[*i]) 
             { 
                 visited[*i] = true; 
-                d[*i] = d[u] + 1; 
+                distances[s][*i] = distances[s][u] + 1; 
                 q.push(*i);  
             } 
         } 
     } 
-    double closeness = 0.0;
-    for(int i = 0; i<V; i++){
-        if(d[i] > 0) closeness += 1/(1.0*d[i]);
-    }
-    return closeness/(1.0*(V-1));
+    distCalculated[s] = true;
 } 
 
 double Graph::ClosenessCentrality(){
     double closeness = 0.0;
-    for(int i = 0; i<V; closeness += Closeness(i), i++);
+    for(int i = 0; i<V; i++) closeness += Closeness(i);
     return closeness/(1.0*V);
 } 
-
-double Graph::ClosenessCentralityReduced(int M){
-    double closeness = 0.0;
-    for(int i = 0; i<M; closeness += Closeness(i), i++);
-    return (closeness/(1.0*V));
-}
-
-
 
 void Graph::TrySwitch(int v1, int v2){
     vector<int> _v2 = adj[v2];

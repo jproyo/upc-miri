@@ -36,7 +36,6 @@ int main(int argc, char* argv[]) {
     std::string path = argv[1];
     Graph g = Graph::fromStdIn(path);
     g.PrintTable1Report();
-    // g.PrintAdjList();
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     double closeness = g.ClosenessCentrality();
     chrono::steady_clock::time_point end = chrono::steady_clock::now();

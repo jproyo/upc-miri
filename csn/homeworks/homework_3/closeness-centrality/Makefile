@@ -2,10 +2,10 @@ DIR = /usr/local
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
   CCFLAGS += -D OSX
-	CXX  = g++ -std=c++11 -F/Library/Frameworks
+	CXX  = g++ -std=c++11 -F/Library/Frameworks -O3
 	LIBS = 
 else
-	CXX = g++ -std =c ++11
+	CXX = g++ -std =c ++11 -O3
 	LIBS = 
 endif
 

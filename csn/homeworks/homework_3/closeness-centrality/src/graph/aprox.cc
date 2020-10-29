@@ -38,7 +38,6 @@ class Montecarlo {
     double CalcPValue(){
         int countSuccess = 0;
         double newCloseness = 0.0;
-        int M = graph.GetV()/1000;
         for(int i = 0; i < T; i++){
             if(model == 1){
                 Graph newG = DoSwitching();

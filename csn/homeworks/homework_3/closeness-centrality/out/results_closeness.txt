@@ -1,40 +1,40 @@
 COMPILING
 rm -rf bin/*
-g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/main_cc.cc -o bin/main.o
-g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/domain/graph.cc -o bin/graph.o
-g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/graph/aprox.cc -o bin/aprox.o
-g++ -std=c++11 -F/Library/Frameworks -L/usr/local/lib -o bin/closeness bin/main.o 
-g++ -std=c++11 -F/Library/Frameworks -I/usr/local/include -c src/main_aprox.cc -o bin/main_aprox.o
-g++ -std=c++11 -F/Library/Frameworks -L/usr/local/lib -o bin/montecarlo bin/main_aprox.o 
+g++ -std=c++11 -F/Library/Frameworks -O3 -I/usr/local/include -c src/main_cc.cc -o bin/main.o
+g++ -std=c++11 -F/Library/Frameworks -O3 -I/usr/local/include -c src/domain/graph.cc -o bin/graph.o
+g++ -std=c++11 -F/Library/Frameworks -O3 -I/usr/local/include -c src/graph/aprox.cc -o bin/aprox.o
+g++ -std=c++11 -F/Library/Frameworks -O3 -L/usr/local/lib -o bin/closeness bin/main.o 
+g++ -std=c++11 -F/Library/Frameworks -O3 -I/usr/local/include -c src/main_aprox.cc -o bin/main_aprox.o
+g++ -std=c++11 -F/Library/Frameworks -O3 -L/usr/local/lib -o bin/montecarlo bin/main_aprox.o 
 ----------------- STARTING !!!! CLOSENESS CENTRALITY ---------------------
 Arabic_syntactic_dependency & 21532 & 68743 & 6.3851941 & 0.0002966 \\ 
-Closeness for Language Arabic_syntactic_dependency 0.3264580
-Elapsed time: 158047959 microsec 
+Closeness for Language Arabic_syntactic_dependency 0.3264629
+Elapsed time: 11776403 microsec 
 Basque_syntactic_dependency & 12207 & 25541 & 4.1846482 & 0.0003428 \\ 
-Closeness for Language Basque_syntactic_dependency 0.2697194
-Elapsed time: 40812050 microsec 
+Closeness for Language Basque_syntactic_dependency 0.2697357
+Elapsed time: 2739227 microsec 
 Catalan_syntactic_dependency & 36865 & 197075 & 10.6917130 & 0.0002900 \\ 
-Closeness for Language Catalan_syntactic_dependency 0.3410102
-Elapsed time: 632246802 microsec 
+Closeness for Language Catalan_syntactic_dependency 0.3410137
+Elapsed time: 39485656 microsec 
 Chinese_syntactic_dependency & 40298 & 180925 & 8.9793538 & 0.0002228 \\ 
-Closeness for Language Chinese_syntactic_dependency 0.3264540
-Elapsed time: 844372981 microsec 
+Closeness for Language Chinese_syntactic_dependency 0.3264578
+Elapsed time: 41542207 microsec 
 Czech_syntactic_dependency & 69303 & 257254 & 7.4240365 & 0.0001071 \\ 
-Closeness for Language Czech_syntactic_dependency 0.3059482
-Elapsed time: 2504713167 microsec 
+Closeness for Language Czech_syntactic_dependency 0.3059504
+Elapsed time: 133615746 microsec 
 English_syntactic_dependency & 29634 & 193078 & 13.0308430 & 0.0004397 \\ 
-Closeness for Language English_syntactic_dependency 0.3435094
-Elapsed time: 569428745 microsec 
+Closeness for Language English_syntactic_dependency 0.3435143
+Elapsed time: 26911725 microsec 
 Greek_syntactic_dependency & 13283 & 43961 & 6.6191372 & 0.0004984 \\ 
-Closeness for Language Greek_syntactic_dependency 0.3147174
-Elapsed time: 63618992 microsec 
+Closeness for Language Greek_syntactic_dependency 0.3147265
+Elapsed time: 4438173 microsec 
 Hungarian_syntactic_dependency & 36126 & 106681 & 5.9060510 & 0.0001635 \\ 
-Closeness for Language Hungarian_syntactic_dependency 0.2883464
-Elapsed time: 475492922 microsec 
+Closeness for Language Hungarian_syntactic_dependency 0.2883495
+Elapsed time: 33671847 microsec 
 Italian_syntactic_dependency & 14726 & 55954 & 7.5993481 & 0.0005161 \\ 
-Closeness for Language Italian_syntactic_dependency 0.3278201
-Elapsed time: 88055939 microsec 
+Closeness for Language Italian_syntactic_dependency 0.3278253
+Elapsed time: 6386893 microsec 
 Turkish_syntactic_dependency & 20409 & 45625 & 4.4710667 & 0.0002191 \\ 
-Closeness for Language Turkish_syntactic_dependency 0.3603335
-Elapsed time: 121800926 microsec 
+Closeness for Language Turkish_syntactic_dependency 0.3603390
+Elapsed time: 8495388 microsec 
 ----------------- FINISHED !!!! CLOSENESS CENTRALITY ---------------------

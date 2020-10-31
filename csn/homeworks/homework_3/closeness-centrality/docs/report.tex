@@ -23,6 +23,8 @@
 \newminted{R}{frame=lines,framerule=2pt}
 \newminted{cpp}{frame=lines,framerule=2pt}
 \graphicspath{{./images/}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 \tikzstyle{bag} = [align=center]
 
@@ -61,11 +63,22 @@
 \section{Introduction}
 In this work I have been analyzing the significance of \acrfull{cc} metric over a \acrfull{lang} provided for such case.
 Basically the idea of the work is the following: Giving this set of Languages with some set of connected terms, determine 
-the \acrshort{cc} accurately measured. Hypothesis
+the \acrshort{cc} accurately measured by:
+
+\begin{equation}
+    C = \frac{1}{N} \sum_{i}^N C_i
+\end{equation}
+
+where,
+
+\begin{equation}
+    C_i = \frac{1}{N-1} \sum_{j \neq i}^N \frac{1}{d_{ij}}
+\end{equation}
+
 
 After that I am going to measure the \textbf{Significance} of that metric against different \acrshort{nh}, in particular against \acrfull{switching} and \acrfull{binomial}.
 
-Using a \acrfull{mc} I am going to approximate the \textit{p-value} of both \textbf{Null} Hypothesis against the real model for each language.
+Using a \acrfull{mc} I am going to approximate the \textit{p-value} of both \textbf{Null} Hypothesis against the $C$ for each language.
 
 The present work is divided in the following sections:
 
@@ -86,16 +99,16 @@ Lets divide the results for each language, but first lets see the Summary of the
     \begin{tabular}{l l l l l}
     Language & N & E & $<k>$ & $\delta$ \\
      \hline
-    Arabic & 21532 & 68743 & 6.3851941 & 0.0002966 \\
-    Basque & 12207 & 25541 & 4.1846482 & 0.0003428 \\
-    Catalan & 36865 & 197075 & 10.6917130 & 0.0002900 \\
-    Chinese & 40298 & 180925 & 8.9793538 & 0.0002228 \\
-    Czech & 69303 & 257254 & 7.4240365 & 0.0001071 \\
-    English & 29634 & 193078 & 13.0308430 & 0.0004397 \\
-    Greek & 13283 & 43961 & 6.6191372 & 0.0004984 \\
-    Hungarian & 36126 & 106681 & 5.9060510 & 0.0001635 \\
-    Italian & 14726 & 55954 & 7.5993481 & 0.0005161 \\
-    Turkish & 20409 & 45625 & 4.4710667 & 0.0002191 \\
+     Arabic & 21532 & 68743 & 6.3851941 & 0.0002966 \\ 
+     Basque & 12207 & 25541 & 4.1846482 & 0.0003428 \\ 
+     Catalan & 36865 & 197075 & 10.6917130 & 0.0002900 \\ 
+     Chinese & 40298 & 180925 & 8.9793538 & 0.0002228 \\ 
+     Czech & 69303 & 257254 & 7.4240365 & 0.0001071 \\ 
+     English & 29634 & 193078 & 13.0308430 & 0.0004397 \\ 
+     Greek & 13283 & 43961 & 6.6191372 & 0.0004984 \\ 
+     Hungarian & 36126 & 106681 & 5.9060510 & 0.0001635 \\ 
+     Italian & 14726 & 55954 & 7.5993481 & 0.0005161 \\ 
+     Turkish & 20409 & 45625 & 4.4710667 & 0.0002191
     \end{tabular}
    \caption{Language List - Main Characteristics}
    \label{table:1}
@@ -111,13 +124,13 @@ Lets divide the results for each language, but first lets see the Summary of the
    Arabic & 0.3264629  & 1.00 & 0.00 \\
    Basque & 0.2697357  & 0.00 & 0.00 \\
    Catalan & 0.3410137 & 1.00 & 0.00 \\
-   Chinese & 0.3264578 & 0.95& 0.00 \\
-   Czech & 0.3059504 & 1.00 & 0.00 \\
-   English & 0.3435143  & 1.00 & 0.00 \\
+   Chinese & 0.3264533 & 0.00 & 0.00 \\
+   Czech & 0.3059504 & 0.392 & 0.00 \\
+   English & 0.3435140  & 0.00 & 0.00 \\
    Greek & 0.3147265  & 1.00 & 0.00 \\
-   Hungarian & 0.2883495 & 1.00 & 0.00 \\
+   Hungarian & 0.2883451 & 1.00 & 0.00 \\
    Italian & 0.3278253 & 1.00 & 0.00 \\
-   Turkish & 0.3603390  & 0.00 & 0.00 \\
+   Turkish & 0.3603387  & 0.00 & 0.00 \\
      \end{tabular}
  \caption{Language List - Closeness Centrality}
  \label{table:2}
@@ -126,46 +139,36 @@ Lets divide the results for each language, but first lets see the Summary of the
 
 \section{Discussion}
 \subsection{Switching}
-Accordingly to the results obtained as it can be appreciate in~\ref{table:2} the majority of the \textbf{p-value} for the 
-\acrshort{switching} are close to $1.00$ except for the \textbf{Basque} and \textbf{Turkish} language. This means that I can \textbf{accept the \acrfull{nh}}  
-for the \acrshort{switching}. As we can see for almost all iterations \acrshort{cc} value is greater than the real model and most of them are above percentile $0.95$ or more.
-For detailed iterations and values of each \acrshort{cc} of each iteration and for each language, please see results on \mintinline{bash}{docs/results_montecarlo.txt}.
+Accordingly to the results obtained as it can be appreciate in~\ref{table:2} the majority of the \textbf{p-value}, it means $\frac{6}{10}$ for the 
+\acrshort{switching} are greater than $0.05$. This means that I can \textbf{accept the \acrfull{nh}} for the \acrshort{switching} in the case of those languages. 
+As we can see for almost all iterations \acrshort{cc} value is greater than the real model $C$.
+For detailed iterations and values of each \acrshort{cc} of each iteration and for each language, please see results on \mintinline{bash}{results/results_montecarlo_XXX_1.txt} 
+where $XXX$ is the raw results for language $XXX$ of the \acrshort{mc}, where it is describe the result for each iteration.
 
-If we analyze for example some of those detailed outputs of the results that can be found in \mintinline{bash}{docs/results_montecarlo.txt},
-in the cases of languages whose I need to \textbf{accept the \acrshort{nh}}, I have detected that the difference between the real value and for every
-iteration is very small. 
+Lets analyze what happen for those cases that I \textbf{cannot accept} \acrshort{nh} because the \textit{p-value} is $0.00$. For doing that I will purpose to analyze each of those 
+rejected language against some language whose \textit{p-value} \textbf{has been accepted} and it has similar characteristics. So lets define Similar. 
 
-\begin{listing}[H]
-    \inputminted[firstline=58, lastline=78, breaklines]{bash}{./results_montecarlo.txt}
-    \caption{Extracted from folder docs results\_montecarlo.txt}
-    \label{apx:results:1}
-\end{listing}  
+Given the set of languages $L = \{Arabic, \dots, Turkish\}$ A language $S_i$ is similar to other language if the difference in number of vertices are minimum with respect to $L$:
 
-As it can be seen here~\ref{apx:results:1} the real \acrshort{cc} for \textbf{Catalan} language is \textbf{$0.3410102$}
-and all values generated by the random \acrshort{switching} have been between $0.3498$ and $0.3556$ which indicates that
-the \acrshort{cc} is higher than the real but very close to it.
+\begin{equation}
+    S_i = \argmin_{j \in L, j \neq i} \{ |N_j - N_i| \land p_{value}(j) > 0.05 \}
+\end{equation}
 
-On the other hand the same can be said about the \textbf{rejection cases} whose \textit{p-value} gives $0.00$ in this \acrshort{nh}.
-In those cases, \textbf{Basque and Turkish language}, it can be appreciated that although there is a \textbf{rejection} because \acrshort{cc} 
-is less than the real value of the metric, the values for each iteration are very close to the real \acrshort{cc}, so the distance between \acrshort{cc} of 
-\acrshort{nh} and real model is very small.
-
-\begin{listing}[H]
-    \inputminted[firstline=12, lastline=32, breaklines]{bash}{./results_montecarlo.txt}
-    \caption{Extracted from folder docs results\_montecarlo.txt}
-    \label{apx:results:2}
-\end{listing}  
-
-For example, lets analyze \textbf{Basque} language. \acrshort{cc} value for the real model is $0.2697194$, and the values obtained
-in \acrshort{nh} have been between  $0.2575014 \leq x_{hnull} \geq 0.2633076$, which indicates that the difference with the lower bound and the real
-value is only $0.012$. This led me to think that perhaps tunning better the random generation of the graph or the number of permutations in the \acrshort{switching}
-can narrow the values a little more in order to accept the \acrshort{nh}. I haven't done that because that should be forcing the \acrshort{nh} to match with the expected
-results and that wouldn't be a serious experiment.
+\begin{itemize}
+    \item \textbf{Basque}: $S_{Basque} = Greek$. In this case we can appreciate that $<k>$ and $\delta$ in \textbf{Greek} is higher which indicate that the probability of being connected with central nodes are higher. 
+    This can explained why \acrshort{switching} preserves the structure and centrality in this case, which is more difficult to achieve with \textbf{Basque}.
+    \item \textbf{Chinese}: $S_{Chinese} = Catalan$. In this case we observe the same as in the previous case of \textbf{Basque}. This language \textbf{Chinese} has higher $<k>$ and $\delta$ rather than \textbf{Catalan}
+    which is the most Similar with acceptance of \acrshort{nh}. 
+    \item \textbf{English}: $S_{English} = Hungarian$. In this case since the $<k>$ is extremely high in comparison to the density this indicates that although \textbf{English} has a higher degree on average, that does not
+    mean are dense, which in random permutations those start to be lost for the number of terms and edges.
+    \item \textbf{Turkish}: $S_{Chinese} = Catalan$. In the case of \textbf{Chinese} we can appreciate that the $\delta$ is lower than \textbf{Catalan} which could indicate the same as \textbf{English}.
+\end{itemize}
+ 
 
 \subsection{Binomial}
 Regarding the \acrshort{binomial} none of the random generated graphs has been close to the real \acrshort{cc} of the given models,
-and it can be seen by the results output file \mintinline{bash}{docs/results_montecarlo.txt}, that all of the them behaves in a stable number according to the 
-number of \textbf{Edges and Vertices} that were provided for generating the Random Graph.
+and it can be seen by the results output file \mintinline{bash}{docs/results_montecarlo_XXX_2.txt} where $XXX$ is the raw results for language $XXX$ of the \acrshort{mc}, 
+that all of the them behaves in a stable number according to the number of \textbf{Edges and Vertices} that were provided for generating the Random Graph.
 
 This could be explain by the fact that \acrshort{binomial} are fully random graph and \acrshort{cc} is an intrinsic property of \textbf{non random graph}, because it indicates how concentrated 
 are the elements around some of them. In the previous \acrshort{switching} this behavior was different and it gives more accurate \acrshort{cc} values, because it is a permutation
@@ -177,25 +180,8 @@ Therefore, I need to \textbf{reject} the \acrshort{nh} in the case of \acrshort{
 In this section i am going to describe the method used for arriving to this conclusions, starting from analyzing the source code, following up to the parameters selected
 for running the analysis.
 
-
-\subsection{Experiment Parameters}
-I have set different type of parameters for the case of \acrshort{switching} and \acrshort{binomial}.
-
-For the case of \acrshort{switching}
-\begin{itemize}
-    \item $T = 20$ 
-    \item $Q = 15$
-\end{itemize}
-
-For the case of \acrshort{binomial} since i detected early that because of the fully randomization i will never going to achieve a close result, i decided
-to setup:
-\begin{itemize}
-    \item $T = 10$ 
-\end{itemize}
-
-
 \subsection{Source Code Implementation}
-When we talk about the methodology that it is used for conducting this kind of experiments it is a very important to remark what have been the decisions regarding the implementation in the source
+When we talk about the methodology that it is used for conducting this kind of experiments it is a very important to remark all those decisions regarding the implementation in the source
 code.
 As it can be seen in the folder of this distribution, the language use was \textbf{C++}.
 
@@ -204,22 +190,20 @@ As it can be seen in the folder of this distribution, the language use was \text
 Basically the Graph of the language is represented by an Adjacency matrix of the \textbf{Vertex} and \textbf{Edges} that are connected to those edges.
 
 \begin{listing}[H]
-    \inputminted[firstline=44, lastline=51, breaklines]{cpp}{../src/domain/graph.cc}
+    \inputminted[firstline=40, lastline=46, breaklines]{cpp}{../src/domain/graph.cc}
     \caption{Extracted from source code graph.cc}
     \label{source:code:1}
 \end{listing}  
 
-In this case it is worth to mention that \mintinline{cpp}{map<string, set<string>> _edges} and \mintinline{cpp}{vector<EDGE> inputEdges} are additional 
-structures to deal with the reorder base on degree distribution or random sort. 
 All the computations are done over the array of edges \mintinline{cpp}{vector<int> *adj} which is the adjacency list.
 
 \subsubsection{Order of Edges}
 After several and different experimentation I have finally decide to order the edges by \textbf{Degree sequence in descendent order}.
-
-This can be seen here, where after parsing the whole input file i am ordering the edges and finally creating the adjacency list.
+This order is done just before calculating the \acrshort{cc} to speed and optimize the process. In fact \textbf{Adjacency list of nodes are not sorted at all},
+the sorting process is done \textit{on-the-fly} when we need to iterate over the vertices for calculate \acrshort{cc}.
 
 \begin{listing}[H]
-    \inputminted[firstline=151, lastline=167, breaklines]{cpp}{../src/domain/graph.cc}
+    \inputminted[firstline=272, lastline=281, highlightlines={277-279}, breaklines]{cpp}{../src/domain/graph.cc}
     \caption{Extracted from source code graph.cc}
     \label{source:code:2}
 \end{listing}  
@@ -229,22 +213,48 @@ The calculation of \acrshort{cc} is as it was proposed in the work, a regular \t
 that can be seen here:
 
 \begin{listing}[H]
-    \inputminted[firstline=233, lastline=270, breaklines]{cpp}{../src/domain/graph.cc}
+    \inputminted[firstline=167, lastline=167, breaklines]{cpp}{../src/domain/graph.cc}
     \caption{Extracted from source code graph.cc}
     \label{source:code:3}
 \end{listing} 
 
-I have a couple of lines below that methods a calculation over the first $M$ items as it was 
-proposed in order to optimize the calculations but this has never worked for me, so i never implemented.
+In order to \textbf{speed the process} I have also implemented the proposal of the work to calculate for those nodes whose 
+$k < 2$ taking the distance of the parent $ + 1$. 
+
+\begin{listing}[H]
+    \inputminted[firstline=126, lastline=156, highlightlines={127-132,145-153}, breaklines]{cpp}{../src/domain/graph.cc}
+    \caption{Extracted from source code graph.cc}
+    \label{source:code:3}
+\end{listing} 
+
+Also I have implemented the \textbf{Optimization} regarding to not calculate the whole \acrshort{cc} for the whole graph, and 
+only a portion of them taking and $M = \frac{N}{1000}$.
+
+\begin{listing}[H]
+    \inputminted[firstline=284, lastline=296, breaklines]{cpp}{../src/domain/graph.cc}
+    \caption{Extracted from source code graph.cc}
+    \label{source:code:4}
+\end{listing} 
 
 \subsubsection{Montecarlo}
+The main algorithm can be found here:
+
+\begin{listing}[H]
+    \inputminted[firstline=37, lastline=59, breaklines]{cpp}{../src/graph/aprox.cc}
+    \caption{Extracted from source code aprox.cc}
+    \label{source:code:8}
+\end{listing} 
+
+
 In the case of \acrshort{mc} I have implemented the generation of the \acrshort{binomial} which can be found here:
 
 \begin{listing}[H]
-    \inputminted[firstline=77, lastline=107, breaklines]{cpp}{../src/graph/aprox.cc}
+    \inputminted[firstline=74, lastline=98, breaklines]{cpp}{../src/graph/aprox.cc}
     \caption{Extracted from source code aprox.cc}
-    \label{source:code:4}
+    \label{source:code:5}
 \end{listing} 
+
+There are more lines that it is not appearing here~\ref{source:code:5} because to fit in the page.
 
 And in the case of \acrshort{switching} it is a slightly more complicated because i needed to take care of no breaking the 
 structure of the graph when i toss the coin to switch 2 terminals of 2 different edges.
@@ -252,21 +262,48 @@ structure of the graph when i toss the coin to switch 2 terminals of 2 different
 Basically the main implementation of the \acrshort{switching} can be seen here:
 
 \begin{listing}[H]
-    \inputminted[firstline=64, lastline=74, breaklines]{cpp}{../src/graph/aprox.cc}
+    \inputminted[firstline=61, lastline=71, breaklines]{cpp}{../src/graph/aprox.cc}
     \caption{Extracted from source code aprox.cc}
-    \label{source:code:5}
+    \label{source:code:6}
 \end{listing} 
 
 But the \mintinline{cpp}{TrySwitch} method which is doing the whole work can be found here:
 
 \begin{listing}[H]
-    \inputminted[firstline=280, lastline=317, breaklines]{cpp}{../src/domain/graph.cc}
+    \inputminted[firstline=299, lastline=299, breaklines]{cpp}{../src/domain/graph.cc}
     \caption{Extracted from source code graph.cc}
-    \label{source:code:6}
-\end{listing} 
+    \label{source:code:7}
+\end{listing}
 
-As it can be appreciated this is a more complex code because i am preventing to do a switching which 
-can generate that the whole structure of the graph can be broken.
+There are more lines that it is not appearing here~\ref{source:code:7} because to fit in the page.
+
+\subsection{Optimization and Improvements}\label{sub:section:opt}
+I have done both optimizations proposed by the work:
+
+\begin{itemize}
+    \item Not calculating exhaustively \acrshort{cc} for nodes whose degree is less than 2 $k < 2$. This has been
+    shown here~\ref{source:code:3}
+    \item In the case of \acrshort{mc} Calculate a portion $M$ for both the real model and the \acrshort{nh}. This has 
+    been explained here~\ref{source:code:4}
+\end{itemize}
+
+\subsection{Experiment Parameters}
+Implementing all the optimizations described before~\ref{sub:section:opt}, I was able to produce experiments with higher value of $T$
+for all languages in the case of \acrshort{switching}.
+
+\begin{itemize}
+    \item $T = 1000$ 
+    \item $Q = 15$
+\end{itemize}
+
+For the case of \acrshort{binomial} since i detected early that because of the fully randomization i will never going to achieve a close result, i decided
+to setup in the minimum value which is $100$.
+\begin{itemize}
+    \item $T = 100$ 
+\end{itemize}
+
+All the outputs of the experiment with each value generated can be found as i pointed out at the beginning of this document 
+\mintinline{bash}{results/results_montecarlo_XXX_1.txt}, suffix $1$ for the case of \acrshort{switching} and $2$ for \acrshort{binomial}.
 
 \section{Conclusions}
 One of the first conclusions i can arrive after doing these experiments is that \acrshort{switching} is a more accurate
@@ -281,7 +318,7 @@ As a future work, it would be important to explore other mechanisms to tunning b
 to have the same level of randomization but preserving better \acrshort{cc} characteristics of the original model.
 
 In conclusion although it is quite hard to iterate over a large number of $T$ in order to measure properly the \acrshort{cc} based on the \acrshort{nh},
-it has been seen that \acrshort{switching} gives us very accurate approximation.
+it has been seen that \acrshort{switching} gives us an accurate approximation.
 
 \printglossary[type=\acronymtype]
 
@@ -293,13 +330,80 @@ The source code and different assets that are contained in these folders are cla
     \item \textbf{bin} This folder contains the compiled binary files for the code that implements the requirements suggested by the lab work.
     \item \textbf{data} This folder contains the input \acrshort{lang} provided.
     \item \textbf{docs} This folder contains this report in Latex and PDF compiled format.
-    \item \textbf{out} This folder contains the standar output results after executing each program over the \acrshort{lang}
+    \item \textbf{out} This folder contains the standard output results after executing each program over the \acrshort{lang}
+    \item \textbf{results} This folder contains the standard output of the raw results obtained in the experiments conducted for each \acrshort{lang}
     \item \textbf{src} This folder contains the \mintinline{bash}{cpp} files with the source code implementation.
     \item \textbf{\mintinline{bash}{./Makefile}} Makefile to compile programs
     \item \textbf{\mintinline{bash}{./README.md}} Markdown file with the instructions to run the program.
     \item \textbf{\mintinline{bash}{./run_closeness.sh}} Script file for running the algorithm over the \acrshort{lang} in order to calculate \textit{Closeness Centrality} and 
     main features of each language.
-    \item \textbf{\mintinline{bash}{./run_montecarlo.sh}} Script file for running the aproximation algorithms for each language with null models.
+    \item \textbf{\mintinline{bash}{./run_montecarlo.sh}} Script file for running the approximation algorithms for each language with null models.
 \end{itemize}
+
+\section{Running and Compiling}
+\subsection{Compiling}
+
+\begin{listing}[H]
+    \begin{minted}{bash}
+        > make clean
+        > make all
+    \end{minted}
+\end{listing}
+
+All the binaries are going to be place in \mintinline{bash}{bin/} directory.
+
+\subsection{Help}
+
+\begin{listing}[H]
+    \begin{minted}{bash}
+        > bin/closeness -h
+        > bin/montecarlo -h
+    \end{minted}
+\end{listing}
+
+\subsection{Running for a Single Language}
+\subsubsection{Closeness Centrality for real Model}
+
+\begin{listing}[H]
+    \begin{minted}{bash}
+        > bin/closeness "data/Basque_syntactic_dependency_network.txt"
+    \end{minted}
+\end{listing}
+
+\subsubsection{Montecarlo Approximation for Switching Model}
+
+\begin{listing}[H]
+    \begin{minted}{bash}
+        > bin/montecarlo "data/Basque_syntactic_dependency_network.txt" T Q 1
+    \end{minted}
+\end{listing}
+
+Where $T$ is the number of iterations of Montecarlo Method and $Q$ the number of Switching that is going to be multiplied by the number of Edges to get the total number of switching.
+
+\subsubsection{Montecarlo Approximation for Binomial Model}
+
+\begin{listing}[H]
+    \begin{minted}{bash}
+        > bin/montecarlo "data/Basque_syntactic_dependency_network.txt" T Q 2
+    \end{minted}
+\end{listing}
+
+\subsection{Running for ALL Language}
+
+\begin{listing}[H]
+    \begin{minted}{bash}
+        > sh run_closeness.sh
+    \end{minted}
+\end{listing}
+
+\begin{listing}[H]
+    \begin{minted}{bash}
+        > sh run_montecarlo.sh
+    \end{minted}
+\end{listing}
+
+\textbf{WARNING: This script might take more than 6 HOURS TO FINISH.}
+
+
 
 \end{document}

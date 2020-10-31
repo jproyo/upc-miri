@@ -37,13 +37,12 @@ int main(int argc, char* argv[]) {
   show_help_aprox(argc,argv);
 
   string path = argv[1];
-  double x = atof(argv[2]);
-  int t = atoi(argv[3]);
-  int q = atoi(argv[4]);
-  int model = atoi(argv[5]);
+  int t = atoi(argv[2]);
+  int q = atoi(argv[3]);
+  int model = atoi(argv[4]);
   Graph g = Graph::fromStdIn(path);
-  Montecarlo m = Montecarlo(g,t,q, model, x);
-  cout << "Executing Montecarlo for Language " << g.GetLanguage() << " - T " << t << " - Q " << q << " - Model " << (model == 1?"Switching":"Binomial") <<endl;
+  Montecarlo m = Montecarlo(g,t,q, model);
+  cout << "Executing Montecarlo for Language " << g.GetLanguage() << " - T " << t << " - Q " << q << " - Model " << (model == 1?"Switching":"Binomial") << endl;
   chrono::steady_clock::time_point begin = chrono::steady_clock::now();
   double pval = m.CalcPValue();
   chrono::steady_clock::time_point end = chrono::steady_clock::now();

@@ -21,36 +21,28 @@
 #include <chrono>
 #include <vector>
 #include <queue>
+#include <numeric>      // std::iota
+#include <algorithm>    // std::sort, std::stable_sort
 
 namespace fs = std::__fs::filesystem;
 
 using namespace std;
 
-typedef pair<string, int> EDGE_DEGREE;
-typedef pair<string, string> EDGE;
+vector<size_t> sort_indexes(const vector<int> *v, int size) {
+  vector<size_t> idx(size);
+  iota(idx.begin(), idx.end(), 0);
+  stable_sort(idx.begin(), idx.end(),
+       [&v](size_t i1, size_t i2) {return v[i1].size() >= v[i2].size();});
 
-struct cmpByDegreeAsc {
-    bool operator()(const EDGE_DEGREE& a, const EDGE_DEGREE& b) const {
-        return a.second <= b.second;
-    }
-};
-
-struct cmpByDegreeDesc {
-    bool operator()(const EDGE_DEGREE& a, const EDGE_DEGREE& b) const {
-        return a.second >= b.second;
-    }
-};
+  return idx;
+}
 
 class Graph 
 { 
-    map<string, set<string>> _edges;
     string language;
-	int V;
+    int V;
     int E;
-	vector<int> *adj; 
-    int **distances;
-    vector<EDGE> inputEdges;
-    vector<bool> distCalculated;
+    vector<int> *adj; 
 
 public: 
 	Graph(string language, int V); 
@@ -59,23 +51,11 @@ public:
 
 	void addEdge(int v, int w); 
 
-    void AddEdgeUnderlying(string v, string w); 
-
-    double Closeness(int s); 
-	
-    void ClosenessBFS(int s); 
-    
-    void ClosenessLowDegree(int s); 
-
-    void CopyDistancesPlus1(int s, int t);
-
     double ClosenessCentrality(); 
 
     double ClosenessCentralityReduced(int M);
 
     void TrySwitch(int v1, int v2);
-
-    void CreateAdjOrdered();
 
     void PrintAdjList();
 
@@ -84,7 +64,9 @@ public:
     string GetLanguage();
 
     int GetV();
+
     int GetE();
+
     vector<int>* GetAdj();
 
     double GetK();
@@ -110,20 +92,106 @@ public:
             Graph graph(language, vertices);
             string v1, v2;
             int c = 0;
+            int v = 0;
+            map<string, int> m;
             for(int i = 0; i<edges; i++){
                 inFile >> v1 >> v2;
                 if(v1.compare(v2) != 0) {
-                    graph.AddEdgeUnderlying(v1, v2);
+                    if ( m.find(v1) == m.end() ) {
+                        if ( m.find(v2) == m.end() ) {
+                            m[v1] = v++;
+                            m[v2] = v++;
+                        }else{
+                            m[v1] = v++;
+                        }
+                    }else{
+                        if ( m.find(v2) == m.end() ) {
+                            m[v2] = v++;
+                        }
+                    }
+                    graph.addEdge(m[v1], m[v2]);
+                    graph.addEdge(m[v2], m[v1]);
                     c++;
                 }
             }
             inFile.close();
             graph.SetEdgesCount(c);
-            graph.CreateAdjOrdered();
             return graph;
         }
         throw new exception;
     }
+
+    private:
+
+    double Closeness(int s, int **distances, vector<bool> distCalculated){
+        if(adj[s].size() == 0) return 0.0;
+        if(adj[s].size()<2){
+            ClosenessLowDegree(s, distances, distCalculated);
+        }else{
+            ClosenessBFS(s, distances, distCalculated);
+        }
+        double closeness = 0.0;
+        for(int i = 0; i<V; i++){
+            if(distances[s][i] > 0) closeness += 1/(1.0*distances[s][i]);
+        }
+        return closeness/(1.0*(V-1));
+    }
+
+    void ClosenessLowDegree(int s, int **distances, vector<bool> distCalculated){
+        if(!distCalculated.at(s)){
+            int node = adj[s].front();
+            distances[s] = new int[V];
+            for(int i = 0; i<V; i++) distances[s][i] = 0;
+            if(adj[node].size()<2 && adj[node].front() == s){
+                distances[node] = new int[V];
+                distances[s][node] = 1;
+                distances[node][s] = 1;
+                distCalculated.assign(node,
+                true);        
+            }else{
+                CopyDistancesPlus1(node, s, distances);
+            }
+            distCalculated.assign(s, true);
+        }
+    }
+
+    void CopyDistancesPlus1(int sourceNode, int targetNode, int **distances){
+        for(int i = 0; i < V;i++){
+            if(distances[sourceNode][i] != targetNode && distances[sourceNode][i] > 0){
+                distances[targetNode][i] = distances[sourceNode][i] + 1;
+            }
+        }
+        distances[targetNode][sourceNode] = 1;
+    }
+
+    void ClosenessBFS(int s, int **distances, vector<bool> distCalculated) 
+    { 
+        queue<int> q; 
+        vector<bool> visited;
+        visited.assign(V, false); 
+
+        q.push(s);  
+        distances[s] = new int[V];
+        for(int i = 0; i<V; i++) distances[s][i] = 0;
+        visited[s] = true; 
+            
+        while (!q.empty()) 
+        { 
+            int u = q.front(); 
+            q.pop(); 
+
+            for (auto i = adj[u].begin(); i != adj[u].end(); i++) 
+            { 
+                if (!visited[*i]) 
+                { 
+                    visited[*i] = true; 
+                    distances[s][*i] = distances[s][u] + 1; 
+                    q.push(*i);  
+                } 
+            } 
+        } 
+        distCalculated.assign(s, true);
+    } 
 
 }; 
 
@@ -134,22 +202,12 @@ Graph::Graph(string language, int V)
     this->language = language;
 	this->V = V; 
 	adj = new vector<int>[V]; 
-    distances = new int*[V];
-    distCalculated.assign(V, false); 
 } 
 
 Graph::Graph(const Graph &g){
     this->language = g.language;
     this->V = g.V;
     this->E = g.E;
-    this->distances = new int*[V];
-    this->distCalculated.assign(V, false); 
-    std::map<string, set<string>>::const_iterator it = g._edges.begin();
-    while(it != g._edges.end())
-    {
-        this->_edges[it->first] = it->second;
-        ++it;
-    }
     this->adj = new vector<int>[V];
     for (auto i = 0; i<V; i++){
         this->adj[i] = g.adj[i];
@@ -158,24 +216,6 @@ Graph::Graph(const Graph &g){
 
 void Graph::SetEdgesCount(int count){
     this->E = count;
-}
-
-void Graph::CreateAdjOrdered(){
-    set<EDGE_DEGREE, cmpByDegreeDesc> ordered;
-    for(map<string,set<string>>::iterator iter = _edges.begin(); iter != _edges.end(); ++iter){
-        ordered.insert(EDGE_DEGREE(iter->first, iter->second.size()));
-    }
-
-    map<string, int> m;
-    for(set<EDGE_DEGREE>::iterator iter = ordered.begin(); iter != ordered.end(); ++iter){
-        m[iter->first] = distance(ordered.begin(), iter);
-    }
-
-    for(map<string,set<string>>::iterator iter = _edges.begin(); iter != _edges.end(); ++iter){
-        for(set<string>::iterator iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2){
-            this->addEdge(m[iter->first], m[*iter2]);
-        }
-    }
 }
 
 void Graph::PrintAdjList(){
@@ -190,19 +230,6 @@ void Graph::PrintAdjList(){
 void Graph::addEdge(int v, int w) 
 { 
 	adj[v].push_back(w); 
-} 
-
-void Graph::AddEdgeUnderlying(string v, string w) 
-{
-    if(_edges.find(v) == _edges.end()){
-        _edges[v] = set<string>(); 
-    } 
-    if(_edges.find(w) == _edges.end()){
-        _edges[w] = set<string>(); 
-    } 
-	_edges[v].insert(w);
-    _edges[w].insert(v);
-    inputEdges.push_back(EDGE(v,w));
 } 
 
 string Graph::GetLanguage(){
@@ -242,79 +269,32 @@ void Graph::PrintTable1Report(){
     << endl;
 }
 
-double Graph::Closeness(int s){
-    if(adj[s].size()<2){
-        ClosenessLowDegree(s);
-    }else{
-        ClosenessBFS(s);
-    }
-    double closeness = 0.0;
-    for(int i = 0; i<V; i++){
-        if(distances[s][i] > 0) closeness += 1/(1.0*distances[s][i]);
-    }
-    return closeness/(1.0*(V-1));
-}
-
-void Graph::ClosenessLowDegree(int s){
-    if(!distCalculated[s]){
-        int node = adj[s].front();
-        distances[s] = new int[V];
-        for(int i = 0; i<V; i++) distances[s][i] = 0;
-        if(adj[node].size()<2 && adj[node].front() == s){
-            distances[node] = new int[V];
-            distances[s][node] = 1;
-            distances[node][s] = 1;
-            distCalculated[node] = true;        
-        }else{
-            CopyDistancesPlus1(node, s);
-        }
-        distCalculated[s] = true;
-    }
-}
-
-void Graph::CopyDistancesPlus1(int sourceNode, int targetNode){
-    for(int i = 0; i < V;i++){
-        if(distances[sourceNode][i] != targetNode && distances[sourceNode][i] > 0){
-            distances[targetNode][i] = distances[sourceNode][i] + 1;
-        }
-    }
-    distances[targetNode][sourceNode] = 1;
-}
-
-void Graph::ClosenessBFS(int s) 
-{ 
-    queue<int> q; 
-  	vector<bool> visited;
-    visited.assign(V, false); 
-
-    q.push(s);  
-    distances[s] = new int[V];
-    for(int i = 0; i<V; i++) distances[s][i] = 0;
-    visited[s] = true; 
-          
-    while (!q.empty()) 
-    { 
-        int u = q.front(); 
-        q.pop(); 
-
-        for (auto i = adj[u].begin(); i != adj[u].end(); i++) 
-        { 
-            if (!visited[*i]) 
-            { 
-                visited[*i] = true; 
-                distances[s][*i] = distances[s][u] + 1; 
-                q.push(*i);  
-            } 
-        } 
-    } 
-    distCalculated[s] = true;
-} 
-
 double Graph::ClosenessCentrality(){
     double closeness = 0.0;
-    for(int i = 0; i<V; i++) closeness += Closeness(i);
+    int **distances = new int*[V];
+    vector<bool> distCalculated;
+    distCalculated.assign(V, false);
+    for (auto i: sort_indexes(adj, V)) {
+        closeness += Closeness(i, distances, distCalculated);
+    }
+    delete *distances;
     return closeness/(1.0*V);
 } 
+
+double Graph::ClosenessCentralityReduced(int M){
+    double closeness = 0.0;
+    int **distances = new int*[V];
+    vector<bool> distCalculated;
+    distCalculated.assign(V, false);
+    int a = 0;
+    for (auto i: sort_indexes(adj, V)) {
+        if(a >= M) break;
+        closeness += Closeness(i, distances, distCalculated);
+        a++;
+    }
+    return closeness/(1.0*V);
+} 
+
 
 void Graph::TrySwitch(int v1, int v2){
     vector<int> _v2 = adj[v2];

@@ -7,6 +7,8 @@ This README file only contains instruction to running the program and does NOT c
 - **`bin`**: Folder with compiled binaries. The content of this folder is deleted on `make clean` task.
 - **`docs`**: Latex and PDF generated report with the formal specification of the solution.
 - **`data`**: Language models that input the program
+- **`results`**: Results with experiment conducted. 
+> PLEASE DO NOT DELETE THIS FOLDER OR ITS CONTENT
 - **`reports`**: Output of running the program with raw data
 
     > NOTE: We are delivering the solutions obtained in the best running of the program. If you want to clean up this folder, please first save this outputs files in other place.
@@ -41,7 +43,29 @@ All the binaries are going to be place in [bin](bin/) directory
 > bin/montecarlo -h
 ```
 
-### Running
+### Running for a Single language
+
+- Closeness Centrality for real Model
+
+```shell
+> bin/closeness "data/Basque_syntactic_dependency_network.txt"
+```
+
+- Montecarlo Approximation for Switching Model
+
+```shell
+> bin/montecarlo "data/Basque_syntactic_dependency_network.txt" T Q 1
+```
+Where `T` is the number of iterations of Montecarlo Method and `Q` the number of Switching that is going to be multiplied by the number of Edges to get the total number of switching.
+
+- Montecarlo Approximation for Binomial Model
+
+```shell
+> bin/montecarlo "data/Basque_syntactic_dependency_network.txt" T Q 2
+```
+Where `T` is the number of iterations of Montecarlo Method and `Q` the number of Switching that is going to be multiplied by the number of Edges to get the total number of switching.
+
+### Running with Script
 
 
 For running the program just do:

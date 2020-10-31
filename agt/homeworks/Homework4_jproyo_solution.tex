@@ -13,7 +13,8 @@
 \usepackage{caption}
 \usepackage{titlesec}
 \usepackage{multirow}
-
+\usepackage{tikz}
+\usetikzlibrary{arrows}
 
 \title{%
   Algorithmic Game Theory \\
@@ -81,40 +82,111 @@ Then, \textbf{it is not convex.}
 
 \subsection{(c) Shapley values}
 Knowing that Shapley value is additive we can think on splitting up the game as the sum of several
-Shaply values if they were different games. 
+Shapley values if they were different games, one for each album $j$.
 
-Lets define that a game $\Gamma_j$ as the recording of $j$ album type. So,
+Given that $S_{\pi}(i)$ is the list of predecessors, in this case \textbf{players} before $i$, that may or may not contribute with copy of album $j$.
+
+We have 2 cases 
+\begin{itemize}
+  \item If $i$ does not have a copy of $j$, then $\Phi_i(\Gamma_j) = 0$
+  \item If $i$ does, we need to count the number of possible permutation in which the other players have or not have $k-1$ copies of $j$
+\end{itemize}
+
+For that we know that if $v(S_{\pi}(i)) = 0$ and $i$ is added $v(S_{\pi}(i) \cup \{i\}) = 1$, \textit{if and only if} there is
+$\sum_{a \in S_{\pi}(i)} x_{aj} = k - 1$. So we have that,
+
+\begin{equation}
+  \Phi_i(\Gamma_j) = \frac{|\{n | v(S_{\pi}(i)) = 0 \land v(S_{\pi}(i) \cup \{i\}) = 1\}|}{n!}
+\end{equation}
+
+So, we need to count the number of other players that has copies of $j$.
+
+Lets define $b_j$ as the number of player that has copies of $j$.
+
+Basically the permutation has the following form:
+
+\begin{center}
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4.8cm,semithick]
+    \node         (S)              {};
+    \node         (i) [right of=S] {$i$};
+    \node         (F) [right of=i] {};
+    
+    \path (i) edge node {$S_{\pi}(i)$} (S);
+    \path (i) edge [below] node {$N \setminus \{S_{\pi}(i) \cup \{i\}\}$} (F);
+  \end{tikzpicture}
+\end{center}
+
+In this picture, we can see that $S_{\pi}(i)$ has $k-1$ players with a copy of $j$ and the rest after $i$ does not.
+
+Therefore we can argue that:
+
 \[
-  v(C) = \begin{cases}
-    1 \text{ if } \sum_{i \in C} x_i \geq k\\
-    0 \text{ otherwise}
+  \begin{cases}
+    | S_{\pi}(i) | \geq k-1 \\
+    n - | S_{\pi}(i) | \geq b_j - k
   \end{cases}
-  \]
+\]
 
-where $x_i$ is the amount of copies of album $j$ that player $i$ contributes.
+Plugin this equations together we have that 
 
-The Shapley value for this game should be:
+\begin{equation}
+  k-1 \leq | S_{\pi}(i) | \leq n - b_j - k
+\end{equation}
+
+Lets define this amount of players as $| S_{\pi}(i) | = \alpha$, so 
+
+\begin{equation}
+  k-1 \leq \alpha \leq n - b_j - k
+\end{equation}
+
+Graphically we can represent the number of players with:
+
+\begin{center}
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4.8cm,semithick]
+    \node         (S)              {};
+    \node         (i) [right of=S] {$i$};
+    \node         (F) [right of=i] {};
+    
+    \path (i) edge node {$\alpha$} (S);
+    \path (i) edge [below] node {$n - \alpha - 1$} (F);
+  \end{tikzpicture}
+\end{center}
+
+This means that $\alpha_i$ first players have $k-1$ copies of $j$ and the rest $n-\alpha-1$ does not.
+
+So we need to count all possible combinations of players that has copies of $j$ and those who don't taking into consideration that $i$ has 1 copy.
+
+\begin{equation}
+  \binom{b_j - 1}{k-1}\binom{n-b_j}{\alpha - k - 1}
+\end{equation}
+
+So the total number of permutations when $v(S_{\pi}(i)) = 0 \land v(S_{\pi}(i) \cup \{i\}) = 1$, with $| S_{\pi}(i) | = \alpha$ is:
+
+\begin{equation}
+  \binom{b_j - 1}{k-1}\binom{n-b_j}{\alpha - k - 1} \alpha! (n - \alpha - 1)! 
+\end{equation}
+
+Therefore,
 
 \begin{subequations}
-  \begin{align}    
-    \Phi_i(\Gamma_j) &= \frac{1}{N!} \sum_{C \subseteq N \setminus \{i\}} v(C \cup \{i\}) - v(C)\\
-                     &= \frac{1}{N!}\label{eq:1}
+  \begin{align} 
+    \Phi_i(\Gamma) &= \frac{\sum_{\alpha = k -1}^{n-b_j-k} \binom{b_j - 1}{k-1}\binom{n-b_j}{\alpha - k - 1} \alpha! (n - \alpha - 1)!}{n!}\\
+                   &= \frac{\binom{b_j - 1}{k-1}}{n!} \sum_{\alpha = k -1}^{n-b_j-k} \binom{n-b_j}{\alpha - k - 1} \alpha! (n - \alpha - 1)!
   \end{align}
 \end{subequations}
 
-This~\ref{eq:1} because once we have $1$ we are not summing up anything.
 
-Using additivity property of Shapley values if we telescope this to the sum of all games of different albums
+Using additivity property of Shapley values if we telescope this to the sum of all games of different albums $j$
 
 \begin{subequations}
   \begin{align}    
-  \Phi_i(\Gamma) &= \Phi_i\bigr(\sum_{j=1}^m \Gamma_j\bigl)\\
-                 &= \sum_{j=1}^n \Phi_i(\Gamma_j)\\
-                 &= \frac{m}{N!}
-\end{align}
+  \Phi_i(\Gamma) &= \Phi_i\bigr(\sum_{j=1}^M \Gamma_j\bigl)\\
+                 &= \sum_{j=1}^M \Phi_i(\Gamma_j)\\
+                 &= \sum_{j=1} \frac{\binom{b_j - 1}{k-1}}{n!} \sum_{\alpha = k -1}^{n-b_j-k} \binom{n-b_j}{\alpha - k - 1} \alpha! (n - \alpha - 1)!
+  \end{align}
 \end{subequations}
 
-It can be easily calculate in \textit{Poly-time} because of the simplicity of the final expression.
+It cannot be calculated in \textit{Poly-time} because it has exponential number of permutation.
 
 \end{document}
 

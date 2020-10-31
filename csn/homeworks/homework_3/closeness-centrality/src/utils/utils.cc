@@ -27,11 +27,11 @@ namespace utils {
       // Write help message.
     if (argc != 4 and (string(argv[1]) == "-h" or string(argv[1]) == "--help")) {
       cerr << "Run the Closeness Centrality Metric Significance" << endl;
-      cerr << "Usage: " << argv[0] << " \"data/Some_Lang.txt\" \"0.7\" 5 5" << endl;
+      cerr << "Usage: " << argv[0] << " \"data/Some_Lang.txt\" 5 5 1" << endl;
       cerr << "1 parameter: Path to language file" << endl;
-      cerr << "2 parameter: Closeness Centrality Real model" << endl;
-      cerr << "3 parameter: T for Montecarlo" << endl;
-      cerr << "4 parameter: Q for Switching" << endl;
+      cerr << "2 parameter: T for Montecarlo" << endl;
+      cerr << "3 parameter: Q for Switching" << endl;
+      cerr << "4 parameter: 1 if switching 2 if binomial for Switching" << endl;
       exit(0);
     }
   }

@@ -1,0 +1,12 @@
+language file
+Arabic ./data/Arabic_dependency_tree_metrics.txt
+Basque ./data/Basque_dependency_tree_metrics.txt
+Catalan ./data/Catalan_dependency_tree_metrics.txt
+Chinese ./data/Chinese_dependency_tree_metrics.txt
+Czech ./data/Czech_dependency_tree_metrics.txt
+English ./data/English_dependency_tree_metrics.txt
+Greek ./data/Greek_dependency_tree_metrics.txt
+Hungarian ./data/Hungarian_dependency_tree_metrics.txt
+Italian ./data/Italian_dependency_tree_metrics.txt
+Turkish ./data/Turkish_dependency_tree_metrics.txt
+

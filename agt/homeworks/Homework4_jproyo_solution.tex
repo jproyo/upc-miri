@@ -96,7 +96,7 @@ For that we know that if $v(S_{\pi}(i)) = 0$ and $i$ is added $v(S_{\pi}(i) \cup
 $\sum_{a \in S_{\pi}(i)} x_{aj} = k - 1$. So we have that,
 
 \begin{equation}
-  \Phi_i(\Gamma_j) = \frac{|\{n | v(S_{\pi}(i)) = 0 \land v(S_{\pi}(i) \cup \{i\}) = 1\}|}{n!}
+  \Phi_i(\Gamma_j) = \frac{|\{\pi | v(S_{\pi}(i)) = 0 \land v(S_{\pi}(i) \cup \{i\}) = 1\}|}{n!}
 \end{equation}
 
 So, we need to count the number of other players that has copies of $j$.
@@ -130,13 +130,13 @@ Therefore we can argue that:
 Plugin this equations together we have that 
 
 \begin{equation}
-  k-1 \leq | S_{\pi}(i) | \leq n - b_j - k
+  k-1 \leq | S_{\pi}(i) | \leq n - b_j + k
 \end{equation}
 
 Lets define this amount of players as $| S_{\pi}(i) | = \alpha$, so 
 
 \begin{equation}
-  k-1 \leq \alpha \leq n - b_j - k
+  k-1 \leq \alpha \leq n - b_j + k
 \end{equation}
 
 Graphically we can represent the number of players with:
@@ -186,7 +186,9 @@ Using additivity property of Shapley values if we telescope this to the sum of a
   \end{align}
 \end{subequations}
 
-It cannot be calculated in \textit{Poly-time} because it has exponential number of permutation.
+Although it cannot be calculated in \textit{Poly-time} because the size of the input can be big and the calculation could not be done in \textit{Poly-time},
+the calculation itself of the $\Phi_i(\Gamma)$ can be done in \textit{Poly-time} assuming that \textbf{product of numbers} are constant, then \textbf{factorials} are linear.
+On the other hand, the combination depends on $\alpha$ that are a subset of the possible permutation and not the whole Set.
 
 \end{document}
 

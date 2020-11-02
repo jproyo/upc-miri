@@ -27,6 +27,16 @@ print_summary_table <- function(data){
   print.data.frame(df, right=FALSE, row.names=FALSE)
 }
 
+# Plot data for each language 
+plot_language <- function(language, file){
+  dep_tree = read.table(file, header = FALSE)
+  colnames(dep_tree) = c("vertices","degree_2nd_moment", "mean_length")
+  dep_tree = dep_tree[order(dep_tree$vertices), ]
+  mean_dep_tree = aggregate(dep_tree, list(dep_tree$vertices), mean)
+  plot(log(mean_dep_tree$vertices), log(mean_dep_tree$mean_length),main = language,
+       xlab = "log(vertices)", ylab = "log(mean dependency length)")
+}
+
 main <- function(){
 
   # Read all in-degree files to iterate each language
@@ -39,7 +49,12 @@ main <- function(){
   }
   print_summary_table(result)
 
-    
+  # Potting
+  for (x in 1:nrow(source)) {
+    plot_language(source$language[x], source$file[x])
+  }
+  
+  
 }
 
 ## RUN PROGRAM

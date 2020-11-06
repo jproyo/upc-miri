@@ -58,3 +58,8 @@ makeLenses ''Schedule
 makePrisms ''Resource
 
 instance Wrapped ResourceList
+
+maxNode :: Schedule -> Int
+maxNode sc = let alapMax = maximumOf traverse (sc^.sAlap ^.. folded . nId) & maybe 0 identity
+                 alapMaxStep = maximumOf traverse (sc^.sAsap ^.. folded . nEndStep) & maybe 0 identity
+              in (alapMax * 10)+alapMaxStep

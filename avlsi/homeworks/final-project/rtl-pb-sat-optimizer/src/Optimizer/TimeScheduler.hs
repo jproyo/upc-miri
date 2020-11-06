@@ -27,7 +27,8 @@ data EncodedState = EncodedState
 makeLenses ''EncodedState
 
 encode :: Schedule -> PB.Formula
-encode = flip evalState (EncodedState 0 M.empty) . encodeFormula
+encode sc = let maxLit = maxNode sc
+             in flip evalState (EncodedState maxLit M.empty) . encodeFormula $ sc
 
 encodeFormula :: MonadState EncodedState m => Schedule -> m PB.Formula
 encodeFormula sc = do 

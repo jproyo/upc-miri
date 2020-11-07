@@ -11,7 +11,11 @@
 module Data.Schedule where
 
 import Control.Lens
-import Relude
+import Data.Map as M
+import Data.List as L
+import Data.Text as T
+import Relude as R
+import GHC.Show 
 
 type Asap = [Node]
 
@@ -59,17 +63,44 @@ data NodeResult = NodeResult
   } deriving Show
 
 data ScheduleResult = ScheduleResult 
-  { _srNodes :: [NodeResult]
-  , _srResources :: [Resource]
-  , _srOptimum :: Integer
-  } deriving Show
+  { _srNodes     :: [NodeResult]
+  , _srResources :: [(ResourceType, Int)]
+  , _srOptimum   :: Integer
+  }
 
+data EncodedState = EncodedState
+  { _esLastLit :: Int
+  , _esResourceSlot :: Map ResourceType [Int]
+  } deriving (Show, Eq)
+
+makeLenses ''NodeResult
+makeLenses ''EncodedState
 makeLenses ''ScheduleResult
 makeLenses ''Resource
 makeLenses ''ResourceList
 makeLenses ''Node
 makeLenses ''Schedule
 makePrisms ''ResourceType
+
+instance Show ScheduleResult where
+  show ScheduleResult{..} = 
+    let nodes = L.groupBy (\a b -> a^.nrStep == b^.nrStep) . sortWith (view nrStep) $ _srNodes
+     in toString $ "\n---------------------------\n" <> showNodes nodes <> "\n---------------------------\n" <> showResource _srResources <> "\n---------------------------\n" <> "Optimum: " <> R.show _srOptimum
+
+showResource :: [(ResourceType, Int)] -> Text
+showResource = mappend "###### Resources ######\n" . T.intercalate "\n" . R.foldl' eachResource [] 
+  where
+    eachResource :: [Text] -> (ResourceType, Int) -> [Text]
+    eachResource accum (r, amount) = R.show r <> ": " <> R.show amount : accum
+
+showNodes :: [[NodeResult]] -> Text
+showNodes = mappend "###### Schedule ######" . R.foldl' eachStep "" 
+  where
+    eachStep :: Text -> [NodeResult] -> Text
+    eachStep accum xs = accum <> "\n" <> "Step " <> (R.show . _nrStep . L.head $ xs) <> ": " <> toText (T.intercalate " | " $ R.reverse $ R.foldl' eachNode [] xs)
+
+    eachNode :: [Text] -> NodeResult -> [Text]
+    eachNode accum NodeResult{..} = "[" <> R.show _nrId <> maybe "]" (mappend "]" . mappend " --> " . R.show) _nrConnectedToNode : accum
 
 instance Wrapped ResourceList
 

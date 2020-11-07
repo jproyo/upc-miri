@@ -14,6 +14,7 @@ import Control.Lens
 import Control.Monad
 import Data.Schedule
 import Data.Array.Unboxed ((!))
+import qualified Data.Map as M
 import qualified Data.PseudoBoolean as PBFile
 import Relude
 import qualified ToySolver.SAT as SAT
@@ -52,16 +53,23 @@ setupOptimizer pbo = do
   PBO.setEnableObjFunVarsHeuristics pbo PBO.defaultEnableObjFunVarsHeuristics
   PBO.setMethod pbo PBO.LinearSearch
 
-toSchedule :: Schedule -> (SAT.Model, Integer) -> ScheduleResult
-toSchedule orig (model, optimum) = let (newNodes, newResources) = fromModel orig model
-                                    in ScheduleResult newNodes newResources optimum
+toSchedule :: Schedule -> EncodedState -> (SAT.Model, Integer) -> ScheduleResult
+toSchedule orig encoded (model, optimum) = let (newNodes, newResources) = fromModel orig model encoded
+                                            in ScheduleResult newNodes newResources optimum
 
-fromModel :: Schedule -> SAT.Model -> ([NodeResult], [Resource])
-fromModel Schedule{..} model = let nodes = foldMap (`selected` model) $ zip _sAsap _sAlap
-                                in (nodes,[])
+fromModel :: Schedule -> SAT.Model -> EncodedState -> ([NodeResult], [(ResourceType, Int)])
+fromModel Schedule{..} model encode = let nodes     = foldMap (`toNodeResult` model) $ zip _sAsap _sAlap
+                                          resources = toResources model encode
+                                       in (nodes, resources)
 
-selected :: (Node,Node) -> SAT.Model -> [NodeResult]
-selected (node1, node2) model = 
+toResources :: SAT.Model -> EncodedState -> [(ResourceType, Int)]
+toResources model encode = encode ^. (esResourceSlot . to (foldl' toRs [] . M.keys) )
+  where
+    toRs :: [(ResourceType, Int)] -> ResourceType -> [(ResourceType, Int)]
+    toRs rs r = (r, length [ x | x <- (encode^.esResourceSlot) M.! r , model ! x ]) : rs
+
+toNodeResult :: (Node,Node) -> SAT.Model -> [NodeResult]
+toNodeResult (node1, node2) model = 
   [ NodeResult (node1^.nId) x (node1^.nResource) (node1^.nToNode) 
     | x <- [node1^.nStartStep..node2^.nEndStep], model ! (node1^.nId*10+x) 
   ]

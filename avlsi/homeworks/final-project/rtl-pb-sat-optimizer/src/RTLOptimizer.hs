@@ -10,55 +10,20 @@
 -- Main entry point of the optimizer for Time-Constrained Schedule and Resource-Constrained Schedule
 module RTLOptimizer where
 
-import qualified Data.PseudoBoolean as PBFile
+import Input.Parser 
+import Text.Trifecta.Parser
 import Relude
 import SAT.PBSolver as S
+import Optimizer.TimeScheduler 
 import qualified ToySolver.SAT as SAT
 
 solve :: IO ()
 solve = do
+  Just sc <- parseFromFile parseSchedule "app/input.sch"
   solver <- SAT.newSolver
-  let formula =
-        PBFile.Formula
-          { pbObjectiveFunction = Just [(8, [992]), (4, [991]), (2, [990]), (4, [772]), (2, [771]), (1, [770]), (4, [882]), (2, [881]), (1, [880]), (4, [662]), (2, [661]), (1, [660])],
-            pbConstraints = constraints,
-            pbNumVars = 992,
-            pbNumConstraints = 31
-          }
-  result <- S.solvePB solver formula
-  print result
+  let (f, encoded) = encode sc
+  result <- S.solvePB solver f
+  putStrLn $ maybe "No Result" (show . toSchedule sc encoded) result
 
-constraints :: [PBFile.Constraint]
-constraints =
-  [ ([(1, [11])], PBFile.Eq, 1),
-    ([(1, [22])], PBFile.Eq, 1),
-    ([(1, [33])], PBFile.Eq, 1),
-    ([(1, [44])], PBFile.Eq, 1),
-    ([(1, [51])], PBFile.Eq, 1),
-    ([(1, [61]), (1, [62])], PBFile.Eq, 1),
-    ([(1, [72]), (1, [73])], PBFile.Eq, 1),
-    ([(1, [81]), (1, [82]), (1, [83])], PBFile.Eq, 1),
-    ([(1, [92]), (1, [93]), (1, [94])], PBFile.Eq, 1),
-    ([(1, [101]), (1, [102]), (1, [103])], PBFile.Eq, 1),
-    ([(1, [112]), (1, [113]), (1, [114])], PBFile.Eq, 1),
-    ([(-1, [11]), (2, [22])], PBFile.Ge, 1),
-    ([(-2, [22]), (3, [33])], PBFile.Ge, 1),
-    ([(-3, [33]), (4, [44])], PBFile.Ge, 1),
-    ([(-1, [51]), (2, [22])], PBFile.Ge, 1),
-    ([(-1, [61]), (-2, [62]), (2, [72]), (3, [73])], PBFile.Ge, 1),
-    ([(-2, [72]), (-3, [73]), (4, [44])], PBFile.Ge, 1),
-    ([(-1, [81]), (-2, [82]), (-3, [83]), (2, [92]), (3, [93]), (4, [94])], PBFile.Ge, 1),
-    ([(-1, [101]), (2, [102]), (3, [103]), (2, [112]), (3, [113]), (4, [114])], PBFile.Ge, 0),
-    ([(-1, [11]), (-1, [51]), (-1, [61]), (-1, [81]), (4, [992]), (2, [991]), (1, [990])], PBFile.Ge, 0),
-    ([(-1, [101]), (4, [882]), (2, [881]), (1, [880])], PBFile.Ge, 0),
-    ([(-1, [22]), (-1, [62]), (-1, [72]), (-1, [82]), (4, [992]), (2, [991]), (1, [990])], PBFile.Ge, 0),
-    ([(-1, [92]), (-1, [102]), (4, [882]), (2, [881]), (1, [880])], PBFile.Ge, 0),
-    ([(-1, [112]), (4, [662]), (2, [661]), (1, [660])], PBFile.Ge, 0),
-    ([(-1, [73]), (-1, [83]), (4, [992]), (2, [991]), (1, [990])], PBFile.Ge, 0),
-    ([(-1, [33]), (4, [772]), (2, [771]), (1, [770])], PBFile.Ge, 0),
-    ([(-1, [93]), (-1, [103]), (4, [882]), (2, [881]), (1, [880])], PBFile.Ge, 0),
-    ([(-1, [113]), (4, [662]), (2, [661]), (1, [660])], PBFile.Ge, 0),
-    ([(-1, [44]), (4, [772]), (2, [771]), (1, [770])], PBFile.Ge, 0),
-    ([(-1, [94]), (4, [882]), (2, [881]), (1, [880])], PBFile.Ge, 0),
-    ([(-1, [114]), (4, [662]), (2, [661]), (1, [660])], PBFile.Ge, 0)
-  ]
+  
+

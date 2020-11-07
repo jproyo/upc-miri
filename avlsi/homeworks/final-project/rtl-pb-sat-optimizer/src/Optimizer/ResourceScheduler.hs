@@ -10,7 +10,7 @@
 -- Portability : POSIX
 --
 -- Main entry point of the optimizer for Time-Constrained Schedule and Resource-Constrained Schedule
-module Optimizer.TimeScheduler where
+module Optimizer.ResourceScheduler where
 
 import Control.Lens
 import qualified Data.PseudoBoolean as PB

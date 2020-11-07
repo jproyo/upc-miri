@@ -25,24 +25,27 @@ parseAlap :: Parser Alap
 parseAlap = manyTill parseNode (try (string "RESOURCES"))
 
 skipAsapHeader :: Parser ()
-skipAsapHeader = string "ASAP" *> whiteSpace <* optional newline
+skipAsapHeader = skipComments *> string "ASAP" *> whiteSpace <* optional newline
 
 skipAlapHeader :: Parser ()
 skipAlapHeader = whiteSpace <* optional newline
 
-skipResourceListHeader :: Parser ()
-skipResourceListHeader = whiteSpace <* optional newline
+skipComments :: Parser ()
+skipComments = skipMany (char '#' <* manyTill anyChar (try newline))
 
-parseResourceAmount :: Parser ResourceConf
-parseResourceAmount = ResourceConf <$> parseResource <* whiteSpace <*> parseInt <* whiteSpace <*> parseInt <* optional newline
+skipResourceListHeader :: Parser ()
+skipResourceListHeader = skipComments *> whiteSpace <* optional newline
+
+parseResourceAmount :: Parser Resource
+parseResourceAmount = Resource <$> (skipComments *> parseResource) <* whiteSpace <*> parseInt <* whiteSpace <*> parseInt <* optional newline
 
 parseResourceList :: Parser ResourceList
 parseResourceList = ResourceList <$> manyTill parseResourceAmount (try eof)
 
-parseResource :: Parser Resource
+parseResource :: Parser ResourceType
 parseResource = fromLetter <$> characterChar
 
-fromLetter :: Char -> Resource
+fromLetter :: Char -> ResourceType
 fromLetter = \case
     'A' -> Adder
     'S' -> Substracter
@@ -51,7 +54,7 @@ fromLetter = \case
     _   -> error "Failing parsing character"
 
 parseNode :: Parser Node
-parseNode = Node <$> parseResource
+parseNode = Node <$> (skipComments *> parseResource)
                  <* whiteSpace
                  <*> parseInt
                  <* whiteSpace

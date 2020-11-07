@@ -21,7 +21,7 @@ import Relude
 
 data EncodedState = EncodedState
   { _esLastLit :: Int
-  , _esResourceSlot :: Map Resource [Int]
+  , _esResourceSlot :: Map ResourceType [Int]
   } deriving (Show, Eq)
 
 makeLenses ''EncodedState
@@ -50,7 +50,7 @@ encodeObjectiveFunction sc = sc ^. sResources . to (runReader resources') & trav
   where
     convertToSum (i, r) = (i,) . flip (:) [] . flip (^.) esLastLit <$> (modify (execState (updateResourceEncodedState r)) >> get)
 
-updateResourceEncodedState :: Resource -> State EncodedState ()
+updateResourceEncodedState :: ResourceType -> State EncodedState ()
 updateResourceEncodedState r = do 
   esLastLit += 1 
   lastLit <- use esLastLit
@@ -67,19 +67,19 @@ encodePrecedenceConstraints sc = do
 encodeResourceConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
 encodeResourceConstraints sc = resourceConstraint (sc^.sResources. to fromResourceList) . combinedListByStep $ sc
 
-combinedListByStep :: Schedule -> Map Int (Map Resource [Int])
+combinedListByStep :: Schedule -> Map Int (Map ResourceType [Int])
 combinedListByStep = foldl' buildMapNodes M.empty . combinedList
   where 
     buildMapNodes m (n1, n2) = foldl' (toMapResource (n1^.nResource) (n1^.nId)) m [(n1^.nStartStep)..(n2^.nEndStep)]
     toMapResource r i m s = m & at s . non M.empty . at r . non [] %~ (:) i
 
-resourceConstraint :: MonadState EncodedState m => Map Resource ResourceConf -> Map Int (Map Resource [Int]) -> m [PB.Constraint]
+resourceConstraint :: MonadState EncodedState m => Map ResourceType Resource -> Map Int (Map ResourceType [Int]) -> m [PB.Constraint]
 resourceConstraint rs nodes = foldlM addConstraint [] (M.keys nodes)
   where 
     addConstraint :: MonadState EncodedState m => [PB.Constraint] -> Int -> m [PB.Constraint]
     addConstraint xs step = (<>xs) <$> foldlM (resourceToConstraint step) [] (M.keys (nodes M.! step))
 
-    resourceToConstraint :: MonadState EncodedState m => Int -> [PB.Constraint] -> Resource -> m [PB.Constraint]
+    resourceToConstraint :: MonadState EncodedState m => Int -> [PB.Constraint] -> ResourceType -> m [PB.Constraint]
     resourceToConstraint step rxs resource = do
       let resWeight = runReader (resourceWeight $ Just 1) (rs M.! resource)
       encoded <- get
@@ -88,7 +88,7 @@ resourceConstraint rs nodes = foldlM addConstraint [] (M.keys nodes)
                , PB.Ge, 0)
                : rxs
 
-fromResourceList :: ResourceList -> Map Resource ResourceConf
+fromResourceList :: ResourceList -> Map ResourceType Resource
 fromResourceList (ResourceList l) = fromList . fmap (\x -> (x ^. rcResource, x)) $ l
 
 combinedList :: Schedule -> [(Node, Node)]
@@ -141,10 +141,10 @@ calculateMaxX list = let maxL = (maximumOf traverse list ^.. folded . _2 . folde
                       in maybe minInt identity maxL
 
 
-resources' :: Reader ResourceList [(Integer, Resource)]
+resources' :: Reader ResourceList [(Integer, ResourceType)]
 resources' = magnify (_Wrapped' . folded) $ reverse <$> resourceWeight Nothing
 
-resourceWeight :: Maybe Int -> Reader ResourceConf [(Integer, Resource)]
+resourceWeight :: Maybe Int -> Reader Resource [(Integer, ResourceType)]
 resourceWeight maybeWeight = do 
     weight <- view rcWeight
     amount <- view rcAmount
@@ -152,6 +152,6 @@ resourceWeight maybeWeight = do
     let w = maybe weight identity maybeWeight
     return $ foldl' (createResourceWeight w rType) [] [0 .. amount -1]
 
-createResourceWeight :: Int -> Resource -> [(Integer, Resource)] -> Int -> [(Integer, Resource)]
+createResourceWeight :: Int -> ResourceType -> [(Integer, ResourceType)] -> Int -> [(Integer, ResourceType)]
 createResourceWeight weight rType pbsum b =
   (fromIntegral ((2 ^ b) * weight), rType) : pbsum

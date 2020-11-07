@@ -10,7 +10,10 @@
 -- Solver that use several Haskell Libs like pseudo-boolean in order to solve PB-SAT problem
 module SAT.PBSolver where
 
+import Control.Lens
 import Control.Monad
+import Data.Schedule
+import Data.Array.Unboxed ((!))
 import qualified Data.PseudoBoolean as PBFile
 import Relude
 import qualified ToySolver.SAT as SAT
@@ -28,8 +31,8 @@ solvePB solver formula = runMaybeT $ do
   pbnlc <- liftIO $ PBNLC.newEncoder solver enc
 
   liftIO $
-    forM_ (PBFile.pbConstraints formula) $ \(lhs, op, rhs) ->
-      case op of
+    forM_ (PBFile.pbConstraints formula) $ \(lhs, op1, rhs) ->
+      case op1 of
         PBFile.Ge -> PBNLC.addPBNLAtLeast pbnlc lhs rhs
         PBFile.Eq -> PBNLC.addPBNLExactly pbnlc lhs rhs
 
@@ -48,3 +51,17 @@ setupOptimizer :: PBO.Optimizer -> IO ()
 setupOptimizer pbo = do
   PBO.setEnableObjFunVarsHeuristics pbo PBO.defaultEnableObjFunVarsHeuristics
   PBO.setMethod pbo PBO.LinearSearch
+
+toSchedule :: Schedule -> (SAT.Model, Integer) -> ScheduleResult
+toSchedule orig (model, optimum) = let (newNodes, newResources) = fromModel orig model
+                                    in ScheduleResult newNodes newResources optimum
+
+fromModel :: Schedule -> SAT.Model -> ([NodeResult], [Resource])
+fromModel Schedule{..} model = let nodes = foldMap (`selected` model) $ zip _sAsap _sAlap
+                                in (nodes,[])
+
+selected :: (Node,Node) -> SAT.Model -> [NodeResult]
+selected (node1, node2) model = 
+  [ NodeResult (node1^.nId) x (node1^.nResource) (node1^.nToNode) 
+    | x <- [node1^.nStartStep..node2^.nEndStep], model ! (node1^.nId*10+x) 
+  ]

@@ -25,7 +25,7 @@ data Schedule = Schedule
   deriving (Eq, Show)
 
 data Node = Node
-  { _nResource :: Resource,
+  { _nResource :: ResourceType,
     _nId :: Int,
     _nStartStep :: Int,
     _nEndStep :: Int,
@@ -33,29 +33,43 @@ data Node = Node
   }
   deriving (Show, Eq)
 
-data Resource
+data ResourceType
   = Adder
   | Multiplier
   | Substracter
   | Comparator
   deriving (Show, Eq, Ord)
 
-data ResourceConf = ResourceConf
-  { _rcResource :: Resource,
+data Resource = Resource
+  { _rcResource :: ResourceType,
     _rcWeight :: Int,
     _rcAmount :: Int
   }
   deriving (Show, Eq)
 
-newtype ResourceList = ResourceList [ResourceConf]
+newtype ResourceList = ResourceList [Resource]
   deriving (Show, Eq, Generic)
   deriving newtype (Semigroup, Monoid)
 
-makeLenses ''ResourceConf
+data NodeResult = NodeResult
+  { _nrId :: Int
+  , _nrStep :: Int
+  , _nrResource :: ResourceType
+  , _nrConnectedToNode :: Maybe Int
+  } deriving Show
+
+data ScheduleResult = ScheduleResult 
+  { _srNodes :: [NodeResult]
+  , _srResources :: [Resource]
+  , _srOptimum :: Integer
+  } deriving Show
+
+makeLenses ''ScheduleResult
+makeLenses ''Resource
 makeLenses ''ResourceList
 makeLenses ''Node
 makeLenses ''Schedule
-makePrisms ''Resource
+makePrisms ''ResourceType
 
 instance Wrapped ResourceList
 

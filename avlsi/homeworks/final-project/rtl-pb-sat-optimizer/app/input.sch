@@ -1,3 +1,5 @@
+# This file has the following format
+# TYPE_RESOURCE NODE_ID FROM_STEP TO_STEP CONNECTED_TO_NODE_ID
 ASAP
 M 1 1 1 2
 M 2 2 2 3

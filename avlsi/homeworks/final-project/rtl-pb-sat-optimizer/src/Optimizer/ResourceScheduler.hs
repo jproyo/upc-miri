@@ -36,6 +36,7 @@ encodeConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
 encodeConstraints sc = foldMapM ($ sc) [ encodeUniqueConstraints
                                        , encodePrecedenceConstraints
                                        , encodeResourceConstraints
+                                       , encodeLatencyConstraints
                                        ]
 
 encodeObjectiveFunction :: MonadState EncodedState m => Schedule -> m PB.Sum
@@ -58,7 +59,7 @@ encodePrecedenceConstraints sc = do
   foldMapM (fmap (filter (not . null . view _1)) . updateState . precedence maps) . combinedList $ sc
 
 encodeResourceConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
-encodeResourceConstraints sc = resourceConstraint (sc^.sResources. to fromResourceList) . combinedListByStep $ sc
+encodeResourceConstraints = resourceConstraint . combinedListByStep
 
 combinedListByStep :: Schedule -> Map Int (Map ResourceType [Int])
 combinedListByStep = foldl' buildMapNodes M.empty . combinedList
@@ -66,20 +67,34 @@ combinedListByStep = foldl' buildMapNodes M.empty . combinedList
     buildMapNodes m (n1, n2) = foldl' (toMapResource (n1^.nResource) (n1^.nId)) m [(n1^.nStartStep)..(n2^.nEndStep)]
     toMapResource r i m s = m & at s . non M.empty . at r . non [] %~ (:) i
 
-resourceConstraint :: MonadState EncodedState m => Map ResourceType Resource -> Map Int (Map ResourceType [Int]) -> m [PB.Constraint]
-resourceConstraint rs nodes = foldlM addConstraint [] (M.keys nodes)
+resourceConstraint :: MonadState EncodedState m => Map Int (Map ResourceType [Int]) -> m [PB.Constraint]
+resourceConstraint nodes = foldlM addConstraint [] (M.keys nodes)
   where 
     addConstraint :: MonadState EncodedState m => [PB.Constraint] -> Int -> m [PB.Constraint]
     addConstraint xs step = (<>xs) <$> foldlM (resourceToConstraint step) [] (M.keys (nodes M.! step))
 
     resourceToConstraint :: MonadState EncodedState m => Int -> [PB.Constraint] -> ResourceType -> m [PB.Constraint]
     resourceToConstraint step rxs resource = do
-      let resWeight = runReader (resourceWeight $ Just 1) (rs M.! resource)
-      encoded <- get
-      return $ ([ (toInteger rw, [vr]) | (rw, vr) <- zip (resWeight^..folded . _1) (encoded ^. esResourceSlot . to (M.! resource))] 
-               <> [(negate 1, [(nodeId * 10) + step]) | nodeId <- nodes M.! step M.! resource]
-               , PB.Ge, 0)
+      let constraint = [(negate 1, [(nodeId * 10) + step]) | nodeId <- nodes M.! step M.! resource]
+      return $ ( constraint
+               , PB.Ge, fromIntegral . negate . length $ constraint)
                : rxs
+
+encodeLatencyConstraints :: MonadState EncodedState m => Schedule -> m [PB.Constraint]
+encodeLatencyConstraints sc = foldMapM (nodeLatency' sc) . combinedList $ sc
+
+nodeLatency' :: MonadState EncodedState m => Schedule -> (Node, Node) -> m [PB.Constraint]
+nodeLatency' sc (n1, n2) = do
+  let rs = sc ^. sResources. to fromResourceList
+  let resWeight = runReader (resourceWeight Nothing) (rs M.! (n1^.nResource))
+  encoded <- get
+  let nId1 = n1 ^. nId
+  let nStart1 = n1 ^. nStartStep
+  let nEnd2 = n2 ^. nEndStep
+  let listResources = [ (toInteger rw, [vr]) | (rw, vr) <- zip (resWeight^..folded . _1) (encoded ^. esResourceSlot . to (M.! (n1^.nResource)))]
+  let list = [(negate 1, [(nId1 * 10) + s]) | s <- [nStart1 .. nEnd2]] <> listResources
+  return [(toList $ setOf folded list, PB.Ge, 0)]
+
 
 fromResourceList :: ResourceList -> Map ResourceType Resource
 fromResourceList (ResourceList l) = fromList . fmap (\x -> (x ^. rcResource, x)) $ l
@@ -139,10 +154,9 @@ resources' = magnify (_Wrapped' . folded) $ reverse <$> resourceWeight Nothing
 
 resourceWeight :: Maybe Int -> Reader Resource [(Integer, ResourceType)]
 resourceWeight maybeWeight = do 
-    weight <- view rcWeight
     amount <- view rcAmount
     rType <- view rcResource
-    let w = maybe weight identity maybeWeight
+    let w = maybe 1 identity maybeWeight
     return $ foldl' (createResourceWeight w rType) [] [0 .. amount -1]
 
 createResourceWeight :: Int -> ResourceType -> [(Integer, ResourceType)] -> Int -> [(Integer, ResourceType)]

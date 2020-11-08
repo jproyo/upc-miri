@@ -1,7 +1,7 @@
 import Input.Parser 
 import Text.Trifecta.Parser
 import Control.Lens
-import Optimizer.TimeScheduler as O
+import Optimizer.ResourceScheduler as O
 import SAT.PBSolver as S
 import qualified ToySolver.SAT as SAT
 Just sc <- parseFromFile parseSchedule "app/input.sch"

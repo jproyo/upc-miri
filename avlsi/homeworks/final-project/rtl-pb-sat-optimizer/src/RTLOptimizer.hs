@@ -14,14 +14,14 @@ import Input.Parser
 import Text.Trifecta.Parser
 import Relude
 import SAT.PBSolver as S
-import Optimizer.TimeScheduler 
+import Encoder.Encoder 
 import qualified ToySolver.SAT as SAT
 
 solve :: IO ()
 solve = do
   Just sc <- parseFromFile parseSchedule "app/input.sch"
   solver <- SAT.newSolver
-  let (f, encoded) = encode sc
+  let (ResultEncoder (f, encoded)) = encodeTimeSchedule sc
   result <- S.solvePB solver f
   putStrLn $ maybe "No Result" (show . toSchedule sc encoded) result
 

@@ -55,7 +55,7 @@ setupOptimizer pbo = do
 
 toSchedule :: Schedule -> EncodedState -> (SAT.Model, Integer) -> ScheduleResult
 toSchedule orig encoded (model, optimum) = let (newNodes, newResources) = fromModel orig model encoded
-                                            in ScheduleResult newNodes newResources optimum
+                                            in ScheduleResult orig newNodes newResources optimum
 
 fromModel :: Schedule -> SAT.Model -> EncodedState -> ([NodeResult], [(ResourceType, Int)])
 fromModel Schedule{..} model encode = let nodes     = foldMap (`toNodeResult` model) $ zip _sAsap _sAlap

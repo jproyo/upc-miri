@@ -57,6 +57,13 @@ packages:
       sha256: 8dcc93631b70ef2d03e601fe1aab114038e0d9c03559b146acac6d04a4a6aa51
   original:
     hackage: sign-0.4.4@sha256:128107e3839bb185f6a7b97e63de9829f503b7f2d953653d4e9f71dbb6635cfe,2088
+- completed:
+    hackage: dot-0.3@sha256:3164856728cc06046a8e005d04f497487227906ceb4d7bf841f190c54b4b3de0,1052
+    pantry-tree:
+      size: 319
+      sha256: 3d5010fd9bce97afc0d062410d216b9d4385590b908d6cfda930e51346ac5379
+  original:
+    hackage: dot-0.3@sha256:3164856728cc06046a8e005d04f497487227906ceb4d7bf841f190c54b4b3de0,1052
 snapshots:
 - completed:
     size: 532380

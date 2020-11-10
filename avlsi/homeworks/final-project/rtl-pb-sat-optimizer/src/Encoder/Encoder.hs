@@ -13,6 +13,7 @@
 module Encoder.Encoder where
 
 import Control.Lens
+import Control.Arrow
 import qualified Data.PseudoBoolean as PB
 import Data.Schedule
 import Data.Set.Lens
@@ -135,10 +136,6 @@ nodeLatency (n1, n2) = do
   let list = [(negate 1, [(nId1 * 10) + s]) | s <- [nStart1 .. nEnd2]] <> listResources
   return [(toList $ setOf folded list, PB.Ge, 0)]
 
-
-fromResourceList :: ResourceList -> Map ResourceType Resource
-fromResourceList (ResourceList l) = fromList . fmap (\x -> (x ^. rcResource, x)) $ l
-
 combinedList :: Encoder m => m [(Node, Node)]
 combinedList = ask >>= \sc -> return $ zip (sc ^. sAsap) (sc ^. sAlap) 
 
@@ -149,7 +146,7 @@ toMapNodes = do
   return (fromNodes asap, fromNodes alap)
 
 fromNodes :: [Node] -> Map Int Node
-fromNodes = fromList . fmap (\x -> (x ^. nId, x))
+fromNodes = fromList . fmap (view nId &&& identity)
 
 precedence :: (Map Int Node, Map Int Node) -> (Node, Node) -> (Int, [PB.Constraint])
 precedence (asap, alap) (n1, n2) =

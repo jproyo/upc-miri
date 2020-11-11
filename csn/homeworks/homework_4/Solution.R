@@ -148,7 +148,24 @@ fit_models <- function(language, file){
     min_model_name <- "Model 3"
   }
   
-  # Running Model +1 f(n) = (n/2)^b + d
+  # Running Model 4 f(n) = a log(n)
+  linear_model_4 = lm(log(mean_length) ~ log(vertices), dep_tree)
+  a_initial_4 = coef(linear_model_4)[1]
+  print(paste("Running Non Linear Model 4 for ", language))
+  nonlinear_model_4 = nls(mean_length~a*log(vertices),data=dep_tree,
+                          start = list(a = a_initial_4), trace = TRUE)
+  
+  rss_4 = deviance(nonlinear_model_4)
+  aic_4 = AIC(nonlinear_model_4)
+  s_4 = sqrt(deviance(nonlinear_model_4)/df.residual(nonlinear_model_4))
+  print(paste("RSS: ", rss_4, " - AIC: ", aic_4, " - s:" , s_4))
+  if(min_aic >= aic_4){
+    min_aic <- aic_4
+    min_aic_model <- nonlinear_model_4
+    min_model_name <- "Model 4"
+  }
+  
+    # Running Model +1 f(n) = (n/2)^b + d
   linear_model_plus_1 = lm(log(mean_length) ~ log(vertices), dep_tree)
   b_initial_p_1 = coef(linear_model_plus_1)[2]
   d_initial_p_1 = 0
@@ -206,6 +223,25 @@ fit_models <- function(language, file){
     min_aic_model <- nonlinear_model_p_3
     min_model_name <- "Model +3"
   }
+  
+  # Running Model +4 f(n) = a log(n) + d
+  linear_model_p_4 = lm(log(mean_length) ~ log(vertices), dep_tree)
+  a_initial_p_4 = coef(linear_model_p_4)[1]
+  d_initial_p_4 = 0
+  print(paste("Running Non Linear Model +4 for ", language))
+  nonlinear_model_p_4 = nls(mean_length~a*log(vertices)+d,data=dep_tree,
+                          start = list(a = a_initial_p_4, d=d_initial_p_4), trace = TRUE)
+  
+  rss_p_4 = deviance(nonlinear_model_p_4)
+  aic_p_4 = AIC(nonlinear_model_p_4)
+  s_p_4 = sqrt(deviance(nonlinear_model_p_4)/df.residual(nonlinear_model_p_4))
+  print(paste("RSS: ", rss_p_4, " - AIC: ", aic_p_4, " - s:" , s_p_4))
+  if(min_aic >= aic_p_4){
+    min_aic <- aic_p_4
+    min_aic_model <- nonlinear_model_p_4
+    min_model_name <- "Model +4"
+  }
+  
 
   print(paste("Best AIC for language ",language, " = ", min_aic))
   
@@ -218,25 +254,29 @@ fit_models <- function(language, file){
     , s_1, aic_1, aic_1-min_aic
     , s_2, aic_2, aic_2-min_aic
     , s_3, aic_3, aic_3-min_aic
+    , s_4, aic_4, aic_4-min_aic
     , s_p_1, aic_p_1, aic_p_1-min_aic
     , s_p_2, aic_p_2, aic_p_2-min_aic
     , s_p_3, aic_p_3, aic_p_3-min_aic
+    , s_p_4, aic_p_4, aic_p_4-min_aic
     , coef(nonlinear_model_1)[1]
     , coef(nonlinear_model_2)[1], coef(nonlinear_model_2)[2]
     , coef(nonlinear_model_3)[1], coef(nonlinear_model_3)[2]
+    , coef(nonlinear_model_4)[1]
     , coef(nonlinear_model_p_1)[1], coef(nonlinear_model_p_1)[2]
     , coef(nonlinear_model_p_2)[1], coef(nonlinear_model_p_2)[2], coef(nonlinear_model_p_2)[3]
     , coef(nonlinear_model_p_3)[1], coef(nonlinear_model_p_3)[2], coef(nonlinear_model_p_3)[3]
+    , coef(nonlinear_model_p_4)[1], coef(nonlinear_model_p_4)[2]
   )
 }
 
 # Print extracted data for each language in a table
 print_tables_2_3 <- function(data, languages){
   df <- data.frame(data)
-  colnames(df) = c("s 0", "AIC 0", "AIC delta 0","s 1", "AIC 1", "AIC delta 1", "s 2", "AIC 2", "AIC delta 2", "s 3", "AIC 3", "AIC delta 3", "s +1", "AIC +1", "AIC delta +1","s +2", "AIC +2", "AIC delta +2","s +3", "AIC +3", "AIC delta +3", "Model 1 (b)", "Model 2 (a)", "Model 2 (b)",  "Model 3 (a)", "Model 3 (c)",  "Model +1 (b)", "Model +1 (d)",  "Model +2 (a)", "Model +2 (b)", "Model +2 (d)", "Model +3 (a)", "Model +3 (c)", "Model +3 (d)")
+  colnames(df) = c("s 0", "AIC 0", "AIC delta 0","s 1", "AIC 1", "AIC delta 1", "s 2", "AIC 2", "AIC delta 2", "s 3", "AIC 3", "AIC delta 3", "s 4", "AIC 4", "AIC delta 4", "s +1", "AIC +1", "AIC delta +1","s +2", "AIC +2", "AIC delta +2","s +3", "AIC +3", "AIC delta +3", "s +4", "AIC +4", "AIC delta +4", "Model 1 (b)", "Model 2 (a)", "Model 2 (b)",  "Model 3 (a)", "Model 3 (c)", "Model 4 (a)","Model +1 (b)", "Model +1 (d)",  "Model +2 (a)", "Model +2 (b)", "Model +2 (d)", "Model +3 (a)", "Model +3 (c)", "Model +3 (d)", "Model +4 (a)", "Model +4 (d)")
   rownames(df) = c(languages)
-  df_1 = subset(df, select=c("s 0", "AIC 0", "AIC delta 0","s 1", "AIC 1", "AIC delta 1", "s 2", "AIC 2", "AIC delta 2", "s 3", "AIC 3", "AIC delta 3", "s +1", "AIC +1", "AIC delta +1","s +2", "AIC +2", "AIC delta +2","s +3", "AIC +3", "AIC delta +3"))
-  df_2 = subset(df, select=c( "Model 1 (b)", "Model 2 (a)", "Model 2 (b)",  "Model 3 (a)", "Model 3 (c)",  "Model +1 (b)", "Model +1 (d)",  "Model +2 (a)", "Model +2 (b)", "Model +2 (d)", "Model +3 (a)", "Model +3 (c)", "Model +3 (d)"))
+  df_1 = subset(df, select=c("s 0", "AIC 0", "AIC delta 0","s 1", "AIC 1", "AIC delta 1", "s 2", "AIC 2", "AIC delta 2", "s 3", "AIC 3", "AIC delta 3", "s 4", "AIC 4", "AIC delta 4", "s +1", "AIC +1", "AIC delta +1","s +2", "AIC +2", "AIC delta +2","s +3", "AIC +3", "AIC delta +3", "s +4", "AIC +4", "AIC delta +4"))
+  df_2 = subset(df, select=c( "Model 1 (b)", "Model 2 (a)", "Model 2 (b)",  "Model 3 (a)", "Model 3 (c)",  "Model 4 (a)", "Model +1 (b)", "Model +1 (d)",  "Model +2 (a)", "Model +2 (b)", "Model +2 (d)", "Model +3 (a)", "Model +3 (c)", "Model +3 (d)", "Model +4 (a)", "Model +4 (d)"))
   print.data.frame(df_1, right=FALSE)
   print.data.frame(df_2, right=FALSE)
 }

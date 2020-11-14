@@ -14,7 +14,7 @@ This README file only contains instruction to running the program and does NOT c
 
 ## Formal Documentation
 
-In order to see the report in which it is described the formal definition of the solution go [here](docs/report.pdf)
+In order to see the report in which it is described the formal definition of the solution go [here](docs/presentation.pdf)
 
 ## Prerequisites to running the program
 

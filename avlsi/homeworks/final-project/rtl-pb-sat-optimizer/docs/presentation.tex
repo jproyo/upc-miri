@@ -1,0 +1,334 @@
+\documentclass{beamer}
+\usetheme{Boadilla}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usetikzlibrary{calc,shapes.multipart,chains,arrows}
+\usepackage{float}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage{caption}
+\usepackage[linguistics]{forest}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
+\newminted{haskell}{}
+\graphicspath{{./images/}}
+\setbeamertemplate{frametitle}{%
+  \usebeamerfont{frametitle}\insertframetitle%
+  \vphantom{g}% To avoid fluctuations per frame
+  % \hrule% Uncomment to see desired effect, without a full-width hrule
+  \par\hspace*{-\dimexpr0.5\paperwidth-0.5\textwidth}\rule[0.5\baselineskip]{\paperwidth}{0.4pt}
+  \par\vspace*{-\baselineskip}% <-- reduce vertical space after rule
+}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshortsubtitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\DeclareMathOperator*{\st}{st}
+
+\title{SAT Based Scheduling in High Level Synthesis}
+\subtitle{RTL PB-SAT Optimizer}
+
+\author{Juan Pablo Royo Sales}
+\institute{Universitat Politècnica de Catalunya}
+\date{November, 2020}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+  \tableofcontents
+\end{frame}
+
+\begin{frame}{Agenda}
+  \section{Introduction}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Introduction}
+  \begin{block}{Paper}
+      \begin{itemize}
+        \item Study Generation of \textbf{RTL (Register Transfer Level)}: Optimization Process of Generating \textbf{High Level Synthesis} 
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Introduction}
+  \begin{block}{Paper}
+      \begin{itemize}
+        \item Study Generation of \textbf{RTL (Register Transfer Level)}: Optimization Process of Generating \textbf{High Level Synthesis} 
+        \item Based on \textit{SAT-Based High Level Synthesis}\footnote{Kundu S., Chandrakar K., Roy S. (2014) SAT Based Scheduling in High Level Synthesis. In: Kumar Kundu M., Mohapatra D., Konar A., Chakraborty A. (eds) Advanced Computing, Networking and Informatics- Volume 2. Smart Innovation, Systems and Technologies, vol 28. Springer, Cham.}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}{Agenda}
+  \section{Paper Goal: Optimize RTL}
+  \tableofcontents[currentsection]
+\end{frame}
+
+
+\begin{frame}[fragile]{Paper Goal: Optimize RTL}
+  \begin{block}{2 Scheduling Optimization}
+    \begin{itemize}
+      \item \textbf{Time-Constraint Scheduling}: \textit{Given constraints on the maximum number
+      of control steps, find the cost-efficient schedule which satisfies the constraints}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Paper Goal: Optimize RTL}
+  \begin{block}{2 Scheduling Optimization}
+    \begin{itemize}
+      \item \textbf{Time-Constraint Scheduling}: \textit{Given constraints on the maximum number
+      of control steps, find the cost-efficient schedule which satisfies the constraints}
+      \item \textbf{Resource-Constraint Scheduling}: \textit{Given constraints on the resources,
+      find the fastest scheduling which satisfies the constraints.}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Paper Goal: Optimize RTL}
+  \begin{block}{2 Scheduling Optimization}
+    \begin{itemize}
+      \item \textbf{Time-Constraint Scheduling}: \textit{Given constraints on the maximum number
+      of control steps, find the cost-efficient schedule which satisfies the constraints}
+      \item \textbf{Resource-Constraint Scheduling}: \textit{Given constraints on the resources,
+      find the fastest scheduling which satisfies the constraints.}
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Proposed Approach}
+    \centering\textbf{Pseudo-Boolean SAT Optimizer}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Agenda}
+  \section{PB-SAT Encoding}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{PB-SAT Encoding}
+ \begin{block}{Time-Constraint Scheduling}
+  \begin{subequations}
+    \begin{align}
+      \min \quad & \sum_{k=1}^m \biggl(c_k \times \biggl(\sum_{b=0}^{r-1}2^b \times M_k\biggr)\biggr)\\
+      \st  \quad & \\
+      \quad & \sum_{j=S_i}^{L_i} x_{i,j} = 1 & \quad & \forall 1 \leq i \leq N \\\label{c:1}
+      \quad & \sum_{j=S_i}^{L_i} (j \times x_{i,j}) - \sum_{j=S_k}^{L_k} (j \times x_{k,j}) \leq -1 \\\label{c:2}
+      \quad & \sum_{j=o_i \in FU_k} x_{i,j} - \sum_{b=0}^{r-1}(2^b \times M_k) \leq 0 & \quad & \forall 1 \leq j \leq s\\\label{c:3}
+    \end{align}
+    \end{subequations}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{PB-SAT Encoding}
+  \begin{block}{Resource-Constraint Scheduling}
+   \begin{subequations}
+     \begin{align}
+       \min \quad & \sum_{b=0}^{r-1}2^b \times C_{\text{step},b}\\
+       \st  \quad & \\
+       \quad & \sum_{j=S_i}^{L_i} x_{i,j} = 1 & \quad & \forall 1 \leq i \leq N \\\label{c:4}
+       \quad & \sum_{j=S_i}^{L_i} (j \times x_{i,j}) - \sum_{j=S_k}^{L_k} (j \times x_{k,j}) \leq -1 \\\label{c:5}
+       \quad & \sum_{j=o_i \in FU_k} x_{i,j} - M_k \leq 0 & \quad & \forall 1 \leq j \leq s\\\label{c:6}
+       \quad & \sum_{j=S_i}^{L_i} x_{i,j} - \sum_{b=0}^{r-1}2^b \times C_{\text{step},b} \leq 0 & \quad & \forall o_i \text{ without successor} \\\label{c:7}
+     \end{align}
+     \end{subequations}
+   \end{block}
+ \end{frame}
+
+ \begin{frame}{Agenda}
+  \section{Proposed Algorithm}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Proposed Algorithm}
+  \begin{algorithm}[H]
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \Input{ASAP and ALAP Schedule}
+    \Output{Time and Resource Schdule Optimized}
+    1. Determine mobility of each node of the Graph\\
+    2. Construct PB-SAT formulations of the DFG\\
+    3. Solve PB-SAT\\
+    4. Find minimums for resource and time schedule
+   \caption{RTL PB-SAT Optimizer}
+  \end{algorithm}
+\end{frame}
+ 
+\begin{frame}{Agenda}
+  \section{My Contribution}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{My Contribution}
+  \begin{block}{}
+    \begin{itemize}
+      \item \textbf{Define an input format}: Input wasn't well defined in Author's word
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{My Contribution}
+  \begin{block}{}
+    \begin{itemize}
+      \item \textbf{Define an input format}: Input wasn't well defined in Author's word
+      \item \textbf{Haskell}: Using Haskell based PB-SAT Solver with an \textbf{FP} Encoding approach
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{My Contribution}
+  \begin{block}{}
+    \begin{itemize}
+      \item \textbf{Define an input format}: Input wasn't well defined in Author's word
+      \item \textbf{Haskell}: Using Haskell based PB-SAT Solver with an \textbf{FP} Encoding approach
+      \item \textbf{Output}: Graphical Output Representation of the Results in PNG format
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Agenda}
+  \section{Input Format - SCH Format}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Input Format - SCH Format}
+    \begin{minted}[fontsize=\tiny,highlightlines={3-5,15-17,27-29}]{text}
+      # This file has the following format
+      # TYPE_RESOURCE NODE_ID FROM_STEP TO_STEP CONNECTED_TO_NODE_ID
+      ASAP
+      M 1 1 1 2
+      M 2 2 2 3
+      S 3 3 3 4
+      S 4 4 4
+      M 5 1 1 2
+      M 6 1 1 7
+      M 7 2 3 4
+      M 8 1 1 9
+      A 9 2 2
+      A 10 1 1 11
+      C 11 2 2
+      ALAP
+      M 1 1 1 2
+      M 2 2 2 3
+      S 3 3 3 4
+      S 4 4 4
+      M 5 1 1 2
+      M 6 2 2 7
+      M 7 3 3 4
+      M 8 3 3 9
+      A 9 4 4
+      A 10 3 3 11
+      C 11 4 4
+      RESOURCES
+      M 2 3
+      A 1 3
+      S 1 3
+      C 1 3
+    \end{minted}  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Haskell Main Algorithm Implementation}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Haskell Main Algorithm Implementation}
+
+  \begin{minted}[fontsize=\tiny,highlightlines={3-3,9-11,17}]{haskell}
+    solve :: RTLConf -> IO ()
+    solve RTLConf{..} = do
+      parse <- parseFromFileEx parseSchedule _rtlcFileInput
+      case parse of
+        Failure ex -> putText $ show ex
+        Success sc -> do
+          createDirectoryIfMissing True _rtlcFolderOutput
+          dumpInputSchedules _rtlcFolderOutput sc
+          forM_ 
+            [encodeTimeSchedule, encodeResourceSchedule]
+            (solve' sc _rtlcFolderOutput)
+    
+    solve' :: Schedule -> FilePath -> (Schedule -> ResultEncoder) -> IO ()
+    solve' sc output fSolve = do
+      solver <- SAT.newSolver
+      let rEncoder = fSolve sc
+      result <- fmap (toSchedule sc (rEncoder^.reEncode)) <$> S.solvePB solver (rEncoder^.reFormula)
+      maybe 
+        (putText $ "NO SOLUTION FOUND FOR: " <> show (rEncoder^.reType) <> " Schedule") 
+        (\r -> putText (show r) >> dumpResult output (rEncoder^.reType) r)
+        result
+  \end{minted}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Caveats and Analysis}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Caveats and Analysis}
+  \begin{block}{About Author's work}
+    \begin{itemize}
+      \item Although they provide 1 complete encoding in PB-SAT results presented in the work are not correct
+      \item I have tried to reproduce their results even with \textbf{Minisat+} which is the solver they use and results are different on what they presented.
+      \item Author's don't provide big examples and all their experiments are based on tiny examples.
+  \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agenda}
+  \section{Conclusion}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Conclusion}
+  \begin{block}{About Author's work}
+    \begin{itemize}
+      \item Very Fast Optimization technique
+      \item Simple to Encode in PB-SAT 
+  \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \textbf{\huge{Demo Time}}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}
+  \begin{center}
+    \textbf{\huge{Thank you!!}}
+    \end{center}
+\end{frame}
+
+\end{document}
+

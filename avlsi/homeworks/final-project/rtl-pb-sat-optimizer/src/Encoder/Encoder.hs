@@ -1,5 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
 -- |
 -- Module      : Optimizer.TimeScheduler
 -- Description : This module contains the encoding
@@ -20,8 +18,25 @@ import Data.Set.Lens
 import Control.Monad
 import qualified Data.Map as M
 import Relude
+import GHC.Show
 
-newtype ResultEncoder = ResultEncoder (PB.Formula, EncodedState)
+data Optimizer = TimeOpt | ResourceOpt
+
+instance Show Optimizer where
+  show TimeOpt = "Time Optimized Schedule"
+  show ResourceOpt = "Resource Optimized Schedule"
+
+toFileName :: Optimizer -> Text
+toFileName TimeOpt = "time_optimized"
+toFileName ResourceOpt = "resource_optimized"
+
+data ResultEncoder = ResultEncoder 
+  { _reFormula :: PB.Formula
+  , _reEncode  :: EncodedState
+  , _reType    :: Optimizer
+  }
+
+makeLenses ''ResultEncoder
 
 class (MonadReader Schedule m, MonadState EncodedState m) => Encoder m where
   encodeObjectiveFunction :: m PB.Sum
@@ -52,7 +67,7 @@ instance Encoder TimeScheduler where
 encodeTimeSchedule :: Schedule -> ResultEncoder
 encodeTimeSchedule sc = let maxLit = maxNode sc
                             result = flip runState (EncodedState maxLit M.empty) . flip runReaderT sc . unTime $ encodeFormula 
-                         in ResultEncoder result
+                         in uncurry ResultEncoder result TimeOpt
 
 newtype ResourceScheduler a = ResourceScheduler { unResource :: ReaderT Schedule (State EncodedState) a }
   deriving newtype (Functor, Applicative, Monad, MonadState EncodedState, MonadReader Schedule)
@@ -77,7 +92,7 @@ instance Encoder ResourceScheduler where
 encodeResourceSchedule :: Schedule -> ResultEncoder
 encodeResourceSchedule sc = let maxLit = maxNode sc
                                 result = flip runState (EncodedState maxLit M.empty) . flip runReaderT sc . unResource $ encodeFormula 
-                             in ResultEncoder result
+                             in uncurry ResultEncoder result ResourceOpt
 
 encodeFormula :: Encoder m => m PB.Formula
 encodeFormula = do 

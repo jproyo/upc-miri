@@ -4,6 +4,7 @@ test_1
 *.cabal
 .stack-work/
 dist-newstyle/
+result/*
 
 # Other
 *.log

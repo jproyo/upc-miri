@@ -12,7 +12,6 @@ module Input.Parser where
 
 import Data.Schedule
 import Relude
---import System.Directory
 import Text.Trifecta as T
 
 parseInt :: Parser Int
@@ -74,15 +73,3 @@ parseSchedule' = Schedule <$> parseAsap
 
 parseSchedule :: Parser Schedule
 parseSchedule = skipAsapHeader *> parseSchedule'
-
-
-
--- parse :: IO ()
--- parse = do
---   content <- maybe [] identity <$> parseFromFile parseResults "results.txt"
---   forM_ content $ \(f, optimum)  -> do
---     whenM (doesFileExist $ toS f) $ do
---       result <- maybe 0 identity <$> parseFromFile parseOutput (toS f)
---       if result == optimum
---         then print (f <> ": OK")
---         else print (f <> ": ERROR --> OPTIMUM " <> show optimum <> " ---> MY SOLUTION " <> show result)

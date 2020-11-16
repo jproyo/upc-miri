@@ -6,67 +6,114 @@
 
 library(igraph)
 
-##exploring community structure
-karate <- graph.famous("Zachary")
-##view friendship relation among members of Karate club
-plot(karate)
-##Find cluster partition according to Walktrap algorithm:
-#distance is based on random walks, and similarity==shortest random walk
-wc <- walktrap.community(karate)
-modularity(wc)
-membership(wc)
-plot(wc, karate)
 
-##An alternative way of plotting communities without the shaded regions:
-plot(karate, vertex.color=membership(wc))
+# Higher is best
+calculate_tpr <- function(community, g) {
+  # Get the sizes of Each Community that the algorithm is providing without the header of the table
+  comm_sizes <- unname(sizes(community))
+  # How many communities the algorithm built
+  until <- length(community)
+  # Original Graph size
+  graph_size <- gsize(g)
+  # Counter for non empty triangles
+  count_triads <- 0
+  for(i in 1:until) {
+    # induced.subgraph https://igraph.org/r/doc/subgraph.html. Build a new graph with edges and vertices required
+    # count_triangles - Provided by igraph
+    count_triads = count_triads + sum(count_triangles(induced.subgraph(g, unname(unlist(community[i])))))*comm_sizes[i]
+  }
+  return(count_triads/graph_size)
+}
 
-##to view hierarchical structure (dendogram) given by algorithm that works by hierarchical construction (as fastgreedy)
- karate <- graph.famous("Zachary")
-##fastgreedy.community : clustering via greedy optimization of modularity
-fc <- fastgreedy.community(karate)
-dendPlot(fc)
+fold_edge <- function(members, g, edge, acc, inside = FALSE){
+  e <- ends(g, edge)
+  if(inside && members[e[1]] == members[e[2]]){
+    acc <- acc + 2
+  }
+  if(!inside && members[e[1]] != members[e[2]]){
+    acc <- acc + 2
+  }
+  return(acc)
+}
 
-##compare with Girvan-Newman edge betweeness:
-GN<-edge.betweenness.community(karate)
-dendPlot(GN)
+# f_c is defined as the edges in the frontier C = |(u,v) | u \in C \land v \notin C|
+get_f_c <- function(community, g) {
+  # Take all members (vertices) of the community that we are calculating
+  members <- membership(community)
+  # Take all edges of the graph
+  edges <- E(g)
+  sum_f_c <- 0
+  for(i in 1:length(edges)) {
+    sum_f_c <- fold_edge(members, g, edges[i], sum_f_c) 
+  }
+  return(sum_f_c)
+}
 
-modularity(GN); modularity(fc)
+# Lower the best f_c/n_c
+calculate_expansion <- function(community, g){
+  return(get_f_c(community, g)/gsize(g))
+}
 
-##HIERARCHICAL CLUST on dissimilarity graph
-IBEX<-read.table("ibex_dataset.txt",sep="",header=T)
-dd <-as.dist(2*(1-cor(IBEX)))
-met="ward.D2" ##  complete,single,average,median,mcquitty
-hc <-hclust(dd,method=met)
-plot(hc,main=paste(met," method"),axes=TRUE,xlab="",sub="")
-#compute the cut at mean level K
-l <-length(hc$height);hh <- sort(hc$height);K <- mean(hh[1:l])
-abline(h=K,lty=2,lwd=2) ##draw the cut
-#branches below K make clusters, above go to singletons
-groups <- cutree(hc, h = K)  ##obtain  clusters
-numgp <- max(groups) #number of clusters.
-#extract the names of each group and convert to list
-W <- list(names(groups[groups==1]))
-##recursively concatenate lists
-for (i in 2:numgp){W <- c(W,list(names(groups[groups==i])))}
-W
-##Xtras
-plot(hc,hang=-1) ##hang=-1 places labels at bottom
+calculate_modularity = modularity
 
-##Obtain adjacency matrix from dissimilarity relation (dist)
-A<-as.matrix(dd)
-##create igraph graph object from adjacency matrix
-G <-graph.adjacency(A,mode="undirected",weighted = TRUE)
-plot(G)
-##to view weights
-E(G)$weight
-##BE AWARE when applying clustering algorithms from igraph to graph object G
-##which are based on maximizing modularity (wrto random graph). Problem: G is complete
-##keep in mind is a weighted graph so it must be indicated
-fG<-fastgreedy.community(G,weights = E(G)$weight)
-dendPlot(fG)
-sizes(fG) ##give community sizes (by max modularity, will see is too rough: gives 1 community)
-modularity(fG)
-##almost 0 :  the problem is the graph is complete so modularity is almost 0 for any partition
-##fix: consider Hamiltonian with parameter gamma > 1.
+# m_c is defined as the edges within cluster C = |(u,v) | u \land v \in C|
+get_m_c <- function(community, g){
+  # Take all members (vertices) of the community that we are calculating
+  members <- membership(community)
+  # Take all edges of the graph
+  edges <- E(g)
+  sum_m_c <- 0
+  for(i in 1:length(edges)) {
+    sum_m_c <- fold_edge(members, g, edges[i], sum_m_c, TRUE) 
+  }
+  return(sum_m_c)
+}
+
+# Lower the best: Fraction of total edge volume that points outside the cluster, \frac{f_c}{2m_c+f_c}
+calculate_conductance <- function(community, g) {
+  f_c <- get_f_c(community, g)
+  m_c <- get_m_c(community, g)
+  return(f_c/((2*m_c)+f_c))
+}
+
+execute_algorithm <- function(algorithm, graph){
+  community <- get(algorithm)(graph)
+  tpr <- calculate_tpr(community, graph)
+  expansion <- calculate_expansion(community, graph)
+  conductance <- calculate_conductance(community, graph)
+  modularity <- calculate_modularity(community, graph)
+  return(c(tpr, expansion, conductance, modularity))
+}
+
+# Print extracted data for each algorithm and each metric
+print_summary_model_results <- function(data, algos){
+  df <- data.frame(data)
+  colnames(df) = c("TPR", "Expansion", "Conductance", "Modularity")
+  rownames(df) = c(algos)
+  print.data.frame(df, right=FALSE)
+}
+
+
+main <- function(){
+  communities_algo <- c( "edge.betweenness.community"
+                       , "fastgreedy.community"
+                       , "label.propagation.community"
+                       , "leading.eigenvector.community"
+                       , "multilevel.community"
+                       , "optimal.community"
+                       , "spinglass.community"
+                       , "walktrap.community"
+                       , "infomap.community"
+                       )
+  
+  graph <- graph.famous("Zachary")
+  result <- NULL
+  for(algo in communities_algo){
+    result <- rbind(result, execute_algorithm(algo, graph))
+  }
+  print_summary_model_results(result, communities_algo)
+}
+
+main()
 
 

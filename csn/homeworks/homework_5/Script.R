@@ -1,7 +1,8 @@
-##################################
-##Argimiro Arratia @2016,2018 CSN Lab 5
-##Communities
-##################################
+######################################################
+## Authors: Juan Pablo Royo Sales & Francesc Roy
+## Title: Homework 4
+## Dae: 2020-11-16
+####################################################
 
 library(igraph)
 
@@ -32,7 +33,7 @@ dendPlot(GN)
 modularity(GN); modularity(fc)
 
 ##HIERARCHICAL CLUST on dissimilarity graph
-IBEX<-read.table("data/Ibex0809",sep="",header=T)
+IBEX<-read.table("ibex_dataset.txt",sep="",header=T)
 dd <-as.dist(2*(1-cor(IBEX)))
 met="ward.D2" ##  complete,single,average,median,mcquitty
 hc <-hclust(dd,method=met)

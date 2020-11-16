@@ -1,0 +1,494 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{amssymb}
+\usepackage[svgnames]{xcolor}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[lofdepth,lotdepth]{subfig}
+
+\lstset{language=R,
+    basicstyle=\small\ttfamily,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character},
+    keywordstyle=\color{black},
+    commentstyle=\color{DarkGreen},
+}
+
+\title{CSN Laboratory 4 \\
+    \large Non-linear regression on dependency trees}
+
+\author{
+  Juan Pablo Royo Sales
+  \and
+  Guillem Rodríguez
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+In this session, we practiced on the fit of non-linear functions to data using collections of syntactic dependency trees from different languages. In our case, we studied the scaling of the mean length $\langle d \rangle$ as a function of the number of vertices ($n$).
+
+\section{Results}
+In Table~1 we can see a summary of different properties of the degree sequences.
+\begin{table}[h!]
+\centering
+\begin{tabular}{cccccc}
+    \hline
+    Language & $N$ & $\mu_n $ & $\sigma_n$ & $\mu_d$ & $\sigma_d$ \\
+    \hline
+    Arabic      & 4108      & 26.9576   & 20.6492   & 2.1658    & 0.9317 \\
+    Basque      & 2933      & 11.3355   & 6.5282    & 1.9610    & 0.6915 \\
+    Catalan     & 15053     & 25.5717   & 13.6187   & 2.3186    & 0.7023 \\
+    Chinese     & 54238     & 6.2489    & 3.3104    & 1.4446    & 0.4839 \\
+    Czech       & 25037     & 16.4276   & 10.7216   & 2.0194    & 0.8750 \\
+    English     & 18779     & 24.0462   & 11.2232   & 3.0506    & 0.8951 \\
+    Greek       & 2951      & 22.8204   & 14.3819   & 2.2010    & 0.8129 \\
+    Hungarian   & 6424      & 21.6599   & 12.5664   & 3.8778    & 1.7804 \\
+    Italian     & 4144      & 18.4066   & 13.3457   & 1.9719    & 0.7684 \\
+    Turkish     & 6030      & 11.1017   & 8.2818    & 1.8408    & 0.8204 \\
+    \hline
+\end{tabular}
+\label{Table:T1}
+\caption{Summary of the properties of the degree sequences. $N$ is the sample
+size (the number of sentences or dependency trees), $\mu_n$ and $\sigma_n$ are, respectively,
+the mean and the standard deviation of $n$, the sentence length ($n$ is the number
+of vertices of a trees), $\mu_d$ and $\sigma_d$ are the mean and the standard deviation of
+the target metric $\langle d \rangle$ (mean length).}
+\end{table}
+
+In Tables 2, 3 and 4 we can see a summary of the residual error, Akaike Information Criterion and AIC differences (respectively) for each model and language.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+    Language & 0 & 1 & 2 & 3 & 4 & 1+ & 2+ & 3+ & 4+ \\
+    \hline
+    Arabic      & 22.600     & 1.022     & 0.996     & 0.971     & 0.958     & 1.006     & 0.965     & 0.975     & 0.973 \\
+    Basque      & 6.380      & 0.477     & 0.476     & 0.535     & 0.481     & 0.477     & 0.482     & 0.542     & 0.488 \\
+    Catalan     & 16.624     & 0.424     & 0.417     & 0.445     & 0.404     & 0.419     & 0.411     & 0.447     & 0.409 \\
+    Chinese     & 6.219      & 1.050     & 1.023     & 0.961     & 0.974     & 1.036     & 0.990     & 0.964     & 1.026 \\
+    Czech       & 14.600     & 4.497     & 4.182     & 4.439     & 4.160     & 4.325     & 4.199     & 4.465     & 3.938 \\
+    English     & 14.642     & 0.828     & 0.832     & 0.953     & 0.834     & 0.833     & 0.833     & 0.959     & 0.835 \\
+    Greek       & 14.958     & 0.864     & 0.863     & 0.901     & 0.867     & 0.864     & 0.867     & 0.906     & 0.872 \\
+    Hungarian   & 10.376     & 0.833     & 0.836     & 1.093     & 0.841     & 0.836     & 0.841     & 1.100     & 1.801 \\
+    Italian     & 15.185     & 0.771     & 0.741     & 0.782     & 0.731     & 0.750     & 0.730     & 0.787     & 0.734 \\
+    Turkish     & 8.885      & 0.381     & 0.384     & 0.505     & 0.378     & 0.384     & 0.384     & 0.509     & 0.380  \\
+    \hline
+\end{tabular}
+\label{Table:T2}
+\caption{Summary of the residual standard error ($s$) for each model.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+    Language & 0 & 1 & 2 & 3 & 4 & 1+ & 2+ & 3+ & 4+ \\
+    \hline
+    Arabic      & 1090.84 & 348.80  & 343.53    & 337.51  & 335.27  & 346.03    & 337.06 & 339.51  & 339.89    \\
+    Basque      & 276.86  & 60.00   & 60.87     &  70.60  & 62.67   & 61.01     & 62.70  & 72.60   & 64.66   \\
+    Catalan     & 814.12  & 110.80  & 108.28    & 121.00  & 103.24  & 109.35    & 106.57 & 123.00  &  106.65   \\
+    Chinese     & 274.71  & 126.25  & 125.08    & 119.84  & 121.83  & 126.10    & 123.25 & 121.02  & 127.16    \\
+    Czech       & 723.60  & 517.32  & 505.52    & 516.03  & 505.56  & 511.45    & 507.22 & 518.03  & 496.89    \\
+    English     & 724.10  & 219.58  & 221.39    & 245.24  & 222.68  & 221.51    & 222.51 & 247.24  & 223.90   \\
+    Greek       & 711.35  & 221.85  & 222.72    & 230.06  & 224.54  & 222.88    & 224.49 & 232.06  &  226.41   \\
+    Hungarian   & 610.87  & 203.17  & 204.83    & 248.30  & 206.77  & 204.81    & 206.81 & 250.30  &  331.07 \\
+    Italian     & 705.67  & 200.00  & 194.33    & 203.44  & 192.88  & 196.28    & 192.78 & 205.44  &  194.51   \\
+    Turkish     & 412.78  & 54.60   & 56.55     & 87.80   & 55.87   & 56.47     & 57.55  & 89.80   &  57.22   \\
+    \hline
+\end{tabular}
+\label{Table:T3}
+\caption{Summary of the Akaike Information Criterion (AIC) for each model.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+    Language & 0 & 1 & 2 & 3 & 4 & 1+ & 2+ & 3+ & 4+ \\
+    \hline
+    Arabic      & 755.57    & 13.53     & 8.26    & 2.24    & 0     & 10.76     & 1.79      & 4.24      &  4.62  \\
+    Basque      & 216.86    & 0         & 0.87    & 10.60   & 2.66  & 1.01      & 2.70      & 12.60     &  4.66  \\
+    Catalan     & 710.88    & 7.56      & 5.04    & 17.76   & 0     & 6.11      & 3.33      & 19.76     &  3.41  \\
+    Chinese     & 154.88    & 6.41      & 5.24    & 0       & 1.99  & 6.26      & 3.42      & 1.18      &  7.33  \\
+    Czech       &  226.71   & 20.44     & 8.63    & 19.14   & 8.67  & 14.56     & 10.34     & 21.14     &  0  \\
+    English     & 504.52    & 0         & 1.81    & 25.66   & 3.11  & 1.93      & 2.93      & 27.66     &  4.32  \\
+    Greek       & 489.50    & 0         & 0.87    & 8.21    & 2.69  & 1.03      & 2.64      & 10.21     &  4.56  \\
+    Hungarian   & 407.70    & 0         & 1.66    & 45.13   & 3.60  & 1.64      & 3.64      & 47.13     &  127.90  \\
+    Italian     & 512.90    & 7.22      & 1.55    & 10.67   & 0.11  & 3.51      & 0         & 12.67     &  1.74  \\
+    Turkish     & 358.18    & 0         & 1.95    & 33.20   & 1.27  & 1.88      & 2.95      & 35.20     &  2.63  \\
+    \hline
+\end{tabular}
+\label{Table:T4}
+\caption{Summary of the Akaike Information Criterion differences ($\Delta$AIC) for each model.}
+\end{table}
+
+In Tables 5, 6, 7 and 8 we can see the values of the parameters giving the best fit for each
+model. Notice that Model 0 is no included here because it has no parameters.
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|cc|}
+    \cline{2-4}
+    & \multicolumn{3}{c|}{Model} \\
+    \cline{2-4}
+    & 1 & \multicolumn{2}{c|}{1+} \\
+    \hline
+    \multicolumn{1}{|c|}{Language}  & b & b & d\\
+    \hline
+    \multicolumn{1}{|c|}{Arabic}    & 0.3512422     & 0.3852848       & -0.47903323\\
+    \multicolumn{1}{|c|}{Basque}    & 0.4370793     & 0.4545331       & -0.15400588\\
+    \multicolumn{1}{|c|}{Catalan}   & 0.3565484     & 0.3729537       & -0.19271265\\
+    \multicolumn{1}{|c|}{Chinese}   & 0.4593249     & 0.5094501       & -0.49062889\\
+    \multicolumn{1}{|c|}{Czech}     & 0.5248309     & 0.6286264       & -2.61102345\\
+    \multicolumn{1}{|c|}{English}   & 0.4566473     & 0.4598128       & -0.05064673\\
+    \multicolumn{1}{|c|}{Greek}     & 0.3637845     & 0.3826870       & -0.21562806\\
+    \multicolumn{1}{|c|}{Hungarian} & 0.5940305     & 0.5988579       & -0.11455854\\
+    \multicolumn{1}{|c|}{Italian}   & 0.3726787     & 0.4094078       & -0.44923822\\
+    \multicolumn{1}{|c|}{Turkish}   & 0.4127196     & 0.4167909       & -0.03991731\\
+    \hline
+\end{tabular}
+\label{Table:T5}
+\caption{Summary of values of the parameters giving the best fit for Models 1 and 1+.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|cc|ccc|}
+    \cline{2-6}
+    & \multicolumn{5}{c|}{Model} \\
+    \cline{2-6}
+    & \multicolumn{2}{c|}{2+} & \multicolumn{3}{c|}{2+} \\
+    \hline
+    \multicolumn{1}{|c|}{Language}  & a & b & a & b & d\\
+    \hline
+    \multicolumn{1}{|c|}{Arabic}    & 0.43167125   & 0.4870379    & 0.013434116   & 1.1275406      & 1.5931178    \\
+    \multicolumn{1}{|c|}{Basque}    & 0.62282772   & 0.4872886 & 0.408457191   & 0.5747096      & 0.3714143    \\
+    \multicolumn{1}{|c|}{Catalan}   & 0.62972753   & 0.4088112    & 0.164340252 & 0.6511170      &  0.9534447   \\
+    \multicolumn{1}{|c|}{Chinese}   & 0.36301241   & 0.6633560    & 0.001518251   & 2.0289108      & 1.6360426    \\
+    \multicolumn{1}{|c|}{Czech}     & 0.04434391   & 1.1699586    & 0.025522715   & 1.2737331      &  0.5833903   \\
+    \multicolumn{1}{|c|}{English}   & 0.68046340   & 0.4732807    & 0.322338798   & 0.6086175      & 0.7953070    \\
+    \multicolumn{1}{|c|}{Greek}     & 0.61861934   & 0.4203148    &  0.322050580  & 0.5361625 &  0.5532839   \\
+    \multicolumn{1}{|c|}{Hungarian} & 0.61505131   & 0.6124458    & 0.663821574   & 0.5978166     &  -0.1228325   \\
+    \multicolumn{1}{|c|}{Italian}   & 0.45394735   & 0.5035479    & 0.079311764   & 0.8364100      & 1.0647708    \\
+    \multicolumn{1}{|c|}{Turkish}   & 0.73330940 & 0.4193468    & 1.599528744   & 0.2880126     &  -1.1753418   \\
+    \hline
+\end{tabular}
+\label{Table:T6}
+\caption{Summary of values of the parameters giving the best fit for Models 2 and 2+.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|cc|ccc|}
+    \cline{2-6}
+    & \multicolumn{5}{c|}{Model} \\
+    \cline{2-6}
+    & \multicolumn{2}{c|}{3+} & \multicolumn{3}{c|}{3+} \\
+    \hline
+    \multicolumn{1}{|c|}{Language}  & a & c & a & c & d\\
+    \hline
+    \multicolumn{1}{|c|}{Arabic}    & 1.872363    & 0.007211773 & 1.8723647    & 0.007211765  & 0.000000    \\
+    \multicolumn{1}{|c|}{Basque}    & 1.599569    & 0.021625091 & 1.5995686    & 0.021625104  & 0.000000    \\
+    \multicolumn{1}{|c|}{Catalan}   & 1.799769    & 0.009237304 & 1.7997696    & 0.009237301  & 0.000000    \\
+    \multicolumn{1}{|c|}{Chinese}   & 1.288536    & 0.030331585& 0.3361013    & 0.054406737  & 1.297008    \\
+    \multicolumn{1}{|c|}{Czech}     & 2.494892    & 0.011217433 & 2.4949094    & 0.011217357  & 0.000000    \\
+    \multicolumn{1}{|c|}{English}   & 2.527430    & 0.009044438 & 2.5274359    & 0.009044401  & 0.000000    \\
+    \multicolumn{1}{|c|}{Greek}     & 1.804814    & 0.009850307 & 1.8048131    & 0.009850320  & 0.000000    \\
+    \multicolumn{1}{|c|}{Hungarian} & 2.947576    & 0.014726981 & 2.9475775    & 0.014726970  & 0.000000    \\
+    \multicolumn{1}{|c|}{Italian}   & 1.831872    & 0.009693254 & 1.8318725    & 0.009693247  & 0.000000    \\
+    \multicolumn{1}{|c|}{Turkish}   & 1.807829    & 0.014837390 & 1.8078225    & 0.014837482  & 0.000000    \\
+    \hline
+\end{tabular}
+\label{Table:T7}
+\caption{Summary of values of the parameters giving the best fit for Models 3 and 3+.}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|ccc|cccc|}
+    \cline{2-8}
+    & \multicolumn{7}{c|}{Model} \\
+    \cline{2-8}
+    & \multicolumn{3}{c|}{4+} & \multicolumn{4}{c|}{4+} \\
+    \hline
+    \multicolumn{1}{|c|}{Language}  & a & b & c & a & b & c & d\\
+    \hline
+    \multicolumn{1}{|c|}{Arabic}    & 1.0944  & 0.1744  & 0.0048 & -30.0000 & -0.0006 & -0.0009 & 31.3504 \\
+    \multicolumn{1}{|c|}{Basque}    & 0.7013  & 0.4247  & 0.0029 & 0.7395 & 0.4115 & 0.0031 & -0.0469\\
+    \multicolumn{1}{|c|}{Catalan}   & 0.9381  & 0.2507  & 0.0037 & -27.7933 & -0.0112 & -0.0008 & 28.5769 \\
+    \multicolumn{1}{|c|}{Chinese}   & 1.2451  & 0.0176  & 0.0296 & -30.0000 & 0.0089 & -0.0034 & 31.2578 \\
+    \multicolumn{1}{|c|}{Czech}     & 0.0008  & 2.2805  & -0.0107 & 1.148e-06 & 3.9542 & -0.0224 & 1.4458\\
+    \multicolumn{1}{|c|}{English}   & 0.8243  & 0.4020  & 0.0015 & -13.9404 & -0.0293 & -0.0035 & 14.7134 \\
+    \multicolumn{1}{|c|}{Greek}     & 0.7184  & 0.3604  & 0.0015 & -6.58809 & -0.0419 & -0.0061 & 7.3003 \\
+    \multicolumn{1}{|c|}{Hungarian} & 0.5771  & 0.6373  & -0.0006 & -1.3722 & 0.9873 & -0.1606 & 6.1490 \\
+    \multicolumn{1}{|c|}{Italian}   & 0.7485  & 0.3186  & 0.0039 & -30.0000 & -0.0054 & -0.0011 & 30.9079 \\
+    \multicolumn{1}{|c|}{Turkish}   & 0.5369  & 0.5688  & -0.0057 & -3.4282 & 0.0223 & -0.0418 & 4.2056\\
+    \hline
+\end{tabular}
+\label{Table:T8}
+\caption{Summary of values of the parameters giving the best fit for Models 4 and 4+.}
+\end{table}
+
+In the following pages, we can see the plots of the best model to the real data in double logarithmic scale. The data is obtained by averaging mean lengths for a given number of vertices. Green lines indicate the function of the best model found.
+
+\newpage
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Arabic.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Basque.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Catalan.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Chinese.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Czech.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/English.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Greek.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Hungarian.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Italian.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Aggregate/Turkish.png}
+\label{fig:globfig}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+\section{Discussion}
+
+By taking a first look at the obtained data, the difference between the fit of the considered functions with respect to the null hypothesis (model 0) is sufficiently significant to conclude that the latter is not a good representation of the data. This can be easily observed in the $\Delta AIC$ and standard error Tables.
+
+When considering the best obtained models for each language we can see that there is some variety. For some of them, we were able to obtain a reasonably good fitting functions (i.e. Arabic, Greek or Hungarian), but for others we struggled to achieve them (i.e. Czech or Chinese). We think that this could be because we where not able to find good initial parameters, but we talk more about the reasons below. In addition, in some models, we considered bounds when calculating the Nonlinear Least Squares. For instance, in the case of models 3+ and 4+, we considered a lower bound of 0 and -30 (respectively) by using the port algorithm, and this decision may have affected the search for good fitting parameters in many cases. As we can see in Tables 7 and 8, many parameters take this value, meaning that we could have restricted the search space to a region when the best fit was not in. In addition, we can see that the generalized models (with the additive term $d$) are not usually the best ones, which is strange because they give more options for fitting.
+
+In the Methods section we explain how we have dealt with the assumption of homoscedasticity. In all the cases, the data has been aggregated (taking the mean) as the assumption did not hold. However, we include the graphical representation of the best models when assuming homoscedasticity in the Appendix Section.
+
+Occasionally, although the proposal is to aggregate the data when homoscedasticity does not hold, we have detected that, by running the fitting without aggregation, we obtain models that represent the examined data more accurately than the former. We think that this could be due to the presence of many outliers in the data that can bias the calculations of the fitting procedure more when less values are considered (in the case of taking the mean). On the other hand, we may not have been able to find good starting parameters for some models when considering the aggregating case. This deviations of the best obtained models with respect to the original data can be more clearly visualized in the case of the Czech language (which gave us a lot of problems), as running the models without aggregation gives us a better fitting function. For checking how the heteroscedasticity assumption affected the calculations, check the Appendix Section at the end to visualize the models when not aggregating the data.
+
+
+\newpage
+
+\section{Methods}
+\subsection{Metric validation}
+Before applying any method, we checked that the metrics satisfied the following equations:
+\[
+4 - \frac{6}{n} \leq \langle k^2 \rangle \leq n-1
+\]
+and
+\[
+\frac{n}{8(n-1)} \langle k^2 \rangle + \frac{1}{2} \leq \langle d \rangle \leq n-1
+\]
+Both equations held for all the tested languages.
+
+\subsection{Homocesdasticity}
+As homocesdasticity is assumed when calculating non-linear regression, we tested if that assumption held for all the languages. To this end, we used different methods:
+\begin{enumerate}
+    \item \textbf{Similar variances}: Checking that the difference between the maximum and minimum variances between points do not exceed a given threshold (1.5 in our case).
+    \item \textbf{Graphical representations}: Fitting a linear model and displaying diverse plots to check visually if the assumption holds. In our case, we were interested in the \emph{Residuals vs Fitted} and \emph{Residuals vs Leverage} plots. If the line of points in both is close to 0, the inference is that homoscedasticity exists.
+    \item \textbf{Statistical tests}: Using an assemble of statistical tests to establish the presence or absence of homoscedasticity. In our case, we used the \emph{Breush Pagan} Test (bqtest), the \emph{NCV} Test (nvctest) and the \emph{Goldfeld-Quandt} Test (gqtest), which are all fed with a linear model and return a p-value. The null hypothesis in all cases is homoscedasticity. Therefore, if the p-value is less than 0.05, we can reject the null hypothesis and infer that heteroscedasticity exists in our model.
+\end{enumerate}
+
+In all the cases, the result was that homocesdasticity did not hold, so we fed the Nonlinear Least-Squares (\texttt{nls}) function with the output of \texttt{aggregate} and not with the original data.
+
+\subsection{Non-linear regression}
+The ensemble of models considered in this work are presented in Table 9:
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{rll}
+    \hline
+    Model & Function & Parameters \\
+    \hline
+    0   & $f(n) = (n+1)3$               & \\
+    1   & $f(n) = (n/2)^b$              & $b$ \\
+    2   & $f(n) = an^b$                 & $a,b$ \\
+    3   & $f(n) = ae^{cn}$              & $a,c$ \\
+    4   & $f(n) = an^be^{cn}$           & $a,b,c$ \\
+    1+  & $f(n) = (n/2)^b + d$          & $b,d$ \\
+    2+  & $f(n) = an^b +d $             & $a,b,d$ \\
+    3+  & $f(n) = ae^{cn} + d$          & $a,c,d$ \\
+    4+  & $f(n) = an^be^{cn} + d $      & $a,b,c,d$ \\
+    \hline
+\end{tabular}
+\label{Table:T9}
+\caption{Ensemble of models and their parameters. Model 0 is considered the null model (obtained from the expected mean length) and has no free parameters.}
+\end{table}
+
+For each model, we tried to carefully chose adequate initial values, as they can be crucial to warrant that \texttt{nls} is able to find a solution. The procedures for calculating them are the following: \\
+
+\noindent \textbf{MODEL 0} \\
+It has no free parameters, so we do not use \texttt{nls}. The calculations are straightforward (explained in the session guide). \\
+
+\noindent \textbf{MODEL 1}
+\begin{lstlisting}
+linear_model = lm(log(mean_length) ~ log(vertices), language)
+b_initial = coef(linear_model)[2]
+\end{lstlisting}
+
+\noindent \textbf{MODEL 2}
+\begin{lstlisting}
+linear_model = lm(log(mean_length) ~ log(vertices), language)
+a_initial = exp(coef(linear_model)[1])
+b_initial = coef(linear_model)[2]
+\end{lstlisting}
+
+\noindent \textbf{MODEL 3}
+\begin{lstlisting}
+linear_model = lm(log(mean_length) ~ vertices, language)
+a_initial = exp(coef(linear_model)[1])
+c_initial = coef(linear_model)[2]
+\end{lstlisting}
+Note that here we do not use the logarithm of the vertices as the function has an exponential. \\
+
+\noindent \textbf{MODEL 4} \\
+For calculating the initial parameters, we use a negative log-likelihood function and try to get the optimum with a Nelder-Mead method (a commonly applied numerical method used to find the minimum or maximum of an objective function in a multidimensional space). We set the initial guess of parameters a, b and c to 1.
+\begin{lstlisting}
+neg_log_like  <- function(params){
+    a <- params[1]
+    b <- params[2]
+    c <- params[3]
+    logSigmaSq <- params[4]
+    meanVec <- a*(mean_length^b)*exp(c*mean_length)
+    sds <- rep(exp(logSigmaSq/2), length(meanVec))
+    -sum(dnorm(mean_length, meanVec, sds, log=T))
+}
+
+init_guess <- c(1,1,1,0.0)
+res <- optim(par = init_guess, fn = neg_log_like,
+             method = "Nelder-Mead")
+
+a_initial = res$par[1]
+b_initial = res$par[2]
+c_initial = res$par[3]
+\end{lstlisting}
+
+For the generalization of the suggested models we use an initial value of the additive term $d = \frac{1}{2}$ min(mean length) and subtract this value from the mean length when calculating the value of the other parameters.
+
+\newpage
+\section*{Appendix: Plots of the best model when assuming homoscedasticity}
+Although we did not aggregate the data when calculating these models, we used the mean length when displaying the plots for a better visualization of the data.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Arabic.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Basque.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Catalan.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Chinese.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Czech.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/English.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Greek.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Hungarian.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Italian.png}
+\label{fig:globfig}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{NoAggregate/Turkish.png}
+\label{fig:globfig}
+\end{figure}
+
+
+
+\end{document}
+

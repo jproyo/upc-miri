@@ -169,12 +169,20 @@
   \begin{algorithm}[H]
     \SetKwInOut{Input}{Input}
     \SetKwInOut{Output}{Output}
-    \Input{ASAP and ALAP Schedule}
-    \Output{Time and Resource Schdule Optimized}
-    1. Determine mobility of each node of the Graph\\
-    2. Construct PB-SAT formulations of the DFG\\
-    3. Solve PB-SAT\\
-    4. Find minimums for resource and time schedule
+    \Input{$G = (V,E)$ with ASAP and ALAP Schedule}
+    \Output{$T \land R$ New Graphs with Time and Resource Schdule Optimized}
+    $G' \leftarrow \textbf{ Determine mobility of each node of the Graph}$\\
+    $T_M \leftarrow \text{ Build PB-SAT Time schedule on } G'$\\
+    $R_M \leftarrow \text{ Build PB-SAT Resource schedule on } G'$\\
+    $T_{SAT} \leftarrow PB-SAT(T_M)$\\
+    $R_{SAT} \leftarrow PB-SAT(T_M)$\\
+    \eIf{$T_{SAT} \neq UNSAT$}
+    {$T \leftarrow \text{Build result on } T_{SAT}$}
+    {Output $UNSAT$ for Time}
+    \eIf{$R_{SAT} \neq UNSAT$}
+    {$R \leftarrow \text{Build result on } R_{SAT}$}
+    {Output $UNSAT$ for Resource}
+    return $T$ and $R$
    \caption{RTL PB-SAT Optimizer}
   \end{algorithm}
 \end{frame}

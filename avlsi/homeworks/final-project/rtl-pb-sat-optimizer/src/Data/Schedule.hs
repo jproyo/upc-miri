@@ -34,7 +34,7 @@ data Node = Node
     _nId :: Int,
     _nStartStep :: Int,
     _nEndStep :: Int,
-    _nToNode :: Maybe Int
+    _nToNode :: Maybe [Int]
   }
   deriving (Show, Eq)
 
@@ -60,7 +60,7 @@ data NodeResult = NodeResult
   { _nrId :: Int
   , _nrStep :: Int
   , _nrResource :: ResourceType
-  , _nrConnectedToNode :: Maybe Int
+  , _nrConnectedToNode :: Maybe [Int]
   } deriving Show
 
 data ScheduleResult = ScheduleResult 
@@ -111,14 +111,12 @@ toInnerResultDot s = let clusters = s^.srNodes . to (stepsSubgraph . fromNodeLis
                          edges    = s^.srNodes . to (edgesConn . fmap (view nrId &&& view nrConnectedToNode))
                       in clusters <> "\n" <> edges
 
-edgesConn :: [(Int, Maybe Int)] -> Text
+edgesConn :: [(Int, Maybe [Int])] -> Text
 edgesConn = T.intercalate "\n" . R.filter (not . T.null) . fmap toEdge
 
-toEdge :: (Int, Maybe Int) -> Text
-toEdge (nId', toId) = maybe "" toConnectedEdge toId
-  where
-    toConnectedEdge :: Int -> Text
-    toConnectedEdge toId' = " " <> R.show nId' <> " -> " <> R.show toId'
+toEdge :: (Int, Maybe [Int]) -> Text
+toEdge (_, Nothing)      = ""
+toEdge (nId', Just toId) = T.intercalate "\n" . R.map (\tId -> " " <> R.show nId' <> " -> " <> R.show tId) $ toId
 
 stepsSubgraph :: Map Int [Int] -> Text
 stepsSubgraph = M.foldrWithKey subgraph ""
@@ -160,7 +158,7 @@ showNodes = mappend "###### Schedule ######" . R.foldl' eachStep ""
     eachStep accum xs = accum <> "\n" <> "Step " <> (R.show . _nrStep . L.head $ xs) <> ": " <> toText (T.intercalate " | " $ R.reverse $ R.foldl' eachNode [] xs)
 
     eachNode :: [Text] -> NodeResult -> [Text]
-    eachNode accum NodeResult{..} = "[" <> R.show _nrId <> maybe "]" (mappend "]" . mappend " --> " . R.show) _nrConnectedToNode : accum
+    eachNode accum NodeResult{..} = "[" <> R.show _nrId <> (mappend "]" . mappend " --> " . R.show) _nrConnectedToNode : accum
 
 maxNode :: Schedule -> Int
 maxNode sc = let alapMax = maximumOf traverse (sc^.sAlap ^.. folded . nId) & maybe 0 identity

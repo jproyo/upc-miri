@@ -170,16 +170,16 @@ precedence (asap, alap) (n1, n2) =
       nEndStep2 = n2 ^. nEndStep
       toNode1 = toNode n1 asap
       toNode2 = toNode n1 alap
-      toNode node schedule = node ^? nToNode . _Just . to (flip view schedule . at) . folded
-      bList [tN1, tN2] =
+      toNode node schedule = node ^. nToNode ^.. traversed . to (fmap ((M.!) schedule)) . folded
+      bList [xn1, xn2] =
         [ [ (fromIntegral $ negate s, [(nodeId1 * 10) + s]),
             (fromIntegral sTn, [(tN1 ^. nId * 10) + sTn])
           ]
-          | s <- [nStartStep1 .. nEndStep2],
+          | s <- [nStartStep1 .. nEndStep2], tN1 <- xn1, tN2 <- xn2,
             sTn <- [(tN1 ^. nStartStep) .. (tN2 ^. nEndStep)]
         ]
       bList _ = []
-      list = mconcat . bList . catMaybes $ [toNode1, toNode2]
+      list = mconcat . bList $ [toNode1, toNode2]
    in (calculateMaxX list, [(toList $ setOf folded list, PB.Ge, 1)])
 
 nodeUnique' :: (Node, Node) -> (Int, [PB.Constraint])

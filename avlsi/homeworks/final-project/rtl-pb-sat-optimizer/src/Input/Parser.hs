@@ -17,6 +17,9 @@ import Text.Trifecta as T
 parseInt :: Parser Int
 parseInt = fromInteger <$> integer
 
+parseList :: Parser [Int]
+parseList = between (symbol "[") (symbol "]") (some parseInt)
+
 parseAsap :: Parser Asap
 parseAsap = manyTill parseNode (try (string "ALAP"))
 
@@ -61,7 +64,7 @@ parseNode = Node <$> (skipComments *> parseResource)
                  <* whiteSpace
                  <*> parseInt
                  <* whiteSpace
-                 <*> optional parseInt
+                 <*> optional parseList
                  <* whiteSpace <* optional newline
 
 parseSchedule' :: Parser Schedule

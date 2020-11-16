@@ -106,7 +106,9 @@ main <- function(){
                        , "infomap.community"
                        )
   
-  graph <- graph.famous("Zachary")
+  #graph <- graph.famous("Zachary")
+  graph <- read.graph("wikipedia.gml", format="gml")
+  #graph <- read_graph("email-Eu-core.txt")
   result <- NULL
   for(algo in communities_algo){
     result <- rbind(result, execute_algorithm(algo, graph))

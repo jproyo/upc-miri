@@ -1,11 +1,11 @@
 ######################################################
 ## Authors: Juan Pablo Royo Sales & Francesc Roy
-## Title: Homework 4
+## Title: Homework 5
 ## Dae: 2020-11-16
 ####################################################
 
 library(igraph)
-
+setwd("~/Projects/upc/upc-miri/csn/homeworks/homework_5")
 
 # Higher is best
 calculate_tpr <- function(community, g) {
@@ -25,63 +25,48 @@ calculate_tpr <- function(community, g) {
   return(count_triads/graph_size)
 }
 
-fold_edge <- function(members, g, edge, acc, inside = FALSE){
-  e <- ends(g, edge)
-  if(inside && members[e[1]] == members[e[2]]){
-    acc <- acc + 2
-  }
-  if(!inside && members[e[1]] != members[e[2]]){
-    acc <- acc + 2
-  }
-  return(acc)
-}
-
-# f_c is defined as the edges in the frontier C = |(u,v) | u \in C \land v \notin C|
-get_f_c <- function(community, g) {
-  # Take all members (vertices) of the community that we are calculating
-  members <- membership(community)
-  # Take all edges of the graph
-  edges <- E(g)
-  sum_f_c <- 0
-  for(i in 1:length(edges)) {
-    sum_f_c <- fold_edge(members, g, edges[i], sum_f_c) 
-  }
-  return(sum_f_c)
-}
-
 # Lower the best f_c/n_c
-calculate_expansion <- function(community, g){
-  return(get_f_c(community, g)/gsize(g))
+calculate_expansion <- function(f_c, g){
+  return(f_c/gsize(g))
 }
 
 calculate_modularity = modularity
 
+# f_c is defined as the edges in the frontier C = |(u,v) | u \in C \land v \notin C|
 # m_c is defined as the edges within cluster C = |(u,v) | u \land v \in C|
-get_m_c <- function(community, g){
+get_f_c_m_c <- function(community, g){
   # Take all members (vertices) of the community that we are calculating
   members <- membership(community)
   # Take all edges of the graph
   edges <- E(g)
   sum_m_c <- 0
-  for(i in 1:length(edges)) {
-    sum_m_c <- fold_edge(members, g, edges[i], sum_m_c, TRUE) 
+  sum_f_c <- 0
+  for(edge in edges) {
+    e <- ends(g, edge)
+    if(members[e[1]] == members[e[2]]){
+      sum_m_c <- sum_m_c + 2
+    }else{
+      sum_f_c <- sum_f_c + 2
+    }
   }
-  return(sum_m_c)
+  return(c(sum_f_c, sum_m_c))
 }
 
 # Lower the best: Fraction of total edge volume that points outside the cluster, \frac{f_c}{2m_c+f_c}
-calculate_conductance <- function(community, g) {
-  f_c <- get_f_c(community, g)
-  m_c <- get_m_c(community, g)
+calculate_conductance <- function(f_c, m_c) {
   return(f_c/((2*m_c)+f_c))
 }
 
 execute_algorithm <- function(algorithm, graph){
   community <- get(algorithm)(graph)
+  tuple_f_c_m_c <- get_f_c_m_c(community, graph)
+  f_c <- tuple_f_c_m_c[1]
+  m_c <- tuple_f_c_m_c[2]
   tpr <- calculate_tpr(community, graph)
-  expansion <- calculate_expansion(community, graph)
-  conductance <- calculate_conductance(community, graph)
+  expansion <- calculate_expansion(f_c, graph)
+  conductance <- calculate_conductance(f_c, m_c)
   modularity <- calculate_modularity(community, graph)
+  print(paste("Algorithm: ", algorithm, " was calculated"))
   return(c(tpr, expansion, conductance, modularity))
 }
 
@@ -107,8 +92,7 @@ main <- function(){
                        )
   
   #graph <- graph.famous("Zachary")
-  graph <- read.graph("wikipedia.gml", format="gml")
-  #graph <- read_graph("email-Eu-core.txt")
+  graph <- simplify(read_graph("ca-HepTh.txt", format = "edgelist", directed = FALSE))
   result <- NULL
   for(algo in communities_algo){
     result <- rbind(result, execute_algorithm(algo, graph))

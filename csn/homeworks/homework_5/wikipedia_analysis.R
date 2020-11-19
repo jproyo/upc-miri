@@ -5,6 +5,7 @@
 ####################################################
 
 library(igraph)
+library("data.table") 
 setwd("~/Projects/upc/upc-miri/csn/homeworks/homework_5")
 
 computeSummaryTableForWiki <- function(graph) {

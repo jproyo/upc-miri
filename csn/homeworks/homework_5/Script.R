@@ -80,25 +80,64 @@ print_summary_model_results <- function(data, algos){
 
 
 main <- function(){
-  communities_algo <- c( "edge.betweenness.community"
-                       , "fastgreedy.community"
-                       , "label.propagation.community"
-                       , "leading.eigenvector.community"
-                       , "multilevel.community"
-                       , "optimal.community"
-                       , "spinglass.community"
-                       , "walktrap.community"
-                       , "infomap.community"
-                       )
+  communities_algo_small <- c( "edge.betweenness.community"
+                             , "fastgreedy.community"
+                             , "label.propagation.community"
+                             , "leading.eigenvector.community"
+                             , "multilevel.community"
+                             , "optimal.community"
+                             , "spinglass.community"
+                             , "walktrap.community"
+                             , "infomap.community"
+                             )
+
+  communities_algo_big <- c( "edge.betweenness.community"
+                           , "fastgreedy.community"
+                           , "label.propagation.community"
+                           , "leading.eigenvector.community"
+                           , "multilevel.community"
+                           , "spinglass.community"
+                           , "walktrap.community"
+                           , "infomap.community"
+  )
   
-  #graph <- graph.famous("Zachary")
-  graph <- simplify(read_graph("ca-HepTh.txt", format = "edgelist", directed = FALSE))
-  result <- NULL
-  for(algo in communities_algo){
-    result <- rbind(result, execute_algorithm(algo, graph))
+  graph_zachary <- graph.famous("Zachary")
+  
+  # Starred Repositories in Github https://snap.stanford.edu/data/github_stargazers.html
+  graph_git <- graph.data.frame(read.csv('git_target.csv', header=TRUE), directed = FALSE)
+  
+  # Arxiv HEP-TH (High Energy Physics - Theory)  https://snap.stanford.edu/data/ca-HepTh.html
+  graph_hep_th <- read.graph("ca-HepTh.txt", format = "edgelist", directed = FALSE)
+  
+  # print("####################################")
+  # print("Zachary GRAPH")
+  # print("####################################")
+  # result_zachary <- NULL
+  # for(algo in communities_algo_small){
+  #   result_zachary <- rbind(result_zachary, execute_algorithm(algo, graph_zachary))
+  # }
+  # print_summary_model_results(result_zachary, communities_algo_small)
+  # 
+  # print("####################################")
+  # print("Github Starred Repos GRAPH")
+  # print("####################################")
+  # result_github <- NULL
+  # for(algo in communities_algo_big){
+  #   result_github <- rbind(result_github, execute_algorithm(algo, graph_git))
+  # }
+  # print_summary_model_results(result_github, communities_algo_big)
+  
+  print("####################################")
+  print("Hep-TH GRAPH")
+  print("####################################")
+  result_hep_th <- NULL
+  for(algo in communities_algo_big){
+    result_hep_th <- rbind(result_hep_th, execute_algorithm(algo, graph_hep_th))
   }
-  print_summary_model_results(result, communities_algo)
+  print_summary_model_results(result_hep_th, communities_algo_big)
+  
 }
+
 
 main()
 

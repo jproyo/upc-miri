@@ -44,7 +44,7 @@ main <- function(){
   count <- max(communities$membership)
   print(paste("Number of Communities: ", count))
   
-  plotSome(communities, graph, sample(1:count, 10))
+  plotSome(communities, graph, sample(1:count, 50))
 
 }
 

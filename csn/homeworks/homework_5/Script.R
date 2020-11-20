@@ -121,17 +121,16 @@ main <- function(){
   # Starred Repositories in Github https://snap.stanford.edu/data/github_stargazers.html
   graph_git <- graph.data.frame(read.csv('git_target.csv', header=TRUE), directed = FALSE)
   
-  # Arxiv GR-QC (General Relativity and Quantum Cosmology)  https://snap.stanford.edu/data/ca-GrQc.html
-  graph_gr_qc <- read.graph("oregon1_010526.txt", format = "edgelist", directed = FALSE)
+  graph_facebook <- read.graph("facebook_combined.txt", format="edgelist", directed = FALSE)
+  
+  run_graph("Facebook", graph_facebook, communities_algo_big)
   
   #run_graph("Zachary", graph_zachary, communities_algo_small)
   
   # Comment this if you want to run something quick
   #run_graph("Github Starred Repos", graph_git, communities_algo_big)
   
-  # Comment this if you want to run something quick
-  run_graph("Oregon March 2001", graph_gr_qc, communities_algo_big)
-  
+
 }
 
 

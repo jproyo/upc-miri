@@ -122,7 +122,7 @@ main <- function(){
   graph_git <- graph.data.frame(read.csv('git_target.csv', header=TRUE), directed = FALSE)
   
   # Arxiv GR-QC (General Relativity and Quantum Cosmology)  https://snap.stanford.edu/data/ca-GrQc.html
-  graph_gr_qc <- read.graph("ca-GrQc.txt", format = "edgelist", directed = FALSE)
+  graph_gr_qc <- read.graph("oregon1_010526.txt", format = "edgelist", directed = FALSE)
   
   #run_graph("Zachary", graph_zachary, communities_algo_small)
   
@@ -130,7 +130,7 @@ main <- function(){
   #run_graph("Github Starred Repos", graph_git, communities_algo_big)
   
   # Comment this if you want to run something quick
-  run_graph("GR-QC", graph_gr_qc, communities_algo_big)
+  run_graph("Oregon March 2001", graph_gr_qc, communities_algo_big)
   
 }
 

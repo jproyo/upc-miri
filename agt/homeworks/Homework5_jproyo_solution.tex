@@ -1,0 +1,133 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+\usepackage{titlesec}
+  
+
+\title{%
+  Algorithmic Game Theory \\
+  Homework 5 - Cooperative Games
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AGT - Homework 5}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newacronym{bpp}{BPP}{BPP}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 11}
+
+\subsection{Simple Game Analysis}
+Lets analyze case by case to see if some of the option $(a)$, $(b)$ or $(c)$ is a $\Gamma_s$ \textbf{Simple Game}.
+
+\newtheorem{case_a}{$(a)$}
+\newtheorem{proofpart}{Part}
+\begin{case_a}
+  A Coalition $X$ is winning in $\Gamma_s \iff X$ wins in $\Gamma$ and $H[X]$ has not isolated vertices.
+\end{case_a}
+
+\begin{proof}
+\begin{proofpart}
+$\implies$\\
+This part is trivial by \textbf{monotonicity} of Simple Games since if it is wining on $\Gamma_s$ is winning on $\Gamma$ and
+there should be not isolated vertices since all the players should communicate.
+\end{proofpart}
+
+\begin{proofpart}
+$\impliedby$\\
+Lets assume there is no isolated vertices. But if that occurs it doesn't mean that $H[X]$ is a connected graph, because
+for example if $(u,v) \in E$ and $(v,z) \in E$ but $(u,z) \notin E$, the graph has not isolated vertices but it is not connected.
+\end{proofpart}
+
+Therefore, $(a)$ \textbf{is not a simple game} on $\Gamma_s$.
+\end{proof}
+
+\newtheorem{case_b}{$(b)$}
+\newtheorem{proofpart_b}{Part}
+\begin{case_b}
+  A Coalition $X$ is winning in $\Gamma_s \iff X$ wins in $\Gamma$ and $H[X]$ is connected.
+\end{case_b}
+
+\begin{proof}
+\begin{proofpart}
+$\implies$\\
+This part is trivial by the same reason of previous analysis.
+\end{proofpart}
+
+\begin{proofpart}
+$\impliedby$\\
+If $H[X]$ is connected means that $\forall \{u,v\} \in N, (u,v) \in E$. So every member communicate each other.
+At the same time $X$ is winning in $\Gamma$, therefore $X$ is also winning in $\Gamma_s$ because both condition holds.
+\end{proofpart}
+
+Therefore, $(b)$ \textbf{is a simple game} on $\Gamma_s$.
+\end{proof}
+
+\newtheorem{case_c}{$(c)$}
+\newtheorem{proofpart_c}{Part}
+\begin{case_c}
+  A Coalition $X$ is winning in $\Gamma_s \iff$ there is an $Y \subseteq X$, so that $Y$ wins in $\Gamma$ and $H[Y]$ is connected.
+\end{case_c}
+
+\begin{proof}
+\begin{proofpart}
+$\implies$\\
+Suppose that $X$ belongs to a minimal wining coalition $W^m$. If that happens there cannot be any other winning coalition that is included in $X$, 
+because $\forall Y \in W, Y \subsetneq X$ according to the definition of minimal winning coalition.
+\end{proofpart}
+
+Therefore, $(c)$ \textbf{is a not simple game} on $\Gamma_s$.
+\end{proof}
+
+\subsection{Complexity Analysis}
+For the complexity analysis and taking into consideration that $X \in W$ can be decide in $Poly-time$, i could provide the following Polynomial time algorithm for deciding \textit{empty-core} in $\Gamma_s$. In this case for $(b)$,
+based on the Theorem in which we know that \textit{A Simple Game has a non-empty core if it has a veto player}.
+The idea of the algorithm is trying to find that \textbf{veto player}
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{Given $H = (N, E)$}
+  \Output{If $\Gamma_s$ has an empty core}
+  \nlset{$O(|N|+|E|)$ times}{$SCC \leftarrow $ Calculate \textbf{SCC} of $H$}\\
+  \nlset{$n$ times}\For{each $X \in SCC$}{
+    \nlset{$k$ times}\For{each $p \in X$}{
+      $X \leftarrow X \setminus \{p\}$;\\
+      \nlset{$Poly-time$}\lIf{$X \notin W$}
+      {return \emph{NON EMPTY CORE};
+      }
+    }
+  }
+  return \emph{EMPTY CORE};
+  \caption{Decide $\Gamma_s$ has an empty core}
+\end{algorithm}
+
+\end{document}
+

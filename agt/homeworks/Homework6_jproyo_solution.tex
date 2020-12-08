@@ -101,6 +101,27 @@ Lets assume that we take $X = Y$, then
   \item Therefore the core is not empty.
 \end{itemize}
 
+\section{Problem 16}
+In order to probe if it is $NP-\text{Complete}$ we need to first show that it is $NP-\text{hard}$.
+
+Lets call $X$ the votes that are not in $M$.
+
+Lets consider every \textit{pairwise} competition and we could see that every \textit{pairwise} is determined without $M$ except for the pairwise $a$ and $b$
+
+\begin{itemize}
+  \item $d$ wins to $a$ and $b$ in first row $2K + 1$
+  \item $a$ and $b$ wins to $c$
+  \item $c$ wins to $d$
+\end{itemize}
+
+If there is someone who wins between $a$ and $b$ pairwise, that one either $a$ or $b$ will tie with $d$.
+So, taking into consideration the previous statement $d$ wins \textbf{Copeland} manipulation election $\iff a \land b$ tie in their \textit{pairwise}.
+But, after the votes in $X$ $a$ and $b$ are tied. In order to maintain this tie we need that the \textbf{combined weights} $k_i \in M$ such that $\{b \mid b\ P\ a\}$ ($b$ is preferred over $a$) 
+is the same as \textbf{combined weights} $k_i \in M$ such that $\{a \mid a\ P\ b\}$ ($a$ is preferred over $b$).
+
+Since there is a $PARTITION$ instance $(k1,\dots, k_n)$ with $\sum_{i=1}^n = 2K$, so $M$ can be balance and preserved the tie.
+
+Therefore since $PARTITION$ is $NP-\text{Complete}$, \textit{Copeland-CWM} is also $NP-\text{Complete}$.
 
 \end{document}
 

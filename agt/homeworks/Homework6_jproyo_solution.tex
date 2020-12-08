@@ -1,0 +1,106 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+\usepackage{titlesec}
+  
+
+\title{%
+  Algorithmic Game Theory \\
+  Homework 6 - Cooperative Games
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AGT - Homework 6}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newacronym{bpp}{BPP}{BPP}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem 10}
+\subsection{Question a}
+\subsubsection{Monotone}
+In order to probe if this game is \textit{monotone} we need to probe that $v(C) \leq v(D)$ for any $C,D$ such that $C \subseteq D$.
+Since we have a case function we are going to analyze the different parts. 
+
+Let have a graph $G_x = (V, X)$. Since by definition the players are the Edges, we can add player to $X$, so we are adding edges $Y$ to the graph $G_x$, such that
+$X' = X \cup Y$. Lets call this new graph $G_x' = (V', X')$.
+
+\begin{itemize}
+  \item If $G_x'$ is connected then $v(X') = 2|X'| - \text{diam}(G_x')$. Since we are adding more edges $|X'| > |X|$, and the diameter is at least greater or equal $diam(G_x') \geq diam(G_x)$ because it is connected and by definition of diameter if we are adding edges the greatest length of the shortest path cannot be smaller with more edges.
+  \item If $G_x'$ is not connected also $\frac{|X'|}{2} > \frac{|X|}{2}$.
+\end{itemize}
+
+Therefore for any $G_x \subseteq G_x'$, $v(X) \leq v(X')$, so it is \textbf{Monotone}.
+
+\subsubsection{Superadditive}
+A game is Superadditive if $v(C \cup D) \geq v(C) + v(D)$ for any 2 disjoint coalitions $C$ and $D$.
+
+Lets analyize each case. 
+Lets take if $G_{X \cup Y}$ is connected, then 
+
+\begin{subequations}
+  \begin{align}
+    v(X \cup Y) &= 2(|X| + |Y|) - diam(G_{X \cup Y})\\
+                &= 2|X| + 2|Y| - diam(G_{X \cup Y})
+  \end{align}
+\end{subequations}
+
+And $2|X| + 2|Y| - diam(G_{X \cup Y}) \geq 2|X| - diam(G_X) + 2|Y| - diam(G_Y)$ because $diam(G_{X \cup Y}) \leq diam(G_X) + diam(G_Y)$ since it is included in one of the 2.
+
+Lets take if $G_{X \cup Y}$ is not connected, then 
+
+\begin{subequations}
+  \begin{align}
+    v(X \cup Y) &= \frac{|X| + |Y|}{2}\\
+                &= \frac{|X|}{2} + \frac{|Y|}{2}\\
+                &= v(X) + v(Y)
+  \end{align}
+\end{subequations}
+
+Therefore it is superadditive.
+
+\subsubsection{Supermodular}
+A game is Supermodular if $v(C \cup D) + v(C \cap D) \geq v(C) + v(D)$.
+
+By the previous item we have probe that it is superadditive, so if we sum $v(C \cap D)$ to the union, we are still going to have something
+greater or equal of the sum of the individual valuation functions, therefore it is also supermodular.
+
+\subsection{Question b}
+Yes, a graph of only 1 edge because. Let suppose that that graph is $A = (Z, Y)$ where $Z={z,v}$ and $Y = {z,v}$. 
+Lets assume that we take $X = Y$, then
+
+\begin{itemize}
+  \item $v(X) = 2 |X| - diam(A_X) = 2 \times 1 - 1 = 1$ 
+  \item Also we have that $x(X) = 1$ because we have 1 edge.
+  \item Therefore the core is not empty.
+\end{itemize}
+
+
+\end{document}
+

@@ -42,6 +42,7 @@ main <- function(){
   communities <- walktrap.community(graph)
   
   count <- max(communities$membership)
+  
   print(paste("Number of Communities: ", count))
   
   plot(communities, main = "Communities"

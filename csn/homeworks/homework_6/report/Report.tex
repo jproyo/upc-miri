@@ -276,7 +276,7 @@ The solution of this work is divided as follows:
         Model 4+  &  869216.84\\
     \end{tabular}
     \caption{AIC Selection: Growth + Preferential Attachment over Time Degree}
-    \label{table:time_grow_ran_att_1}
+    \label{table:time_grow_pref_att_1}
 \end{table}
 
 \begin{minipage}[t]{\linewidth}
@@ -375,6 +375,11 @@ Regarding \textit{R} scripts we have the following scripts:
     \item \mintinline{shell}{code/Task2.R}: We have developed here the analysis and plotting of the first task about analysis of \acrshort{growdeg}
 \end{itemize}
 
+\subsubsection{Experiments}
+As we are dealing with randomness, we have realized that we needed different number of experiments in order to be able to empirically test the theoretical the expected behavior. 
+
+As it can bee seen in the \mintinline{shell}{code/main.cpp} code, we have conducted $100$ experiments on each case to reach this mean values.
+
 \subsubsection{Parameters Selection}
 We have 2 cases in parameter selection, on the one hand we have chosen parameters and \textbf{Initial Graph Configuration} for \acrshort{prefatt} and \acrfull{randatt} and on the other hand we have chosen a different set of parameters
 and \textbf{Initial Graph Configuration} of initial graph for \acrshort{nprefatt}.
@@ -409,16 +414,23 @@ and \textbf{Initial Graph Configuration} of initial graph for \acrshort{nprefatt
     \item At the same time we can see that \acrshort{nprefatt} best fit with \acrshort{dispp} as it is expected according to tis \acrshort{aic} value. This can be seen in the table and plot here~\ref{table:no_grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_no_pref}.
 \end{itemize}
 
-\subsubsection{Degree Distribution Analysis}
-\begin{itemize}
-    \item Regarding the \acrshort{degdist} analysis we can appreciate that for \acrshort{prefatt} we have checked that the best model that fits is the \acrshort{zeta} Distribution as
-    it is expected according to its \acrshort{aic} value and the plot obtained here~\ref{table:grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_pref_att}.
-    \item In the case of \acrshort{randatt} the best fit is also given as expected by \acrshort{dispg} as we can appreicate by its \acrshort{aic} value and the plot obtained here~\ref{table:grow_ran_att_3} and here~\ref{fig:degree_tmax_grow_random_att}.
-    \item At the same time we can see that \acrshort{nprefatt} best fit with \acrshort{dispp} as it is expected according to tis \acrshort{aic} value. This can be seen in the table and plot here~\ref{table:no_grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_no_pref}.
-\end{itemize}
+\subsubsection{Vertex Growth Degree over Time Analysis}
+In the case of the \acrshort{growdeg} analysis we have detected that once we apply the re-escalation function either on \acrshort{prefatt} or \acrshort{randatt}, the \textbf{time} where the vertex 
+was inserted does not affect the distribution and all the different moments are similar. In the case of the model \acrshort{nprefatt} we didn't have the need to re-escalate because all nodes are inserted
+in $t_0$ and there is \textbf{No Growth} as its name indicates.
+
+On the other hand all the correspondent models fits as expected, for example in the case of \acrshort{prefatt} the best model which fits is \textbf{Model 2+} as we can see here~\ref{table:time_grow_pref_att_1} and here~\ref{fig:time_growth_degree_best_fit_pref_att}, and
+the same we can appreciate for \acrshort{nprefatt}. Although this, we couldn't fit properly strategy \acrshort{randatt}, because in the exercise it is said that \textbf{Model 4} should be the best, but in 
+our experiments according to our results the best model which fits is the \textbf{Model 0}. This can be seen here~\ref{table:time_grow_ran_att_1} and here~\ref{fig:time_growth_degree_best_fit_rand_att}.
+
 
 \section{Conclusions}
-As we have appreciated in the~\ref{sec:disc} .....
+In our humble opinion we think it is better to try out different parameters rather than spend so much time coding and having the different parts to work together. When we refer to \textit{trying out different parameters}, we are talking about
+experiment with different sets of $m_0, n_0, t_{max}$, the \textbf{Initial Graph Configuration}, etc. Although we have tried some of them because of lack of time and because we have been focusing on having a piece of working code, we think that perhaps in 
+other circumstances a better and deeper analysis could be conducted.
+
+On very interested thing of this Homework was the possibility of integrating different parts of homeworks that we have conducted before into a single work: the possibility of using different fitting methods as \textbf{Maximum likelihood estimation}, \textbf{NLS}, etc.
+
 
 \end{document}
 

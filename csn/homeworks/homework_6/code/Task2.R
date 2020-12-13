@@ -230,6 +230,20 @@ plot_best_aic <- function(filename){
     min_model_name <- "Model 4+"
   }
   
+  print(filename)
+  print("AIC Model & Value")
+  print(paste("Model 0", " & ", aic_0))
+  print(paste("Model 1", " & ", aic_1))
+  print(paste("Model 2", " & ", aic_2))
+  print(paste("Model 3", " & ", aic_3))
+  print(paste("Model 4", " & ", aic_4))
+  print(paste("Model 0+", " & ", aic_p_0))
+  print(paste("Model 1+", " & ", aic_p_1))
+  print(paste("Model 2+", " & ", aic_p_2))
+  print(paste("Model 3+", " & ", aic_p_3))
+  print(paste("Model 4+", " & ", aic_p_4))
+
+  
   plot(log(degree_over_time_10$V1), log(degree_over_time_10$V2),xlab = "log(vertices)", ylab = "log(mean dependency length)", main = paste("Best Model", min_model_name, ":", filename))
   lines(log(degree_over_time_10$V1), log(fitted(min_aic_model)), col = "green")
 

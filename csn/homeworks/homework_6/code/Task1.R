@@ -38,19 +38,19 @@ sum(table$V2)
 
 
 ## MODEL 1##
-x <- seq(0,MAX,1)
-y <- (x^-2.295044)/gamma(2.295044) 
-
-harmonic=0
-for (i in 1:MAX){
-  harmonic=harmonic+ 1/(i^(3))
-}
-y_1 <- (x^-3)/harmonic 
-
-plot(log(table$V1),log(table$V2), col = "blue", pch = 20,main = "Growth + Pref.Attachment: Degree distribution at time tmax", 
-     xlab = "log degree",
-     ylab = "log probability")
-points(log(x), log(y), col = "red", pch = 20)
+# x <- seq(0,MAX,1)
+# y <- (x^-2.295044)/gamma(2.295044) 
+# 
+# harmonic=0
+# for (i in 1:MAX){
+#   harmonic=harmonic+ 1/(i^(3))
+# }
+# y_1 <- (x^-3)/harmonic 
+# 
+# plot(log(table$V1),log(table$V2), col = "blue", pch = 20,main = "Growth + Pref.Attachment: Degree distribution at time tmax", 
+#      xlab = "log degree",
+#      ylab = "log probability")
+# points(log(x), log(y), col = "red", pch = 20)
 #points(log(x), log(y_1), col = "green", pch = 20)
 
 
@@ -60,7 +60,7 @@ q= 0.500005
 x <- seq(0,MAX,1)
 y <- q*(1-q)^(x-1)
 
-plot(log(table$V1),log(table$V2), col = "blue", pch = 20,main = "Growth + Rand.Attachment: Degree distribution at time tmax", 
+plot(log(table$V1),log(table$V2), col = "blue", pch = 20,main = "Growth + Rand Att: Degree distribution at t_max", 
      xlab = "log degree",
      ylab = "log probability")
 points(log(x), log(y), col = "red", pch = 20)

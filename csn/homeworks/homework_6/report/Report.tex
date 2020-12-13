@@ -47,14 +47,13 @@
 \newacronym{netdyn}{Network Dynamics}{Network Dynamics}
 \newacronym{degdist}{Degree Distribution}{Degree Distribution}
 \newacronym{growdeg}{Time Growth Degree}{Growth of Vertex Degree over time}
+\newacronym{prefatt}{G Pref Attachment}{Growth + Preferential Attachment}
+\newacronym{randatt}{G Random Attachment}{Growth + Random Attachment}
+\newacronym{nprefatt}{NG Pref Attachment}{No Growth + Preferential Attachment}
+\newacronym{baral}{Barabasi-Albert model}{Barabasi-Albert model}
 \newacronym{indegree}{Incomming Degree}{Incomming Degree Language Set}
-\newacronym{dispp}{Displaced Poisson}{Displaced Poisson Model}
-\newacronym{dispg}{Displaced Geometric}{Displaced Geometric Model}
-\newacronym{zeta2}{Zeta-Gamma-2}{Zeta Model with fixed Gamma with value 2}
 \newacronym{zeta}{Zeta}{Zeta Model}
-\newacronym{zetar}{Right-Truncated Zeta}{Right-Truncated Zeta Model}
 \newacronym{aic}{Akaike}{Akaike Information Criterion}
-\newacronym{alt}{Altmann}{Altmann Model}
 
 \begin{document}
 
@@ -64,10 +63,22 @@
 
 \section{Introduction}
 In this homework we have analyzed \acrfull{netdyn} on different models proposed for this work.
-The main goal of this work is to identify the best model which fit on both aspects of \acrshort{netdyn}, 
+The main goal of this work is to identify the best model which fit on both aspects of \acrshort{netdyn}, \acrfull{degdist} and \acrfull{growdeg}.
+The following sections are going to show the results obtained and after that the discussion about the methodology used for the analysis and some conclusions at the end.
+
+All the models that we have generated for the analysis of \acrfull{baral} over time have been done using \textbf{C++} Language and you can find the source code of this 
+solution under \mintinline{shell}{code/main.cpp}.
+
+The solution of this work is divided as follows:
+
+\begin{itemize}
+    \item \textbf{code}: Under this folder you are going to find \textit{C++} code for simulating and generating the different networks using the different strategies: \acrfull{prefatt}, \acrfull{randatt} and \acrfull{nprefatt}, as well as the \textit{R} scripts for generating plots and doing graph analysis.
+    \item \textbf{code/data}: Data Generated for each strategy
+    \item \textbf{report}: This report in Latex and PDF format.
+\end{itemize}
 
 \section{Results}
-\subsection{Degree Distribution Analysis}
+\subsection{Degree Distribution Analysis}\label{deg_dist_ana}
 \subsubsection{Growth + Preferential Attachment}
 
 \begin{table}[H]
@@ -179,21 +190,114 @@ The main goal of this work is to identify the best model which fit on both aspec
   \end{minipage}
 
 \subsection{Time Growth Degree Analysis}
+
 \subsubsection{Growth + Preferential Attachment}
+
 \begin{minipage}[t]{\linewidth}
     \includegraphics[width=\textwidth]{time_growth_degree_pref_att}
     \captionsetup{type=figure}
     \captionof{figure}{Time Growth Degree: Growth + Pref Att}
     \label{fig:time_growth_degree_pref_att}
   \end{minipage}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l r}
+        Model & AIC Value\\
+        \hline
+        Model 0  &  827909.63\\
+        Model 1  &  98488.01\\
+        Model 2  &  98043.99\\
+        Model 3  &  696452.97\\
+        Model 4  &  869213.48\\
+        Model 0+  &  595689.50\\
+        Model 1+  &  95483.67\\
+        \textbf{Model 2+} & \textbf{82349.48}\\
+        Model 3+  &  696467.54\\
+        Model 4+  &  869216.84\\
+    \end{tabular}
+    \caption{AIC Selection: Growth + Preferential Attachment over Time Degree}
+    \label{table:time_grow_ran_att_1}
+\end{table}
+
+\begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{time_growth_degree_best_fit_pref_att}
+    \captionsetup{type=figure}
+    \captionof{figure}{Best Fit Time Growth Degree: Growth + Pref Att}
+    \label{fig:time_growth_degree_best_fit_pref_att}
+  \end{minipage}
+
+
 \subsubsection{Growth + Random Attachment}
 
+\begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{time_growth_degree_rand_att}
+    \captionsetup{type=figure}
+    \captionof{figure}{Time Growth Degree: Growth + Random Att}
+    \label{fig:time_growth_degree_rand_att}
+  \end{minipage}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l r}
+        Model & AIC Value\\
+        \hline
+        Model 0  &  529661.14\\
+        Model 1  &  414515.14\\
+        \textbf{Model 2}  &  \textbf{40943.69}\\
+        Model 3  &  148894.78\\
+        Model 4  &  60229.36\\
+        Model 0+  &  140375.69\\
+        Model 1+  &  89613.81\\
+        Model 2+  & 45361.77\\
+        Model 3+  &  148896.86\\
+        Model 4+  &  60233.06\\
+    \end{tabular}
+    \caption{AIC Selection: Growth + Random Attachment over Time Degree}
+    \label{table:time_grow_ran_att_1}
+\end{table}
+
+
+\begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{time_growth_degree_best_fit_rand_att}
+    \captionsetup{type=figure}
+    \captionof{figure}{Best Fit Time Growth Degree: Growth + Random Att}
+    \label{fig:time_growth_degree_best_fit_rand_att}
+  \end{minipage}
 
 \section{Discussion and Methods}
-fafdsaf
+\subsection{Methods}
+As we have pointed out in the introduction we have use \textbf{C++} code for generating the different kinds of Growth in the \acrshort{baral}.
+This can be found in the source code file \mintinline{shell}{code/main.cpp}. 
+
+Regarding \textit{R} scripts we have the following scripts:
+
+\begin{itemize}
+    \item \mintinline{shell}{code/FromHomework2.R}: Which is the same script we have used on the Homework 2 for Fitting model analysis but we have change \acrshort{zeta} in order to fix $\Gamma = 3$
+    \item \mintinline{shell}{code/Task1.R}: We have developed here the analysis and plotting of the first task about analysis of \acrshort{degdist}
+    \item \mintinline{shell}{code/Task2.R}: We have developed here the analysis and plotting of the first task about analysis of \acrshort{growdeg}
+\end{itemize}
+
+\subsubsection{Parameters Selection}
+Regarding the selection of parameters we have selected $m_0 = 1$, $n_0 = 2$, $t_{max} = 100.000$.
+This selection is based on the fact that we have tried different kind of alternatives, but the only one which has given the best fit 
+in~\ref{deg_dist_ana} is this set of parameters.
+
+Other option that we have tested are:
+
+\begin{itemize}
+    \item $m_0 = 2$, $n_0 = 3$, $t_{max} = 100.000$
+    \item $m_0 = 3$, $n_0 = 5$, $t_{max} = 100.000$
+    \item $m_0 = 5$, $n_0 = 3$, $t_{max} = 100.000$
+\end{itemize}
+
+\subsection{Discussions}\label{sec:disc}
+\subsubsection{Degree Distribution Analysis}
+Regarding the \acrshort{degdist} analysis we can appreciate that for \acrshort{prefatt} we have checked that the best model that fits is the \acrshort{zeta} Distribution as
+it is expected according to its \acrshort{aic} value and the plot obtained here~\ref{table:grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_pref_att}.
 
 \section{Conclusions}
-fadsfasdf
+As we have appreciated in the~\ref{sec:disc} .....
 
 \end{document}
 

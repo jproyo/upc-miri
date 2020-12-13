@@ -36,6 +36,10 @@ escalate_pref_att <- function(time, degree){
   return (time^0.5*degree)
 }
 
+escalate_no_pref_att <- function(time, degree){
+  return (degree)
+}
+
 escalate_rand_att <- function(time, degree){
   return (degree + M_0*log(N_0+ time -1) -M_0)
 }
@@ -43,10 +47,10 @@ escalate_rand_att <- function(time, degree){
 plot_models <- function(){
   plot_degree_over_time("degree_over_time_pref_att", "escalate_pref_att")
   plot_degree_over_time("degree_over_time_rand_att", "escalate_rand_att")
+  plot_degree_over_time("degree_over_time_no_pref_att", "escalate_no_pref_att")
 }
 
-plot_degree_over_time("degree_over_time_rand_att", "escalate_rand_att")
-
+plot_degree_over_time("degree_over_time_no_pref_att", "escalate_no_pref_att")
 
 
 plot_best_aic <- function(filename){
@@ -54,7 +58,7 @@ plot_best_aic <- function(filename){
   min_aic_model <- NULL
   min_model_name <- "Model 0"
 
-  degree_over_time_10 = read.table(paste("data/",filename,"_10",sep = ""),header = FALSE)
+  degree_over_time_10 = read.table(paste("data/",filename,"_1",sep = ""),header = FALSE)
   
   # Model 0
   linear_model = lm(log(degree_over_time_10$V2)~log(degree_over_time_10$V1), degree_over_time_10)
@@ -251,6 +255,7 @@ plot_best_aic <- function(filename){
 
 plot_best_aic("degree_over_time_pref_att")
 plot_best_aic("degree_over_time_rand_att")
+plot_best_aic("degree_over_time_no_pref_att")
 
 
 

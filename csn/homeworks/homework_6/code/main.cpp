@@ -10,11 +10,11 @@
 
 #define NUM_EXPERIMENTS 100
 #define TIME_STEPS 100000
-#define N_0 2
+#define N_0 10000
 #define M_0 1
-#define TYPE 1
+#define TYPE 2 //TYPE 1= COMPLETE ,TYPE 2=RING
 
-#define MODEL 2
+#define MODEL 3
 
 int results_t1[TIME_STEPS][NUM_EXPERIMENTS];
 int results_t10[TIME_STEPS][NUM_EXPERIMENTS];
@@ -142,6 +142,9 @@ class Graph{
         
         }
         
+        
+        
+        
         // METHODS //
         
         //
@@ -218,7 +221,7 @@ class Graph{
         //
         void fillDestinationId(vector <int> * destination_id, int m_0, int my_id){
         
-            if(MODEL==1){
+            if(MODEL==1 || MODEL==3){
             
                 std::uniform_int_distribution<int> distribution(0,this->stubs.size()-1);
 
@@ -231,7 +234,7 @@ class Graph{
                         int number = distribution(generator);
                         dest_id = this->stubs.at(number)->one;
 
-                        if(!containsID(destination_id,dest_id)){ // to avoid multiedges (loops are never going to occur right?)
+                        if(!containsID(destination_id,dest_id) && dest_id!=my_id){ // to avoid multiedges (loops are never going to occur right?)
 
                             next =true;
                         }
@@ -344,6 +347,7 @@ class Model{
         Graph barabasi;
         int n_0;
         int m_0;
+        std::default_random_engine generator_model; 
     
     public:
         //Constructor
@@ -351,7 +355,8 @@ class Model{
 
             this->n_0=n_0;
             this->m_0=m_0;
-
+            generator_model.seed(time(NULL));
+            
             for(int i=0;i<n_0;i++){
 
                 barabasi.addNode(i);
@@ -402,35 +407,59 @@ class Model{
             
             for(int t=0;t<units_of_time;t++){
 
-                int new_id = n_0+t;
+                if(MODEL==1 || MODEL==2){
+                
+                    int new_id = n_0+t;
 
-                barabasi.addNode(new_id); // Adding 1 vertex
+                    barabasi.addNode(new_id); // Adding 1 vertex
 
-                vector<int>  destination_id;
-                barabasi.fillDestinationId(&destination_id,m_0,new_id);
-                
-                for(int i=0;i<m_0;i++){
+                    vector<int>  destination_id;
+                    barabasi.fillDestinationId(&destination_id,m_0,new_id);
 
-                    barabasi.addEdge(new_id,destination_id.at(i));
+                    for(int i=0;i<m_0;i++){
+
+                        barabasi.addEdge(new_id,destination_id.at(i));
+                    }
+
+
+
+
+                    results_t1[t][id_exp] = barabasi.getNode(n_0)->getDegree();
+
+                    if(t>=9){
+                        results_t10[t][id_exp] = barabasi.getNode(n_0+9)->getDegree();
+                    }
+
+                    if(t>=99){
+                        results_t100[t][id_exp] = barabasi.getNode(n_0+99)->getDegree();
+                    }
+
+                    if(t>=999){ 
+                        results_t1000[t][id_exp] = barabasi.getNode(n_0+999)->getDegree();
+                    }
+                
+                }else if(MODEL==3){
+                
+                    std::uniform_int_distribution<int> distribution(0,this->barabasi.getNumberOfNodes()-1);
+                    int vertex_chosen = distribution(generator_model); 
+                    
+                    vector<int>  destination_id;
+                    barabasi.fillDestinationId(&destination_id,m_0,vertex_chosen);
+
+                    for(int i=0;i<m_0;i++){
+
+                        barabasi.addEdge(vertex_chosen,destination_id.at(i));
+                    }
+
+
+
+
+                    results_t1[t][id_exp] = barabasi.getNode(0)->getDegree(); // don't care wich...!
+                
+                
+                
+                
                 }
-                
-                
-                
-                  
-                results_t1[t][id_exp] = barabasi.getNode(n_0)->getDegree();
-                
-                if(t>=9){
-                    results_t10[t][id_exp] = barabasi.getNode(n_0+9)->getDegree();
-                }
-                
-                if(t>=99){
-                    results_t100[t][id_exp] = barabasi.getNode(n_0+99)->getDegree();
-                }
-                
-                if(t>=999){ 
-                    results_t1000[t][id_exp] = barabasi.getNode(n_0+999)->getDegree();
-                }
-                
                 
                 
             }

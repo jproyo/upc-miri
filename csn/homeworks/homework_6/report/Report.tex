@@ -54,6 +54,9 @@
 \newacronym{indegree}{Incomming Degree}{Incomming Degree Language Set}
 \newacronym{zeta}{Zeta}{Zeta Model}
 \newacronym{aic}{Akaike}{Akaike Information Criterion}
+\newacronym{dispp}{Displaced Poisson}{Displaced Poisson Model}
+\newacronym{dispg}{Displaced Geometric}{Displaced Geometric Model}
+
 
 \begin{document}
 
@@ -186,8 +189,64 @@ The solution of this work is divided as follows:
     \includegraphics[width=\textwidth]{degree_tmax_grow_random_att}
     \captionsetup{type=figure}
     \captionof{figure}{Degree $t_{max}$ Growth + Pref Att with Displaced Geometric}
-    \label{fig:degree_tmax_grow_pref_att}
+    \label{fig:degree_tmax_grow_random_att}
   \end{minipage}
+
+\subsubsection{No Growth + Preferential Attachment}
+
+  \begin{table}[H]
+      \centering
+      \begin{tabular}{l r}
+          Parameter & Value\\
+          \hline              
+          M & 219726\\
+          N & 10000\\
+          MAX & 60\\
+          M/N & 21.97\\
+          N/M & 0.04\\
+          MP & 30332.60\\
+          C & 495569.98
+      \end{tabular}
+      \caption{Data Analysis over No Growth + Pref Attachment}
+      \label{table:no_grow_pref_att_1}
+  \end{table}
+  
+  \begin{table}[H]
+      \centering
+      \begin{tabular}{l r}
+          Distribution & Estimation\\
+          \hline
+          Displaced Poisson & 21.97\\
+          Displaced Geometric & 0.04\\
+          Zeta Gamma & 1.28\\ 
+          Zeta Truncated & 13000\\
+      \end{tabular}
+      \caption{Estimation of Parameters: No Growth + Preferential Attachment}
+      \label{table:no_grow_pref_att_2}
+  \end{table}
+  
+  \begin{table}[H]
+      \centering
+      \begin{tabular}{l r}
+          Distribution & AIC Value\\
+          \hline
+          \textbf{Displaced Poisson} & \textbf{0}\\
+          Displaced Geometric & 8558.90\\
+          Zeta Gamma 3 & 112899.5\\
+          Zeta Gamma & 33428.39\\ 
+          Zeta Truncated & 31537.34\\
+      \end{tabular}
+      \caption{AIC Selection: No Growth + Preferential Attachment}
+      \label{table:no_grow_pref_att_3}
+  \end{table}
+  
+  \begin{minipage}[t]{\linewidth}
+      \includegraphics[width=\textwidth]{degree_tmax_grow_no_pref}
+      \captionsetup{type=figure}
+      \captionof{figure}{Degree $t_{max}$ No Growth + Pref Att with Poisson}
+      \label{fig:degree_tmax_grow_no_pref}
+    \end{minipage}
+  
 
 \subsection{Time Growth Degree Analysis}
 
@@ -265,6 +324,44 @@ The solution of this work is divided as follows:
     \label{fig:time_growth_degree_best_fit_rand_att}
   \end{minipage}
 
+\subsubsection{No Growth + Preferential Attachment}
+
+  \begin{minipage}[t]{\linewidth}
+      \includegraphics[width=\textwidth]{time_growth_degree_no_pref}
+      \captionsetup{type=figure}
+      \captionof{figure}{Time Growth Degree: No Growth + Preferential Att}
+      \label{fig:time_growth_degree_no_pref}
+    \end{minipage}
+  
+  \begin{table}[H]
+      \centering
+      \begin{tabular}{l r}
+          Model & AIC Value\\
+          \hline
+          Model 0 & 222892.08\\
+          Model 1 & 419104.67\\
+          Model 2 &  102823.02\\
+          Model 3 &  338659.87\\
+          Model 4 &  599022.32\\
+          \textbf{Model 0+} & \textbf{57388.89}\\
+          Model 1+  &  299613.65\\
+          Model 2+  &  248667.38\\
+          Model 3+  &  338696.35\\
+          Model 4+  &  599024.32\\
+      \end{tabular}
+      \caption{AIC Selection: No Growth + Preferential Attachment over Time Degree}
+      \label{table:time_no_grow_pref_att_1}
+  \end{table}
+  
+  
+  \begin{minipage}[t]{\linewidth}
+      \includegraphics[width=\textwidth]{time_growth_degree_best_fit_no_pref_att}
+      \captionsetup{type=figure}
+      \captionof{figure}{Best Fit Time No Growth Degree: Growth + Pref Att}
+      \label{fig:time_growth_degree_best_fit_no_pref_att}
+    \end{minipage}
+  
+
 \section{Discussion and Methods}
 \subsection{Methods}
 As we have pointed out in the introduction we have use \textbf{C++} code for generating the different kinds of Growth in the \acrshort{baral}.
@@ -279,22 +376,46 @@ Regarding \textit{R} scripts we have the following scripts:
 \end{itemize}
 
 \subsubsection{Parameters Selection}
-Regarding the selection of parameters we have selected $m_0 = 1$, $n_0 = 2$, $t_{max} = 100.000$.
-This selection is based on the fact that we have tried different kind of alternatives, but the only one which has given the best fit 
-in~\ref{deg_dist_ana} is this set of parameters.
-
-Other option that we have tested are:
+We have 2 cases in parameter selection, on the one hand we have chosen parameters and \textbf{Initial Graph Configuration} for \acrshort{prefatt} and \acrfull{randatt} and on the other hand we have chosen a different set of parameters
+and \textbf{Initial Graph Configuration} of initial graph for \acrshort{nprefatt}.
 
 \begin{itemize}
-    \item $m_0 = 2$, $n_0 = 3$, $t_{max} = 100.000$
-    \item $m_0 = 3$, $n_0 = 5$, $t_{max} = 100.000$
-    \item $m_0 = 5$, $n_0 = 3$, $t_{max} = 100.000$
+    \item \textbf{Grow + Preferential and Random Attachment}: Regarding the selection of parameters we have selected $m_0 = 1$, $n_0 = 2$, $t_{max} = 100.000$.
+    This selection is based on the fact that we have tried different kind of alternatives, but the only one which has given the best fit 
+    in~\ref{deg_dist_ana} is this set of parameters.
+    Other option that we have tested are:
+    
+    \begin{itemize}
+        \item $m_0 = 2$, $n_0 = 3$, $t_{max} = 100.000$
+        \item $m_0 = 3$, $n_0 = 5$, $t_{max} = 100.000$
+        \item $m_0 = 5$, $n_0 = 5$, $t_{max} = 100.000$
+    \end{itemize}
+
+    Another important thing to point out is the \textbf{Initial Graph Configuration} for these 2 cases have been \textbf{Complete Graph} selection.
+    
+    \item \textbf{No Grow + Preferential Attachment}: The selected parameters have been $m_0 = 1$, $n_0= 10.000$, $t_{max} = 100.000$. 
+    We have chosen a big value for $n_0$ in order to approximate to the binomial and we have reached to that number after trying out different combinations of $n_0$ and $t_{max}$
+    On the other hand the \textbf{Initial Graph Configuration} for this case was a \textbf{Ring}.
+    
 \end{itemize}
+
 
 \subsection{Discussions}\label{sec:disc}
 \subsubsection{Degree Distribution Analysis}
-Regarding the \acrshort{degdist} analysis we can appreciate that for \acrshort{prefatt} we have checked that the best model that fits is the \acrshort{zeta} Distribution as
-it is expected according to its \acrshort{aic} value and the plot obtained here~\ref{table:grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_pref_att}.
+\begin{itemize}
+    \item Regarding the \acrshort{degdist} analysis we can appreciate that for \acrshort{prefatt} we have checked that the best model that fits is the \acrshort{zeta} Distribution as
+    it is expected according to its \acrshort{aic} value and the plot obtained here~\ref{table:grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_pref_att}.
+    \item In the case of \acrshort{randatt} the best fit is also given as expected by \acrshort{dispg} as we can appreicate by its \acrshort{aic} value and the plot obtained here~\ref{table:grow_ran_att_3} and here~\ref{fig:degree_tmax_grow_random_att}.
+    \item At the same time we can see that \acrshort{nprefatt} best fit with \acrshort{dispp} as it is expected according to tis \acrshort{aic} value. This can be seen in the table and plot here~\ref{table:no_grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_no_pref}.
+\end{itemize}
+
+\subsubsection{Degree Distribution Analysis}
+\begin{itemize}
+    \item Regarding the \acrshort{degdist} analysis we can appreciate that for \acrshort{prefatt} we have checked that the best model that fits is the \acrshort{zeta} Distribution as
+    it is expected according to its \acrshort{aic} value and the plot obtained here~\ref{table:grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_pref_att}.
+    \item In the case of \acrshort{randatt} the best fit is also given as expected by \acrshort{dispg} as we can appreicate by its \acrshort{aic} value and the plot obtained here~\ref{table:grow_ran_att_3} and here~\ref{fig:degree_tmax_grow_random_att}.
+    \item At the same time we can see that \acrshort{nprefatt} best fit with \acrshort{dispp} as it is expected according to tis \acrshort{aic} value. This can be seen in the table and plot here~\ref{table:no_grow_pref_att_3} and here~\ref{fig:degree_tmax_grow_no_pref}.
+\end{itemize}
 
 \section{Conclusions}
 As we have appreciated in the~\ref{sec:disc} .....

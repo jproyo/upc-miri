@@ -169,7 +169,7 @@ aic_comparisson <- function(N, M_P, mle_zeta, mle_righ_truncated_zeta, mle_displ
 main <- function(){
 
   result <- NULL
-  result <- rbind(result, extract_info("degree_distribution", "/Users/mac/Desktop/netbeans_projects/csn_lab6/data/degree_of_each_node2"))
+  result <- rbind(result, extract_info("degree_distribution", "data/degree_of_each_node_no_pref_att"))
   
   print_summary_table(result)
   

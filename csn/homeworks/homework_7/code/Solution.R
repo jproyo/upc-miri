@@ -9,124 +9,101 @@ require("Matrix")
 
 setwd("~/Projects/upc/upc-miri/csn/homeworks/homework_7/code")
 
-# Infection Function ------------------------------------------------------
-
-#M is the adjacency matrix
-#v is the vector of infected nodes (1->infected, 0->not infected)
-#beta is the probability of infection, and gamma the probability of recovery
-
-spread <- function(adj_matrix_graph,initial_infected,tmax,beta,gamma){
-  n <- length(initial_infected)
-  A <- matrix(nrow=tmax,ncol=n)
-  A[1,] <- initial_infected
-  for(i in 2:tmax){
-    n_inf <- adj_matrix_graph%*%as.numeric(A[i-1,])  #a vector containing the number of infected neighbours of each node
-    inf <- n_inf > rgeom(n,beta)
-    cured <- as.logical(rbinom(n=n,size=1,prob=gamma)*A[i-1,]) #vector infected of nodes which are cured (with probability gamma)
-    A[i,] <- as.logical((A[i-1,] | inf) & !cured) #an element is infected if it already was or gets infected this time step, and it hasn't been cured
-  }
-  return (A)
-}
-
-
-
-# Graphs ------------------------------------------------------------------
-set.seed(1)
-n <- 2000
-tree <- make_tree(n,children=2,mode = c("undirected"))
-
-scaleF <- barabasi.game(n,.05,directed=F)
-
-erdosRenyi <- erdos.renyi.game(n,p=0.05,directed = F)
-
-knMatrix <- matrix(data=1,n,n)
-for(i in 1:n) knMatrix[i,i] <- 0
-
-star <- make_star(n,mode=c("undirected"))
-
-
-kn <- graph_from_adjacency_matrix(knMatrix,mode=c("undirected"))
-
-graphs <- list(tree,scaleF,erdosRenyi,kn,star)
-graphNames <- c("tree","scaleFree","Erdos-Renyi","complete","star")
-# Generate eigenvalues -----------------------------------------------------
-
-
-#Uses the arpack library built in in igraph to quickly compute the largest eigenvalue.
 eigen_value_mnax <- function(graph){
   max(abs(eigen(as_adj(graph))$values))
 }
 
+run_virus_simulation <- function(adj_matrix_graph,initial_infected,tmax,beta,gamma){
+  n <- length(initial_infected)
+  adj_matrix_in_time <- matrix(nrow=tmax,ncol=n)
+  adj_matrix_in_time[1,] <- initial_infected
+  for(i in 2:tmax){
+    previous_state <- adj_matrix_in_time[i-1,]
+    infected_vector <- adj_matrix_graph%*%previous_state
+    infected <- infected_vector > rgeom(n,beta)
+    recovered <- as.logical(rbinom(n=n,size=1,prob=gamma)*previous_state) 
+    adj_matrix_in_time[i,] <- as.logical((previous_state | infected) & !recovered) 
+  }
+  return (adj_matrix_in_time)
+}
 
-# Simulate -------------------------------------------------------------------
-
-# Given a matrix with all infection states, count the number of infected persons in every state. return this as a vector.
-infectedEvolution <- function(spread){
+fraction_infected_people <- function(sim){
   infected <- c()
-  for(i in 1:length(spread[,1])){
-    infected[i] <- length(which(spread[i,]==T))
+  for(i in 1:length(sim[,1])){
+    infected[i] <- length(which(sim[i,]==T))
   }
-  infected
+  return (infected)
 }
 
-#Run a simple simulation. Returns a vector with the number of infected persons in every simulation step.
-simulate <- function(graph,beta=.4,gamma=.8,p0=.05,tmax=30){
-  #initialise an infection of 5%
+simulate <- function(graph,beta=.4,gamma=.8,p0=.05,tmax=150){
   infect_init <- sample(c(1,0),length(V(graph)),replace=T,prob=c(p0,1-p0))
-  
-  treeSpread <- spread(as_adj(graph),initial_infected=infect_init,tmax=tmax,beta=beta,gamma=gamma)
-  simulation <- infectedEvolution(treeSpread)
-  #scale
-  simulation/length(V(graph))
+  virus_simulation <- run_virus_simulation(as_adj(graph),initial_infected=infect_init,tmax=tmax,beta=beta,gamma=gamma)
+  return (fraction_infected_people(virus_simulation)/length(V(graph)))
 }
 
-
-# beta,gamma close to threshold -------------------------------------------
-
-#Run a double simulation with a beta-gamma value epsilon percentage above and below the threshold
-
-fullSimulationPlot <- function(graph,graphName,gamma,epsilon,threshold){
-  betaThreshold <- gamma*threshold
-  
-  #above threshold
-  highBeta <- min(1,betaThreshold*(1+epsilon))
-  yvalues <- simulate(graph,beta=highBeta,gamma=gamma,tmax=250)
-  plot(yvalues,ylim = c(0,max(yvalues)),
-       main=graphName,
-       xlab="timestep",
-       ylab="fraction infected persons",type="l")
-  
-  #below threshold
-  lowBeta <- max(0,betaThreshold*(1-epsilon))
-  lines(simulate(graph,beta=lowBeta,gamma=gamma,tmax=250),col="red")
-  
-  print(c(lowBeta,highBeta,gamma))
+plot_infected <- function(y_vals, graph_name){
+  plot(y_vals,ylim = c(0,max(y_vals)),
+       main=graph_name,
+       xlab="Time",
+       ylab="Fraction Infected People",type="l")
 }
 
-thresholds = 1/sapply(graphs,largestEigenvalue)
+run_simulation <- function(graph,name,gamma,epsilon,threshold){
+  beta_threshold <- gamma*threshold
+  
+  beta_high <- min(1,beta_threshold*(1+epsilon))
+  y_vals <- simulate(graph,beta=beta_high,gamma=gamma,tmax=250)
 
-set.seed(6)
-plotGraphs <- function(epsilon,save=F){
-  for(i in 1:5){
-    if(save) pdf(file=paste("images//thresholdSimulation_",graphNames[[i]],".png", sep=""))
-    fullSimulationPlot(graphs[[i]],graphNames[i],gamma=.1,epsilon=epsilon,thresholds[[i]])
-    if(save) dev.off()
+  plot_infected(y_vals, name)
+
+  beta_low <- max(0,beta_threshold*(1-epsilon))
+  lines(simulate(graph,beta=beta_low,gamma=gamma,tmax=250), col="red")
+  
+  return (c(beta_low,beta_high,gamma))
+}
+
+task_1 <- function(graphs, names, beta=0.005, gamma=0.05, t_max=300){
+  for(i in 1:length(names)){
+    y_vals <- simulate(graphs[[i]],beta=beta,gamma=gamma,tmax=t_max)
+    plot_infected(y_vals, names[i])
   }
 }
-plotGraphs(epsilon=.1,save=F)
 
-
-
-#task1 (fixed parameters, no threshold)
-fixedbeta <- 0.005
-fixedgamma <- 0.05
-boolSave <- F
-for(i in 1:5){
-  if(boolSave) pdf(file=paste("images//task1_",graphNames[[i]],".png", sep=""))
-  yvalues <- simulate(graphs[[i]],beta=fixedbeta,gamma=fixedgamma,tmax=500)
-  plot(yvalues,ylim = c(0,max(yvalues)),
-       main=graphNames[i],
-       xlab="time",
-       ylab="fraction infected people",type="l")
-  if(boolSave) dev.off()
+task_2 <- function(graphs, names){
+  set.seed(15)
+  thresholds = 1/sapply(graphs,eigen_value_mnax)
+  df<-data.frame("Low Beta" = double(), "High Beta" = double(), "Gamma" = double())
+  for(i in 1:length(names)){
+    df[i,] <- run_simulation(graphs[[i]],names[i],gamma=.1,epsilon=0.01,thresholds[[i]])
+  }
+  rownames(df) <- names
+  print.data.frame(df)
 }
+
+main <- function(){
+  
+  set.seed(3)
+  n <- 2000
+  tree <- make_tree(n,children=2,mode = c("undirected"))
+  star <- make_star(n,mode=c("undirected"))
+  scale_free_barabasi <- barabasi.game(n,.05,directed=F)
+  erdos_renyi <- erdos.renyi.game(n,p=0.05,directed = F)
+  watts_strogatz <- sample_smallworld(1, n, 4, 0.05)
+  
+  graphs <- list(star, tree, scale_free_barabasi, erdos_renyi, watts_strogatz)
+  names <- c("Star", "Tree","Scale Free Barabasi-Albert","Erdos-Renyi","Small World - Watts Strogatz")
+  
+  beta <- 0.005
+  gamma <- 0.05
+  t_max <- 300
+  print(paste("Running Task 1: Fixed Beta and Gamma parameters. Beta:", beta, " - Gamma:", gamma, " - Tmax:", t_max))
+  task_1(graphs, names)
+  
+  print(paste("Running Task 2: Try to find threshold"))
+  task_2(graphs, names)
+
+}
+
+main()
+
+

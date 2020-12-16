@@ -35,36 +35,40 @@ fraction_infected_people <- function(sim){
   return (infected)
 }
 
-simulate <- function(graph,beta=.4,gamma=.8,p0=.05,tmax=150){
+run_simulation <- function(graph,beta,gamma,p0,tmax){
   infect_init <- sample(c(1,0),length(V(graph)),replace=T,prob=c(p0,1-p0))
-  virus_simulation <- run_virus_simulation(as_adj(graph),initial_infected=infect_init,tmax=tmax,beta=beta,gamma=gamma)
+  virus_simulation <- run_virus_simulation(as_adj(graph),infect_init,tmax,beta,gamma)
   return (fraction_infected_people(virus_simulation)/length(V(graph)))
 }
 
 plot_infected <- function(y_vals, graph_name){
-  plot(y_vals,ylim = c(0,max(y_vals)),
+  plot(y_vals, ylim = c(0,max(y_vals)),
        main=graph_name,
        xlab="Time",
-       ylab="Fraction Infected People",type="l")
+       ylab="Fraction Infected People",
+       type="l",
+       col="blue",
+       pch=5)
 }
 
-run_simulation <- function(graph,name,gamma,epsilon,threshold){
+search_threshold <- function(graph,name,gamma,epsilon,threshold){
   beta_threshold <- gamma*threshold
   
   beta_high <- min(1,beta_threshold*(1+epsilon))
-  y_vals <- simulate(graph,beta=beta_high,gamma=gamma,tmax=250)
+  y_vals <- run_simulation(graph,beta=beta_high,gamma,0.05,250)
 
   plot_infected(y_vals, name)
 
   beta_low <- max(0,beta_threshold*(1-epsilon))
-  lines(simulate(graph,beta=beta_low,gamma=gamma,tmax=250), col="red")
+  simulate_low <- run_simulation(graph,beta=beta_low,gamma,0.05,250)
+  lines(simulate_low, col="red", pch=5)
   
-  return (c(beta_low,beta_high,gamma))
+  return (c(round(beta_low,4),round(beta_high,4),round(gamma,4)))
 }
 
-task_1 <- function(graphs, names, beta=0.005, gamma=0.05, t_max=300){
+task_1 <- function(graphs, names, beta, gamma, t_max){
   for(i in 1:length(names)){
-    y_vals <- simulate(graphs[[i]],beta=beta,gamma=gamma,tmax=t_max)
+    y_vals <- run_simulation(graphs[[i]],beta,gamma,0.05,t_max)
     plot_infected(y_vals, names[i])
   }
 }
@@ -74,7 +78,7 @@ task_2 <- function(graphs, names){
   thresholds = 1/sapply(graphs,eigen_value_mnax)
   df<-data.frame("Low Beta" = double(), "High Beta" = double(), "Gamma" = double())
   for(i in 1:length(names)){
-    df[i,] <- run_simulation(graphs[[i]],names[i],gamma=.1,epsilon=0.01,thresholds[[i]])
+    df[i,] <- search_threshold(graphs[[i]],names[i],.1,0.01,thresholds[[i]])
   }
   rownames(df) <- names
   print.data.frame(df)
@@ -88,7 +92,7 @@ main <- function(){
   star <- make_star(n,mode=c("undirected"))
   scale_free_barabasi <- barabasi.game(n,.05,directed=F)
   erdos_renyi <- erdos.renyi.game(n,p=0.05,directed = F)
-  watts_strogatz <- sample_smallworld(1, n, 4, 0.05)
+  watts_strogatz <- sample_smallworld(1, n, 80, 0.05)
   
   graphs <- list(star, tree, scale_free_barabasi, erdos_renyi, watts_strogatz)
   names <- c("Star", "Tree","Scale Free Barabasi-Albert","Erdos-Renyi","Small World - Watts Strogatz")
@@ -97,7 +101,7 @@ main <- function(){
   gamma <- 0.05
   t_max <- 300
   print(paste("Running Task 1: Fixed Beta and Gamma parameters. Beta:", beta, " - Gamma:", gamma, " - Tmax:", t_max))
-  task_1(graphs, names)
+  task_1(graphs, names, beta, gamma, t_max)
   
   print(paste("Running Task 2: Try to find threshold"))
   task_2(graphs, names)

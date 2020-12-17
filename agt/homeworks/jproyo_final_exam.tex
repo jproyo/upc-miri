@@ -1,0 +1,120 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[acronym]{glossaries}
+\usepackage{caption}
+\usepackage{titlesec}
+  
+
+\title{%
+  Algorithmic Game Theory \\
+  Final Exam
+}
+\author{%
+  Juan Pablo Royo Sales\\
+  \small{Universitat Politècnica de Catalunya}
+}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{Juan Pablo Royo Sales - UPC MIRI}
+\fancyhead[L]{AGT - Final Exam}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newacronym{ncg}{NCG}{Network Congestion Game}
+\newacronym{sncg}{SNCG}{Symmetric Network Congestion Game}
+\newacronym{pne}{PNE}{Pure Nash Equilibrium}
+\newacronym{ne}{NE}{Nash Equilibrium}
+\newacronym{mincost}{MINCOST}{Min-Cost Flow Problem}
+
+\begin{document}
+
+\maketitle
+
+\section{Exercise 1}
+A \acrfull{ncg} is \textbf{symmetric} when $s_i = s$ and $t_i = t$, for $i \in N$ according to the definition that we have seen in class. Basically all the players, have the 
+same source and destination endpoint $s$ and $t$ and all have the same path strategies.
+
+The algorithm to find \acrfull{pne} in \acrshort{sncg} in \textit{poly-time} is doing a reduction to \acrfull{mincost}
+in order to find the Optimum of $\varphi(s)$.
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{$G = (V, E, s, t)$, $d_e$ delay function}
+  \Output{\acrshort{mincost} representation of the problem}
+  \For{each $e \in E$}{
+    \For{$1$ up to $d_e$}{
+      $E \leftarrow E \cup \{e'_i\}$ such that $d_{e'_i} = 1$;\\
+    }
+    $E \leftarrow E \setminus \{e\}$;\\
+  }
+  return $N$;
+  \caption{Compute \acrshort{mincost} reduction of \acrshort{sncg}}
+\end{algorithm}
+
+Basically the reduction is replacing each edge $e$ with the amount of the delay function for $e$ $d_e$ of new edges
+but this time each of this edges with delay function equal to $1$.
+
+The \acrshort{mincost} of the new network $N$ minimizes $\varphi(s)$.
+
+Since the algorithm is giving also a Local Optimum, then $s$ is a \acrshort{pne}.
+
+\section{Exercise 2}
+As we have seen in class the \textbf{Social Cost} is the sum of all players 
+
+\begin{equation}
+  C(s) = \sum_{u \in V} c_u(s) = \alpha|E| + \sum_{u,v \in V} d_G(u,v)
+\end{equation}
+
+Every pair of vertices that is not \textit{connected} its distances is $\ge 2$, there is a lower bound for the 
+social cost:
+
+\begin{subequations}
+  \begin{align}
+    C(s) &\geq \alpha|E| + 2|E| + 2(n(n - 1) - 2|E|)\\
+         &= 2n(n - 1) + (\alpha - 2)|E|\label{eq:1}
+  \end{align}
+\end{subequations}
+
+\subsection{(a)}
+In this case when $\alpha < 1$ the social Optimum is achieved when $|E|$ is maximum. So, every vertex is connected with each other. It is a complete graph.
+Any \acrfull{ne} should be of diameter $1$ which implies that the complete graph is the only \acrshort{ne}.
+
+\subsection{(b)}
+In the case $1 \leq \alpha < 2$, the social Optimum is achieved by a complete graph, but not \acrshort{ne}. Any \acrshort{ne} is for diameter at most $2$.
+So, the social cost is equal to~\ref{eq:1} and it is the worst cost when $|E|$ is minimum, which is $n-1$ for a connected graph. Therefore the worst \acrshort{ne} is the $S_n$ Star.
+
+\subsection{(c)}
+As we have seen in class when $\alpha > 2$ we need to minimize the number of edges $|E|$ in order to reduce the cost, but at the same time the graph should be connected.
+Therefore only trees with diameter $2$ have optimal cost. One example that has \acrshort{ne}, with diameter $2$ and minimum number of edges is a \textbf{Cycle Graph} with 4 vertex.
+
+\subsection{(d)}
+Since when $\alpha > n^2$ no player has any incentive to buy an edge, there is going to be the minimum amount possible of edges at the same time with the graph connected, 
+that by definition are \textbf{Spanning Trees} as we have seen in class. All are \acrshort{ne} because no one has incentive to change.
+The $PoA$ is giving by:
+
+\begin{subequations}
+  \begin{align}
+    PoA &= \frac{c(T_n)}{c(S_n)}\\
+        &\leq \frac{\alpha(n-1)+(n-1)(n-1)}{\alpha(n-1)+1+2n(n-1)}\\ 
+        & = O(1)
+  \end{align}
+\end{subequations}
+
+\end{document}

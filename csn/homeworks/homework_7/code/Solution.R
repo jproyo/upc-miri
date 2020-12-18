@@ -100,8 +100,8 @@ main <- function(){
   graphs <- list(star, tree, scale_free_barabasi, erdos_renyi, watts_strogatz)
   names <- c("Star", "Tree","Scale Free Barabasi-Albert","Erdos-Renyi","Small World - Watts Strogatz")
 
-  beta <- 0.8
-  gamma <- 0.4
+  beta <- 0.2
+  gamma <- 0.1
   t_max <- 300
   print(paste("Running Task 1: Fixed Beta and Gamma parameters. Beta:", beta, " - Gamma:", gamma, " - Tmax:", t_max))
   task_1(graphs, names, beta, gamma, t_max)

@@ -52,18 +52,19 @@ plot_infected <- function(y_vals, graph_name){
 }
 
 search_threshold <- function(graph,name,gamma,epsilon,threshold){
-  beta_threshold <- gamma*threshold
+  p_0 <- 0.05
+  t_max <- 300
+  beta <- gamma*threshold
+  beta_slightly_above <- min(1,beta*(1+epsilon))
+  beta_slightly_bellow <- max(0,beta*(1-epsilon))
   
-  beta_high <- min(1,beta_threshold*(1+epsilon))
-  y_vals <- run_simulation(graph,beta=beta_high,gamma,0.05,250)
-
+  y_vals <- run_simulation(graph,beta=beta_slightly_above,gamma,p_0,t_max)
   plot_infected(y_vals, name)
 
-  beta_low <- max(0,beta_threshold*(1-epsilon))
-  simulate_low <- run_simulation(graph,beta=beta_low,gamma,0.05,250)
+  simulate_low <- run_simulation(graph,beta=beta_slightly_bellow,gamma,p_0,t_max)
   lines(simulate_low, col="red", pch=5)
   
-  return (c(round(beta_low,4),round(beta_high,4),round(gamma,4)))
+  return (c(round(beta_slightly_bellow,4),round(beta_slightly_above,4),round(gamma,4)))
 }
 
 task_1 <- function(graphs, names, beta, gamma, t_max){
@@ -75,10 +76,12 @@ task_1 <- function(graphs, names, beta, gamma, t_max){
 
 task_2 <- function(graphs, names){
   set.seed(15)
+  epsilon <- 0.1
+  gamma <- 0.1
   thresholds = 1/sapply(graphs,eigen_value_mnax)
   df<-data.frame("Low Beta" = double(), "High Beta" = double(), "Gamma" = double())
   for(i in 1:length(names)){
-    df[i,] <- search_threshold(graphs[[i]],names[i],.1,0.01,thresholds[[i]])
+    df[i,] <- search_threshold(graphs[[i]],names[i],gamma,epsilon,thresholds[[i]])
   }
   rownames(df) <- names
   print.data.frame(df)
@@ -96,9 +99,9 @@ main <- function(){
   
   graphs <- list(star, tree, scale_free_barabasi, erdos_renyi, watts_strogatz)
   names <- c("Star", "Tree","Scale Free Barabasi-Albert","Erdos-Renyi","Small World - Watts Strogatz")
-  
-  beta <- 0.005
-  gamma <- 0.05
+
+  beta <- 0.8
+  gamma <- 0.4
   t_max <- 300
   print(paste("Running Task 1: Fixed Beta and Gamma parameters. Beta:", beta, " - Gamma:", gamma, " - Tmax:", t_max))
   task_1(graphs, names, beta, gamma, t_max)

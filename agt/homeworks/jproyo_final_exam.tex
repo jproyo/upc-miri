@@ -132,6 +132,21 @@ We assume in this game that
 
 And on the other hand we know that A Game is monotone if $v(C) \leq v(D)$ for any $C, D$ such that $C \subseteq D$.
 
-So, \textit{w.l.g.} lets take a $C \in G$ such that $C$ is a \textit{dominant set} of $G$. 
+Lets take any $C,D \in G$ such that $C \subseteq D$ and lets consider the following cases:
+
+\begin{itemize}
+  \item If $D$ is a dominant set, any subset of vertices on $D$, lets call $C$ such that $C \subseteq D$, have 2 possibilities: either
+  \begin{itemize}
+    \item $C$ is also dominant because we remove some border vertex which adjacency vertices are connected to other $v \in C$, so $v(C) = v(D) = 1$
+    \item $C$ is not dominant because selected subset is not a resulting dominant set, in which case $v(C) = 0 < v(D)$
+  \end{itemize}
+  \item If $D$ is non dominant then any subset is also non dominant so $v(C) = v(D) = 0$.
+\end{itemize}
+
+Then we can conclude that $v(C) \leq v(D)$, for any $C, D \in G, C \subseteq D$. So this is \textbf{monotone}.
+
+Therefore it is a \acrshort{sg}.
+
+If we add a vertex 
 
 \end{document}

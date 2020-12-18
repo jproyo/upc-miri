@@ -41,6 +41,7 @@
 \newacronym{pne}{PNE}{Pure Nash Equilibrium}
 \newacronym{ne}{NE}{Nash Equilibrium}
 \newacronym{mincost}{MINCOST}{Min-Cost Flow Problem}
+\newacronym{sg}{SG}{Simple Game}
 
 \begin{document}
 
@@ -116,5 +117,21 @@ The $PoA$ is giving by:
         & = O(1)
   \end{align}
 \end{subequations}
+
+\section{Exercise 3}
+\subsection{(a)}
+In order to show that it is a \acrfull{sg}, we need to show that the valuation function is \textbf{monotone}.
+
+We assume in this game that
+
+\[ v(X) = \begin{cases}
+  1 \textit{ if X is a dominant set of G}\\
+  0 \textit{ otherwise}
+\end{cases}
+\]
+
+And on the other hand we know that A Game is monotone if $v(C) \leq v(D)$ for any $C, D$ such that $C \subseteq D$.
+
+So, \textit{w.l.g.} lets take a $C \in G$ such that $C$ is a \textit{dominant set} of $G$. 
 
 \end{document}

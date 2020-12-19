@@ -251,8 +251,94 @@ So the problem is in \textit{NP}, since we have different decision trees on the 
 
 \section{Exercise 4}
 \subsection{(a)}
-A candidate $a$ can win an election at node $u \in T \iff a$ can win in $1$ of $u$'s children subelections
+\newtheorem{case_a}{}
+\newtheorem{proofpart_a}{Part}
+\begin{case_a}
+  A candidate $a$ can win an election at node $u \in T \iff a$ can win in $1$ of $u$'s children subelections and it can defeat one 
+  of the potential winner of other sibling child of $u$ in a pairwise election.
+\end{case_a}
 
+\begin{proof}
+  \begin{proofpart_a}
+  $\implies$\\
+  This part is trivial because of the structure of the Balance Tree.
+  \end{proofpart_a}
+
+  If we take lets say this candidate $a$ and this can win an election at node $u \in T$, we can think on that subtree which root is $a$ that $a$ is the winner of that subtree according to Cup definition.
+
+  Then if it is the winner it is because it should win in some sub-children pairwise election in order to appear at the top.
+
+  Since that $a$ belongs to a subtree of $T$ that subelections that wins should be for some of the subchildren of $T$.
+
+  Also it is trivial that $a$ defeat any other sibling of $u$ otherwise it shouldn't be at the root of this subtree.
+  
+  \begin{proofpart_a}
+  $\impliedby$\\
+  This part is not so trivial and we need to do it in two subparts.\\
+  \begin{enumerate}
+    \item If $a$ can win in $1$ of $u$'s children subelections of $T$
+    \item If $a$ can defeat one of the potential winner of other sibling child of $u$ in a pairwise election.
+  \end{enumerate}
+  If $1 \land 2 \implies a$ can win an election at node $u \in T$.
+  \end{proofpart_a}
+
+  \begin{itemize}
+    \item Lets assume that point $1$ holds, and $a$ competes in a pairwise election with some $b$ candidate in a subelection of $T$. 
+    If that happens and $a$ wins to $b$ the parent node of $a$ and $b$ would be $a$.
+    \item At the same time in other sibling of $u$ tree could be an election of in which there could be a potential winner lets say $c$. 
+    At some point that $c$ are going to compete with $a$ because they are going to raise to the tree roots. If that happens and as the problem 
+    state, if $a$ can defeat this potential winner $c$, then $a$ continue to the root and not $c$.
+  \end{itemize}
+
+  Therefore, $a$ can win an election at node $u \in T$.
+\end{proof}
+
+\subsection{(b)}
+Since the voters in $T$ should form a coalition in order to raise to the top to the tree the candidate $p \in A$, the idea of the algorithm
+is that this coalition manipulate elections in the leafs for those candidates that can be defeated by $p$ in pairwise elections, constructing the pairwise competition
+in such a way that they can raise $p$ to compete with the worst candidates. This basically can be done with a version of CSL algorithm~\cite{csl} but in a bottom up version instead of top down, and it takes $O(n^2)$
+
+The algorithm is as following:
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{$p \in A$ pref candidate, $T$ Manipulator, $C$ Binary Tree, $D$ assignment of leaves}
+  \Output{True if $p$ can win via manipulation, False otherwise}
+  $MW \leftarrow $ConstructWinnersCCM(T,C,D)
+  \If{$p \in MW$}{
+    return True;
+  }\Else{ return False; }
+  \caption{Compute CCM over $p \in A$}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{$T$ Manipulator, $C$ Binary Tree, $D$ assignment of leaves}
+  \Output{Winner Set Manipulated}
+  \If{isLeaf(C)}{
+    return $\{C\}$;
+  }\Else{
+    $W \leftarrow \{\}$\tcp*[r]{Possible Winner Set}
+    \textbf{leftTree} $\leftarrow$ ConstructWinnersCCM(T, Left(C), D);\\
+    \textbf{rightTree} $\leftarrow$ ConstructWinnersCCM(T, Right(C), D);\\
+    \ForAll{$u \in leftTree$}{
+      \If{$\exists v \in rightTree$ such that $(u,v) \in D \lor v \in T$}{
+        $W \leftarrow \{u\}$
+      }
+    }
+    \ForAll{$v \in rightTree$}{
+      \If{$\exists u \in leftTree$ such that $(v,u) \in D \lor u \in T$}{
+        $W \leftarrow \{v\}$
+      }
+    }
+    return $W$;
+  }
+  \caption{ConstructWinnersCCM(T,C,D)}
+\end{algorithm}
+
+Based on this~\cite{ccmalgo}.
 
 \bibliographystyle{alpha}
 \bibliography{jproyo_final_exam}

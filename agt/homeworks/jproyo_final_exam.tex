@@ -12,6 +12,7 @@
 \usepackage[acronym]{glossaries}
 \usepackage{caption}
 \usepackage{titlesec}
+\usepackage{tikz}
   
 
 \title{%
@@ -41,7 +42,12 @@
 \newacronym{pne}{PNE}{Pure Nash Equilibrium}
 \newacronym{ne}{NE}{Nash Equilibrium}
 \newacronym{mincost}{MINCOST}{Min-Cost Flow Problem}
-\newacronym{sg}{SG}{Simple Game}
+\newacronym{ds}{Dominant Set}{Dominant Set}
+\newacronym{sg}{Simple Game}{Simple Game}
+\newacronym{is}{IsStrong}{IsStrong}
+\newacronym{ip}{IsProper}{IsProper}
+\newacronym{mis}{Maximal Independent Set}{Maximal Independent Set}
+\newacronym{mvc}{Minimal Vertex Cover}{Minimal Vertex Cover}
 
 \begin{document}
 
@@ -76,6 +82,7 @@ The \acrshort{mincost} of the new network $N$ minimizes $\varphi(s)$.
 
 Since the algorithm is giving also a Local Optimum, then $s$ is a \acrshort{pne}.
 
+Based on this~\cite{ne_complex}
 \section{Exercise 2}
 As we have seen in class the \textbf{Social Cost} is the sum of all players 
 
@@ -118,6 +125,8 @@ The $PoA$ is giving by:
   \end{align}
 \end{subequations}
 
+Based on this~\cite{network_creation}.
+
 \section{Exercise 3}
 \subsection{(a)}
 In order to show that it is a \acrfull{sg}, we need to show that the valuation function is \textbf{monotone}.
@@ -125,7 +134,7 @@ In order to show that it is a \acrfull{sg}, we need to show that the valuation f
 We assume in this game that
 
 \[ v(X) = \begin{cases}
-  1 \textit{ if X is a dominant set of G}\\
+  1 \textit{ if X is a \acrlong{ds} set of G}\\
   0 \textit{ otherwise}
 \end{cases}
 \]
@@ -135,10 +144,10 @@ And on the other hand we know that A Game is monotone if $v(C) \leq v(D)$ for an
 Lets take any $C,D \in G$ such that $C \subseteq D$ and lets consider the following cases:
 
 \begin{itemize}
-  \item If $D$ is a dominant set, any subset of vertices on $D$, lets call $C$ such that $C \subseteq D$, have 2 possibilities: either
+  \item If $D$ is a \acrfull{ds}, any subset of vertices on $D$, lets call $C$ such that $C \subseteq D$, have 2 possibilities: either
   \begin{itemize}
     \item $C$ is also dominant because we remove some border vertex which adjacency vertices are connected to other $v \in C$, so $v(C) = v(D) = 1$
-    \item $C$ is not dominant because selected subset is not a resulting dominant set, in which case $v(C) = 0 < v(D)$
+    \item $C$ is not dominant because selected subset is not a resulting \acrlong{ds}, in which case $v(C) = 0 < v(D)$
   \end{itemize}
   \item If $D$ is non dominant then any subset is also non dominant so $v(C) = v(D) = 0$.
 \end{itemize}
@@ -151,11 +160,102 @@ Therefore it is a \acrshort{sg}.
 Base on the theorem that states \textit{A simple game has non-empty core if and only if it has a veto player}, we can check
 if there is a veto player for some \textit{dominant game} in order to see if it has a non-empty core.
 An example of that is a $S_n$ star in which the center vertex $c$ belongs to any coalition that contains $c$ but it cannot be remove from any of those 
-coalition because if we remove it it is not a \textit{dominant set}.
+coalition because if we remove it it is not a \acrlong{ds}.
 
 \subsection{(c)}
+Lets analyze case by case. We are going to analyze \acrshort{is} and \acrshort{ip}
+
+\subsubsection{IsProper Analysis}
+A Game $\Gamma$ is proper if $S \in W \implies N \setminus S \notin W$.
+
+Let $S \in W$, then for every vertex $u \in S$, we have the following cases:
+\begin{itemize}
+  \item $u \notin N \setminus S$, but that not implies that $N \setminus S \notin W$, because it can be another \acrlong{ds}.
+  For example if we have an cycle square connected in each vertex, and $S$ are 2 adjacent vertices. $N \setminus S$ is still another $W$. 
+  In that case the game is not proper. Let see an example
+
+  \begin{tikzpicture}[main/.style = {draw, circle}] 
+    \node[main] (1) {$a$}; 
+    \node[main] (2) [right of=1] {$b$}; 
+    \node[main] (3) [below of=1] {$c$}; 
+    \node[main] (4) [below of=2] {$d$}; 
+    \draw (1) -- (2);
+    \draw (1) -- (3);
+    \draw (2) -- (4);
+    \draw (3) -- (4);
+  \end{tikzpicture} 
+
+  As we can see here for example if $\{a,b\} \in S$ which $\in W$, but the complement which is $\{b,d\} \in W$ as well.
+
+  \item In order $N \setminus S \notin W$ we need that all $u \in W$ form a single Coalition. That means that $S$ should be a \acrfull{mis},
+  because by definition every \acrlong{mis} is a \acrlong{ds}. In that case the Game is proper.
+\end{itemize}
+
+Therefore in order to analyze if the Game \acrlong{ip} we need to provide an algorithm that check if the provided $S$ is a \acrlong{mis}.
+Such an algorithm can be computed in \textit{poly-time} because it is known that finding a \acrlong{mis} can be done in \textit{poly-time} according to this~\cite{mis_complex}.
+Once we have the \acrlong{mis} of $G$, we need to check for each $u \in S$ if it is belongs to the \acrlong{mis}.
+
+\begin{algorithm}[H]
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{$G = (V, E)$, $S$}
+  \Output{$S$ IsProper}
+  $MIS \leftarrow$ \textbf{Compute \acrlong{mis} in \textit{poly-time}}\\
+  \For{each $u \in S$}{
+    \If{$u \notin MIS$}{
+      return Not Proper;\\
+    }
+  }
+  return IsProper;
+  \caption{Compute if $S$ IsProper}
+\end{algorithm}
+
+\subsubsection{IsStrong Analysis}
+A Game $\Gamma$ is strong if $S \notin W \implies N \setminus S \in W$.
+
+Let $S \notin W$, then for every vertex $u \in S$, we have the following:
+\begin{itemize}
+  \item $u \notin N \setminus S$, but that not implies that $N \setminus S \in W$, because it can be another subset that is $\notin W$.
+  In that case the game is not strong. Let see an example
+
+  \begin{tikzpicture}[main/.style = {draw, circle}] 
+    \node[main] (1) {$a$}; 
+    \node[main] (5) [left of=1] {$u$}; 
+    \node[main] (2) [right of=1] {$b$}; 
+    \node[main] (3) [below of=1] {$c$}; 
+    \node[main] (4) [below of=2] {$d$}; 
+    \node[main] (6) [right of=2] {$v$}; 
+    \draw (1) -- (2);
+    \draw (1) -- (3);
+    \draw (1) -- (5);
+    \draw (2) -- (4);
+    \draw (3) -- (4);
+    \draw (2) -- (6);
+  \end{tikzpicture} 
+
+  As we can see here for example if $\{a,b,u\} \in S$ which $\notin W$, but the complement which is $\{b,d,v\} \notin W$ as well.
+
+  \item In order $N \setminus S \in W$ we need that all $u \notin W$ are maximal losing form. That means that $S$ should be a \acrfull{mvc},
+  because by definition we know that the complement of \acrlong{mis} is a \acrlong{mvc}. In that case the Game is proper.
+\end{itemize}
+
+It is well known that \textbf{decision Problem} for \textbf{Vertex Cover} is \textit{NP-Complete} for an arbitrary graph.
+So \acrlong{is} is $NP-hard$ at least for deciding whether or not $S$ is a \acrlong{mvc}.
+
+\subsection{(d)}
+Given the fact as we have explained before we can calculate \acrfull{mis} in \textit{poly-time}, 
+we can build a \textbf{Minimum Dominant Set} starting from the \acrshort{mis} and removing vertex checking that we still have
+an \acrlong{ds}. 
+But the issue with that is that we can have exponential number of possible ways of removing or combining the removal process from the \acrlong{mis}.
+So the problem is in \textit{NP}, since we have different decision trees on the removal process.
+
+\section{Exercise 4}
+\subsection{(a)}
+A candidate $a$ can win an election at node $u \in T \iff a$ can win in $1$ of $u$'s children subelections
 
 
+\bibliographystyle{alpha}
+\bibliography{jproyo_final_exam}
 
 
 \end{document}

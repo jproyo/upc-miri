@@ -1,9 +1,10 @@
-######################################################
-## Authors: Juan Pablo Royo Sales 
+##############################################################
+## Authors: Juan Pablo Royo Sales & Francesc Roy Campderros
 ## Title: Final Work
 ## Dae: 2020-12-21
-####################################################
+##############################################################
 
+library(sna)
 library(igraph)
 library("data.table") 
 setwd("~/Projects/upc/upc-miri/csn/homeworks/final_work")
@@ -34,7 +35,13 @@ plotSome <- function(communities, graph, vecToShow) {
 }
 
 main <- function(){
-  graph <- read.graph("graph.txt", format="edgelist", directed = FALSE)
+  fp_graphs <- c("graph_small_fp.txt", "graph_cryptol.txt", "graph_bad_design.txt", "graph_pandoc.txt", "graph_cabal.txt")
+  selected <- fp_graphs[5]
+  adj_matrix <- read.dot(selected)
+  colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
+  rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))
+  graph <- graph_from_adjacency_matrix(adjmatrix = adj_matrix, c("undirected"))
+  #graph <- read.graph("graph_small_fp.txt", format="edgelist", directed = FALSE)
   
   summary <- dataFromGraph(graph)
   print.data.frame(summary, right=FALSE)
@@ -45,7 +52,7 @@ main <- function(){
   
   print(paste("Number of Communities: ", count))
   
-  plot(communities, main = "Communities"
+  plot(communities, graph, main = "Communities"
        , layout = layout.auto,vertex.color = "blue"
        , edge.color = "black")
   

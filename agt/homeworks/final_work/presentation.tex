@@ -1,0 +1,154 @@
+\documentclass{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usetikzlibrary{calc,shapes.multipart,chains,arrows}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[linguistics]{forest}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
+\newminted{haskell}{}
+\graphicspath{{./images/}}
+\setbeamertemplate{frametitle}{%
+  \usebeamerfont{frametitle}\insertframetitle%
+  \vphantom{g}% To avoid fluctuations per frame
+  % \hrule% Uncomment to see desired effect, without a full-width hrule
+  \par\hspace*{-\dimexpr0.5\paperwidth-0.5\textwidth}\rule[0.5\baselineskip]{\paperwidth}{0.4pt}
+  \par\vspace*{-\baselineskip}% <-- reduce vertical space after rule
+}
+
+\usetheme{Boadilla}
+\title{Boolean Combinations of WVG}
+
+\author{Juan Pablo Royo Sales}
+\institute{Universitat Politècnica de Catalunya}
+\date{January 2020}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}[fragile]{Definition of the Problem}
+
+  \begin{block}{}
+    \begin{itemize}
+      \item Set of $n$ players 
+      \item Partitioned into two groups. 
+      \item \textbf{Bad pairings}: \textit{two players in such a pair do not want to be in the same group}.
+      \item Players free to choose any group.
+      \item Modeled as a Graph $G = (V,E)$, such that there is an edge $(i, j) \in E$ if $i$ and $j$ form
+      a bad pair.
+      \item The private objective of player $i$ is to maximize the number of its neighbors that
+      are in the \textbf{other group}.
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Formalization}
+  \begin{block}{Given the problem definition}
+    \begin{itemize}
+      \item Let $G=(V,E)$ be the graph representing with $V$ the number of players as vertices and $E$ the set of edges such as $\forall_{i,j \in V}\ (i,j) \in E$ if it is a bad pairing.
+      \item $N = V$.
+      \item $\forall_{i \in N}, A_i = \{1,0\}$ $1$ if it is in Group 1, $0$ if it is in Group 2.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Formalization}
+  \begin{block}{Pay-off function}
+    \[
+u_i(v_2,\dots,v_n) = 
+    \begin{cases}
+      1 & \exists\ j \neq i, (i,j) \in E \text{ and $j$ is in the other group of $i$} \\
+      0 & otherwise 
+    \end{cases} 
+\]
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Formalization}
+  \begin{block}{Best Response Function}
+    \[
+BR_i(v_{-i}) = 
+    \begin{cases}
+      \{1\} & \forall_{j \neq i}, (i,j) \in E \implies \sum_j 1 - v_j > \sum_j v_j\\ 
+      \{0\} & \forall_{j \neq i}, (i,j) \in E \implies \sum_j v_j > \sum_j 1 - v_j\\
+      \{0,1\} & otherwise
+    \end{cases}
+\]
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{NPE Analysis}
+\newtheorem{npe}{NPE Analysis}
+\newtheorem{proofpart}{Part}
+\begin{npe}
+  $v=(v_1,\dots,v_n)$ is a $NPE \iff \forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j$
+\end{npe}
+\end{frame}
+
+\begin{frame}[fragile]{NPE Analysis}
+\begin{proof}
+
+\begin{proofpart}
+$\impliedby$
+$\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j \implies$
+\begin{subequations}
+  \begin{align}
+     &\implies \forall_{i,j}, (i,j) \in E\ \sum_{j \neq i} 1 - v_i > \sum_{j \neq i} v_i \implies \{1\} \in BR_i\\
+     &\implies \forall_{i,j}, (i,j) \in E\ \sum_{j \neq i} 1 - v_i < \sum_{j \neq i} v_i \implies \{0\} \in BR_i
+  \end{align}
+\end{subequations}
+\end{proofpart}
+\end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{NPE Analysis}
+\begin{proof}
+\begin{proofpart}
+  $\implies$\\
+  $\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i \neq \sum_{i=1}^n v_j$ if this holds, then \newline
+  \begin{subequations}
+    \begin{align}
+       \exists j &, v_j = 1 \iff (i,j) \in E\ \land \sum_{j \neq i} 1 - v_i < \sum_{j \neq i} v_i + v_j\\
+                 &, v_j = 0 \iff (i,j) \in E\ \land \sum_{j \neq i} (1 - v_i)+v_j > \sum_{j \neq i} v_i\\
+    \end{align}
+  \end{subequations}
+  
+  But if this is true $i$ changes to other group.\newline
+  Therefore $\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j$
+  \end{proofpart}
+  
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Complexity Analysis}
+  \begin{block}{}
+    \begin{itemize}
+      \item Polinomial in the size of $V$ by the size of $E$
+      \item Problem of type \textbf{\textit{Strategy General Form}}
+      \item Therefore, $O(|V||E|)$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \textbf{\huge{Thank you!!}}
+    \end{center}
+\end{frame}
+
+\end{document}
+

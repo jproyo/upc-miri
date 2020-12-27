@@ -1,4 +1,5 @@
 \documentclass{beamer}
+\usetheme{Madrid}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -14,20 +15,32 @@
 \usepackage{float}
 \usepackage{caption}
 \usepackage[linguistics]{forest}
-\usepackage[cache=false]{minted}
-\usemintedstyle{default}
-\newminted{haskell}{}
-\graphicspath{{./images/}}
 \setbeamertemplate{frametitle}{%
   \usebeamerfont{frametitle}\insertframetitle%
-  \vphantom{g}% To avoid fluctuations per frame
-  % \hrule% Uncomment to see desired effect, without a full-width hrule
+  \vphantom{g}
   \par\hspace*{-\dimexpr0.5\paperwidth-0.5\textwidth}\rule[0.5\baselineskip]{\paperwidth}{0.4pt}
-  \par\vspace*{-\baselineskip}% <-- reduce vertical space after rule
+  \par\vspace*{-\baselineskip}
+}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshortinstitute
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
 }
 
 \usetheme{Boadilla}
-\title{Boolean Combinations of WVG}
+
+\title{Boolean Combinations of Weighted Voting Games}
 
 \author{Juan Pablo Royo Sales}
 \institute{Universitat Politècnica de Catalunya}
@@ -37,110 +50,97 @@
 \begin{frame}
 \titlepage
 \end{frame}
-
-\begin{frame}[fragile]{Definition of the Problem}
-
-  \begin{block}{}
-    \begin{itemize}
-      \item Set of $n$ players 
-      \item Partitioned into two groups. 
-      \item \textbf{Bad pairings}: \textit{two players in such a pair do not want to be in the same group}.
-      \item Players free to choose any group.
-      \item Modeled as a Graph $G = (V,E)$, such that there is an edge $(i, j) \in E$ if $i$ and $j$ form
-      a bad pair.
-      \item The private objective of player $i$ is to maximize the number of its neighbors that
-      are in the \textbf{other group}.
-    \end{itemize}
-  \end{block}
-
-\end{frame}
-
-
-\begin{frame}[fragile]{Formalization}
-  \begin{block}{Given the problem definition}
-    \begin{itemize}
-      \item Let $G=(V,E)$ be the graph representing with $V$ the number of players as vertices and $E$ the set of edges such as $\forall_{i,j \in V}\ (i,j) \in E$ if it is a bad pairing.
-      \item $N = V$.
-      \item $\forall_{i \in N}, A_i = \{1,0\}$ $1$ if it is in Group 1, $0$ if it is in Group 2.
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}[fragile]{Formalization}
-  \begin{block}{Pay-off function}
-    \[
-u_i(v_2,\dots,v_n) = 
-    \begin{cases}
-      1 & \exists\ j \neq i, (i,j) \in E \text{ and $j$ is in the other group of $i$} \\
-      0 & otherwise 
-    \end{cases} 
-\]
-  \end{block}
-\end{frame}
-
-\begin{frame}[fragile]{Formalization}
-  \begin{block}{Best Response Function}
-    \[
-BR_i(v_{-i}) = 
-    \begin{cases}
-      \{1\} & \forall_{j \neq i}, (i,j) \in E \implies \sum_j 1 - v_j > \sum_j v_j\\ 
-      \{0\} & \forall_{j \neq i}, (i,j) \in E \implies \sum_j v_j > \sum_j 1 - v_j\\
-      \{0,1\} & otherwise
-    \end{cases}
-\]
-  \end{block}
-\end{frame}
-
-\begin{frame}[fragile]{NPE Analysis}
-\newtheorem{npe}{NPE Analysis}
-\newtheorem{proofpart}{Part}
-\begin{npe}
-  $v=(v_1,\dots,v_n)$ is a $NPE \iff \forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j$
-\end{npe}
-\end{frame}
-
-\begin{frame}[fragile]{NPE Analysis}
-\begin{proof}
-
-\begin{proofpart}
-$\impliedby$
-$\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j \implies$
-\begin{subequations}
-  \begin{align}
-     &\implies \forall_{i,j}, (i,j) \in E\ \sum_{j \neq i} 1 - v_i > \sum_{j \neq i} v_i \implies \{1\} \in BR_i\\
-     &\implies \forall_{i,j}, (i,j) \in E\ \sum_{j \neq i} 1 - v_i < \sum_{j \neq i} v_i \implies \{0\} \in BR_i
-  \end{align}
-\end{subequations}
-\end{proofpart}
-\end{proof}
-\end{frame}
-
-\begin{frame}[fragile]{NPE Analysis}
-\begin{proof}
-\begin{proofpart}
-  $\implies$\\
-  $\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i \neq \sum_{i=1}^n v_j$ if this holds, then \newline
-  \begin{subequations}
-    \begin{align}
-       \exists j &, v_j = 1 \iff (i,j) \in E\ \land \sum_{j \neq i} 1 - v_i < \sum_{j \neq i} v_i + v_j\\
-                 &, v_j = 0 \iff (i,j) \in E\ \land \sum_{j \neq i} (1 - v_i)+v_j > \sum_{j \neq i} v_i\\
-    \end{align}
-  \end{subequations}
   
-  But if this is true $i$ changes to other group.\newline
-  Therefore $\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j$
-  \end{proofpart}
-  
-  \end{proof}
+\begin{frame}[fragile]{Agenda}
+  \tableofcontents
 \end{frame}
 
-\begin{frame}[fragile]{Complexity Analysis}
-  \begin{block}{}
+\begin{frame}[fragile]{Agenda}
+  \section{Introduction}
+  \tableofcontents[currentsection]
+\end{frame}
+
+  
+\begin{frame}[fragile]{Introduction}
+  \begin{block}{Basic Notions}
     \begin{itemize}
-      \item Polinomial in the size of $V$ by the size of $E$
-      \item Problem of type \textbf{\textit{Strategy General Form}}
-      \item Therefore, $O(|V||E|)$
+      \item Based on \textit{Boolean Combinations of Weighted Voting Games paper} \textit{\textbf{BWVG}}\footnotemark
+      \item It is a natural Generalization over \textbf{Weighted Voting Games}
+      \item Intuitively is a decision making process via multiple committees
+      \item Each committee has the authority to decide the outcome \textit{"yes" or "no"} about an issue.
+      \item And each committee is a WVG 
+      \item Individuals can appear in multiple committees
+      \item Different committees can have different Threshold values
     \end{itemize}
+  \end{block}
+  \footnotetext{\tiny{Piotr Faliszewski, Edith Elkind, and Michael Wooldridge. 2009. Boolean combinations of weighted voting games. In Proceedings of The 8th International Conference on Autonomous Agents and Multiagent Systems - Volume 1 (AAMAS '09). International Foundation for Autonomous Agents and Multiagent Systems, Richland, SC, 185–192.}}
+\end{frame}
+
+\begin{frame}[fragile]{Introduction}
+  \begin{block}{Questions to be answered?}
+    \begin{itemize}
+      \item Which coalitions might be able to bring the goal about?
+      \item How important is a particular individual with respect to the achievement of the goal?
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Introduction}
+  \begin{block}{Goals of the Paper}
+    \begin{itemize}
+      \item Formal Definition of \textbf{BWVG}
+      \item Investigate Computational Properties of \textbf{BWVG}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Agenda}
+  \section{Preliminary Definitions}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Propositional Logic}
+    \begin{itemize}
+      \item Let $\Phi = \{p,q,\dots\}$ be a fixed non-empty vocabulary of Boolean variables    
+      \item Let $\mathcal{L}$ denote the set of formulas of propositional logic over $\Phi$
+      \item If "$\lor$" and "$\land$" are the only operators appearing in formula $\varphi$, se say that $\varphi$ is \textbf{monotone}
+      \item If $\xi \subseteq \Phi$, we write $\xi \models \varphi$ mean that $\varphi$ is true satisfied by valuation $\xi$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Agenda}
+  \section{Boolean Weighted Voting Games}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Boolean Weighted Voting Games}
+  \begin{block}{}
+    asdfasfsd
+  \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Agenda}
+  \section{Shapley Value}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{block}{}
+    asdfasfsd
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Agenda}
+  \section{The Core}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{The Core}
+  \begin{block}{}
+    asdfasfsd
   \end{block}
 \end{frame}
 
@@ -151,4 +151,3 @@ $\forall_{i,j}, (i,j) \in E\ \sum_{i=1}^n 1 - v_i = \sum_{i=1}^n v_j \implies$
 \end{frame}
 
 \end{document}
-

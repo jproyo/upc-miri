@@ -1,5 +1,6 @@
 \documentclass{beamer}
 \usetheme{Madrid}
+\usepackage{bookmark}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -110,15 +111,114 @@
   \end{block}
 \end{frame}
 
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Simple Games}
+    \begin{itemize}
+      \item A coalitional game is Simple if $v(C) \in \{0,1\} \forall C \subseteq N$
+      \item $C$ wins if $v(C) = 1$ and $C$ losses otherwise.  
+      \item A Simple Game is \textbf{monotone} if $v(C) = 1 \implies v(C') = 1$ for any $C \subseteq C'$.
+      \item In this paper authors consider both \textit{monotone} and \textit{non-monotone} Simple Games.
+      \item They assume games with finite numbers of players $|N| = n$, $N = \{1,\dots,n\}$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Weighted Voting Games}
+    \begin{itemize}
+      \item Given $N = \{1,\dots,n\}$ players
+      \item A list of $n$ weights $w = (w_1, \dots, w_n) \in \mathbb{R}^n$
+      \item A threshold $T \in \mathbb{R}$
+      \item When $N$ is clear from the context $q = (T; w_1, \dots, w_n)$ to denote a $WVG$ $g$
+      \item $w(C)$ total weight of coalition $C$, $w(C) = \sum_{i \in C} w_i$ 
+      \item Characteristic function given by $v(C) = 1$ if $w(C) \geq T$ and $v(C) = 0$ otherwise.
+      \item If all Weights are non-negative the game is monotone.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Computational Complexity}
+    \begin{itemize}
+      \item $P$, $NP$, $coNP$, $\Sigma_2^p$, $\Pi_2^p$
+      \item $D^p$: A Language $L \in D^p$ if $L = L_1 \cap L_2$, for some language $L_1 \in NP$ and $L_2 \in coNP$
+      \item $D_2^p$: A Language $L \in D_2^p$ if $L = L_1 \cap L_2$, for some language $L_1 \in \Sigma_2^p$ and $L_2 \in \Pi_2^p$
+      \item A Language $L \in UP$ if its Characteristic Function is in $\# P$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
 \begin{frame}[fragile]{Agenda}
-  \section{Boolean Weighted Voting Games}
+  \section{Formal Definition BWVG}
   \tableofcontents[currentsection]
 \end{frame}
 
 \begin{frame}[fragile]{Boolean Weighted Voting Games}
-  \begin{block}{}
-    asdfasfsd
+  \begin{block}{Definition}
+    A \textbf{BWVG} is a tuple $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$, where:
+    \begin{itemize}
+      \item $N = \{1,\dots,n\}$ is a set of players;
+      \item $\mathcal{G} = \{g^1, \dots, g^n\}$ is a Set of \textbf{WVG} over $N$, where $j$th game, $g^j$, is
+      given by a vector of weights $w^j = (w_1^j, \dots, w_n^j)$ and a Threshold $T^j$. $\mathcal{G}$ is called the \textbf{component games} of $G$;
+      \item $\Phi = \{p^1, \dots, p^n\}$ Set of Propositional Variables, in which each $p^j$ correspond with the \textbf{component} $g^j$;
+      \item $\varphi$ is a propositional formula over $\Phi$. 
+    \end{itemize}
   \end{block}
+  \begin{block}{Shorthand Definition}
+    Example:
+    \begin{itemize}
+      \item $g^1 \land g^2 \equiv \langle N, \{g^1,g^2\}, \{p^1, p^2\}, p^1 \land p^2 \rangle$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Boolean Weighted Voting Games}
+  \begin{block}{Winning Coalition}
+    We say that $C$ is a \textit{wins} $G$ if:
+    \begin{equation}
+      \exists \xi_1 \subseteq \Phi_C\ :\ \forall \xi_2 \subseteq (\Phi \setminus \Phi_C)\ :\ \xi_1 \cup \xi_2 \models \varphi \label{eq:1}
+    \end{equation}
+  \end{block}
+  \begin{block}{Intuitively~\ref{eq:1}}
+    A coalition $C$ wins if it is able to fix variables under its control in such a way that the goal formula $\varphi$ is guaranteed to be \textbf{True}.
+  \end{block}
+  \begin{block}{Notes}
+    It is allowed \textbf{\textit{BWVG}} to contain \textit{negative} weights
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Agenda}
+  \section{Representational Complexity}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{block}{Preliminaries}
+    \begin{itemize}
+      \item Any Simple Game with $n$ players can be represented as a \textit{K-Vector Weighted Voting Game}
+      for $k = O(2^n)$, and therefore as a \textbf{BWVG} with $O(2^n)$ \textbf{component games} $\mathcal{G}$.
+      \item That worst-case can be improved in \textbf{BWVG}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \newtheorem{prop1}{Proposition 1}
+  \begin{prop1}
+    The total number of Boolean weighted voting games with $|N| = n$ and $|\varphi| = s$ is
+    most $2^{O(sn^2 \log(sn))}$
+  \end{prop1}
+  \begin{proof}
+    \begin{itemize}
+      \item Any weighted voting game\footnotemark\ can be represented using Integer weights whose absolute values do not exceed $2^{O(n \log{n})}$
+      \item \textit{w.l.g.} we assumed that $|\mathcal{G}| = |\Phi|$ and $|\Phi| \leq |\varphi| = s$
+      \item Given a \textbf{BWVG} $G$ with $n$ players and $|\varphi| = s$, we can find a equivalent representation using $O(sn^2 \log{n})$
+      bits to represent all weights in ALL components, plus another $O(s \log{s})$ bits to represent $\mathcal{G}, \Phi$ and $\varphi$.
+      \item Therefore, the total number of \textbf{distinct games} can be represented as \textbf{BWVG} with $|N| = n$ and $|\varphi| = s$ is
+      $2^{O(sn^2 \log(sn))}$
+    \end{itemize}
+  \end{proof}
+  \footnotetext{\tiny{S. Muroga. Threshold Logic and its Applications. Wiley, 1971.}}
 \end{frame}
 
 

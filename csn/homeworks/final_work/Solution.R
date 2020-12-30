@@ -36,7 +36,7 @@ plotSome <- function(communities, graph, vecToShow) {
 
 main <- function(){
   fp_graphs <- c("graph_small_fp.txt", "graph_cryptol.txt", "graph_bad_design.txt", "graph_pandoc.txt", "graph_cabal.txt")
-  selected <- fp_graphs[5]
+  selected <- fp_graphs[1]
   adj_matrix <- read.dot(selected)
   colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
   rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))

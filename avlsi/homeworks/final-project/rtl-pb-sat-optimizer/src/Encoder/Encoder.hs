@@ -1,5 +1,5 @@
 -- |
--- Module      : Optimizer.TimeScheduler
+-- Module      : Encoder.Encoder
 -- Description : This module contains the encoding
 -- Copyright   : (c) Juan Pablo Royo Sales, 2020
 -- License     : GPL-3
@@ -7,7 +7,7 @@
 -- Stability   : educational
 -- Portability : POSIX
 --
--- Main entry point of the optimizer for Time-Constrained Schedule and Resource-Constrained Schedule
+-- This is the Encoder which convert the Schedule in PB-SAT formula based on the paper that optimize time and resource scheduling.
 module Encoder.Encoder where
 
 import Control.Lens
@@ -38,6 +38,8 @@ data ResultEncoder = ResultEncoder
 
 makeLenses ''ResultEncoder
 
+-- Type class which abstract the generation of objective function, and constraints which are different
+-- for the both encoding that we need to do: Time and Resource encoding.
 class (MonadReader Schedule m, MonadState EncodedState m) => Encoder m where
   encodeObjectiveFunction :: m PB.Sum
   encodeConstraints :: m [PB.Constraint]
@@ -46,6 +48,7 @@ class (MonadReader Schedule m, MonadState EncodedState m) => Encoder m where
 newtype TimeScheduler a = TimeScheduler { unTime :: ReaderT Schedule (State EncodedState) a }
   deriving newtype (Functor, Applicative, Monad, MonadState EncodedState, MonadReader Schedule)
 
+-- Instance of Type Class for TimeSchedule
 instance Encoder TimeScheduler where
   encodeObjectiveFunction = ask >>= \sc -> sc^.sResources . to (runReader resourcesTime) & traverseOf each convertToSum
     where
@@ -72,6 +75,7 @@ encodeTimeSchedule sc = let maxLit = maxNode sc
 newtype ResourceScheduler a = ResourceScheduler { unResource :: ReaderT Schedule (State EncodedState) a }
   deriving newtype (Functor, Applicative, Monad, MonadState EncodedState, MonadReader Schedule)
 
+-- Instance of Type Class for Resource
 instance Encoder ResourceScheduler where
   encodeObjectiveFunction = ask >>= \sc -> sc^.sResources . to (runReader resourcesR) & traverseOf each convertToSum
     where
@@ -94,6 +98,7 @@ encodeResourceSchedule sc = let maxLit = maxNode sc
                                 result = flip runState (EncodedState maxLit M.empty) . flip runReaderT sc . unResource $ encodeFormula 
                              in uncurry ResultEncoder result ResourceOpt
 
+-- Clearly encode objective functions and then the constraints, returning the Formula for the solver
 encodeFormula :: Encoder m => m PB.Formula
 encodeFormula = do 
   objective   <- Just <$> encodeObjectiveFunction

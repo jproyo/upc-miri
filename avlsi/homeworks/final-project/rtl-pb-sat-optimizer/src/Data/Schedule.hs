@@ -18,10 +18,13 @@ import Data.Text as T
 import Relude as R
 import GHC.Show 
 
+-- Asap type alias which is a list of nodes 
 type Asap = [Node]
 
+-- Alap type alias which is a list of nodes 
 type Alap = [Node]
 
+-- Data type that represents the whole Schedule and the list of resources
 data Schedule = Schedule
   { _sAsap :: Asap,
     _sAlap :: Alap,
@@ -29,15 +32,17 @@ data Schedule = Schedule
   }
   deriving (Eq, Show)
 
+-- Data type that represents a node
 data Node = Node
-  { _nResource :: ResourceType,
-    _nId :: Int,
-    _nStartStep :: Int,
-    _nEndStep :: Int,
-    _nToNode :: Maybe [Int]
+  { _nResource :: ResourceType, -- Resource type 
+    _nId :: Int, -- Node id
+    _nStartStep :: Int, -- Start Step 
+    _nEndStep :: Int, -- End step
+    _nToNode :: Maybe [Int] -- Destination nodes if there is
   }
   deriving (Show, Eq)
 
+-- Type of resources
 data ResourceType
   = Adder
   | Multiplier
@@ -45,6 +50,7 @@ data ResourceType
   | Comparator
   deriving (Show, Eq, Ord)
 
+-- A resource with the weight (Cost) and the amount available of that resource
 data Resource = Resource
   { _rcResource :: ResourceType,
     _rcWeight :: Int,
@@ -52,10 +58,14 @@ data Resource = Resource
   }
   deriving (Show, Eq)
 
+-- All resources
 newtype ResourceList = ResourceList [Resource]
   deriving (Show, Eq, Generic)
   deriving newtype (Semigroup, Monoid)
 
+-- From there on defining the Data types which represent the output result
+
+-- Result node
 data NodeResult = NodeResult
   { _nrId :: Int
   , _nrStep :: Int
@@ -63,6 +73,7 @@ data NodeResult = NodeResult
   , _nrConnectedToNode :: Maybe [Int]
   } deriving Show
 
+-- Schedule optimized result
 data ScheduleResult = ScheduleResult 
   { _srOrig      :: Schedule
   , _srNodes     :: [NodeResult]
@@ -75,6 +86,7 @@ data EncodedState = EncodedState
   , _esResourceSlot :: Map ResourceType [Int]
   } deriving (Show, Eq)
 
+-- Lenses generation
 makeLenses ''NodeResult
 makeLenses ''EncodedState
 makeLenses ''ScheduleResult
@@ -85,6 +97,8 @@ makeLenses ''Schedule
 makePrisms ''ResourceType
 
 instance Wrapped ResourceList
+
+-- Utilitary functions to write the results as a Graphviz representation or Dot file.
 
 fromResourceList :: ResourceList -> Map ResourceType Resource
 fromResourceList = M.fromList . fmap (view rcResource &&& identity) . view _Wrapped'

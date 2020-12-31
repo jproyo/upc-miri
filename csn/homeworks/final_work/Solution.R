@@ -42,10 +42,13 @@ main <- function(){
                   "fp_graphs/cabal.dot")
   oop_graphs <- c( "oop_graphs/bad_design.dot", 
                    "oop_graphs/spring.dot",
-                   "oop_graphs/joda_time.dot")
+                   "oop_graphs/joda_time.dot",
+                   "oop_graphs/guava.dot", 
+                   "oop_graphs/akka.dot",
+                   "oop_graphs/jetty.dot")
   
   selected <- fp_graphs[1]
-  selected <- oop_graphs[3]
+  selected <- oop_graphs[6]
   adj_matrix <- read.dot(selected)
   colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
   rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))

@@ -35,13 +35,20 @@ plotSome <- function(communities, graph, vecToShow) {
 }
 
 main <- function(){
-  fp_graphs <- c("graph_small_fp.txt", "graph_cryptol.txt", "graph_bad_design.txt", "graph_pandoc.txt", "graph_cabal.txt")
+  fp_graphs <- c( "fp_graphs/graph_small.dot", 
+                  "fp_graphs/graph_cryptol.dot", 
+                  "fp_graphs/graph_bad_design.dot", 
+                  "fp_graphs/graph_pandoc.dot", 
+                  "fp_graphs/graph_cabal.dot")
+  oop_graphs <- c( "oop_graphs/graph_bad_design.dot", 
+                   "oop_graphs/graph_spring.dot")
+  
   selected <- fp_graphs[1]
+  selected <- oop_graphs[2]
   adj_matrix <- read.dot(selected)
   colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
   rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))
   graph <- graph_from_adjacency_matrix(adjmatrix = adj_matrix, c("undirected"))
-  #graph <- read.graph("graph_small_fp.txt", format="edgelist", directed = FALSE)
   
   summary <- dataFromGraph(graph)
   print.data.frame(summary, right=FALSE)

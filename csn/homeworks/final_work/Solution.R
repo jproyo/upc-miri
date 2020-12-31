@@ -35,16 +35,17 @@ plotSome <- function(communities, graph, vecToShow) {
 }
 
 main <- function(){
-  fp_graphs <- c( "fp_graphs/graph_small.dot", 
-                  "fp_graphs/graph_cryptol.dot", 
-                  "fp_graphs/graph_bad_design.dot", 
-                  "fp_graphs/graph_pandoc.dot", 
-                  "fp_graphs/graph_cabal.dot")
-  oop_graphs <- c( "oop_graphs/graph_bad_design.dot", 
-                   "oop_graphs/graph_spring.dot")
+  fp_graphs <- c( "fp_graphs/small.dot", 
+                  "fp_graphs/cryptol.dot", 
+                  "fp_graphs/bad_design.dot", 
+                  "fp_graphs/pandoc.dot", 
+                  "fp_graphs/cabal.dot")
+  oop_graphs <- c( "oop_graphs/bad_design.dot", 
+                   "oop_graphs/spring.dot",
+                   "oop_graphs/joda_time.dot")
   
   selected <- fp_graphs[1]
-  selected <- oop_graphs[2]
+  selected <- oop_graphs[3]
   adj_matrix <- read.dot(selected)
   colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
   rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))

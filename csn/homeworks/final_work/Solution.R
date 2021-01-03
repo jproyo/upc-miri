@@ -48,7 +48,7 @@ main <- function(){
                    "oop_graphs/jetty.dot")
   
   selected <- fp_graphs[1]
-  selected <- oop_graphs[1]
+  selected <- oop_graphs[2]
   adj_matrix <- read.dot(selected)
   colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
   rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))

@@ -1,0 +1,104 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage[pdfencoding=auto]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage{authblk}
+\usepackage[acronym]{glossaries}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\newminted{R}{frame=lines,framerule=2pt}
+\graphicspath{{./images/}}
+
+\tikzstyle{bag} = [align=center]
+
+\title{%
+      Analysis of Software Design Principles \\
+      under Complex Network Theory\\
+}
+\author{Juan Pablo Royo Sales \& Francesc Roy Campderrós}
+\affil{Universitat Politècnica de Catalunya}
+\date\today
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{UPC MIRI}
+\fancyhead[L]{CSN - Final Work}
+\fancyfoot[L,C]{}
+\fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\newacronym{netdyn}{Network Dynamics}{Network Dynamics}
+\newacronym{degdist}{Degree Distribution}{Degree Distribution}
+\newacronym{growdeg}{Time Growth Degree}{Growth of Vertex Degree over time}
+\newacronym{prefatt}{G Pref Attachment}{Growth + Preferential Attachment}
+\newacronym{randatt}{G Random Attachment}{Growth + Random Attachment}
+\newacronym{nprefatt}{NG Pref Attachment}{No Growth + Preferential Attachment}
+\newacronym{baral}{Barabasi-Albert model}{Barabasi-Albert model}
+\newacronym{indegree}{Incomming Degree}{Incomming Degree Language Set}
+\newacronym{zeta}{Zeta}{Zeta Model}
+\newacronym{aic}{Akaike}{Akaike Information Criterion}
+\newacronym{dispp}{Displaced Poisson}{Displaced Poisson Model}
+\newacronym{dispg}{Displaced Geometric}{Displaced Geometric Model}
+\newacronym{hc}{High Cohesion}{High Cohesion}
+\newacronym{lc}{Low Coupling}{Low Coupling}
+\newacronym{cnt}{Complex Network Theory}{Complex Network Theory}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+One of the most well known Software Design principles in \textbf{Software Engineering} is \acrfull{hc} and \acrfull{lc}, which is well described here~\cite{cohesion_coupling}.
+
+As this two principles states a \textit{robust Software} should be design with \acrlong{lc} between their modules and \acrlong{hc} inside it. 
+
+In other words, a Software that fullfil this characteristics should be very connected in their minimum functional units (Functions inside same file, Methods inside a class, etc), and with few connections between their coarse grained functional units (a.k.a Modules or Packages).
+
+In this work, we are going to formulate some hypothesis which we believe we can empirically prove, that are going to show the relationship between this principles and how to measure with \textbf{\acrfull{cnt}}.
+At the same time, we are going to analysis different kinds of software of different sizes and build under different language paradigms to see if that tool set that \acrshort{cnt} provides are suitable for the general case. 
+
+\section{Preliminaries}
+\subsection{Context}
+\subsection{Hypothesis}
+
+\section{Results}
+\subsection{Experiments}
+\subsection{Metrics}
+
+\section{Discussion and Analysis}
+\section{Conclusions}
+
+\bibliographystyle{alpha}
+\bibliography{Report}
+
+\appendix
+\section{Organization}
+
+\begin{itemize}
+    \item \textbf{code}: Under this folder you are going to find \textit{C++} code for simulating and generating the different networks using the different strategies: \acrfull{prefatt}, \acrfull{randatt} and \acrfull{nprefatt}, as well as the \textit{R} scripts for generating plots and doing graph analysis.
+    \item \textbf{code/data}: Data Generated for each strategy
+    \item \textbf{report}: This report in Latex and PDF format.
+\end{itemize}
+
+\end{document}
+

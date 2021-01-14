@@ -15,6 +15,7 @@
 \usepackage{color}
 \usepackage{caption}
 \usepackage{authblk}
+\usepackage{longtable}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
@@ -59,7 +60,11 @@
 \newacronym{hc}{High Cohesion}{High Cohesion}
 \newacronym{lc}{Low Coupling}{Low Coupling}
 \newacronym{cnt}{Complex Network Theory}{Complex Network Theory}
+\newacronym{fp}{Functional Programming}{Functional Programming}
+\newacronym{oop}{Object Oriented Programming}{Object Oriented Programming}
+\newacronym{loc}{LoC}{Lines of Code}
 
+\newtheorem{hyp}{Hypothesis}
 
 \begin{document}
 
@@ -78,13 +83,64 @@ In this work, we are going to formulate some hypothesis which we believe it can 
 At the same time, we are going to analysis different kinds of software of different sizes and build under different language paradigms to see if the tool set that \acrshort{cnt} provides are suitable for the general case. 
 
 \section{Preliminaries}
-\subsection{Context}
+In this section we are going to describe how and why the different Language Paradigms are selected and what is the criterion for selection of different Software solutions to be evaluated.
 
-\begin{table}[H]
-    \centering
-    \begin{tabular}{l l l}
+On the other hand as well, we are going to formulate some hypothesis that are going to guide our work to see if our assumptions can empirically been proved using \acrlong{cnt}.
+
+\subsection{Context}
+We have selected the most important $2$ main Language Paradigm to conduct the analysis: \acrfull{fp} and \acrfull{oop}. 
+
+The reasons behind this decision are basically the following:
+
+\begin{itemize}
+    \item \textbf{95\%} of Software in the Industry are built with one of these 2 Paradigms according to the last results of this well-known survey~\cite{so_survey}.
+    \item Due to the intrinsic nature of each of those Paradigms we have some hypothesis that we are going to describe later that can lead to different conclusion and Metrics
+    \item If we can deduce some Software Design properties analyzing these 2 Paradigms we can generalize for the rest because they are quite different in nature and covers almost the whole Industry.
+    \item We also believe that Software Principles should apply indistinguishably the Paradigm. 
+\end{itemize}
+
+
+\subsection{Hypothesis}
+In this work we are trying to prove the following \textbf{Hypothesis} that we consider can be proved using \acrfull{cnt}.
+
+\begin{hyp}
+Given any Software Program Solution, its Network Metrics should be in the percentil $.95$ according to the average of the Network Metrics that we have been identified in this work.
+\end{hyp}
+
+\begin{hyp}
+Any \acrlong{oop} Program have a better modularity in terms of \acrlong{cnt} Metric rather than \acrlong{fp} Programs.
+\end{hyp}
+
+\begin{hyp}
+The more \acrfull{loc} a Program have, the better Modularity it presents.
+\end{hyp}
+    
+
+\section{Results}
+\subsection{Experiments}
+\subsection{Metrics}
+
+\section{Discussion and Analysis}
+\section{Conclusions}
+
+\bibliographystyle{alpha}
+\bibliography{Report}
+
+\appendix
+\section{Organization}
+
+\begin{itemize}
+    \item \textbf{code}: Under this folder you are going to find \textit{C++} code for simulating and generating the different networks using the different strategies: \acrfull{prefatt}, \acrfull{randatt} and \acrfull{nprefatt}, as well as the \textit{R} scripts for generating plots and doing graph analysis.
+    \item \textbf{code/data}: Data Generated for each strategy
+    \item \textbf{report}: This report in Latex and PDF format.
+\end{itemize}
+
+\section{FP Analytzed Programs}
+\begin{longtable}[H]{l r l}
+    \caption{FP Analyzed Programs}\label{table:fp_prog_1}\\
         Program & LoC & Repository \\
         \hline            
+        \endhead
         aeson & 6948 & https://github.com/haskell/aeson.git \\
         amazonka & 715531 & https://github.com/brendanhay/amazonka \\
         async & 743 & https://github.com/simonmar/async.git \\
@@ -127,39 +183,9 @@ At the same time, we are going to analysis different kinds of software of differ
         yesod & 19971 & https://github.com/yesodweb/yesod.git \\
         small & 449 & PRIVATE \\
         PRIVATE PROGRAM & 26975 & PRIVATE \\
+    
+\end{longtable}
 
-    \end{tabular}
-    \caption{FP Analyzed Programs}
-    \label{table:fp_prog_1}
-\end{table}
-
-\subsection{Hypothesis}
-
-\begin{itemize}
-    \item Que si escribes un programa, las métricas de su grafo deben estar más o menos parecidas $.95$ percentil al avarage de las que hemos calculado.
-    \item Que los OOP programs estan mejor modularizados que los FP programs
-    \item Que la modularización de un programa mejora cuantas más lineas de código tiene
-\end{itemize}
-
-
-\section{Results}
-\subsection{Experiments}
-\subsection{Metrics}
-
-\section{Discussion and Analysis}
-\section{Conclusions}
-
-\bibliographystyle{alpha}
-\bibliography{Report}
-
-\appendix
-\section{Organization}
-
-\begin{itemize}
-    \item \textbf{code}: Under this folder you are going to find \textit{C++} code for simulating and generating the different networks using the different strategies: \acrfull{prefatt}, \acrfull{randatt} and \acrfull{nprefatt}, as well as the \textit{R} scripts for generating plots and doing graph analysis.
-    \item \textbf{code/data}: Data Generated for each strategy
-    \item \textbf{report}: This report in Latex and PDF format.
-\end{itemize}
 
 \end{document}
 

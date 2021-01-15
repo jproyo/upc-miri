@@ -22,7 +22,6 @@ dataFromGraph <- function(graph) {
   DIAM = diameter(graph)
   
   
-  
   table <- rbind(table, list(N, E, round(k, 2), round(delta, 6),MGD,DIAM))
   colnames(table) = c("N", "E", "k", "delta","avarage path distance","diameter")
   return(table)
@@ -42,31 +41,15 @@ plotSome <- function(communities, graph, vecToShow) {
   }
 }
 
-main <- function(){
-  fp_graphs <- c( "fp_graphs/small.dot", 
-                  "fp_graphs/cryptol.dot", 
-                  "fp_graphs/bad_design.dot", 
-                  "fp_graphs/pandoc.dot", 
-                  "fp_graphs/cabal.dot")
-  oop_graphs <- c( "oop_graphs/bad_design.dot", 
-                   "oop_graphs/spring.dot",
-                   "oop_graphs/joda_time.dot",
-                   "oop_graphs/guava.dot", 
-                   "oop_graphs/akka.dot",
-                   "oop_graphs/jetty.dot")
-  
-  
-  selected <- oop_graphs[1]
-  adj_matrix <- read.dot(selected)
+run_metrics <- function(file){
+  graphName <- tools::file_path_sans_ext(basename(file))
+  adj_matrix <- read.dot(file)
   colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
   rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))
   graph <- graph_from_adjacency_matrix(adjmatrix = adj_matrix, c("undirected")) 
-  
-  #Isolated = which(degree(graph)==0)
-  #graph = delete.vertices(graph, Isolated)
-  
-  
-  print(dim(adj_matrix))
+
+  print("##################################################################################################")
+  print(paste( "##############", "Program", graphName, "##############"))
   
   summary <- dataFromGraph(graph)
   
@@ -89,14 +72,26 @@ main <- function(){
   #TRANS = ClustF(A, type = "undirected", isolates = "zero", norm=1)
   print(paste("mean local clustering coef:", TRANS))
   
-  
-  
-  
-  
   graph_d = degree.distribution(graph)
   print(graph_d[0:5])
-  plot(graph_d)
+  plot(graph_d, main = paste("Program: ", graphName))
+  print("##################################################################################################")
 }
+
+process_graphs <- function(path_graph, label){
+  print(paste("Running", label, "......."))
+  files <- list.files(path = path_graph, pattern = "*.dot", full.names = TRUE)
+  lapply(files, run_metrics)
+}
+
+main <- function(){
+  process_graphs("fp_graphs", "FP GRAPHS")
+  #process_graphs("oop_graphs", "FP GRAPHS")
+}
+
+
+#Isolated = which(degree(graph)==0)
+#graph = delete.vertices(graph, Isolated)
 
 
 ## d_ij = shortest distance between i and j = geodesic distance

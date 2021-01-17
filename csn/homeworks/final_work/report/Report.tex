@@ -63,6 +63,8 @@
 \newacronym{fp}{Functional Programming}{Functional Programming}
 \newacronym{oop}{Object Oriented Programming}{Object Oriented Programming}
 \newacronym{loc}{LoC}{Lines of Code}
+\newacronym{cdg}{CDG}{Call Dependency Graph}
+\newacronym{fu}{FU}{Functional Units}
 
 \newtheorem{hyp}{Hypothesis}
 
@@ -77,7 +79,7 @@ One of the most well known Software Design principles in \textbf{Software Engine
 
 As this two principles states a \textit{robust Software} should be design with \acrlong{lc} between their modules and \acrlong{hc} inside it. 
 
-In other words, a Software that fullfil this characteristics should be very connected in their minimum functional units (Functions inside same file, Methods inside a class, etc), and with few connections between their coarse grained functional units (a.k.a Modules or Packages).
+In other words, a Software that fullfil this characteristics should be very connected in their minimum \acrfull{fu} (Functions inside same file, Methods inside a class, etc), and with few connections between their coarse grained \acrshort{fu} (a.k.a Modules or Packages).
 
 In this work, we are going to formulate some hypothesis which we believe it can been empirically proved and shown the relationship between these principles and how to measure with \textbf{\acrfull{cnt}}.
 At the same time, we are going to analysis different kinds of software of different sizes and build under different language paradigms to see if the tool set that \acrshort{cnt} provides are suitable for the general case. 
@@ -99,6 +101,18 @@ The reasons behind this decision are basically the following:
     \item We also believe that Software Principles should apply indistinguishably the Paradigm. 
 \end{itemize}
 
+On the other hand the selection of the programs to be analyzed are the following:
+
+\begin{itemize}
+    \item Most of the software are Open Source or Free software that can be download publicly either from \url{https://github.com} or from \url{https://repo1.maven.org}.
+    \item Software that are marked as \textbf{PRIVATE} are Big Projects from Privates Companies that don't want to reveal the Sources Code and Names for Commercial reasons.
+    \item In the case of \textbf{PRIVATE} \acrshort{fp} Solution, it belongs to a Company one of the authors of the current work is working right now.
+    \item In the case of \textbf{PRIVATE} \acrshort{oop} Solution, it belongs to a Company one of the authors of the current work worked in the past.
+    \item In both cases, taken anonymous data for conducting this analysis has been agreed with legal representatives of those Companies.
+\end{itemize}
+
+On the last hand we are going to use \textit{Haskell} Programs for analyzing \acrlong{fp} and \textit{Java} Programs for \acrlong{oop}. We believe that right now both are the most representative
+ones in their Paradigm fields.
 
 \subsection{Hypothesis}
 In this work we are trying to prove the following \textbf{Hypothesis} that we consider can be proved using \acrfull{cnt}.
@@ -124,6 +138,29 @@ If the Software follows the principle design of \acrshort{hc} and \acrshort{lc},
 In this section first we are going to describe the \textbf{Experiments} conducted and after that we have obtained after running the different experiments; this is what we call \textbf{Metrics} subsection.
 
 \subsection{Experiments}
+In this section we are going to described how the experiment have been set up in order to prepare the graphs for taking the desired metrics, that could allow us to explain and verify the proposed hypothesis.
+
+\subsubsection{Preliminaries}
+In order to determine if a Software fullfil the 2 Software Design Principles that we want to analyze, \acrshort{hc} and \acrshort{lc}, 
+we need to extract the \acrfull{cdg} from the programs that we want to analyze.
+
+In \acrshort{cdg}, \textbf{nodes} are \acrlong{fu}: \textit{Functions} in the case of \acrshort{fp} and \textit{Methods} in the case of \acrshort{oop}.
+An \textbf{edge} is when from inside a \acrshort{fu} another \acrshort{fu} is called or invoked.
+
+Therefore, we need to build this \acrlong{cdg} in order to establish how the different Modules are interconnected in order to measure \acrshort{lc} and \acrshort{hc}.
+
+\subsubsection{Building Graphs from Programs}
+In order to achieve the desired \acrlong{cdg} we are going to use some specific tooling for each Paradigm.
+The following has been used on each case:
+
+\begin{itemize}
+    \item \textbf{\acrlong{fp}}: \textit{function-call-graph} \url{https://github.com/dustinnorwood/function-call-graph} is a Program that given a \textit{Haskell} Source Code it outputs a \textit{DOT} file with the \acrlong{cdg}
+    \item \textbf{\acrlong{oop}}: \textit{java-callgraph} \url{https://github.com/gousiosg/java-callgraph} is a Program that given a \textit{Java} Compiled Jar it outputs a in \textit{stdout} the \acrlong{cdg}. In order to use only \textit{DOT} files we have converted this output into \textit{DOT} using a script that is under \mintinline{bash}{code/script_java.sh}
+\end{itemize}
+
+All the resulting graphs are under their respective folders as you can see here~\ref{apx:sec:org:1}.
+
+\subsubsection{R Scripts}
 
 \subsection{Metrics}
 
@@ -134,11 +171,12 @@ In this section first we are going to describe the \textbf{Experiments} conducte
 \bibliography{Report}
 
 \appendix
-\section{Organization}
+\section{Organization}\label{apx:sec:org:1}
 
 \begin{itemize}
-    \item \textbf{code}: Under this folder you are going to find \textit{C++} code for simulating and generating the different networks using the different strategies: \acrfull{prefatt}, \acrfull{randatt} and \acrfull{nprefatt}, as well as the \textit{R} scripts for generating plots and doing graph analysis.
-    \item \textbf{code/data}: Data Generated for each strategy
+    \item \textbf{code}: Under this folder you are going to find \textit{R Scripts} code for conducting this analysis.
+    \item \textbf{fp\_graphs}: \textit{DOT} files that contains the Dependency Graph Representation of each \acrlong{fp} Program
+    \item \textbf{oop\_graphs}: \textit{DOT} files that contains the Dependency Graph Representation of each \acrlong{oop} Program
     \item \textbf{report}: This report in Latex and PDF format.
 \end{itemize}
 

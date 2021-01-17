@@ -45,7 +45,7 @@
 
 \author{Juan Pablo Royo Sales}
 \institute{Universitat Politècnica de Catalunya}
-\date{January 2020}
+\date{January 18th, 2021}
 \begin{document}
 
 \begin{frame}
@@ -104,7 +104,31 @@
   \begin{block}{Propositional Logic}
     \begin{itemize}
       \item Let $\Phi = \{p,q,\dots\}$ be a fixed non-empty vocabulary of Boolean variables    
-      \item Let $\mathcal{L}$ denote the set of formulas of propositional logic over $\Phi$
+      \item Let $\mathcal{L}$ denote the set of formulas of propositional logic over $\Phi$, constructed using conventional Boolean operators: 
+      $\land, \lor, \implies, \iff, \neg$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Propositional Logic}
+    \begin{itemize}
+      \item Let $\Phi = \{p,q,\dots\}$ be a fixed non-empty vocabulary of Boolean variables    
+      \item Let $\mathcal{L}$ denote the set of formulas of propositional logic over $\Phi$, constructed using conventional Boolean operators: 
+      $\land, \lor, \implies, \iff, \neg$
+      \item If "$\lor$" and "$\land$" are the only operators appearing in formula $\varphi$, se say that $\varphi$ is \textbf{monotone}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Propositional Logic}
+    \begin{itemize}
+      \item Let $\Phi = \{p,q,\dots\}$ be a fixed non-empty vocabulary of Boolean variables    
+      \item Let $\mathcal{L}$ denote the set of formulas of propositional logic over $\Phi$, constructed using conventional Boolean operators: 
+      $\land, \lor, \implies, \iff, \neg$
       \item If "$\lor$" and "$\land$" are the only operators appearing in formula $\varphi$, se say that $\varphi$ is \textbf{monotone}
       \item If $\xi \subseteq \Phi$, we write $\xi \models \varphi$ mean that $\varphi$ is true satisfied by valuation $\xi$
     \end{itemize}
@@ -141,9 +165,26 @@
   \begin{block}{Computational Complexity}
     \begin{itemize}
       \item $P$, $NP$, $coNP$, $\Sigma_2^p$, $\Pi_2^p$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Computational Complexity}
+    \begin{itemize}
+      \item $P$, $NP$, $coNP$, $\Sigma_2^p$, $\Pi_2^p$
+      \item $D^p$: A Language $L \in D^p$ if $L = L_1 \cap L_2$, for some language $L_1 \in NP$ and $L_2 \in coNP$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Preliminary Definitions}
+  \begin{block}{Computational Complexity}
+    \begin{itemize}
+      \item $P$, $NP$, $coNP$, $\Sigma_2^p$, $\Pi_2^p$
       \item $D^p$: A Language $L \in D^p$ if $L = L_1 \cap L_2$, for some language $L_1 \in NP$ and $L_2 \in coNP$
       \item $D_2^p$: A Language $L \in D_2^p$ if $L = L_1 \cap L_2$, for some language $L_1 \in \Sigma_2^p$ and $L_2 \in \Pi_2^p$
-      \item A Language $L \in UP$ if its Characteristic Function is in $\# P$
     \end{itemize}
   \end{block}
 \end{frame}
@@ -179,6 +220,27 @@
       \exists \xi_1 \subseteq \Phi_C\ :\ \forall \xi_2 \subseteq (\Phi \setminus \Phi_C)\ :\ \xi_1 \cup \xi_2 \models \varphi \label{eq:1}
     \end{equation}
   \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Boolean Weighted Voting Games}
+  \begin{block}{Winning Coalition}
+    We say that $C$ is a \textit{wins} $G$ if:
+    \begin{equation}
+      \exists \xi_1 \subseteq \Phi_C\ :\ \forall \xi_2 \subseteq (\Phi \setminus \Phi_C)\ :\ \xi_1 \cup \xi_2 \models \varphi \label{eq:1}
+    \end{equation}
+  \end{block}
+  \begin{block}{Intuitively~\ref{eq:1}}
+    A coalition $C$ wins if it is able to fix variables under its control in such a way that the goal formula $\varphi$ is guaranteed to be \textbf{True}.
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Boolean Weighted Voting Games}
+  \begin{block}{Winning Coalition}
+    We say that $C$ is a \textit{wins} $G$ if:
+    \begin{equation}
+      \exists \xi_1 \subseteq \Phi_C\ :\ \forall \xi_2 \subseteq (\Phi \setminus \Phi_C)\ :\ \xi_1 \cup \xi_2 \models \varphi \label{eq:1}
+    \end{equation}
+  \end{block}
   \begin{block}{Intuitively~\ref{eq:1}}
     A coalition $C$ wins if it is able to fix variables under its control in such a way that the goal formula $\varphi$ is guaranteed to be \textbf{True}.
   \end{block}
@@ -197,14 +259,72 @@
     \begin{itemize}
       \item Any Simple Game with $n$ players can be represented as a \textit{K-Vector Weighted Voting Game}
       for $k = O(2^n)$, and therefore as a \textbf{BWVG} with $O(2^n)$ \textbf{component games} $\mathcal{G}$.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{block}{Preliminaries}
+    \begin{itemize}
+      \item Any Simple Game with $n$ players can be represented as a \textit{K-Vector Weighted Voting Game}
+      for $k = O(2^n)$, and therefore as a \textbf{BWVG} with $O(2^n)$ \textbf{component games} $\mathcal{G}$.
       \item That worst-case unfortunately cannot be improved in \textbf{BWVG}
-      \item But we are going to show that for \textbf{some specific} instance that captures \textbf{realistic voting scenarios} that can be improve with linear representation.
     \end{itemize}
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Representational Complexity}
   \newtheorem{prop1}{Proposition}
+  \begin{prop1}
+    The total number of Boolean weighted voting games with $|N| = n$ and $|\varphi| = s$ is
+    most $2^{O(sn^2 \log(sn))}$
+  \end{prop1}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{prop1}
+    The total number of Boolean weighted voting games with $|N| = n$ and $|\varphi| = s$ is
+    most $2^{O(sn^2 \log(sn))}$
+  \end{prop1}
+  \begin{proof}
+    \begin{itemize}
+      \item Any weighted voting game\footnotemark\ can be represented using Integer weights whose absolute values do not exceed $2^{O(n \log{n})}$
+    \end{itemize}
+  \end{proof}
+  \footnotetext{\tiny{S. Muroga. Threshold Logic and its Applications. Wiley, 1971.}}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{prop1}
+    The total number of Boolean weighted voting games with $|N| = n$ and $|\varphi| = s$ is
+    most $2^{O(sn^2 \log(sn))}$
+  \end{prop1}
+  \begin{proof}
+    \begin{itemize}
+      \item Any weighted voting game\footnotemark\ can be represented using Integer weights whose absolute values do not exceed $2^{O(n \log{n})}$
+      \item \textit{w.l.g.} we assumed that $|\mathcal{G}| = |\Phi|$ and $|\Phi| \leq |\varphi| = s$
+    \end{itemize}
+  \end{proof}
+  \footnotetext{\tiny{S. Muroga. Threshold Logic and its Applications. Wiley, 1971.}}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{prop1}
+    The total number of Boolean weighted voting games with $|N| = n$ and $|\varphi| = s$ is
+    most $2^{O(sn^2 \log(sn))}$
+  \end{prop1}
+  \begin{proof}
+    \begin{itemize}
+      \item Any weighted voting game\footnotemark\ can be represented using Integer weights whose absolute values do not exceed $2^{O(n \log{n})}$
+      \item \textit{w.l.g.} we assumed that $|\mathcal{G}| = |\Phi|$ and $|\Phi| \leq |\varphi| = s$
+      \item Given a \textbf{BWVG} $G$ with $n$ players and $|\varphi| = s$, we can find a equivalent representation using $O(sn^2 \log{n})$
+      bits to represent all weights in ALL components, plus another $O(s \log{s})$ bits to represent $\mathcal{G}, \Phi$ and $\varphi$.
+    \end{itemize}
+  \end{proof}
+  \footnotetext{\tiny{S. Muroga. Threshold Logic and its Applications. Wiley, 1971.}}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
   \begin{prop1}
     The total number of Boolean weighted voting games with $|N| = n$ and $|\varphi| = s$ is
     most $2^{O(sn^2 \log(sn))}$
@@ -223,6 +343,19 @@
 \end{frame}
 
 \begin{frame}[fragile]{Representational Complexity}
+  \begin{block}{Linear Representation - Specific Case}    
+    \begin{itemize}
+      \item We are going to show that for \textbf{some specific} instance that captures \textbf{realistic voting scenarios} that can be improve with linear representation.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{block}{Linear Representation - Specific Case}    
+    \begin{itemize}
+      \item We are going to show that for \textbf{some specific} instance that captures \textbf{realistic voting scenarios} that can be improve with linear representation.
+    \end{itemize}
+  \end{block}
   \newtheorem{theorem1}{Theorem}
   \begin{theorem1}
    Consider a \textbf{BWVG} $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ where
@@ -230,6 +363,73 @@
    and $\varphi = p^1 \lor p^2$. To represent $G$ as a conjunction of $m$ weighted voting games
    requires $m \geq k/2$ \textbf{component games} $\mathcal{G}$ 
   \end{theorem1}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}
+    \begin{itemize}
+      \item Poof by contradiction
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}
+    \begin{itemize}
+      \item Poof by contradiction
+      \item A coalition $C$ to win in $G$ has to contain either \textit{even players} or \textit{odd players}
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}
+    \begin{itemize}
+      \item Poof by contradiction
+      \item A coalition $C$ to win in $G$ has to contain either \textit{even players} or \textit{odd players}
+      \item Any \textit{maximal losing coalition} (MLC) in $G$ is of the form $N \setminus \{2i, 2j - 1\}$ where
+      $i,j \in \{1,\dots,k\}$, denote as $C_{i,j}$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}
+    \begin{itemize}
+      \item Poof by contradiction
+      \item A coalition $C$ to win in $G$ has to contain either \textit{even players} or \textit{odd players}
+      \item Any \textit{maximal losing coalition} (MLC) in $G$ is of the form $N \setminus \{2i, 2j - 1\}$ where
+      $i,j \in \{1,\dots,k\}$, denote as $C_{i,j}$
+      \item There are exactly $k^2$ MLC
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}
+    \begin{itemize}
+      \item Poof by contradiction
+      \item A coalition $C$ to win in $G$ has to contain either \textit{even players} or \textit{odd players}
+      \item Any \textit{maximal losing coalition} (MLC) in $G$ is of the form $N \setminus \{2i, 2j - 1\}$ where
+      $i,j \in \{1,\dots,k\}$, denote as $C_{i,j}$
+      \item There are exactly $k^2$ MLC
+      \item 2 MLC $C_{i,j}$ and $C_{i',j'}$ clashes if $i=i'$ or $j= j'$, if $C_{i,j} \cup C_{i',j'} \neq N$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}
+    \begin{itemize}
+      \item Poof by contradiction
+      \item A coalition $C$ to win in $G$ has to contain either \textit{even players} or \textit{odd players}
+      \item Any \textit{maximal losing coalition} (MLC) in $G$ is of the form $N \setminus \{2i, 2j - 1\}$ where
+      $i,j \in \{1,\dots,k\}$, denote as $C_{i,j}$
+      \item There are exactly $k^2$ MLC
+      \item 2 MLC $C_{i,j}$ and $C_{i',j'}$ clashes if $i=i'$ or $j= j'$, if $C_{i,j} \cup C_{i',j'} \neq N$
+      \item \textbf{Suppose} that $G$ can be represented as $\langle N, \{h^1, \dots, h^m\}, \{q^1, \dots, q^m\}, q^1 \land \dots \land q^m \rangle$ with $m < k/2$
+    \end{itemize}
+  \end{proof}
 \end{frame}
 
 \begin{frame}[fragile]{Representational Complexity}
@@ -246,6 +446,52 @@
       component game (w.l.g.) that is lost by at least $2k$ distinct MLC.
     \end{itemize}
   \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}[Proof Cont.]
+    \begin{itemize}
+      \item Fix an arbitrary MLC $C_{i,j}$ that loses in $h^1$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}[Proof Cont.]
+    \begin{itemize}
+      \item Fix an arbitrary MLC $C_{i,j}$ that loses in $h^1$
+      \item Among $2k$ MLCs that loses in $h^1$ there can be at most $k - 1$ MLCs of the form
+      $C_{i,j'}, j' \neq j$ and $C_{i',j}, i' \neq i$
+    \end{itemize}
+\end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}[Proof Cont.]
+    \begin{itemize}
+      \item Fix an arbitrary MLC $C_{i,j}$ that loses in $h^1$
+      \item Among $2k$ MLCs that loses in $h^1$ there can be at most $k - 1$ MLCs of the form
+      $C_{i,j'}, j' \neq j$ and $C_{i',j}, i' \neq i$
+      \item There must be a $C_{x,y}$ that loses in $h^1$ and don't clashes with $C_{i,j}$.
+    \end{itemize}
+\end{proof}
+\end{frame}
+
+
+\begin{frame}[fragile]{Representational Complexity}
+  \begin{proof}[Proof Cont.]
+    \begin{itemize}
+      \item Fix an arbitrary MLC $C_{i,j}$ that loses in $h^1$
+      \item Among $2k$ MLCs that loses in $h^1$ there can be at most $k - 1$ MLCs of the form
+      $C_{i,j'}, j' \neq j$ and $C_{i',j}, i' \neq i$
+      \item There must be a $C_{x,y}$ that loses in $h^1$ and don't clashes with $C_{i,j}$.
+      \item Let $h^1 = (T; w_1, \dots, w_n)$, we have
+    \end{itemize}
+    \begin{equation}
+      w(N) - w_{2i} - w_{2j - 1} < T; w(N) - w_{2x} - w_{2y - 1} < T\label{eq:2}
+    \end{equation}
+\end{proof}
 \end{frame}
 
 \begin{frame}[fragile]{Representational Complexity}
@@ -278,13 +524,70 @@
 \end{frame}
 
 \begin{frame}[fragile]{Decision Problems in BWVG}
-  \newtheorem{theorem2}{Winning Coalitions}
-  \begin{theorem2}
+  \newtheorem{theorem3}{Winning Coalitions}
+  \begin{theorem3}
     Given a game $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a coalition $C \subseteq N$, 
     deciding whether $C$ wins in $G$ is $\Sigma_2^p$-complete. This results holds even if there are 2 players
     and the weights of all players in all components are in $\{0,1\}$. However, the problem is in $P$ if the underlying
     formula is monotone.
-  \end{theorem2}
+  \end{theorem3}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{theorem3}
+    Given a game $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a coalition $C \subseteq N$, 
+    deciding whether $C$ wins in $G$ is $\Sigma_2^p$-complete. This results holds even if there are 2 players
+    and the weights of all players in all components are in $\{0,1\}$. However, the problem is in $P$ if the underlying
+    formula is monotone.
+  \end{theorem3}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item By definition of Winning coalition of \textbf{BWVG} is easy to see that is in $\Sigma_2^p$ for the general case
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{theorem3}
+    Given a game $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a coalition $C \subseteq N$, 
+    deciding whether $C$ wins in $G$ is $\Sigma_2^p$-complete. This results holds even if there are 2 players
+    and the weights of all players in all components are in $\{0,1\}$. However, the problem is in $P$ if the underlying
+    formula is monotone.
+  \end{theorem3}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item By definition of Winning coalition of \textbf{BWVG} is easy to see that is in $\Sigma_2^p$ for the general case
+      \item In the case of monotonicity of propositional formula testing whether a Coalition $C$ is winning we need to set all 
+      all the controlled variables by $C$ in \textbf{True}, while All others in \textbf{$\bot$}.
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{theorem3}
+    Given a game $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a coalition $C \subseteq N$, 
+    deciding whether $C$ wins in $G$ is $\Sigma_2^p$-complete. This results holds even if there are 2 players
+    and the weights of all players in all components are in $\{0,1\}$. However, the problem is in $P$ if the underlying
+    formula is monotone.
+  \end{theorem3}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item By definition of Winning coalition of \textbf{BWVG} is easy to see that is in $\Sigma_2^p$ for the general case
+      \item In the case of monotonicity of propositional formula testing whether a Coalition $C$ is winning we need to set all 
+      all the controlled variables by $C$ in \textbf{True}, while All others in \textbf{$\bot$}.
+      \item With formulas with few variables we can enumerate all possible truth assignments.
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{theorem3}
+    Given a game $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a coalition $C \subseteq N$, 
+    deciding whether $C$ wins in $G$ is $\Sigma_2^p$-complete. This results holds even if there are 2 players
+    and the weights of all players in all components are in $\{0,1\}$. However, the problem is in $P$ if the underlying
+    formula is monotone.
+  \end{theorem3}
   \begin{proof}[Proof Sketch]
     \begin{itemize}
       \item By definition of Winning coalition of \textbf{BWVG} is easy to see that is in $\Sigma_2^p$ for the general case
@@ -297,17 +600,83 @@
 \end{frame}
 
 \begin{frame}[fragile]{Decision Problems in BWVG}
-  \newtheorem{theorem3}{Swing Player}
-  \begin{block}{Definition}
+  \newtheorem{theorem4}{Swing Player}
+  \begin{block}{Swing Player: Definition}
     $i$ is a \textbf{swing player} for $C$ in game $G$ if $C$ loses in $G$ but $C \cup \{i\}$ wins in $G$.\newline
     The problem of deciding if $i$ is Swing Player or not, is easy if $\varphi$ is monotone or its size is bounded by a constant, but in general is
     Computationally hard.
   \end{block}
-  \begin{theorem3}
+\end{frame}
+
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{block}{Swing Player: Definition}
+    $i$ is a \textbf{swing player} for $C$ in game $G$ if $C$ loses in $G$ but $C \cup \{i\}$ wins in $G$.\newline
+    The problem of deciding if $i$ is Swing Player or not, is easy if $\varphi$ is monotone or its size is bounded by a constant, but in general is
+    Computationally hard.
+  \end{block}
+  \begin{theorem4}
     SWINGPLAYER is $D_2^p$-complete. This holds even for 3 players and all components are of the form $\{0,1\}$. However, the problem is in $P$ if the underlying
     formula is monotone.
-  \end{theorem3}
+  \end{theorem4}
 \end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The case of monotone formulas follows directly from previous theorem of Winning Coalitions.
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The case of monotone formulas follows directly from previous theorem of Winning Coalitions.
+      \item We must exhibit 2 languages $L_1$ and $L_2$, such that $L_1 \in \Sigma_2^p$, $L_2 \in \Pi_2^p$ and $SWINGPLAYER = L_1 \cap L_2$.
+      \begin{subequations}
+        \begin{align}
+          L_1 &= \{ \langle G, C, i \rangle : C \cup \{i\} \text{ wins in } G \}\\
+          L_2 &= \{ \langle G, C, i \rangle : C \text{ does not win in } G \}
+        \end{align}
+      \end{subequations}
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The case of monotone formulas follows directly from previous theorem of Winning Coalitions.
+      \item We must exhibit 2 languages $L_1$ and $L_2$, such that $L_1 \in \Sigma_2^p$, $L_2 \in \Pi_2^p$ and $SWINGPLAYER = L_1 \cap L_2$.
+      \begin{subequations}
+        \begin{align}
+          L_1 &= \{ \langle G, C, i \rangle : C \cup \{i\} \text{ wins in } G \}\\
+          L_2 &= \{ \langle G, C, i \rangle : C \text{ does not win in } G \}
+        \end{align}
+      \end{subequations}
+      \item Clearly $L_1 \in \Sigma_2^p$ and $L_2 \in \Pi_2^p$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The case of monotone formulas follows directly from previous theorem of Winning Coalitions.
+      \item We must exhibit 2 languages $L_1$ and $L_2$, such that $L_1 \in \Sigma_2^p$, $L_2 \in \Pi_2^p$ and $SWINGPLAYER = L_1 \cap L_2$.
+      \begin{subequations}
+        \begin{align}
+          L_1 &= \{ \langle G, C, i \rangle : C \cup \{i\} \text{ wins in } G \}\\
+          L_2 &= \{ \langle G, C, i \rangle : C \text{ does not win in } G \}
+        \end{align}
+      \end{subequations}
+      \item Clearly $L_1 \in \Sigma_2^p$ and $L_2 \in \Pi_2^p$
+      \item By definition $SWINGPLAYER = L_1 \cap L_2$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
 
 \begin{frame}[fragile]{Decision Problems in BWVG}
   \begin{proof}[Proof Sketch]
@@ -327,9 +696,116 @@
   \end{proof}
 \end{frame}
 
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \newtheorem{theorem2}{Dummy Player}
+  \begin{block}{Dummy Player: Definition}
+    $i$ is a \textbf{dummy player} for $C$ in game $G$ if $v(C) = v(C \cup \{i\})$ for all $C \subseteq N \setminus \{i\}$.
+  \end{block}
+  \begin{theorem2}
+    DUMMYPLAYER is $coNP$-hard even if all weights in all component games are in $\{0,1\}$, and $G$ is in an $m$-vector weighed voting game.
+  \end{theorem2}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The proof can be done following a reduction from the clasic $NP$-complete problem \textbf{X3C (Exact Cover by 3-Sets)}
+      \item An instance $\mathcal{E}$ of this problem is given
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The proof can be done following a reduction from the clasic $NP$-complete problem \textbf{X3C (Exact Cover by 3-Sets)}
+      \item An instance $\mathcal{E}$ of this problem is given
+      \item It is an "yes"-instance if $\mathcal{E}$ can be covered by $K$, "no"-otherwise
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The proof can be done following a reduction from the clasic $NP$-complete problem \textbf{X3C (Exact Cover by 3-Sets)}
+      \item An instance $\mathcal{E}$ of this problem is given
+      \item It is an "yes"-instance if $\mathcal{E}$ can be covered by $K$, "no"-otherwise
+      \item Basically given this $\mathcal{E}$ a \textbf{BWVG} is constructed, where the games $\mathcal{G}$ are of size $3K+1$.
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The proof can be done following a reduction from the clasic $NP$-complete problem \textbf{X3C (Exact Cover by 3-Sets)}
+      \item An instance $\mathcal{E}$ of this problem is given
+      \item It is an "yes"-instance if $\mathcal{E}$ can be covered by $K$, "no"-otherwise
+      \item Basically given this $\mathcal{E}$ a \textbf{BWVG} is constructed, where the games $\mathcal{G}$ are of size $3K+1$.
+      \item A Coalition $C$ wins the first $3K$ games if and only if corresponds to a valid cover of $\mathcal{E}$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The proof can be done following a reduction from the clasic $NP$-complete problem \textbf{X3C (Exact Cover by 3-Sets)}
+      \item An instance $\mathcal{E}$ of this problem is given
+      \item It is an "yes"-instance if $\mathcal{E}$ can be covered by $K$, "no"-otherwise
+      \item Basically given this $\mathcal{E}$ a \textbf{BWVG} is constructed, where the games $\mathcal{G}$ are of size $3K+1$.
+      \item A Coalition $C$ wins the first $3K$ games if and only if corresponds to a valid cover of $\mathcal{E}$
+      \item Analyzing the "no"-instance and the reminding players $+1$ establish the Dummy player or not. 
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Problems in BWVG}
+  \begin{proof}[Proof Sketch]
+    \begin{itemize}
+      \item The proof can be done following a reduction from the clasic $NP$-complete problem \textbf{X3C (Exact Cover by 3-Sets)}
+      \item An instance $\mathcal{E}$ of this problem is given
+      \item It is an "yes"-instance if $\mathcal{E}$ can be covered by $K$, "no"-otherwise
+      \item Basically given this $\mathcal{E}$ a \textbf{BWVG} is constructed, where the games $\mathcal{G}$ are of size $3K+1$.
+      \item A Coalition $C$ wins the first $3K$ games if and only if corresponds to a valid cover of $\mathcal{E}$
+      \item Analyzing the "no"-instance and the reminding players $+1$ establish the Dummy player or not. 
+      \item Therefore, a "no"-instance of $X3C$ is an "yes"-instance of DUMMYPLAYER.
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+
 \begin{frame}[fragile]{Agenda}
   \section{Shapley Value}
   \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{block}{Shapley Value in BWVG}
+    \begin{itemize}
+      \item In \textbf{WVG} it is known that computing Shapley Value is hard ($\# P$-complete).
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{block}{Shapley Value in BWVG}
+    \begin{itemize}
+      \item In \textbf{WVG} it is known that computing Shapley Value is hard ($\# P$-complete).
+      \item This implies that the problem is as least as hard to \textbf{BWVG}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{block}{Shapley Value in BWVG}
+    \begin{itemize}
+      \item In \textbf{WVG} it is known that computing Shapley Value is hard ($\# P$-complete).
+      \item This implies that the problem is as least as hard to \textbf{BWVG}
+      \item However there is a \textit{poly-time} algorithm for computing Shapley Value in \textbf{WVG} with unary-encoded weights.
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Shapley Value}
@@ -344,16 +820,23 @@
 \end{frame}
 
 \begin{frame}[fragile]{Shapley Value}
-  \newtheorem{theorem4}{Shapley Value}
-  \begin{theorem4}
+  \newtheorem{theorem5}{Shapley Value}
+  \begin{theorem5}
     Computing a player's Shapley value in a \textbf{BWVG} is $\# P$-hard even if the game in question is a \textbf{VWVG}
     and all weights in all component games are in $\{0,1\}$.
-  \end{theorem4}
+  \end{theorem5}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{theorem5}
+    Computing a player's Shapley value in a \textbf{BWVG} is $\# P$-hard even if the game in question is a \textbf{VWVG}
+    and all weights in all component games are in $\{0,1\}$.
+  \end{theorem5}
   \begin{proof}
     \begin{itemize}
       \item For the probe it is use a reduction of $X3C$ (Exact Cover by 3-Sets), where an instance of this problem is giving and 
       a \textbf{BWVG} is constructed based on this.
-      \item Given that there a $q$ which is a swing player for exactly $N_k$ combinations, where $N_k$ is the number of exact covers of $\varepsilon$,
+      \item Given that there is a $q$ which is a swing player for exactly $N_k$ combinations, where $N_k$ is the number of exact covers of $\mathcal{E}$,
       and the size of each such coalition is exactly $K$.
       \item Hence the Shapley Value for the $q$ player is exactly $N_k \frac{K!(\ell + 1 - K)!}{(\ell + 1)!}$
       \item $N_K$ can be compute given $sh_q^G$, $\ell$, and $K$
@@ -363,16 +846,135 @@
 \end{frame}
 
 \begin{frame}[fragile]{Shapley Value}
+  \begin{block}{Conclusion}
+    \begin{itemize}
+      \item Shapley value requires to decide whether a given players is a SWINGPLAYER or not.
+      \item Since SWINGPLAYER is in $D_2^p$-complete as we have seen, this hardness cannot be improved as it seems.
+    \end{itemize}
+  \end{block}
+ \end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{block}{Conclusion}
+    \begin{itemize}
+      \item Shapley value requires to decide whether a given players is a SWINGPLAYER or not.
+      \item Since SWINGPLAYER is in $D_2^p$-complete as we have seen, this hardness cannot be improved as it seems.
+    \end{itemize}
+  \end{block}
   \begin{block}{Poly-time}
     \begin{itemize}
       \item Shapley value can be still computed in \textit{poly-time} if both the weights are given in unary and the number of component games 
       is bounded by a constant.
     \end{itemize}
   \end{block}
-  \newtheorem{theorem5}{Shapley Value Poly-Time}
-  \begin{theorem5}
+ \end{frame}
+
+ \begin{frame}[fragile]{Shapley Value}
+  \newtheorem{theorem6}{Theorem: Shapley Value in Poly-Time}
+  \begin{theorem6}
     Given a BWVG $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a player $p \in N$, Shapley value of $p$ can be computed in time $O((n^2 + s)(4nW)^m)$, where $|\Phi| = m, |\varphi| = s, |W| = max_{i,j}|w_i^j|$
-  \end{theorem5}
+  \end{theorem6}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{theorem6}
+    Given a BWVG $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a player $p \in N$, Shapley value of $p$ can be computed in time $O((n^2 + s)(4nW)^m)$, where $|\Phi| = m, |\varphi| = s, |W| = max_{i,j}|w_i^j|$
+  \end{theorem6}
+  \begin{proof}
+    \begin{itemize}
+      \item Proof using Dynamic Programming.
+      \item Given an Integer vector $z = (z^1,\dots,z^m) \in [-nW, nW]^m$, any $k=1,\dots,n-1$, and $t = 1,\dots,k$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{theorem6}
+    Given a BWVG $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a player $p \in N$, Shapley value of $p$ can be computed in time $O((n^2 + s)(4nW)^m)$, where $|\Phi| = m, |\varphi| = s, |W| = max_{i,j}|w_i^j|$
+  \end{theorem6}
+  \begin{proof}
+    \begin{itemize}
+      \item Proof using Dynamic Programming.
+      \item Given an Integer vector $z = (z^1,\dots,z^m) \in [-nW, nW]^m$, any $k=1,\dots,n-1$, and $t = 1,\dots,k$
+      \item Let $N(z,t,k)$ be the number of coalitions $C \subseteq N$, such that $w^j(C) = z^j$ for $j=1,\dots,m$, $|C|=t$, and $C \subseteq \{1,\dots,k\}$.
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{theorem6}
+    Given a BWVG $G = \langle N, \mathcal{G}, \Phi, \varphi \rangle$ and a player $p \in N$, Shapley value of $p$ can be computed in time $O((n^2 + s)(4nW)^m)$, where $|\Phi| = m, |\varphi| = s, |W| = max_{i,j}|w_i^j|$
+  \end{theorem6}
+  \begin{proof}
+    \begin{itemize}
+      \item Proof using Dynamic Programming.
+      \item Given an Integer vector $z = (z^1,\dots,z^m) \in [-nW, nW]^m$, any $k=1,\dots,n-1$, and $t = 1,\dots,k$
+      \item Let $N(z,t,k)$ be the number of coalitions $C \subseteq N$, such that $w^j(C) = z^j$ for $j=1,\dots,m$, $|C|=t$, and $C \subseteq \{1,\dots,k\}$.
+      \item For $k=1$, $N(z,t,1) = 1$ if $t=1$ and $w_1^j=z^j$ and $N(z,t,1) =  0$ otherwise.
+    \end{itemize}
+    \begin{equation}
+      N(z,t,k+1) = N(z,t,k) + N(z_{k+1},t-1,k)
+    \end{equation}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{proof}[Proof Cont. Poly-Time]
+    \begin{itemize}
+      \item First summand Coalitions without $k+1$ player, Second summand with $k+1$ player
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{proof}[Proof Cont. Poly-Time]
+    \begin{itemize}
+      \item First summand Coalitions without $k+1$ player, Second summand with $k+1$ player
+      \item So all $N(z,t,k)$ can be compute in $O(n^2(2nW)^m)$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{proof}[Proof Cont. Poly-Time]
+    \begin{itemize}
+      \item First summand Coalitions without $k+1$ player, Second summand with $k+1$ player
+      \item So all $N(z,t,k)$ can be compute in $O(n^2(2nW)^m)$
+      \item Let $I(z,t) = v(C \cup \{n\})-v(C)$
+      \item Computing the value of $\varphi$ under a truth assignment can be done in $O(s)$, and for a fixed vector $z$ in $O(s2^m)$. Hence all $I(z,t)$ requires $O(s2^m(2nW)^m)$
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+  \begin{proof}[Proof Cont. Poly-Time]
+    \begin{itemize}
+      \item First summand Coalitions without $k+1$ player, Second summand with $k+1$ player
+      \item So all $N(z,t,k)$ can be compute in $O(n^2(2nW)^m)$
+      \item Let $I(z,t) = v(C \cup \{n\})-v(C)$
+      \item Computing the value of $\varphi$ under a truth assignment can be done in $O(s)$, and for a fixed vector $z$ in $O(s2^m)$. Hence all $I(z,t)$ requires $O(s2^m(2nW)^m)$
+      \item Shapley value can be computed as follows:
+    \end{itemize}
+  \end{proof}
+  \end{frame}
+
+\begin{frame}[fragile]{Shapley Value}
+\begin{proof}[Proof Cont. Poly-Time]
+  \begin{itemize}
+    \item First summand Coalitions without $k+1$ player, Second summand with $k+1$ player
+    \item So all $N(z,t,k)$ can be compute in $O(n^2(2nW)^m)$
+    \item Let $I(z,t) = v(C \cup \{n\})-v(C)$
+    \item Computing the value of $\varphi$ under a truth assignment can be done in $O(s)$, and for a fixed vector $z$ in $O(s2^m)$. Hence all $I(z,t)$ requires $O(s2^m(2nW)^m)$
+    \item Shapley value can be computed as follows:
+  \end{itemize}
+  \begin{equation}
+    sh_n = \frac{1}{n!} \sum_{z \in [-nW,nW]^m} \sum_{t=1}^{n-1} N(z,t,n-1)I(z,t)t!(n-1-t)!
+  \end{equation}
+  \begin{itemize}
+    \item Therefore, overall running time: $O(n^2(2nW)^m)+s2^m(2nW)^m) = O((n^2+s)(4nW)^m)$
+  \end{itemize}
+\end{proof}
 \end{frame}
 
 \begin{frame}[fragile]{Agenda}
@@ -391,13 +993,56 @@
 \end{frame}
 
 \begin{frame}[fragile]{The Core}
-  \newtheorem{theorem6}{InCore, CoreNonEmpty and Veto}
-  \begin{theorem6}
+  \newtheorem{theorem7}{InCore, CoreNonEmpty and Veto}
+  \begin{theorem7}
     \textbf{InCore, CoreNonEmpty and Veto} are $\Pi_2^p$-complete even if $|N| = 2$ and all weights in all components games are either $0$ or $1$.
     However for non-negative weights these problems are in $P$ if the underlying formulas are monotone.
-  \end{theorem6}
+  \end{theorem7}
   \begin{block}{Proof}
     Authors Do Not provide any proof due to space restrictions.
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Agenda}
+  \section{Conclusions}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Conclusions}
+  \begin{block}{Conclusions}
+    \begin{itemize}
+      \item \textbf{BWVG} are more expressive than \textbf{VWVG}, in particular when formulas are monotone
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Conclusions}
+  \begin{block}{Conclusions}
+    \begin{itemize}
+      \item \textbf{BWVG} are more expressive than \textbf{VWVG}, in particular when formulas are monotone
+      \item Although expressiveness gain, \textbf{BWVG} are worst in terms of Computational Complexity
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Conclusions}
+  \begin{block}{Conclusions}
+    \begin{itemize}
+      \item \textbf{BWVG} are more expressive than \textbf{VWVG}, in particular when formulas are monotone
+      \item Although expressiveness gain, \textbf{BWVG} are worst in terms of Computational Complexity
+      \item Unrestricted \textbf{BWVG} leads to increase Complexity
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Conclusions}
+  \begin{block}{Conclusions}
+    \begin{itemize}
+      \item \textbf{BWVG} are more expressive than \textbf{VWVG}, in particular when formulas are monotone
+      \item Although expressiveness gain, \textbf{BWVG} are worst in terms of Computational Complexity
+      \item Unrestricted \textbf{BWVG} leads to increase Complexity
+      \item As we have seen there are trade-off to deal with this increase of Complexity and gain in expressiveness
+    \end{itemize}
   \end{block}
 \end{frame}
 

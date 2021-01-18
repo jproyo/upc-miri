@@ -104,7 +104,7 @@ The reasons behind this decision are basically the following:
 On the other hand the selection of the programs to be analyzed are the following:
 
 \begin{itemize}
-    \item Most of the software are Open Source or Free software that can be download publicly either from \url{https://github.com} or from \url{https://repo1.maven.org}.
+    \item Most of the software are Open Source or Free software that can be download publicly either from~\cite{github} or from~\cite{maven_repo}.
     \item Software that are marked as \textbf{PRIVATE} are Big Projects from Privates Companies that don't want to reveal the Sources Code and Names for Commercial reasons.
     \item In the case of \textbf{PRIVATE} \acrshort{fp} Solution, it belongs to a Company one of the authors of the current work is working right now.
     \item In the case of \textbf{PRIVATE} \acrshort{oop} Solution, it belongs to a Company one of the authors of the current work worked in the past.
@@ -154,8 +154,8 @@ In order to achieve the desired \acrlong{cdg} we are going to use some specific 
 The following has been used on each case:
 
 \begin{itemize}
-    \item \textbf{\acrlong{fp}}: \textit{function-call-graph} \url{https://github.com/dustinnorwood/function-call-graph} is a Program that given a \textit{Haskell} Source Code it outputs a \textit{DOT} file with the \acrlong{cdg}
-    \item \textbf{\acrlong{oop}}: \textit{java-callgraph} \url{https://github.com/gousiosg/java-callgraph} is a Program that given a \textit{Java} Compiled Jar it outputs a in \textit{stdout} the \acrlong{cdg}. In order to use only \textit{DOT} files we have converted this output into \textit{DOT} using a script that is under \mintinline{bash}{code/script_java.sh}
+    \item \textbf{\acrlong{fp}}: \textit{function-call-graph}~\cite{fp_callgraph} is a Program that given a \textit{Haskell} Source Code it outputs a \textit{DOT} file with the \acrlong{cdg}
+    \item \textbf{\acrlong{oop}}: \textit{java-callgraph}~\cite{java_callgraph} is a Program that given a \textit{Java} Compiled Jar it outputs a in \textit{stdout} the \acrlong{cdg}. In order to use only \textit{DOT} files we have converted this output into \textit{DOT} using a script that is under \mintinline{bash}{code/script_java.sh}
 \end{itemize}
 
 All the resulting graphs are under their respective folders as you can see here~\ref{apx:sec:org:1}.
@@ -163,6 +163,99 @@ All the resulting graphs are under their respective folders as you can see here~
 \subsubsection{R Scripts}
 
 \subsection{Metrics}
+\subsubsection{FP Program Metrics}
+
+\begin{longtable}[H]{l r r r r r r}
+    \caption{FP Programs Metrics 1}\label{table:fp_metrics_1}\\
+        Program &  N & E & K & Delta & MGD & Diameter\\
+        \hline            
+        \endhead
+        aeson     &  373 &  1167  & 6.26 & 0.0168 & 3.2450 &  9 \\      
+        amazonka  &  739 &  2366  & 6.40 & 0.0087 & 3.3202 &  8 \\      
+        async     &   60 &   120  & 4.00 & 0.0678 & 2.2458 &  6 \\      
+        attoparsec&   61 &   180  & 5.90 & 0.0984 & 2.3978 &  5 \\      
+        PRIVATE   & 1088 &   2239 &  4.12&  0.0038&  4.7322&  13 \\      
+        beam      &  852 &  2215  & 5.20 & 0.0061 & 4.4898 & 11 \\      
+        cabal     & 2294 &  9115  & 7.95 & 0.0035 & 3.6017 & 10 \\      
+        co-log    &   97 &   159  & 3.28 & 0.0341 & 3.8937 &  9 \\      
+        conduit   &  457 &   875  & 3.83 & 0.0084 & 3.4084 &  9 \\      
+        containers&   61 &   125  & 4.10 & 0.0683 & 3.3486 &  8 \\      
+        criterion &   71 &   143  & 4.03 & 0.0575 & 3.3851 &  6 \\      
+        cryptol   & 1803 &  6540  & 7.25 & 0.0040 & 3.4149 &  9 \\      
+        cryptonite&  292 &   652  & 4.47 & 0.0153 & 3.9468 &  9 \\      
+        dhall     &  707 &  2100  & 5.94 & 0.0084 & 3.6749 & 10 \\      
+        free      &  148 &   328  & 4.43 & 0.0302 & 5.0257 & 11 \\      
+        haskoin   &  569 &  1252  & 4.40 & 0.0077 & 5.0333 & 12 \\      
+        hedgehog  &  567 &  1383  & 4.88 & 0.0086 & 4.0136 & 12 \\      
+        helm      &   66 &    97  & 2.94 & 0.0452 & 3.4014 &  6 \\      
+        hlint     &  266 &   624  & 4.69 & 0.0177 & 3.1839 & 10 \\      
+        lens      & 1118 &  3908  & 6.99 & 0.0063 & 2.7743 &  7 \\      
+        liquid    & 2568 &  7742  & 6.03 & 0.0023 & 3.3709 & 12 \\      
+        megaparsec&  107 &   191  & 3.57 & 0.0337 & 4.4812 &  9 \\      
+        mios      &  169 &   397  & 4.70 & 0.0280 & 3.8088 & 10 \\      
+        optparse  &  174 &   464  & 5.33 & 0.0308 & 3.0912 &  7 \\      
+        pandoc    & 3640 & 15951  & 8.76 & 0.0024 & 3.3057 &  9 \\      
+        pipes     &  100 &   250  & 5.00 & 0.0505 & 2.2760 &  3 \\      
+        postgresql&  501 &  1198  & 4.78 & 0.0096 & 3.8283 &  8 \\      
+        protolude &  106 &   193  & 3.64 & 0.0347 & 4.0385 &  9 \\      
+        QuickCheck&  264 &   699  & 5.30 & 0.0201 & 3.1726 &  8 \\      
+        reflex    &  222 &   425  & 3.83 & 0.0173 & 3.4672 & 12 \\      
+        relude    &  209 &   267  & 2.56 & 0.0123 & 6.0423 & 13 \\      
+        servant   &  237 &   445  & 3.76 & 0.0159 & 4.5035 & 11 \\      
+        snap      &  220 &   481  & 4.37 & 0.0200 & 3.8888 & 10 \\      
+        stm       &   70 &   171  & 4.89 & 0.0708 & 2.4576 &  5 \\      
+        summoner  &  194 &   458  & 4.72 & 0.0245 & 4.1549 & 10 \\      
+        text      &  105 &   170  & 3.24 & 0.0311 & 2.1471 &  4 \\      
+        vector    &  399 &  2953 1& 4.80 & 0.0372 & 2.2036 &  6 \\      
+        yesod     &  367 &   748  & 4.08 & 0.0111 & 3.9486 & 12     
+\end{longtable}
+
+\begin{longtable}[H]{l r r r r}
+    \caption{FP Programs Metrics 2}\label{table:fp_metrics_2}\\
+        Program & Modularity & Communities & Mean CC Coef & Mean LC Coef \\
+        \hline            
+        \endhead
+        aeson      &  0.4826  &  14  &  0.3521 &  0.3367 \\      
+        amazonka   &  0.4875  &  36  &  0.3273 &  0.2297 \\      
+        async      &  0.3403  &   9  &  0.4868 &  0.4141 \\      
+        attoparsec &  0.2458  &  16  &  0.4757 &  0.2906 \\      
+        PRIVATE    &   0.6461 &   63 &   0.2323 &  0.1480 \\      
+        beam       &  0.6363  &  37  &  0.2488 &  0.2455 \\      
+        cabal      &  0.4939  &  96  &  0.2981 &  0.1915 \\      
+        co-log     &  0.6203  &  11  &  0.3144 &  0.4594 \\      
+        conduit    &  0.4621  &  35  &  0.3211 &  0.3221 \\      
+        containers &  0.4138  &   5  &  0.3692 &  0.3520 \\      
+        criterion  &  0.6054  &   6  &  0.3516 &  0.3147 \\      
+        cryptol    &  0.5320  &  79  &  0.3169 &  0.2060 \\      
+        cryptonite &  0.5825  &  25  &  0.2886 &  0.2790 \\      
+        dhall      &  0.5832  &  29  &  0.2975 &  0.2485 \\      
+        free       &  0.5749  &  15  &  0.2570 &  0.4042 \\      
+        haskoin    &  0.7069  &  24  &  0.2270 &  0.2604 \\      
+        hedgehog   &  0.5792  &  44  &  0.2500 &  0.2757 \\      
+        helm       &  0.5655  &   4  &  0.3585 &  0.4360 \\      
+        hlint      &  0.4633  &  40  &  0.3589 &  0.3124 \\      
+        lens       &  0.4207  &  24  &  0.3884 &  0.4447 \\      
+        liquid     &  0.3388  &  19  &  0.3229 &  0.2057 \\      
+        megaparsec &  0.6245  &   6  &  0.2847 &  0.2359 \\      
+        mios       &  0.5310  &  16  &  0.3081 &  0.2211 \\      
+        optparse   &  0.4466  &   8  &  0.3665 &  0.2248 \\      
+        pandoc     &  0.4614  &  22  &  0.3248 &  0.2379 \\      
+        pipes      &  0.3251  &   6  &  0.4704 &  0.6419 \\      
+        postgresql &  0.6063  &  16  &  0.3060 &  0.5070 \\      
+        protolude  &  0.5651  &   8  &  0.3174 &  0.3897 \\      
+        QuickCheck &  0.4640  &  19  &  0.3605 &  0.3677 \\      
+        reflex     &  0.5238  &  22  &  0.3469 &  0.4267 \\      
+        relude     &  0.7759  &  14  &  0.2051 &  0.3334 \\      
+        servant    &  0.6871  &  20  &  0.2463 &  0.3390 \\      
+        snap       &  0.5939  &  19  &  0.2894 &  0.2925 \\      
+        stm        &  0.3033  &   9  &  0.4538 &  0.3540 \\      
+        summoner   &  0.5757  &  17  &  0.2866 &  0.1518 \\      
+        text       &  0.3191  &  17  &  0.4863 &  0.5178 \\      
+        vector     &  0.1458  &  17  &  0.4825 &  0.4041 \\      
+        yesod      &  0.5858  &  13  &  0.2932 &  0.2731     
+
+\end{longtable}
+
 
 \section{Discussion and Analysis}
 \section{Conclusions}
@@ -274,46 +367,6 @@ All the resulting graphs are under their respective folders as you can see here~
         PRIVATE PROGRAM & 2143
 \end{longtable}
 
-% % FP Metrics
-% N    E     K     Delta  MGD    Diameter Modularity Communities Mean CC Coef Mean LC Coef
-% aeson       373  1167  6.26 0.0168 3.2450  9       0.4826      14         0.3521       0.3367      
-% amazonka    739  2366  6.40 0.0087 3.3202  8       0.4875      36         0.3273       0.2297      
-% async        60   120  4.00 0.0678 2.2458  6       0.3403       9         0.4868       0.4141      
-% attoparsec   61   180  5.90 0.0984 2.3978  5       0.2458      16         0.4757       0.2906      
-% PRIVATE 1088  2239  4.12 0.0038 4.7322 13       0.6461      63         0.2323       0.1480      
-% beam        852  2215  5.20 0.0061 4.4898 11       0.6363      37         0.2488       0.2455      
-% cabal      2294  9115  7.95 0.0035 3.6017 10       0.4939      96         0.2981       0.1915      
-% co-log       97   159  3.28 0.0341 3.8937  9       0.6203      11         0.3144       0.4594      
-% conduit     457   875  3.83 0.0084 3.4084  9       0.4621      35         0.3211       0.3221      
-% containers   61   125  4.10 0.0683 3.3486  8       0.4138       5         0.3692       0.3520      
-% criterion    71   143  4.03 0.0575 3.3851  6       0.6054       6         0.3516       0.3147      
-% cryptol    1803  6540  7.25 0.0040 3.4149  9       0.5320      79         0.3169       0.2060      
-% cryptonite  292   652  4.47 0.0153 3.9468  9       0.5825      25         0.2886       0.2790      
-% dhall       707  2100  5.94 0.0084 3.6749 10       0.5832      29         0.2975       0.2485      
-% free        148   328  4.43 0.0302 5.0257 11       0.5749      15         0.2570       0.4042      
-% haskoin     569  1252  4.40 0.0077 5.0333 12       0.7069      24         0.2270       0.2604      
-% hedgehog    567  1383  4.88 0.0086 4.0136 12       0.5792      44         0.2500       0.2757      
-% helm         66    97  2.94 0.0452 3.4014  6       0.5655       4         0.3585       0.4360      
-% hlint       266   624  4.69 0.0177 3.1839 10       0.4633      40         0.3589       0.3124      
-% lens       1118  3908  6.99 0.0063 2.7743  7       0.4207      24         0.3884       0.4447      
-% liquid     2568  7742  6.03 0.0023 3.3709 12       0.3388     419         0.3229       0.2057      
-% megaparsec  107   191  3.57 0.0337 4.4812  9       0.6245       6         0.2847       0.2359      
-% mios        169   397  4.70 0.0280 3.8088 10       0.5310      16         0.3081       0.2211      
-% optparse    174   464  5.33 0.0308 3.0912  7       0.4466       8         0.3665       0.2248      
-% pandoc     3640 15951  8.76 0.0024 3.3057  9       0.4614     222         0.3248       0.2379      
-% pipes       100   250  5.00 0.0505 2.2760  3       0.3251       6         0.4704       0.6419      
-% postgresql  501  1198  4.78 0.0096 3.8283  8       0.6063      16         0.3060       0.5070      
-% protolude   106   193  3.64 0.0347 4.0385  9       0.5651       8         0.3174       0.3897      
-% QuickCheck  264   699  5.30 0.0201 3.1726  8       0.4640      19         0.3605       0.3677      
-% reflex      222   425  3.83 0.0173 3.4672 12       0.5238      22         0.3469       0.4267      
-% relude      209   267  2.56 0.0123 6.0423 13       0.7759      14         0.2051       0.3334      
-% servant     237   445  3.76 0.0159 4.5035 11       0.6871      20         0.2463       0.3390      
-% snap        220   481  4.37 0.0200 3.8888 10       0.5939      19         0.2894       0.2925      
-% stm          70   171  4.89 0.0708 2.4576  5       0.3033       9         0.4538       0.3540      
-% summoner    194   458  4.72 0.0245 4.1549 10       0.5757      17         0.2866       0.1518      
-% text        105   170  3.24 0.0311 2.1471  4       0.3191      17         0.4863       0.5178      
-% vector      399  2953 14.80 0.0372 2.2036  6       0.1458      17         0.4825       0.4041      
-% yesod       367   748  4.08 0.0111 3.9486 12       0.5858      13         0.2932       0.2731      
 
 % N                E               K              Delta              MGD           Diameter     
 % Min.   :  18.0   Min.   :   18   Min.   : 2.000   Min.   :0.00230   Min.   :2.147   Min.   : 3.000  

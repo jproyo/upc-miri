@@ -61,7 +61,8 @@ process_graphs <- function(path_graph, label){
 }
 
 main <- function(){
-  process_graphs("fp_graphs", "FP GRAPHS")
+  process_graphs("to_test", "FP GRAPHS")
+  #process_graphs("fp_graphs", "FP GRAPHS")
   #process_graphs("oop_graphs", "OOP GRAPHS")
 }
 

@@ -163,8 +163,8 @@ All the resulting graphs are under their respective folders as you can see here~
 \subsubsection{R Scripts}
 
 \subsection{Metrics}
-\subsubsection{FP Program Metrics}
 
+\subsubsection{FP Programs}
 \begin{longtable}[H]{l r r r r r r}
     \caption{FP Programs Metrics 1}\label{table:fp_metrics_1}\\
         Program &  N & E & K & Delta & MGD & Diameter\\
@@ -174,7 +174,6 @@ All the resulting graphs are under their respective folders as you can see here~
         amazonka  &  739 &  2366  & 6.40 & 0.0087 & 3.3202 &  8 \\      
         async     &   60 &   120  & 4.00 & 0.0678 & 2.2458 &  6 \\      
         attoparsec&   61 &   180  & 5.90 & 0.0984 & 2.3978 &  5 \\      
-        PRIVATE   & 1088 &   2239 &  4.12&  0.0038&  4.7322&  13 \\      
         beam      &  852 &  2215  & 5.20 & 0.0061 & 4.4898 & 11 \\      
         cabal     & 2294 &  9115  & 7.95 & 0.0035 & 3.6017 & 10 \\      
         co-log    &   97 &   159  & 3.28 & 0.0341 & 3.8937 &  9 \\      
@@ -207,7 +206,8 @@ All the resulting graphs are under their respective folders as you can see here~
         summoner  &  194 &   458  & 4.72 & 0.0245 & 4.1549 & 10 \\      
         text      &  105 &   170  & 3.24 & 0.0311 & 2.1471 &  4 \\      
         vector    &  399 &  2953 1& 4.80 & 0.0372 & 2.2036 &  6 \\      
-        yesod     &  367 &   748  & 4.08 & 0.0111 & 3.9486 & 12     
+        yesod     &  367 &   748  & 4.08 & 0.0111 & 3.9486 & 12 \\     
+        PRIVATE   & 1088 &   2239 &  4.12&  0.0038&  4.7322&  13 
 \end{longtable}
 
 \begin{longtable}[H]{l r r r r}
@@ -219,7 +219,6 @@ All the resulting graphs are under their respective folders as you can see here~
         amazonka   &  0.4875  &  36  &  0.3273 &  0.2297 \\      
         async      &  0.3403  &   9  &  0.4868 &  0.4141 \\      
         attoparsec &  0.2458  &  16  &  0.4757 &  0.2906 \\      
-        PRIVATE    &   0.6461 &   63 &   0.2323 &  0.1480 \\      
         beam       &  0.6363  &  37  &  0.2488 &  0.2455 \\      
         cabal      &  0.4939  &  96  &  0.2981 &  0.1915 \\      
         co-log     &  0.6203  &  11  &  0.3144 &  0.4594 \\      
@@ -252,8 +251,149 @@ All the resulting graphs are under their respective folders as you can see here~
         summoner   &  0.5757  &  17  &  0.2866 &  0.1518 \\      
         text       &  0.3191  &  17  &  0.4863 &  0.5178 \\      
         vector     &  0.1458  &  17  &  0.4825 &  0.4041 \\      
-        yesod      &  0.5858  &  13  &  0.2932 &  0.2731     
+        yesod      &  0.5858  &  13  &  0.2932 &  0.2731 \\    
+        PRIVATE    &   0.6461 &   63 &   0.2323 &  0.1480
+\end{longtable}
 
+\subsubsection{FP Programs - Summary}
+\begin{longtable}[H]{l r r r r r r}
+    \caption{FP Programs - Summary Metrics 1}\label{table:fp_sum_metrics_1}\\
+        Type & N & E & K & Delta & MGD & Diameter\\
+        \hline            
+        \endhead
+        Min.    &   18.0 &    18 &   2.000 &  0.00230 & 2.147 &   3.000  \\
+        1st Qu. &  105.5 &   192 &   3.915 &  0.00850 & 3.214 &   7.500  \\
+        Median  &  237.0 &   481 &   4.690 &  0.01770 & 3.419 &   9.000  \\
+        Mean    &  547.7 &  1764 &   5.036 &  0.02786 & 3.593 &   8.872  \\
+        3rd Qu. &  568.0 &  1742 &   5.615 &  0.03440 & 3.981 &  10.500  \\
+        Max.    & 3640.0 & 15951 &  14.800 &  0.11760 & 6.042 &  13.000 
+\end{longtable}
+
+\begin{longtable}[H]{l r r r r}
+    \caption{FP Programs - Summary Metrics 2}\label{table:fp_sum_metrics_2}\\
+        Type & Modularity & Communities & Mean CC Coef & Mean LC Coef \\
+        \hline            
+        \endhead
+        Min.    & 0.1458 &   4.00 & 0.2051 & 0.1480  \\
+        1st Qu. & 0.4540 &  10.00 & 0.2876 & 0.2369  \\
+        Median  & 0.5320 &  17.00 & 0.3174 & 0.3124  \\
+        Mean    & 0.5097 &  38.08 & 0.3315 & 0.3201  \\
+        3rd Qu. & 0.5898 &  32.00 & 0.3597 & 0.3969  \\
+        Max.    & 0.7759 & 419.00 & 0.4868 & 0.6419
+\end{longtable}
+
+\subsubsection{OOP Programs}
+\begin{longtable}[H]{l r r r r r r}
+    \caption{OOP Programs Metrics 1}\label{table:oop_metrics_1}\\
+        Program &  N & E & K & Delta & MGD & Diameter\\
+        \hline            
+        \endhead
+        akka                          &   291 &   290 & 1.99 & 0.0069 & 5.0948 & 12 \\ 
+        commons-cli-1.4               &   133 &   178 & 2.68 & 0.0203 & 4.9707 & 13 \\ 
+        commons-codec-1.10            &   443 &   599 & 2.70 & 0.0061 & 6.0180 & 16 \\ 
+        commons-csv-1.8               &   168 &   177 & 2.11 & 0.0126 & 2.8243 &  8 \\ 
+        commons-email-1.4             &   182 &   202 & 2.22 & 0.0123 & 4.7634 & 14 \\ 
+        disruptor-3.4.2               &   457 &   632 & 2.77 & 0.0061 & 6.4273 & 16 \\ 
+        ftpserver-core-1.0.6          &  1280 &  2319 & 3.62 & 0.0028 & 5.9379 & 17 \\ 
+        grpc-core-1.34.1              &  3717 &  6544 & 3.52 & 0.0009 & 7.3362 & 24 \\ 
+        guava                         & 11786 & 18082 & 3.07 & 0.0003 & 7.4965 & 28 \\ 
+        hbase-client-2.4.0            &  1724 &  1661 & 1.93 & 0.0011 & 8.4558 & 20 \\ 
+        hsqldb-2.4.1                  & 10394 & 22726 & 4.37 & 0.0004 & 6.6143 & 29 \\ 
+        jackson-databind-2.12.0       &  1637 &  2718 & 3.32 & 0.0020 & 6.9562 & 25 \\ 
+        javax.servlet-api-4.0.1       &   440 &   387 & 1.76 & 0.0040 & 7.8849 & 19 \\ 
+        jedis-3.4.1                   &  4413 &  6625 & 3.00 & 0.0007 & 7.1696 & 25 \\ 
+        jersey-core-1.19.4            &  1409 &  2046 & 2.90 & 0.0021 & 6.4969 & 19 \\ 
+        jetty-7.0.0.pre5              &  1881 &  2947 & 3.13 & 0.0017 & 6.7668 & 24 \\ 
+        joda-time-2.10.6              &  3901 &  8201 & 4.20 & 0.0011 & 6.3395 & 22 \\ 
+        jsch-0.1.54                   &  1314 &  2296 & 3.49 & 0.0027 & 5.5298 & 16 \\ 
+        jsoup-1.13.1                  &  1623 &  3558 & 4.38 & 0.0027 & 6.2448 & 17 \\ 
+        junit-4.13.1                  &  1602 &  2186 & 2.73 & 0.0017 & 7.0309 & 20 \\ 
+        mail-1.4.7                    &  1068 &  1474 & 2.76 & 0.0026 & 9.4969 & 29 \\ 
+        mariadb-java-client-2.7.1     &  2319 &  3678 & 3.17 & 0.0014 & 8.3089 & 24 \\ 
+        mongo-java-driver-3.12.7      &  9147 & 16481 & 3.60 & 0.0004 & 6.8356 & 27 \\ 
+        mx4j-3.0.2                    &   887 &  1192 & 2.69 & 0.0030 & 6.4340 & 18 \\ 
+        org.eclipse.jgit              & 12059 & 23175 & 3.84 & 0.0003 & 6.3935 & 22 \\ 
+        pdfbox-2.0.22                 &  8372 & 16353 & 3.91 & 0.0005 & 6.0460 & 28 \\ 
+        poi-4.1.2                     & 15971 & 26910 & 3.37 & 0.0002 & 7.5505 & 28 \\ 
+        postgresql-42.2.18            &  3164 &  4740 & 3.00 & 0.0009 & 6.8974 & 20 \\ 
+        resteasy-jaxrs-3.14.0.Final   &  4289 &  6818 & 3.18 & 0.0007 & 6.2748 & 18 \\ 
+        runtime-3.10.0-v20140318-2214 &   441 &   547 & 2.48 & 0.0056 & 5.2854 & 13 \\ 
+        slf4j-api-1.7.30              &   180 &   182 & 2.02 & 0.0113 & 4.8468 & 11 \\ 
+        spring-security-core-5.4.2    &  1501 &  2314 & 3.08 & 0.0021 & 6.5614 & 22 \\ 
+        spring-web-5.3.2              &  7219 & 11261 & 3.12 & 0.0004 & 7.5364 & 34 \\ 
+        tomcat-embed-core-10.0.0      &  5386 &  8158 & 3.03 & 0.0006 & 7.3081 & 26 \\ 
+        zookeeper-3.6.2               &  5284 &  9651 & 3.65 & 0.0007 & 6.3153 & 20 \\ 
+        PRIVATE                       &   339 &   529 & 3.12 & 0.0092 & 5.4404 & 13
+\end{longtable}
+
+\begin{longtable}[H]{l r r r r}
+    \caption{OOP Programs Metrics 2}\label{table:oop_metrics_2}\\
+        Program & Modularity & Communities & Mean CC Coef & Mean LC Coef \\
+        \hline            
+        \endhead
+        akka                          &  0.8347 &    39 &  0.0748 & 0 \\  
+        commons-cli-1.4               &  0.6542 &    20 &  0.1658 & 0 \\  
+        commons-codec-1.10            &  0.7835 &    67 &  0.0805 & 0 \\  
+        commons-csv-1.8               &  0.8219 &    29 &  0.0425 & 0 \\  
+        commons-email-1.4             &  0.7564 &    30 &  0.0893 & 0 \\  
+        disruptor-3.4.2               &  0.6508 &    99 &  0.1152 & 0 \\  
+        ftpserver-core-1.0.6          &  0.6670 &   213 &  0.1232 & 0 \\  
+        grpc-core-1.34.1              &  0.6385 &   779 &  0.1039 & 0 \\  
+        guava                         &  0.7583 &  2025 &  0.0754 & 0 \\  
+        hbase-client-2.4.0            &  0.9013 &   419 &  0.0264 & 0 \\  
+        hsqldb-2.4.1                  &  0.6779 &  1254 &  0.1260 & 0 \\  
+        jackson-databind-2.12.0       &  0.7138 &   228 &  0.1261 & 0 \\  
+        javax.servlet-api-4.0.1       &  0.8836 &   111 &  0.0348 & 0 \\  
+        jedis-3.4.1                   &  0.7270 &   586 &  0.1225 & 0 \\  
+        jersey-core-1.19.4            &  0.8157 &   191 &  0.0776 & 0 \\  
+        jetty-7.0.0.pre5              &  0.7034 &   286 &  0.1097 & 0 \\  
+        joda-time-2.10.6              &  0.7110 &   461 &  0.1260 & 0 \\  
+        jsch-0.1.54                   &  0.6709 &   203 &  0.1223 & 0 \\  
+        jsoup-1.13.1                  &  0.7439 &   204 &  0.1290 & 0 \\  
+        junit-4.13.1                  &  0.7672 &   254 &  0.0888 & 0 \\  
+        mail-1.4.7                    &  0.7154 &   195 &  0.0872 & 0 \\  
+        mariadb-java-client-2.7.1     &  0.7519 &   244 &  0.0965 & 0 \\  
+        mongo-java-driver-3.12.7      &  0.6193 &  1731 &  0.1066 & 0 \\  
+        mx4j-3.0.2                    &  0.7091 &   106 &  0.1061 & 0 \\  
+        org.eclipse.jgit              &  0.6403 &  1404 &  0.1293 & 0 \\  
+        pdfbox-2.0.22                 &  0.6890 &   863 &  0.1311 & 0 \\  
+        poi-4.1.2                     &  0.7582 &  2181 &  0.0958 & 0 \\  
+        postgresql-42.2.18            &  0.7695 &   506 &  0.0790 & 0 \\  
+        resteasy-jaxrs-3.14.0.Final   &  0.6456 &   888 &  0.0898 & 0 \\  
+        runtime-3.10.0-v20140318-2214 &  0.7279 &    62 &  0.1229 & 0 \\  
+        slf4j-api-1.7.30              &  0.8531 &    32 &  0.0670 & 0 \\  
+        spring-security-core-5.4.2    &  0.6879 &   216 &  0.1068 & 0 \\  
+        spring-web-5.3.2              &  0.6956 &  1315 &  0.0871 & 0 \\  
+        tomcat-embed-core-10.0.0      &  0.7786 &   684 &  0.0907 & 0 \\  
+        zookeeper-3.6.2               &  0.6624 &   962 &  0.1052 & 0 \\  
+        PRIVATE                       &  0.6676 &    40 &  0.1739 & 0  
+\end{longtable}
+
+\subsubsection{OOP Programs - Summary}
+\begin{longtable}[H]{l r r r r r r}
+    \caption{OOP Programs - Summary Metrics 1}\label{table:oop_sum_metrics_1}\\
+        Type & N & E & K & Delta & MGD & Diameter\\
+        \hline            
+        \endhead
+        Min.    &   133 &   177 & 1.760 & 0.000200 & 2.824 &  8.00\\  
+        1st Qu. &   672 &   912 & 2.715 & 0.000700 & 6.032 & 16.50\\  
+        Median  &  1637 &  2718 & 3.120 & 0.001700 & 6.434 & 20.00\\  
+        Mean    &  3456 &  5984 & 3.094 & 0.003403 & 6.489 & 20.46\\  
+        3rd Qu. &  4351 &  8149 & 3.505 & 0.003500 & 7.100 & 24.50\\  
+        Max.    & 15971 & 26910 & 4.380 & 0.020300 & 9.497 & 34.00  
+\end{longtable}
+
+\begin{longtable}[H]{l r r r r}
+    \caption{OOP Programs - Summary Metrics 2}\label{table:oop_sum_metrics_2}\\
+        Type & Modularity & Communities & Mean CC Coef & Mean LC Coef \\
+        \hline            
+        \endhead
+        Min.    & 0.6193 &   20.0 & 0.02640 & 0 \\    
+        1st Qu. & 0.6693 &  108.5 & 0.08715 & 0 \\    
+        Median  & 0.7110 &  244.0 & 0.10610 & 0 \\    
+        Mean    & 0.7256 &  512.0 & 0.10227 & 0 \\    
+        3rd Qu. & 0.7628 &  731.5 & 0.12305 & 0 \\    
+        Max.    & 0.9013 & 2181.0 & 0.17390 & 0 
 \end{longtable}
 
 
@@ -366,77 +506,6 @@ All the resulting graphs are under their respective folders as you can see here~
         zookeeper-3.6.2 & 19207 \\
         PRIVATE PROGRAM & 2143
 \end{longtable}
-
-
-% N                E               K              Delta              MGD           Diameter     
-% Min.   :  18.0   Min.   :   18   Min.   : 2.000   Min.   :0.00230   Min.   :2.147   Min.   : 3.000  
-% 1st Qu.: 105.5   1st Qu.:  192   1st Qu.: 3.915   1st Qu.:0.00850   1st Qu.:3.214   1st Qu.: 7.500  
-% Median : 237.0   Median :  481   Median : 4.690   Median :0.01770   Median :3.419   Median : 9.000  
-% Mean   : 547.7   Mean   : 1764   Mean   : 5.036   Mean   :0.02786   Mean   :3.593   Mean   : 8.872  
-% 3rd Qu.: 568.0   3rd Qu.: 1742   3rd Qu.: 5.615   3rd Qu.:0.03440   3rd Qu.:3.981   3rd Qu.:10.500  
-% Max.   :3640.0   Max.   :15951   Max.   :14.800   Max.   :0.11760   Max.   :6.042   Max.   :13.000  
-%   Modularity      Communities      Mean CC Coef     Mean LC Coef   
-% Min.   :0.1458   Min.   :  4.00   Min.   :0.2051   Min.   :0.1480  
-% 1st Qu.:0.4540   1st Qu.: 10.00   1st Qu.:0.2876   1st Qu.:0.2369  
-% Median :0.5320   Median : 17.00   Median :0.3174   Median :0.3124  
-% Mean   :0.5097   Mean   : 38.08   Mean   :0.3315   Mean   :0.3201  
-% 3rd Qu.:0.5898   3rd Qu.: 32.00   3rd Qu.:0.3597   3rd Qu.:0.3969  
-% Max.   :0.7759   Max.   :419.00   Max.   :0.4868   Max.   :0.6419 
-
-% %OOP Metrics
-% N     E     K    Delta  MGD    Diameter Modularity Communities Mean CC Coef Mean LC Coef
-% akka                            291   290 1.99 0.0069 5.0948 12       0.8347       39        0.0748    0  
-% commons-cli-1.4                 133   178 2.68 0.0203 4.9707 13       0.6542       20        0.1658    0  
-% commons-codec-1.10              443   599 2.70 0.0061 6.0180 16       0.7835       67        0.0805    0  
-% commons-csv-1.8                 168   177 2.11 0.0126 2.8243  8       0.8219       29        0.0425    0  
-% commons-email-1.4               182   202 2.22 0.0123 4.7634 14       0.7564       30        0.0893    0  
-% disruptor-3.4.2                 457   632 2.77 0.0061 6.4273 16       0.6508       99        0.1152    0  
-% ftpserver-core-1.0.6           1280  2319 3.62 0.0028 5.9379 17       0.6670      213        0.1232    0  
-% grpc-core-1.34.1               3717  6544 3.52 0.0009 7.3362 24       0.6385      779        0.1039    0  
-% guava                         11786 18082 3.07 0.0003 7.4965 28       0.7583     2025        0.0754    0  
-% hbase-client-2.4.0             1724  1661 1.93 0.0011 8.4558 20       0.9013      419        0.0264    0  
-% hsqldb-2.4.1                  10394 22726 4.37 0.0004 6.6143 29       0.6779     1254        0.1260    0  
-% jackson-databind-2.12.0        1637  2718 3.32 0.0020 6.9562 25       0.7138      228        0.1261    0  
-% javax.servlet-api-4.0.1         440   387 1.76 0.0040 7.8849 19       0.8836      111        0.0348    0  
-% jedis-3.4.1                    4413  6625 3.00 0.0007 7.1696 25       0.7270      586        0.1225    0  
-% jersey-core-1.19.4             1409  2046 2.90 0.0021 6.4969 19       0.8157      191        0.0776    0  
-% jetty-7.0.0.pre5               1881  2947 3.13 0.0017 6.7668 24       0.7034      286        0.1097    0  
-% joda-time-2.10.6               3901  8201 4.20 0.0011 6.3395 22       0.7110      461        0.1260    0  
-% jsch-0.1.54                    1314  2296 3.49 0.0027 5.5298 16       0.6709      203        0.1223    0  
-% jsoup-1.13.1                   1623  3558 4.38 0.0027 6.2448 17       0.7439      204        0.1290    0  
-% junit-4.13.1                   1602  2186 2.73 0.0017 7.0309 20       0.7672      254        0.0888    0  
-% mail-1.4.7                     1068  1474 2.76 0.0026 9.4969 29       0.7154      195        0.0872    0  
-% mariadb-java-client-2.7.1      2319  3678 3.17 0.0014 8.3089 24       0.7519      244        0.0965    0  
-% mongo-java-driver-3.12.7       9147 16481 3.60 0.0004 6.8356 27       0.6193     1731        0.1066    0  
-% mx4j-3.0.2                      887  1192 2.69 0.0030 6.4340 18       0.7091      106        0.1061    0  
-% org.eclipse.jgit              12059 23175 3.84 0.0003 6.3935 22       0.6403     1404        0.1293    0  
-% pdfbox-2.0.22                  8372 16353 3.91 0.0005 6.0460 28       0.6890      863        0.1311    0  
-% poi-4.1.2                     15971 26910 3.37 0.0002 7.5505 28       0.7582     2181        0.0958    0  
-% postgresql-42.2.18             3164  4740 3.00 0.0009 6.8974 20       0.7695      506        0.0790    0  
-% resteasy-jaxrs-3.14.0.Final    4289  6818 3.18 0.0007 6.2748 18       0.6456      888        0.0898    0  
-% runtime-3.10.0-v20140318-2214   441   547 2.48 0.0056 5.2854 13       0.7279       62        0.1229    0  
-% slf4j-api-1.7.30                180   182 2.02 0.0113 4.8468 11       0.8531       32        0.0670    0  
-% spring-security-core-5.4.2     1501  2314 3.08 0.0021 6.5614 22       0.6879      216        0.1068    0  
-% spring-web-5.3.2               7219 11261 3.12 0.0004 7.5364 34       0.6956     1315        0.0871    0  
-% tomcat-embed-core-10.0.0       5386  8158 3.03 0.0006 7.3081 26       0.7786      684        0.0907    0  
-% zookeeper-3.6.2                5284  9651 3.65 0.0007 6.3153 20       0.6624      962        0.1052    0  
-% PRIVATE                         339   529 3.12 0.0092 5.4404 13       0.6676       40        0.1739    0  
-
-% N               E               K             Delta               MGD           Diameter    
-% Min.   :  133   Min.   :  177   Min.   :1.760   Min.   :0.000200   Min.   :2.824   Min.   : 8.00  
-% 1st Qu.:  672   1st Qu.:  912   1st Qu.:2.715   1st Qu.:0.000700   1st Qu.:6.032   1st Qu.:16.50  
-% Median : 1637   Median : 2718   Median :3.120   Median :0.001700   Median :6.434   Median :20.00  
-% Mean   : 3456   Mean   : 5984   Mean   :3.094   Mean   :0.003403   Mean   :6.489   Mean   :20.46  
-% 3rd Qu.: 4351   3rd Qu.: 8149   3rd Qu.:3.505   3rd Qu.:0.003500   3rd Qu.:7.100   3rd Qu.:24.50  
-% Max.   :15971   Max.   :26910   Max.   :4.380   Max.   :0.020300   Max.   :9.497   Max.   :34.00  
-%   Modularity      Communities      Mean CC Coef      Mean LC Coef
-% Min.   :0.6193   Min.   :  20.0   Min.   :0.02640   Min.   :0    
-% 1st Qu.:0.6693   1st Qu.: 108.5   1st Qu.:0.08715   1st Qu.:0    
-% Median :0.7110   Median : 244.0   Median :0.10610   Median :0    
-% Mean   :0.7256   Mean   : 512.0   Mean   :0.10227   Mean   :0    
-% 3rd Qu.:0.7628   3rd Qu.: 731.5   3rd Qu.:0.12305   3rd Qu.:0    
-% Max.   :0.9013   Max.   :2181.0   Max.   :0.17390   Max.   :0 
-
 
 \end{document}
 

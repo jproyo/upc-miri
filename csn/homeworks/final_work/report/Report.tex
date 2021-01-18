@@ -161,8 +161,36 @@ The following has been used on each case:
 All the resulting graphs are under their respective folders as you can see here~\ref{apx:sec:org:1}.
 
 \subsubsection{R Scripts}
+We have only one \textit{R Script} where we concentrate all the logic to obtain metrics and plots. 
+
+Basically, the most important function is the following one:
+
+\begin{listing}[H]
+    \inputminted[firstline=18, lastline=46, breaklines, highlightlines={19-23}]{R}{../code/Solution.R}
+    \caption{Extracted from source code code/Script.R}
+    \label{src:script:1}
+\end{listing}
+  
+As it can be appreciated on highlighted lines, we are building the graph from the \textit{DOT} files, 
+and the rest of the \mintinline{R}{run_metrics} function is the well-known metrics that we have explored before.   
 
 \subsection{Metrics}
+Regarding the metrics we are gathering the following ones:
+
+\begin{itemize}
+    \item \textbf{N}: Number of nodes. In our particular set up is the number of Functions or Methods and give us an idea of the big of the program.
+    This can be also check by~\ref{apx:sec:loc} where we have how many \acrlong{loc} each program has.
+    \item \textbf{E}: Number of vertices or the amount of calls that are taking place in the program
+    \item \textbf{K}: Mean Degree Distribution. This will allow us to see how is the connectivity of the Graphs
+    \item \textbf{MGD}: Average Path Length. 
+    \item \textbf{Diameter}
+    \item \textbf{Modularity}: This is a quite important metric. Although there is a work~\cite{paper_cohesion} that is proposing a better metric for modularity
+     to measure \acrlong{hc} in a program, we believe that already explored Modularity metric is enough and it covers \acrlong{lc} as well.
+    \item \textbf{Communities}: We believe that the number of communities should be similar of the number of modules, although it is out of the scope of this work exploring that
+    and we think it could be an interesting topic to discuss in a future work.
+    \item \textbf{Mean Clustering Coefficient (Mean CC Coef.)} and \textbf{Transitivity (Mean LC Coef.)}: We also believe that this 2 metrics are useful for measuring \acrlong{hc} and \acrlong{lc}
+    alongside with \textbf{Modularity} because it is going to help us to understand if there is some concentration of calls in one particular \acrlong{fu}.
+\end{itemize}
 
 \subsubsection{FP Programs}
 \begin{longtable}[H]{l r r r r r r}
@@ -439,7 +467,7 @@ All the resulting graphs are under their respective folders as you can see here~
     \item \textbf{report}: This report in Latex and PDF format.
 \end{itemize}
 
-\section{Programs Details - Line of Codes}
+\section{Programs Details - Line of Codes}\label{apx:sec:loc}
 \subsection{FP Programs}
 \begin{longtable}[H]{l r}
     \caption{FP Analyzed Programs}\label{table:ax_fp_prog_1}\\

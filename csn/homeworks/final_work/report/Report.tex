@@ -480,11 +480,13 @@ We have provided the framework to analyze a new program passed as input. We thin
 
 \subsection{Hypothesis 2}
 
-As we can see in figure~\ref{fig:modularity_paradigm} we can accept our Hypothesis. FP avarage modularity is 0.5097 whereas OOP avarage modularity is 0.7256. This is an increase of 42\%.This is something expected as OOP paradigm has this modularity philosophy (classes, objects, setters, getters,...) in its core design principles. 
+FP avarage modularity is 0.5097 whereas OOP avarage modularity is 0.7256. This is an increase of 42 per cent. The lower value in OOP is 0.6193 and the lower in FP (maybe an outlier) is 0.1458. With this numbers we accept our Hypothesis (maybe rigorous Hypothesis test needed?p-value...?). This is something expected as OOP paradigm has this modularity philosophy (classes, objects, setters, getters,...) in its core design principles. 
 
 \subsection{Hypothesis 3}
 
 As we can see in this figure~\ref{fig:fp_log_lines_mod} and~\ref{fig:oop_log_lines_mod} we have to reject our Hypothesis as we can't see that there exist a clear relationship between this 2 variables. It is enough to check visually the images to make this statement.
+
+Here the Null model is that this two variables are independent. So maybe we could try to fit a linear model, and then do anova method to compare them.
 
 Our hypothesis was based on the intuition that when a program becomes bigger in terms of lines of code it has to be more modularized in order to be able to maintain it as developers.
 

@@ -480,7 +480,7 @@ We have provided the framework to analyze a new program passed as input. We thin
 
 \subsection{Hypothesis 2}
 
-As we can see in figure~\ref{fig:modularity_paradigm} we can accept our Hypothesis. This is something expected as OOP paradigm has this modularity philosophy (classes, objects, setters, getters,...) in its core design principles. 
+As we can see in figure~\ref{fig:modularity_paradigm} we can accept our Hypothesis. FP avarage modularity is 0.5097 whereas OOP avarage modularity is 0.7256. This is an increase of 42\%.This is something expected as OOP paradigm has this modularity philosophy (classes, objects, setters, getters,...) in its core design principles. 
 
 \subsection{Hypothesis 3}
 
@@ -509,7 +509,7 @@ We have focused our study not only in this mentioned aspect but also in:
 \end{itemize}
 
 In order to do this project, a dataset of programs was needed and the collection of it it was the most tedious aspect in the project. This collection has been made by hand in different online repositories mentioned in the References. \\
-For instance in the case of Java programs, to generate the Call dependency grah, a jar file was needed and it is not common to find them online.\\ An alternative was downloading the source files a packaging them but this is not a sustainable method if you want to have a considerable amount of observations in your dataset as a lot of problems usually appear during compilation and packaging to should be solved meticulously. \\ Possibly a good idea could be develop a tool that can generate the CDG from the source files.
+For instance in the case of Java programs, to generate the Call dependency grah, a jar file was needed and it is not common to find them online.\\ An alternative was downloading the source files a packaging them but this is not a scalable method if you want to have a considerable amount of observations in your dataset as a lot of problems usually appear during compilation and packaging to should be solved meticulously. \\ Possibly a good idea could be develop a tool that can generate the CDG from the source files.
 
 This is the reason why other hypothesis that were proposed at the fist moment as finding the relationship between modularity and number of code refactors in the code (counted with number of commits) or finding the relationship between modularity and number of contributors in a project were discarded (Github provides this 2 metrics for each project, i.e, number of commits and number of contributors).
 \newpage

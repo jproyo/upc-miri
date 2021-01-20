@@ -175,6 +175,12 @@ Basically, the most important function is the following one:
 As it can be appreciated on highlighted lines, we are building the graph from the \textit{DOT} files, 
 and the rest of the \mintinline{R}{run_metrics} function is the well-known metrics that we have explored before.   
 
+On the other hand we've also built an \textit{R Script} that can be found in \mintinline{shell}{code/modularity_vs_linesCode.R} 
+that plots the Modularity vs. \acrlong{loc}, which is going to be useful for the analysis of hypothesis~\ref{hip:3}.
+
+Lately we have also built \mintinline{shell}{code/degree_distribution_fit.R} that is going to be useful for analyzing hypothesis~\ref{hip:4}. This last script is based on the Analysis of Degree Distribution that
+we have conducted on Lab $2$.
+
 \subsubsection{Testing Programs}
 We have selected randomly $2$ programs $1$ \acrfull{fp} program and other \acrfull{oop} in order to test against
 the metrics obtained and check if certain \textbf{hypothesis} holds or not.
@@ -321,42 +327,42 @@ Regarding the metrics we are gathering the following ones:
         Program &  N & E & K & Delta & MGD & Diameter\\
         \hline            
         \endhead
-        akka                          &   291 &   290 & 1.99 & 0.0069 & 5.0948 & 12 \\ 
-        commons-cli-1.4               &   133 &   178 & 2.68 & 0.0203 & 4.9707 & 13 \\ 
-        commons-codec-1.10            &   443 &   599 & 2.70 & 0.0061 & 6.0180 & 16 \\ 
-        commons-csv-1.8               &   168 &   177 & 2.11 & 0.0126 & 2.8243 &  8 \\ 
-        commons-email-1.4             &   182 &   202 & 2.22 & 0.0123 & 4.7634 & 14 \\ 
-        disruptor-3.4.2               &   457 &   632 & 2.77 & 0.0061 & 6.4273 & 16 \\ 
-        ftpserver-core-1.0.6          &  1280 &  2319 & 3.62 & 0.0028 & 5.9379 & 17 \\ 
-        grpc-core-1.34.1              &  3717 &  6544 & 3.52 & 0.0009 & 7.3362 & 24 \\ 
-        guava                         & 11786 & 18082 & 3.07 & 0.0003 & 7.4965 & 28 \\ 
-        hbase-client-2.4.0            &  1724 &  1661 & 1.93 & 0.0011 & 8.4558 & 20 \\ 
-        hsqldb-2.4.1                  & 10394 & 22726 & 4.37 & 0.0004 & 6.6143 & 29 \\ 
-        jackson-databind-2.12.0       &  1637 &  2718 & 3.32 & 0.0020 & 6.9562 & 25 \\ 
-        javax.servlet-api-4.0.1       &   440 &   387 & 1.76 & 0.0040 & 7.8849 & 19 \\ 
-        jedis-3.4.1                   &  4413 &  6625 & 3.00 & 0.0007 & 7.1696 & 25 \\ 
-        jersey-core-1.19.4            &  1409 &  2046 & 2.90 & 0.0021 & 6.4969 & 19 \\ 
-        jetty-7.0.0.pre5              &  1881 &  2947 & 3.13 & 0.0017 & 6.7668 & 24 \\ 
-        joda-time-2.10.6              &  3901 &  8201 & 4.20 & 0.0011 & 6.3395 & 22 \\ 
-        jsch-0.1.54                   &  1314 &  2296 & 3.49 & 0.0027 & 5.5298 & 16 \\ 
-        jsoup-1.13.1                  &  1623 &  3558 & 4.38 & 0.0027 & 6.2448 & 17 \\ 
-        junit-4.13.1                  &  1602 &  2186 & 2.73 & 0.0017 & 7.0309 & 20 \\ 
-        mail-1.4.7                    &  1068 &  1474 & 2.76 & 0.0026 & 9.4969 & 29 \\ 
-        mariadb-java-client-2.7.1     &  2319 &  3678 & 3.17 & 0.0014 & 8.3089 & 24 \\ 
-        mongo-java-driver-3.12.7      &  9147 & 16481 & 3.60 & 0.0004 & 6.8356 & 27 \\ 
-        mx4j-3.0.2                    &   887 &  1192 & 2.69 & 0.0030 & 6.4340 & 18 \\ 
-        org.eclipse.jgit              & 12059 & 23175 & 3.84 & 0.0003 & 6.3935 & 22 \\ 
-        pdfbox-2.0.22                 &  8372 & 16353 & 3.91 & 0.0005 & 6.0460 & 28 \\ 
-        poi-4.1.2                     & 15971 & 26910 & 3.37 & 0.0002 & 7.5505 & 28 \\ 
-        postgresql-42.2.18            &  3164 &  4740 & 3.00 & 0.0009 & 6.8974 & 20 \\ 
-        resteasy-jaxrs-3.14.0.Final   &  4289 &  6818 & 3.18 & 0.0007 & 6.2748 & 18 \\ 
-        runtime-3.10.0-v20140318-2214 &   441 &   547 & 2.48 & 0.0056 & 5.2854 & 13 \\ 
-        slf4j-api-1.7.30              &   180 &   182 & 2.02 & 0.0113 & 4.8468 & 11 \\ 
-        spring-security-core-5.4.2    &  1501 &  2314 & 3.08 & 0.0021 & 6.5614 & 22 \\ 
-        spring-web-5.3.2              &  7219 & 11261 & 3.12 & 0.0004 & 7.5364 & 34 \\ 
-        tomcat-embed-core-10.0.0      &  5386 &  8158 & 3.03 & 0.0006 & 7.3081 & 26 \\ 
-        zookeeper-3.6.2               &  5284 &  9651 & 3.65 & 0.0007 & 6.3153 & 20 \\ 
-        PRIVATE                       &   339 &   529 & 3.12 & 0.0092 & 5.4404 & 13
+        akka           &   291 &   290 & 1.99 & 0.0069 & 5.0948 & 12 \\ 
+        commons-cli-1. &   133 &   178 & 2.68 & 0.0203 & 4.9707 & 13 \\ 
+        commons-codec- &   443 &   599 & 2.70 & 0.0061 & 6.0180 & 16 \\ 
+        commons-csv-1. &   168 &   177 & 2.11 & 0.0126 & 2.8243 &  8 \\ 
+        commons-email- &   182 &   202 & 2.22 & 0.0123 & 4.7634 & 14 \\ 
+        disruptor-3.4. &   457 &   632 & 2.77 & 0.0061 & 6.4273 & 16 \\ 
+        ftpserver-core &  1280 &  2319 & 3.62 & 0.0028 & 5.9379 & 17 \\ 
+        grpc-core-1.34 &  3717 &  6544 & 3.52 & 0.0009 & 7.3362 & 24 \\ 
+        guava          & 11786 & 18082 & 3.07 & 0.0003 & 7.4965 & 28 \\ 
+        hbase-client-2 &  1724 &  1661 & 1.93 & 0.0011 & 8.4558 & 20 \\ 
+        hsqldb-2.4.1   & 10394 & 22726 & 4.37 & 0.0004 & 6.6143 & 29 \\ 
+        jackson-databi &  1637 &  2718 & 3.32 & 0.0020 & 6.9562 & 25 \\ 
+        javax.servlet- &   440 &   387 & 1.76 & 0.0040 & 7.8849 & 19 \\ 
+        jedis-3.4.1    &  4413 &  6625 & 3.00 & 0.0007 & 7.1696 & 25 \\ 
+        jersey-core-1. &  1409 &  2046 & 2.90 & 0.0021 & 6.4969 & 19 \\ 
+        jetty-7.0.0.pr &  1881 &  2947 & 3.13 & 0.0017 & 6.7668 & 24 \\ 
+        joda-time-2.10 &  3901 &  8201 & 4.20 & 0.0011 & 6.3395 & 22 \\ 
+        jsch-0.1.54    &  1314 &  2296 & 3.49 & 0.0027 & 5.5298 & 16 \\ 
+        jsoup-1.13.1   &  1623 &  3558 & 4.38 & 0.0027 & 6.2448 & 17 \\ 
+        junit-4.13.1   &  1602 &  2186 & 2.73 & 0.0017 & 7.0309 & 20 \\ 
+        mail-1.4.7     &  1068 &  1474 & 2.76 & 0.0026 & 9.4969 & 29 \\ 
+        mariadb-java-c &  2319 &  3678 & 3.17 & 0.0014 & 8.3089 & 24 \\ 
+        mongo-java-dri &  9147 & 16481 & 3.60 & 0.0004 & 6.8356 & 27 \\ 
+        mx4j-3.0.2     &   887 &  1192 & 2.69 & 0.0030 & 6.4340 & 18 \\ 
+        org.eclipse.jg & 12059 & 23175 & 3.84 & 0.0003 & 6.3935 & 22 \\ 
+        pdfbox-2.0.22  &  8372 & 16353 & 3.91 & 0.0005 & 6.0460 & 28 \\ 
+        poi-4.1.2      & 15971 & 26910 & 3.37 & 0.0002 & 7.5505 & 28 \\ 
+        postgresql-42. &  3164 &  4740 & 3.00 & 0.0009 & 6.8974 & 20 \\ 
+        resteasy-jaxrs &  4289 &  6818 & 3.18 & 0.0007 & 6.2748 & 18 \\ 
+        runtime-3.10.0 &   441 &   547 & 2.48 & 0.0056 & 5.2854 & 13 \\ 
+        slf4j-api-1.7. &   180 &   182 & 2.02 & 0.0113 & 4.8468 & 11 \\ 
+        spring-securit &  1501 &  2314 & 3.08 & 0.0021 & 6.5614 & 22 \\ 
+        spring-web-5.3 &  7219 & 11261 & 3.12 & 0.0004 & 7.5364 & 34 \\ 
+        tomcat-embed-c &  5386 &  8158 & 3.03 & 0.0006 & 7.3081 & 26 \\ 
+        zookeeper-3.6. &  5284 &  9651 & 3.65 & 0.0007 & 6.3153 & 20 \\ 
+        PRIVATE        &   339 &   529 & 3.12 & 0.0092 & 5.4404 & 13
 \end{longtable}
 
 \begin{longtable}[H]{l r r r r}
@@ -364,42 +370,42 @@ Regarding the metrics we are gathering the following ones:
         Program & Modularity & Communities & Mean CC Coef & Mean LC Coef \\
         \hline            
         \endhead
-        akka                          &  0.8347 &    39 &  0.0748 & 0 \\  
-        commons-cli-1.4               &  0.6542 &    20 &  0.1658 & 0 \\  
-        commons-codec-1.10            &  0.7835 &    67 &  0.0805 & 0 \\  
-        commons-csv-1.8               &  0.8219 &    29 &  0.0425 & 0 \\  
-        commons-email-1.4             &  0.7564 &    30 &  0.0893 & 0 \\  
-        disruptor-3.4.2               &  0.6508 &    99 &  0.1152 & 0 \\  
-        ftpserver-core-1.0.6          &  0.6670 &   213 &  0.1232 & 0 \\  
-        grpc-core-1.34.1              &  0.6385 &   779 &  0.1039 & 0 \\  
-        guava                         &  0.7583 &  2025 &  0.0754 & 0 \\  
-        hbase-client-2.4.0            &  0.9013 &   419 &  0.0264 & 0 \\  
-        hsqldb-2.4.1                  &  0.6779 &  1254 &  0.1260 & 0 \\  
-        jackson-databind-2.12.0       &  0.7138 &   228 &  0.1261 & 0 \\  
-        javax.servlet-api-4.0.1       &  0.8836 &   111 &  0.0348 & 0 \\  
-        jedis-3.4.1                   &  0.7270 &   586 &  0.1225 & 0 \\  
-        jersey-core-1.19.4            &  0.8157 &   191 &  0.0776 & 0 \\  
-        jetty-7.0.0.pre5              &  0.7034 &   286 &  0.1097 & 0 \\  
-        joda-time-2.10.6              &  0.7110 &   461 &  0.1260 & 0 \\  
-        jsch-0.1.54                   &  0.6709 &   203 &  0.1223 & 0 \\  
-        jsoup-1.13.1                  &  0.7439 &   204 &  0.1290 & 0 \\  
-        junit-4.13.1                  &  0.7672 &   254 &  0.0888 & 0 \\  
-        mail-1.4.7                    &  0.7154 &   195 &  0.0872 & 0 \\  
-        mariadb-java-client-2.7.1     &  0.7519 &   244 &  0.0965 & 0 \\  
-        mongo-java-driver-3.12.7      &  0.6193 &  1731 &  0.1066 & 0 \\  
-        mx4j-3.0.2                    &  0.7091 &   106 &  0.1061 & 0 \\  
-        org.eclipse.jgit              &  0.6403 &  1404 &  0.1293 & 0 \\  
-        pdfbox-2.0.22                 &  0.6890 &   863 &  0.1311 & 0 \\  
-        poi-4.1.2                     &  0.7582 &  2181 &  0.0958 & 0 \\  
-        postgresql-42.2.18            &  0.7695 &   506 &  0.0790 & 0 \\  
-        resteasy-jaxrs-3.14.0.Final   &  0.6456 &   888 &  0.0898 & 0 \\  
-        runtime-3.10.0-v20140318-2214 &  0.7279 &    62 &  0.1229 & 0 \\  
-        slf4j-api-1.7.30              &  0.8531 &    32 &  0.0670 & 0 \\  
-        spring-security-core-5.4.2    &  0.6879 &   216 &  0.1068 & 0 \\  
-        spring-web-5.3.2              &  0.6956 &  1315 &  0.0871 & 0 \\  
-        tomcat-embed-core-10.0.0      &  0.7786 &   684 &  0.0907 & 0 \\  
-        zookeeper-3.6.2               &  0.6624 &   962 &  0.1052 & 0 \\  
-        PRIVATE                       &  0.6676 &    40 &  0.1739 & 0  
+        akka         &  0.8347 &    39 &  0.0748 & 0 \\  
+        commons-cli- &  0.6542 &    20 &  0.1658 & 0 \\  
+        commons-code &  0.7835 &    67 &  0.0805 & 0 \\  
+        commons-csv- &  0.8219 &    29 &  0.0425 & 0 \\  
+        commons-emai &  0.7564 &    30 &  0.0893 & 0 \\  
+        disruptor-3. &  0.6508 &    99 &  0.1152 & 0 \\  
+        ftpserver-co &  0.6670 &   213 &  0.1232 & 0 \\  
+        grpc-core-1. &  0.6385 &   779 &  0.1039 & 0 \\  
+        guava        &  0.7583 &  2025 &  0.0754 & 0 \\  
+        hbase-client &  0.9013 &   419 &  0.0264 & 0 \\  
+        hsqldb-2.4.1 &  0.6779 &  1254 &  0.1260 & 0 \\  
+        jackson-data &  0.7138 &   228 &  0.1261 & 0 \\  
+        javax.servle &  0.8836 &   111 &  0.0348 & 0 \\  
+        jedis-3.4.1  &  0.7270 &   586 &  0.1225 & 0 \\  
+        jersey-core- &  0.8157 &   191 &  0.0776 & 0 \\  
+        jetty-7.0.0. &  0.7034 &   286 &  0.1097 & 0 \\  
+        joda-time-2. &  0.7110 &   461 &  0.1260 & 0 \\  
+        jsch-0.1.54  &  0.6709 &   203 &  0.1223 & 0 \\  
+        jsoup-1.13.1 &  0.7439 &   204 &  0.1290 & 0 \\  
+        junit-4.13.1 &  0.7672 &   254 &  0.0888 & 0 \\  
+        mail-1.4.7   &  0.7154 &   195 &  0.0872 & 0 \\  
+        mariadb-java &  0.7519 &   244 &  0.0965 & 0 \\  
+        mongo-java-d &  0.6193 &  1731 &  0.1066 & 0 \\  
+        mx4j-3.0.2   &  0.7091 &   106 &  0.1061 & 0 \\  
+        org.eclipse. &  0.6403 &  1404 &  0.1293 & 0 \\  
+        pdfbox-2.0.2 &  0.6890 &   863 &  0.1311 & 0 \\  
+        poi-4.1.2    &  0.7582 &  2181 &  0.0958 & 0 \\  
+        postgresql-4 &  0.7695 &   506 &  0.0790 & 0 \\  
+        resteasy-jax &  0.6456 &   888 &  0.0898 & 0 \\  
+        runtime-3.10 &  0.7279 &    62 &  0.1229 & 0 \\  
+        slf4j-api-1. &  0.8531 &    32 &  0.0670 & 0 \\  
+        spring-secur &  0.6879 &   216 &  0.1068 & 0 \\  
+        spring-web-5 &  0.6956 &  1315 &  0.0871 & 0 \\  
+        tomcat-embed &  0.7786 &   684 &  0.0907 & 0 \\  
+        zookeeper-3. &  0.6624 &   962 &  0.1052 & 0 \\  
+        PRIVATE      &  0.6676 &    40 &  0.1739 & 0  
 \end{longtable}
 
 \subsubsection{OOP Programs - Summary}
@@ -482,8 +488,97 @@ Regarding the metrics we are gathering the following ones:
     \label{fig:log_lines_mod}
   \end{minipage}
 
-\subsubsection{Degree Distribution}
-  
+\subsubsection{Degree Distribution - FP}
+
+\begin{longtable}[H]{l r r r r r}
+    \caption{FP Programs - Degree Distribution AIC Values}\label{table:fp_deg_dist_aic}\\
+        Program & Disp Poisson & Disp Geom & Zeta 2 & Zeta & Zeta Truncated \\
+        \hline            
+        \endhead  
+        aeson      &  1863.67550 &   0.00000 &   452.7808249 &  265.700378 &  265.584673 \\      
+        amazonka   &  3616.77605 &   0.00000 &   837.9114064 &  471.041171 &  468.946567 \\      
+        async      &   117.32660 &   0.00000 &    57.9771735 &   45.393422 &   47.431194 \\      
+        attoparsec &   201.87476 &   0.00000 &    62.3974727 &   37.698004 &   39.563825 \\      
+        beam       &  2991.16891 &   0.00000 &   643.2831784 &  378.697487 &  378.551372 \\      
+        cabal      & 15395.53601 &   0.00000 &  3433.9869964 & 1812.260423 & 1790.841833 \\      
+        co-log     &   151.95216 &   0.00000 &    36.8119509 &   31.385101 &   33.434477 \\      
+        conduit    &  2569.95419 & 100.73831 &    22.7817231 &    0.000000 &    1.900681 \\      
+        containers &    99.07037 &   0.00000 &    50.5854332 &   38.684562 &   40.727983 \\      
+        criterion  &    21.21021 &   0.00000 &    83.0163027 &   64.800536 &   66.762371 \\      
+        cryptol    & 11695.39923 &   0.00000 &  2346.8928801 & 1255.279725 & 1243.297796 \\      
+        cryptonite &   629.52088 &   0.00000 &   221.8455212 &  151.598973 &  153.112739 \\      
+        dhall      &  2852.00284 &   0.00000 &   799.2920305 &  476.202745 &  474.806324 \\      
+        free       &   179.18579 &   0.00000 &   157.6723429 &  114.489806 &  116.181877 \\      
+        haskoin    &   859.82342 &   0.00000 &   580.1156711 &  416.604701 &  417.333653 \\      
+        hedgehog   &  1369.78069 &   0.00000 &   414.3882331 &  276.144396 &  276.983555 \\      
+        helm       &   130.05235 &   0.00000 &     8.2776028 &    8.595222 &   10.714165 \\      
+        hlint      &   925.12005 &   0.00000 &   226.2607732 &  151.972058 &  153.412732 \\      
+        lens       & 15008.87852 &   0.00000 &   725.6466415 &  246.678077 &  243.899534 \\      
+        liquid     & 20225.32515 &   0.00000 &  2341.8676728 & 1273.728286 & 1265.482522 \\      
+        megaparsec &   175.20452 &   0.00000 &    58.6959541 &   47.188012 &   49.192447 \\      
+        mios       &   183.79848 &   0.00000 &   194.2119753 &  137.095338 &  138.626423 \\      
+        optparse   &   487.33560 &   0.00000 &   210.9939556 &  138.873027 &  140.179431 \\      
+        pandoc     & 38849.09113 &   0.00000 &  5122.5021209 & 2432.889804 & 2395.127239 \\      
+        pipes      &   443.08691 &   0.00000 &    53.4193641 &   29.916636 &   31.814254 \\      
+        postgresql &  1993.14352 &   0.00000 &   498.3831077 &  337.969862 &  338.637945 \\      
+        PRIVATE    &  2183.28655 &   0.00000 &   865.8009952 &  629.735886 &  630.170281 \\      
+        protolude  &   282.15330 &   0.00000 &    17.5198441 &   10.981453 &   13.017689 \\      
+        QuickCheck &   895.58710 &   0.00000 &   320.8080028 &  211.359256 &  212.284991 \\      
+        reflex     &   640.20474 &   0.00000 &   147.4878994 &  112.081878 &  113.896163 \\      
+        relude     &   403.01353 &  20.92190 &     0.0000000 &    1.975481 &    4.008396 \\      
+        servant    &   477.06345 &   0.00000 &   109.9038212 &   81.117733 &   82.985295 \\      
+        snap       &   503.40964 &   0.00000 &   179.8183309 &  126.887624 &  128.531432 \\      
+        stm        &   185.14582 &   0.00000 &    66.8080777 &   45.693600 &   47.618021 \\      
+        summoner   &   169.18845 &   0.00000 &   245.7948243 &  174.595515 &  175.964707 \\      
+        text       &   485.77068 &  16.19161 &     0.3142174 &    0.000000 &    2.066109 \\      
+        vector     &  8101.09215 &   0.00000 &   870.8989597 &  359.858763 &  349.192728 \\      
+        yesod      &   900.84725 &   0.00000 &   271.9407233 &  198.458638 &  199.9\\92093 
+    \end{longtable}
+
+\subsubsection{Degree Distribution - OOP}
+\begin{longtable}[H]{l r r r r r}
+    \caption{OOP Programs - Degree Distribution AIC Values}\label{table:oop_deg_dist_aic}\\
+        Program & Disp Poisson & Disp Geom & Zeta 2 & Zeta & Zeta Truncated \\
+        \hline            
+        \endhead  
+        akka         &   849.6612 &   145.357181             &  20.536579 &   0.0000000 &   2.0277241 \\
+        commons-cli  &   182.6214 &     0.000000             &  17.833938 &  18.3940841 &  20.4455174 \\
+        commons-cod  &   645.1480 &     0.000000             &  60.343310 &  57.0577817 &  59.0402410 \\
+        commons-csv  &   228.1798 &     3.582231             &   0.000000 &   0.2724416 &   2.3199915 \\
+        commons-ema  &   351.5918 &    34.202642             &   0.174698 &   0.0000000 &   2.0437682 \\
+        disruptor-3  &   783.4840 &     0.000000             &  31.659939 &  28.4734438 &  30.4552226 \\
+        ftpserver-c  &  5580.8989 &   454.037696             &  33.448005 &   0.0000000 &   1.8283031 \\
+        grpc-core-1  & 10835.3838 &    91.507957             & 199.586897 &   0.0000000 &   1.0972223 \\
+        guava        & 33415.1211 &   783.739138             & 225.652920 &   0.0000000 &   0.9292341 \\
+        hbase-clien  &  3936.7613 &   567.812973             & 111.768218 &   0.0000000 &   2.0037783 \\
+        hsqldb-2.4.  & 60827.4576 &  3821.349841             & 769.117288 &   1.2167069 &   0.0000000 \\
+        jackson-dat  &  6424.7809 &   477.549079             &  25.591008 &   0.0000000 &   1.8459512 \\
+        javax.servl  &   648.7272 &    41.188374             &  28.799780 &   0.0000000 &   2.0181284 \\
+        jedis-3.4.1  & 24909.2180 &  1073.532091             &  25.987669 &   0.0000000 &   1.7579590 \\
+        jersey-core  &  2361.8926 &     0.000000             & 171.982172 & 143.2274926 & 145.0695584 \\
+        jetty-7.0.0  &  4951.7062 &   213.122136             &  34.849186 &   0.0000000 &   1.8033043 \\
+        joda-time-2  & 14344.2295 &     0.000000             & 626.523775 & 150.6451182 & 150.2312534 \\
+        jsch-0.1.54  &  5288.0113 &   463.490503             &  25.704087 &   0.0000000 &   1.8569702 \\
+        jsoup-1.13.  &  7396.7715 &   234.743571             & 173.210436 &   0.0000000 &   1.1219573 \\
+        junit-4.13.  &  2547.7632 &     0.000000             & 164.405825 & 148.4537670 & 150.3365146 \\
+        mail-1.4.7   &  2207.8988 &    43.976252             &   4.568415 &   0.0000000 &   1.9457354 \\
+        mariadb-jav  &  5300.1980 &     0.000000             &  76.180868 &   5.4932517 &   7.1466141 \\
+        mongo-java-  & 35497.2118 &  1675.279358             & 388.717083 &   0.0000000 &   0.3647674 \\
+        mx4j-3.0.2   &  1979.2480 &   106.195916             &   0.000000 &   0.5395893 &   2.5146249 \\
+        org.eclipse  & 55229.8134 &  2812.484850             & 646.961320 &   0.5943077 &   0.0000000 \\
+        pdfbox-2.0.  & 48218.2095 &  3269.391476             & 338.721141 &   0.0000000 &   0.5533084 \\
+        poi-4.1.2    & 64266.0959 &  4206.922778             & 338.744236 &   0.0000000 &   0.5289241 \\
+        postgresql-  &  8332.5738 &   308.784490             &  40.648056 &   0.0000000 &   1.7415784 \\
+        PRIVATE      &   971.4943 &    81.811881             &   1.688681 &   0.0000000 &   1.9977647 \\
+        resteasy-ja  & 14213.8959 &   827.432359             &  68.805525 &   0.0000000 &   1.6086073 \\
+        runtime-3.1  &   988.5741 &    59.818409             &   0.000000 &   1.8914142 &   3.9009734 \\
+        slf4j-api-1  &   164.9488 &     0.000000             &  35.481064 &  36.5668486 &  38.6104244 \\
+        spring-secu  &  3276.5518 &     0.000000             &  51.629722 &  14.4958942 &  16.3027900 \\
+        spring-web-  & 20990.6186 &  1020.625763             & 120.106592 &   0.0000000 &   1.3590405 \\
+        tomcat-embe  & 18388.7792 &  1354.552719             &  35.217930 &   0.0000000 &   1.6975627 \\
+        zookeeper-3  & 24309.6424 &  1862.468736             & 153.995372 &   0.0000000 &   1.2761295 \\
+    \end{longtable}
+
 \begin{minipage}[t]{\linewidth}
     \includegraphics[width=\textwidth]{power_law_fp.png}
     \captionsetup{type=figure}
@@ -497,6 +592,7 @@ Regarding the metrics we are gathering the following ones:
     \captionof{figure}{Example of OOP Degree Distribution}
     \label{fig:power_law_oop}
   \end{minipage}
+
 
 \section{Discussion and Analysis}
 
@@ -556,9 +652,12 @@ Our hypothesis was based on the intuition that when a program becomes bigger in 
 
 \subsection{Hypothesis 4}
 
-This hypothesis can also be accepted. We used a model fitting technique to see that a \textbf{power-law} like function is the most suited to fit this model (giving the lower \acrfull{aic}).
+Regarding hypothesis~\ref{hip:4}, and after running the \acrlong{aic} analysis according to what have studied on Lab $2$, we can see that for \acrlong{fp} the hypothesis cannot be accepted,
+because according to the results in~\ref{table:fp_deg_dist_aic}, \acrlong{dispg} is the most suitable distribution that fits the data.
 
-This was also expected because the vast majority of functions/packages have just few outside calls.
+On the other hand and regarding \acrlong{oop}, we have been able to prove using \acrlong{aic} technique, that almost all the programs fits into a \acrlong{zeta}, i.e. \textbf{power-law} like~\ref{table:oop_deg_dist_aic}.
+
+Moreover, this is another metric that supports our assumption about the better modularization of \acrlong{oop} related that \acrlong{fp}.
 
 \section{Conclusions}
 

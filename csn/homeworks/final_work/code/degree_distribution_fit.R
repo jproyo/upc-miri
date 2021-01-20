@@ -1,13 +1,21 @@
-######################################################
-## Authors: Juan Pablo Royo Sales & Francesc Roy
-## Title: Homework 2
-## Dae: 2020-10-05
-####################################################
+##############################################################
+## Authors: Juan Pablo Royo Sales & Francesc Roy Campderros
+## Title: Final Work
+## Dae: 2021-01-22
+##############################################################
 
 require("stats4") # for MLE
 require("VGAM") # for the Riemann-zeta function
+library(igraph)
+library("data.table") 
+library("DirectedClustering")
 
-setwd("~/Projects/upc/upc-miri/csn/homeworks/homework_2")
+setwd("~/Projects/upc/upc-miri/csn/homeworks/final_work")
+
+
+get_graph_name <- function(file){
+  return(tools::file_path_sans_ext(basename(file)))
+}
 
 #Calculate C 
 calculate_c <- function(x,n){
@@ -21,16 +29,15 @@ calculate_c <- function(x,n){
 }
 
 # Extra data info of each language
-extract_info <- function(language, file) {
-  degree_sequence = read.table(file, header = FALSE)
-  print(typeof(degree_sequence$V1))
-  m <- sum(degree_sequence$V1)
-  n <- length(degree_sequence$V1)
-  max <- max(degree_sequence$V1)
+extract_info <- function(language, degree_sequence) {
+  degree_sequence <- as.integer(degree_sequence)
+  m <- sum(degree_sequence)
+  n <- length(degree_sequence)
+  max <- max(degree_sequence)
   mn <- m/n
   nm <- n/m
-  mp <- sum(log(degree_sequence$V1))
-  c  <- calculate_c(degree_sequence$V1,n)
+  mp <- sum(log(degree_sequence))
+  c  <- calculate_c(degree_sequence,n)
   c(language,m,n,max,mn,nm,mp,c)
 }
 
@@ -64,9 +71,9 @@ fit_with_zeta <- function(N, M_P){
     N * log(zeta(gamma)) + gamma * M_P
   }
   mle( minus_log_likelihood_zeta
-     , start = list(gamma = 2)
-     , method = "L-BFGS-B"
-     , lower = c(1.0000001))
+       , start = list(gamma = 2)
+       , method = "L-BFGS-B"
+       , lower = c(1.0000001))
 }
 
 # Fit model with ZETA TRUNCATED distribution
@@ -79,9 +86,9 @@ fit_with_zeta_truncated <- function(N, M_P, MAX){
     N * log(harmonic) + gamma * M_P
   }
   mle( minus_log_likelihood_right_truncated_zeta
-     , start = list(gamma = 2, k_max= N+3000 )
-     , method = "L-BFGS-B"
-     , lower = c(1.0000001,MAX)
+       , start = list(gamma = 2, k_max= N + 50000)
+       , method = "L-BFGS-B"
+       , lower = c(1.0000001,MAX)
   )
 }
 
@@ -91,22 +98,22 @@ fit_with_displaced_poisson <- function(N, M, C){
     -(M*log(lamda)) + N*(lamda + log(1-exp(-lamda))) + C
   }
   mle( minus_log_likelihood_displaced_poisson
-     , start = list(lamda = M/N)
-     , method = "L-BFGS-B"
-     , lower = c(0.0000001)
+       , start = list(lamda = M/N)
+       , method = "L-BFGS-B"
+       , lower = c(0.0000001)
   )
 }
-  
+
 # Fit model with DISPLACED GEOMETRIC distribution
 fit_with_displaced_geometric <- function(N, M){
   minus_log_likelihood_displaced_geometric <- function(q) {
     -(M-N)*log(1-q) - N*log(q)
   }
   mle( minus_log_likelihood_displaced_geometric
-     , start = list(q = N/M)
-     , method = "L-BFGS-B"
-     , lower = c(0.0000001)
-     , upper = c(0.9999999)
+       , start = list(q = N/M)
+       , method = "L-BFGS-B"
+       , lower = c(0.0000001)
+       , upper = c(0.9999999)
   )
 }
 
@@ -122,9 +129,9 @@ fit_with_altmann_distribution <- function(N, M_P, M){
   }
   
   mle( minus_log_likelihood_altmann
-     , start = list(gamma = 2,delta=5)
-     , method = "L-BFGS-B"
-     , lower = c(0.000001,0.000001)
+       , start = list(gamma = 2,delta=3)
+       , method = "L-BFGS-B"
+       , lower = c(0.000001,0.000001)
        
   )
 }
@@ -169,31 +176,36 @@ aic_comparisson <- function(N, M_P, mle_zeta, mle_righ_truncated_zeta, mle_displ
   c(aic_displaced_poison-aic_best, aic_displaced_geometric-aic_best, aic_zeta_2-aic_best, aic_zeta-aic_best, aic_zeta_truncated-aic_best)
 }
 
-main <- function(){
-
-  # Read all in-degree files to iterate each language
-  source <- read.table("list_in.txt", header = TRUE, as.is=c("language","file"))
-  
-  # Print Summary table of all parameters
+process_graphs <- function(path_graph, label){
+  print(paste("Running", label, "......."))
+  files <- list.files(path = path_graph, pattern = "*.dot", full.names = TRUE)
   result <- NULL
-  for (x in 1:nrow(source)) {
-    result <- rbind(result, extract_info(source$language[x], source$file[x]))
+  for (f in files) {
+    graphName <- get_graph_name(f)
+    adj_matrix <- read.dot(f)
+    colnames(adj_matrix) <- c(1:length(adj_matrix[,1]))
+    rownames(adj_matrix) <- c(1:length(adj_matrix[1,]))
+    graph <- graph_from_adjacency_matrix(adjmatrix = adj_matrix, c("undirected")) 
+    degree_seq <- degree(graph)
+    
+    result <- rbind(result, extract_info(graphName, degree_seq))
   }
+  
   print_summary_table(result)
   
-  # Run all models for all languages
   models <- NULL
   for (x in 1:nrow(result)) {
     models <- rbind(models, summary_all_mle(result[x,]))
   }
   print_summary_model_results(models, result[,1])
   
-  # Potting
-  for (x in 1:nrow(source)) {
-    plot_language(source$language[x], source$file[x])
-  }
+  
+}
 
-    
+
+main <- function(){
+  process_graphs("fp_graphs", "FP GRAPHS")
+  #process_graphs("oop_graphs", "OOP GRAPHS")
 }
 
 ## RUN PROGRAM

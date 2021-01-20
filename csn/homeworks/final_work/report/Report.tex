@@ -118,20 +118,20 @@ ones in their Paradigm fields.
 \subsection{Hypothesis}
 In this work we are trying to prove the following \textbf{Hypothesis} that we consider can be proved using \acrfull{cnt}.
 
-\begin{hyp}
-Given any Software Program Solution, its Network Metrics should be between the  $1$st Quartile and $3$rd Quartile, according to the average of the Network Metrics that we have been identified in this work,
+\begin{hyp}\label{hip:1}
+Given any Software Program Solution, its Modularity Metric should be between the  $1$st Quartile and $3$rd Quartile, according to the average of the Network Metrics that we have been identified in this work,
 to be considered as a well Software Designed Solution.
 \end{hyp}
 
-\begin{hyp}
+\begin{hyp}\label{hip:2}
 Any \acrlong{oop} Program have a better modularity in terms of \acrlong{cnt} Metric rather than \acrlong{fp} Programs.
 \end{hyp}
 
-\begin{hyp}
+\begin{hyp}\label{hip:3}
 The more \acrfull{loc} a Program have, the better Modularity it presents.
 \end{hyp}
     
-\begin{hyp}
+\begin{hyp}\label{hip:4}
 If the Software follows the principle design of \acrshort{hc} and \acrshort{lc}, the \acrfull{degdist} of the Generated Graph should follow a power-law like.
 \end{hyp}
 
@@ -174,6 +174,10 @@ Basically, the most important function is the following one:
   
 As it can be appreciated on highlighted lines, we are building the graph from the \textit{DOT} files, 
 and the rest of the \mintinline{R}{run_metrics} function is the well-known metrics that we have explored before.   
+
+\subsubsection{Testing Programs}
+We have selected randomly $2$ programs $1$ \acrfull{fp} program and other \acrfull{oop} in order to test against
+the metrics obtained and check if certain \textbf{hypothesis} holds or not.
 
 \subsection{Metrics}
 Regarding the metrics we are gathering the following ones:
@@ -425,6 +429,25 @@ Regarding the metrics we are gathering the following ones:
         Max.    & 0.9013 & 2181.0 & 0.17390 & 0 
 \end{longtable}
 
+\subsubsection{Testing Programs}
+\begin{longtable}[H]{l r r r r r r}
+    \caption{Testing Programs Metrics 1}\label{table:test_metrics_1}\\
+        Program &  N & E & K & Delta & MGD & Diameter\\
+        \hline            
+        \endhead
+        gogol         & 339 &  695 & 4.10 & 0.0121 & 4.9149 & 10\\    
+        google-client & 942 & 1316 & 2.79 & 0.0030 & 5.5469 & 14\\ 
+\end{longtable}
+
+\begin{longtable}[H]{l r r r r}
+    \caption{Testing Programs Metrics 2}\label{table:test_metrics_2}\\
+        Program & Modularity & Communities & Mean CC Coef & Mean LC Coef \\
+        \hline            
+        \endhead
+        gogol         & 0.6553 &  24 & 0.2359 & 0.1892 \\   
+        google-client & 0.7413 & 178 & 0.0880 & 0.0000 \\
+\end{longtable}
+
 \subsubsection{Modularity}
 
 \begin{minipage}[t]{\linewidth}
@@ -474,7 +497,13 @@ Here we are going to discuss the results obtained in our experiments.
 
 \subsection{Hypothesis 1}
 
-We have provided the framework to analyze a new program passed as input. We think that this is a good training set to fit our framework. Now any program passed as input should be categorized as bad-designed-software or good-designed-software if its metrics fall inside the first and third quartile of all (or the majority) metrics computed.
+Regarding the first hypothesis~\ref{hip:1}, as we can see in~\ref{table:fp_sum_metrics_1} and~\ref{table:oop_sum_metrics_1}, and taking
+the test programs~\ref{table:test_metrics_1} which the first one is \acrshort{fp} and the other is \acrshort{oop}, we can see that in the case
+of \acrshort{fp} Modularity is slightly above the \textit{3rd Quartile} with $0.6553$, so we can consider that this Hypothesis hold for this program because
+it is even better modularize. In the case of \acrshort{oop} also the modularity holds the hypothesis with $0.7413$.
+
+We are aware that for having a more accurate test, we should have tested with a lot of programs, but due to the difficulty of generating the graphs and the time
+involved it was not possible to achieve that goal which can be lead to future works.
 
 \subsection{Hypothesis 2}
 

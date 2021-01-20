@@ -474,6 +474,13 @@ Regarding the metrics we are gathering the following ones:
     \captionof{figure}{Modularity VS log(Lines of Code) in OOP}
     \label{fig:oop_log_lines_mod}
   \end{minipage}
+  
+\begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{images/lines_code_vs_modularity.jpeg}
+    \captionsetup{type=figure}
+    \captionof{figure}{Modularity VS log(Lines of Code) in both paradigms together}
+    \label{fig:log_lines_mod}
+  \end{minipage}
 
 \subsubsection{Degree Distribution}
   
@@ -508,7 +515,18 @@ involved it was not possible to achieve that goal which can be lead to future wo
 \subsection{Hypothesis 2}
 
 \acrlong{fp} average \textbf{modularity} is $0.5097$ whereas \acrlong{oop} average \textbf{modularity} is $0.7256$. This is an increase of $42\%$.
-The lower value in \acrlong{oop} is $0.6193$ and the lower in \acrlong{fp} (maybe an outlier) is $0.1458$. With this numbers we accept our Hypothesis (maybe rigorous Hypothesis test needed \textit{p-value}). 
+The lower value in \acrlong{oop} is $0.6193$ and the lower in \acrlong{fp} (maybe an outlier) is $0.1458$. 
+
+We do an statiscal t-test to accept or reject our hypothesis. The null hypothesis is that both paradigms have almost equal average modularity. The alternative one is that one is bigger than the other:
+
+\begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{images/ttest.png}
+    \captionsetup{type=figure}
+    \captionof{figure}{T test output (executed in R environment).}
+    \label{fig:ttest}
+  \end{minipage}
+
+As we can see we accept our hypothesis as p-value is lower than 0.05.
 
 \subsection{Hypothesis 3}
 As we can see in this figure~\ref{fig:fp_log_lines_mod} and~\ref{fig:oop_log_lines_mod} we have to reject our Hypothesis as we can't see that there exist a clear relationship between this 2 variables. It is enough to check visually the images to make this statement.
@@ -524,6 +542,15 @@ But if we want to be more rigorous we will perform a statistical test to confirm
 Where $M$ is \textbf{Modularity} and $LOC$ is \acrlong{loc}.
 
 So we perform an \acrfull{anova} test between this $2$ models and the results are displayed in the following picture:
+
+\begin{minipage}[t]{\linewidth}
+    \includegraphics[width=\textwidth]{images/anova.png}
+    \captionsetup{type=figure}
+    \captionof{figure}{ANOVA test output (executed in R environment).}
+    \label{fig:anova}
+  \end{minipage}
+
+As we can see we reject our hypothesis as p-value is greater than 0.05.
 
 Our hypothesis was based on the intuition that when a program becomes bigger in terms of lines of code it has to be more modularized in order to be able to maintain it as developers.
 

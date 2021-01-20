@@ -65,6 +65,7 @@
 \newacronym{loc}{LoC}{Lines of Code}
 \newacronym{cdg}{CDG}{Call Dependency Graph}
 \newacronym{fu}{FU}{Functional Units}
+\newacronym{anova}{ANOVA}{ANOVA Variance Analysis}
 
 \newtheorem{hyp}{Hypothesis}
 
@@ -467,9 +468,6 @@ Regarding the metrics we are gathering the following ones:
     \label{fig:power_law_oop}
   \end{minipage}
 
-
-
-
 \section{Discussion and Analysis}
 
 Here we are going to discuss the results obtained in our experiments.
@@ -480,27 +478,31 @@ We have provided the framework to analyze a new program passed as input. We thin
 
 \subsection{Hypothesis 2}
 
-FP avarage modularity is 0.5097 whereas OOP avarage modularity is 0.7256. This is an increase of 42 per cent. The lower value in OOP is 0.6193 and the lower in FP (maybe an outlier) is 0.1458. With this numbers we accept our Hypothesis (maybe rigorous Hypothesis test needed?p-value...?). This is something expected as OOP paradigm has this modularity philosophy (classes, objects, setters, getters,...) in its core design principles. 
+\acrlong{fp} average \textbf{modularity} is $0.5097$ whereas \acrlong{oop} average \textbf{modularity} is $0.7256$. This is an increase of $42\%$.
+The lower value in \acrlong{oop} is $0.6193$ and the lower in \acrlong{fp} (maybe an outlier) is $0.1458$. With this numbers we accept our Hypothesis (maybe rigorous Hypothesis test needed \textit{p-value}). 
 
 \subsection{Hypothesis 3}
+As we can see in this figure~\ref{fig:fp_log_lines_mod} and~\ref{fig:oop_log_lines_mod} we have to reject our Hypothesis as we can't see that there exist a clear relationship between this 2 variables. It is enough to check visually the images to make this statement.
 
-As we can see in this figure~\ref{fig:fp_log_lines_mod} and~\ref{fig:oop_log_lines_mod} we have to reject our Hypothesis as we can't see that there exist a clear relationship between this 2 variables. It is enough to check visually the images to make this statement.\\
+But if we want to be more rigorous we will perform a statistical test to confirm it. Here the Null model is that this two variables are independent. So our alternative model that we propose is a linear model like this:
 
-But if we want to be more rigorous we will perform a statistical test to comfirm it. Here the Null model is that this two variables are independent. So our alternative model that we propose is a linear model like this:
+\begin{subequations}
+    \begin{align}
+        M = a + b \times LOC
+    \end{align}
+\end{subequations}
 
-modularity = a + b * lines_of_code
+Where $M$ is \textbf{Modularity} and $LOC$ is \acrlong{loc}.
 
-So we perform an ANOVA test between this 2 models and the results are displayed in the following picture:
+So we perform an \acrfull{anova} test between this $2$ models and the results are displayed in the following picture:
 
 Our hypothesis was based on the intuition that when a program becomes bigger in terms of lines of code it has to be more modularized in order to be able to maintain it as developers.
 
 \subsection{Hypothesis 4}
 
-This hypothesis can also be accepted. We used a model fitting technique to see that a power-law like function is the most suited to fit this model (giving the lower AIC).  \\
+This hypothesis can also be accepted. We used a model fitting technique to see that a \textbf{power-law} like function is the most suited to fit this model (giving the lower \acrfull{aic}).
 
 This was also expected because the vast majority of functions/packages have just few outside calls.
-
-
 
 \section{Conclusions}
 
@@ -515,11 +517,11 @@ We have focused our study not only in this mentioned aspect but also in:
 \end{itemize}
 
 In order to do this project, a dataset of programs was needed and the collection of it it was the most tedious aspect in the project. This collection has been made by hand in different online repositories mentioned in the References. \\
-For instance in the case of Java programs, to generate the Call dependency grah, a jar file was needed and it is not common to find them online.\\ An alternative was downloading the source files a packaging them but this is not a scalable method if you want to have a considerable amount of observations in your dataset as a lot of problems usually appear during compilation and packaging to should be solved meticulously. \\ Possibly a good idea could be develop a tool that can generate the CDG from the source files.
+For instance in the case of Java programs, to generate the Call dependency graph, a jar file was needed and it is not common to find them online.\\ An alternative was downloading the source files a packaging them but this is not a scalable method if you want to have a considerable amount of observations in your dataset as a lot of problems usually appear during compilation and packaging to should be solved meticulously. 
+
+Possibly a good idea could be develop a tool that can generate the CDG from the source files.
 
 This is the reason why other hypothesis that were proposed at the fist moment as finding the relationship between modularity and number of code refactors in the code (counted with number of commits) or finding the relationship between modularity and number of contributors in a project were discarded (Github provides this 2 metrics for each project, i.e, number of commits and number of contributors).
-\newpage
-
 
 \bibliographystyle{alpha}
 \bibliography{Report}

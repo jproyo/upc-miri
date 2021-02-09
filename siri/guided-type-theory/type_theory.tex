@@ -46,6 +46,7 @@
 
 \newacronym{lc}{$\lambda$-\textit{calculus}}{Lambda Calculus}
 \newacronym{br}{$\beta$-\textit{reduction}}{Beta Reduction}
+\newacronym{lt}{$\lambda$-\textit{term}}{Lambda Terms}
 
 \newtheorem{hyp}{Hypothesis}
 
@@ -79,13 +80,31 @@ There are \textit{two constructions principles} and \textit{one evaluation rule}
     Example: $(\lambda x.x^2 + 1)(3)$ Application of $3$ over $\lambda x.x^2 + 1$
 \end{itemize}
 
-\textbf{Evaluation Rule:} Formalization of this process is called \acrfull{br}. Makes use of substitution, expressed by $[\ ]$.
+\textbf{Evaluation Rule:} Formalization of this process is called \acrfull{br}. 
 \acrshort{br}: An expression $(\lambda x. M)N$ can be rewritten to $M[x := N]$, which means every $x$ should be replaced by $N$ in $M$. This process 
 is called \acrshort{br} of $(\lambda x. M)N$ to $M[x := N]$.
 
 Example: $(\lambda x. x^2 + 1)(3)$ reduces to $(x^2 + 1)[x := 3]$, which is $3^2 + 1$.
 
+In this book, functions on \acrshort{lc} notation are \textit{Curried}.
+
+\subsubsection{Lambda-terms}
+Expressions in \acrshort{lc} are called \acrfull{lt}
+
+\newtheorem{definition}{Definition}
+\begin{definition}
+    The set $\Lambda$ of all \acrshort{lt}
+\end{definition}
+
+\begin{enumerate}
+    \item (Variable) If $u \in V$, then $u \in \Lambda$ 
+    \item (Application) If $M$ and $N \in \Lambda$, then $(MN) \in \Lambda$ 
+    \item (Abstraction) If $u \in V$ and $M \in \Lambda$, then $(\lambda u. M) \in \Lambda$ 
+\end{enumerate}
+
 \bibliographystyle{alpha}
 \bibliography{type_theory}
 
 \end{document}
+
+

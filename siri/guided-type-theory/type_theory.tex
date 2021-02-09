@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amsthm}
+\usepackage{amssymb}
 \usepackage{array}
 \usepackage{graphicx}
 \usepackage{parskip}
@@ -97,11 +98,127 @@ Expressions in \acrshort{lc} are called \acrfull{lt}
 \end{definition}
 
 \begin{enumerate}
-    \item (Variable) If $u \in V$, then $u \in \Lambda$ 
-    \item (Application) If $M$ and $N \in \Lambda$, then $(MN) \in \Lambda$ 
-    \item (Abstraction) If $u \in V$ and $M \in \Lambda$, then $(\lambda u. M) \in \Lambda$ 
+    \item (Variable) If $u \in V$, then $u \in \Lambda$ \\
+    Example: $x$, $y$, $z$
+    \item (Application) If $M$ and $N \in \Lambda$, then $(MN) \in \Lambda$  \\
+    Example: $(x y)$, $(x(x y))$
+    \item (Abstraction) If $u \in V$ and $M \in \Lambda$, then $(\lambda u. M) \in \Lambda$  \\
+    Example: $(\lambda x. (x z))$, $(\lambda y. (\lambda z. x))$
 \end{enumerate}
 
+
+\begin{definition}
+    Multiset of subterms $Sub$
+\end{definition}
+
+\begin{enumerate}
+    \item (Basis) $Sub(x) = \{x\}$, for each $x \in V$
+    \item (Application) $Sub((MN)) = Sub(M) \cup Sub(N) \cup \{(MN)\}$
+    \item (Abstraction) $Sub((\lambda x. M)) = Sub(M) \cup \{(\lambda x. M)\}$
+\end{enumerate}
+
+\newtheorem{lemma}{Lemma}
+\begin{lemma}
+    (1) (Reflexivity) For all \acrshort{lt} $M$, we have $M \in Sub(M)$. 
+    (2) (Transitivity) If $L \in Sub(M)$ and $M \in Sub(N)$, then $L \in Sub(N)$.
+\end{lemma}
+
+\begin{definition}[Proper subterm]
+    $L$ is a proper subterm of $M$ if $L$ is a subterm of $M$, but $L \not\equiv M$
+\end{definition}
+
+\begin{itemize}
+    \item Parenthesis can be omitted
+    \item Application is lef-associative, $MNL$ is $((MN)L)$
+    \item Application takes precedence over Abstraction
+\end{itemize}
+
+\subsection{Free and bound variables}
+Variables can be \textit{free}, \textit{bound} and \textit{binding}. A variable $x$ which is \textit{free} in $M$ becomes \textit{bound}
+in $\lambda x. M$. $M$ is called a \textit{binding} variable occurrence.
+\begin{definition}[FV, set of free variables of a \acrshort{lt}]
+\end{definition}
+\begin{enumerate}
+    \item (Variable) $FV(x) = \{x\}$
+    \item (Application) $FV(MN) = FV(M) \cup FV(N)$
+    \item (Abstraction) $FV(\lambda x. M) = FV(M) \setminus \{x\}$
+\end{enumerate}
+
+\begin{definition}[Closed \acrshort{lt}; combinator; $\Lambda^0$]
+    The \acrshort{lt} $M$ is closed if $FV(M) = \emptyset$. This is also called a combinator.
+    The set of all closed \acrshort{lt} is denoted by $\Lambda^0$ 
+\end{definition}
+
+\subsubsection{Alpha conversion}
+It is based on the possibility of renaming bound and binding variables.
+
+\begin{definition}[Renaming; $M^{x \rightarrow y}$; $=_\alpha$]\label{def:6}
+    Let $M^{x \rightarrow y}$ denote the result of replacing every free ocurrence of $x$ in $M$ by $y$.
+    Renaming, expressed by $=_\alpha$ is defined as: $\lambda x. M =_\alpha \lambda y. M^{x \rightarrow y}$, provided
+    that $y \notin FV(M)$ and $y$ is not binding in $M$
+\end{definition}
+
+\begin{definition}[$\alpha$-convertion or $\alpha$-equivalence; $=_\alpha$]
+\end{definition}
+\begin{enumerate}
+    \item (Renaming) same as~\ref{def:6}
+    \item (Compatibility) If $M =_\alpha N$, then $ML =_\alpha NL$, $LM =_\alpha LN$ and, for any arbitrary $z$, $\lambda z. M =_\alpha \lambda z. N$
+    \item (Reflexivity) $M =_\alpha M$
+    \item (Symmetry) If $M =_\alpha N$ then $N =_\alpha M$
+    \item (Transitivity) If both $L =_\alpha M$ and $M =_\alpha N$, then $L =_\alpha N$
+\end{enumerate}
+
+\subsection{Substitution}
+\begin{definition}[Substitution]
+\end{definition}
+\begin{enumerate}
+    \item $x[x := N] \equiv N$
+    \item $y[x := N] \equiv y$ if $x \not\equiv y$
+    \item $(PQ)[x := N] \equiv (P[x := N])(Q[x := N])$
+    \item $(\lambda y. P)[x := N] \equiv \lambda z. (P^{y \rightarrow z}[x := N])$, if $\lambda z. P^{y \rightarrow z}$ is $\alpha$-variant of $\lambda y.P$ such that $z \notin FV(N)$
+\end{enumerate}
+
+\subsection{Beta reduction}
+\begin{definition}[One-step $\beta$-reduction, $\rightarrow_\beta$]    
+\end{definition}
+\begin{enumerate}
+    \item (Basis) $(\lambda x. M)N \rightarrow_\beta M[x := N]$,\label{def:9:1}
+    \item (Compatibility) If $M \rightarrow_\beta N$, then $ML \rightarrow_\beta NL$, $LM \rightarrow_\beta LN$ and $\lambda x. M \rightarrow_\beta \lambda x. N$
+\end{enumerate}
+
+In~\ref{def:9:1} the left part of $\rightarrow_\beta$ is called \textit{redex} (reducible expression), and the right
+side is called \textit{contractum} (of the redex).
+
+\begin{definition}[$\beta$-reduction (zero-or-more-step), $\twoheadrightarrow\beta$]
+$M \twoheadrightarrow_\beta N$ if there is an $n \geq 0$ and there are terms $M_0$ to $M_n$ such that $M_0 \equiv M$, $M_n \equiv N$ and for all $i, 0 \leq i < n$:\\
+$M_i \rightarrow_\beta M_{i+1}$
+\end{definition}
+Hence, if $M \twoheadrightarrow_\beta N$, there exists a chain of single-step $\beta$-reductions, starting with $M$ and ending with $N$:
+
+$M \equiv M_0 \rightarrow_\beta M_1 \rightarrow_\beta M_2 \rightarrow_\beta \dots \rightarrow_\beta M_{n-2} \rightarrow_\beta M_{n-1} \rightarrow_\beta M_n \equiv N$
+
+\begin{definition}[$\beta$-conversion, $\beta$-equality; $=_\beta$]
+    $M =_\beta N$ if there is an $n \geq 0$ and there are terms $M_0$ to $M_n$ such that $M_0 \equiv M$, $M_n \equiv N$ and for all $i, 0 \leq i < n$:\\
+    either $M_i \rightarrow_\beta M_{i+1}$ or $M_{i+1} \rightarrow_\beta M_i$
+\end{definition}
+
+\subsection{Fixed Point Theorem}
+\newtheorem{theorem}{Theorem}
+\begin{theorem}
+    For all $L \in \Lambda$ there is $M \in \Lambda$ such that $LM =_\beta M$
+\end{theorem}
+\begin{proof}
+    For given $L$, define $M := (\lambda x. L(xx))(\lambda x. L(xx))$
+    This $M$ is a redex, so we have:
+    \begin{subequations}
+        \begin{align}
+            M &\equiv (\lambda x. L(xx))(\lambda x. L(xx))\\
+              &\rightarrow_\beta L((\lambda x. L(xx))(\lambda x. L(xx)))\\
+              &\equiv LM
+        \end{align}
+    \end{subequations}
+Therefore, $LM =_\beta M$
+\end{proof}
 \bibliographystyle{alpha}
 \bibliography{type_theory}
 

@@ -49,7 +49,14 @@
 \newacronym{br}{$\beta$-\textit{reduction}}{Beta Reduction}
 \newacronym{lt}{$\lambda$-\textit{term}}{Lambda Terms}
 
-\newtheorem{hyp}{Hypothesis}
+\newcommand{\twobeta}{\twoheadrightarrow_\beta}
+\newcommand{\onebeta}{\rightarrow_\beta}
+\newcommand{\ra}{\rightarrow}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem*{exercise}{}
 
 \begin{document}
 
@@ -92,7 +99,6 @@ In this book, functions on \acrshort{lc} notation are \textit{Curried}.
 \subsubsection{Lambda-terms}
 Expressions in \acrshort{lc} are called \acrfull{lt}
 
-\newtheorem{definition}{Definition}
 \begin{definition}
     The set $\Lambda$ of all \acrshort{lt}
 \end{definition}
@@ -117,7 +123,6 @@ Expressions in \acrshort{lc} are called \acrfull{lt}
     \item (Abstraction) $Sub((\lambda x. M)) = Sub(M) \cup \{(\lambda x. M)\}$
 \end{enumerate}
 
-\newtheorem{lemma}{Lemma}
 \begin{lemma}
     (1) (Reflexivity) For all \acrshort{lt} $M$, we have $M \in Sub(M)$. 
     (2) (Transitivity) If $L \in Sub(M)$ and $M \in Sub(N)$, then $L \in Sub(N)$.
@@ -152,9 +157,9 @@ in $\lambda x. M$. $M$ is called a \textit{binding} variable occurrence.
 \subsubsection{Alpha conversion}
 It is based on the possibility of renaming bound and binding variables.
 
-\begin{definition}[Renaming; $M^{x \rightarrow y}$; $=_\alpha$]\label{def:6}
-    Let $M^{x \rightarrow y}$ denote the result of replacing every free ocurrence of $x$ in $M$ by $y$.
-    Renaming, expressed by $=_\alpha$ is defined as: $\lambda x. M =_\alpha \lambda y. M^{x \rightarrow y}$, provided
+\begin{definition}[Renaming; $M^{x \ra y}$; $=_\alpha$]\label{def:6}
+    Let $M^{x \ra y}$ denote the result of replacing every free ocurrence of $x$ in $M$ by $y$.
+    Renaming, expressed by $=_\alpha$ is defined as: $\lambda x. M =_\alpha \lambda y. M^{x \ra y}$, provided
     that $y \notin FV(M)$ and $y$ is not binding in $M$
 \end{definition}
 
@@ -175,35 +180,34 @@ It is based on the possibility of renaming bound and binding variables.
     \item $x[x := N] \equiv N$
     \item $y[x := N] \equiv y$ if $x \not\equiv y$
     \item $(PQ)[x := N] \equiv (P[x := N])(Q[x := N])$
-    \item $(\lambda y. P)[x := N] \equiv \lambda z. (P^{y \rightarrow z}[x := N])$, if $\lambda z. P^{y \rightarrow z}$ is $\alpha$-variant of $\lambda y.P$ such that $z \notin FV(N)$
+    \item $(\lambda y. P)[x := N] \equiv \lambda z. (P^{y \ra z}[x := N])$, if $\lambda z. P^{y \ra z}$ is $\alpha$-variant of $\lambda y.P$ such that $z \notin FV(N)$
 \end{enumerate}
 
 \subsection{Beta reduction}
-\begin{definition}[One-step $\beta$-reduction, $\rightarrow_\beta$]    
+\begin{definition}[One-step $\beta$-reduction, $\onebeta$]    
 \end{definition}
 \begin{enumerate}
-    \item (Basis) $(\lambda x. M)N \rightarrow_\beta M[x := N]$,\label{def:9:1}
-    \item (Compatibility) If $M \rightarrow_\beta N$, then $ML \rightarrow_\beta NL$, $LM \rightarrow_\beta LN$ and $\lambda x. M \rightarrow_\beta \lambda x. N$
+    \item (Basis) $(\lambda x. M)N \onebeta M[x := N]$,\label{def:9:1}
+    \item (Compatibility) If $M \onebeta N$, then $ML \onebeta NL$, $LM \onebeta LN$ and $\lambda x. M \onebeta \lambda x. N$
 \end{enumerate}
 
-In~\ref{def:9:1} the left part of $\rightarrow_\beta$ is called \textit{redex} (reducible expression), and the right
+In~\ref{def:9:1} the left part of $\onebeta$ is called \textit{redex} (reducible expression), and the right
 side is called \textit{contractum} (of the redex).
 
-\begin{definition}[$\beta$-reduction (zero-or-more-step), $\twoheadrightarrow\beta$]
-$M \twoheadrightarrow_\beta N$ if there is an $n \geq 0$ and there are terms $M_0$ to $M_n$ such that $M_0 \equiv M$, $M_n \equiv N$ and for all $i, 0 \leq i < n$:\\
-$M_i \rightarrow_\beta M_{i+1}$
+\begin{definition}[$\beta$-reduction (zero-or-more-step), $\twobeta$]
+$M \twobeta N$ if there is an $n \geq 0$ and there are terms $M_0$ to $M_n$ such that $M_0 \equiv M$, $M_n \equiv N$ and for all $i, 0 \leq i < n$:\\
+$M_i \onebeta M_{i+1}$
 \end{definition}
-Hence, if $M \twoheadrightarrow_\beta N$, there exists a chain of single-step $\beta$-reductions, starting with $M$ and ending with $N$:
+Hence, if $M \twobeta N$, there exists a chain of single-step $\beta$-reductions, starting with $M$ and ending with $N$:
 
-$M \equiv M_0 \rightarrow_\beta M_1 \rightarrow_\beta M_2 \rightarrow_\beta \dots \rightarrow_\beta M_{n-2} \rightarrow_\beta M_{n-1} \rightarrow_\beta M_n \equiv N$
+$M \equiv M_0 \onebeta M_1 \onebeta M_2 \onebeta \dots \onebeta M_{n-2} \onebeta M_{n-1} \onebeta M_n \equiv N$
 
 \begin{definition}[$\beta$-conversion, $\beta$-equality; $=_\beta$]
     $M =_\beta N$ if there is an $n \geq 0$ and there are terms $M_0$ to $M_n$ such that $M_0 \equiv M$, $M_n \equiv N$ and for all $i, 0 \leq i < n$:\\
-    either $M_i \rightarrow_\beta M_{i+1}$ or $M_{i+1} \rightarrow_\beta M_i$
+    either $M_i \onebeta M_{i+1}$ or $M_{i+1} \onebeta M_i$
 \end{definition}
 
 \subsection{Fixed Point Theorem}
-\newtheorem{theorem}{Theorem}
 \begin{theorem}
     For all $L \in \Lambda$ there is $M \in \Lambda$ such that $LM =_\beta M$
 \end{theorem}
@@ -213,12 +217,167 @@ $M \equiv M_0 \rightarrow_\beta M_1 \rightarrow_\beta M_2 \rightarrow_\beta \dot
     \begin{subequations}
         \begin{align}
             M &\equiv (\lambda x. L(xx))(\lambda x. L(xx))\\
-              &\rightarrow_\beta L((\lambda x. L(xx))(\lambda x. L(xx)))\\
+              &\onebeta L((\lambda x. L(xx))(\lambda x. L(xx)))\\
               &\equiv LM
         \end{align}
     \end{subequations}
 Therefore, $LM =_\beta M$
 \end{proof}
+
+\subsection{Exercises}
+\subsubsection{1.10 Church numerals}
+Having that:
+\begin{itemize}
+    \item $zero \ := \lambda fx. x$
+    \item $one \ := \lambda fx. fx$
+    \item $two \ := \lambda fx. f(fx)$
+    \item $add \ := \lambda mnfx. mf(nfx)$
+    \item $mult \ := \lambda mnfx. m(nf)x$
+\end{itemize}
+\begin{exercise}[a]
+    Show that: $(add\ one\ one\ \twobeta\ two)$
+\end{exercise}
+\begin{proof}
+    Replacing by lambda expressions
+    \begin{subequations}
+        \begin{align}
+            add\ one\ one\ &:= (\lambda mnfx. mf(nfx))(\lambda fx. fx)(\lambda fx. fx)\\
+            &\onebeta (\lambda nfx. (\lambda fx. fx)f(nfx))(\lambda fx. fx)\\
+            &\onebeta (\lambda fx. (\lambda fx. fx)f((\lambda fx. fx)fx))\\
+            &\onebeta (\lambda fx. (\lambda fx. fx)f(fx))\\
+            &\onebeta (\lambda fx. f(fx))\\
+            &:= two
+        \end{align}
+    \end{subequations}
+\end{proof}
+
+\begin{exercise}[b]
+    Show that: $(\text{add one one }\neq_\beta \text{ mult one zero})$
+\end{exercise}
+\begin{proof}
+    We need to reduce $(\textit{mult one zero})$ and show that is not \textit{two}
+    \begin{subequations}
+        \begin{align}
+            mult\ one\ zero\ &:= (\lambda mnfx. m(nf)x)(\lambda fx. fx)(\lambda fx. x)\\
+            &\onebeta (\lambda nfx. (\lambda fx. fx)(nf)x)(\lambda fx. x)\\
+            &\onebeta (\lambda fx. (\lambda fx. fx)((\lambda fx. x)f)x)\\
+            &\onebeta (\lambda fx. (\lambda x. ((\lambda fx. x)f)x)x)\\
+            &\onebeta (\lambda fx. (\lambda x. (\lambda x. x)x)x)\\
+            &\onebeta (\lambda fx. (\lambda x. x)x)\\
+            &\onebeta (\lambda fx. x)\\
+            &:= zero
+        \end{align}
+    \end{subequations}
+\end{proof}
+\subsubsection{1.11 - Successor}
+Having that $\textit{suc} := \lambda mfx. f(mfx)$. Check the following
+\begin{exercise}[a]
+    suc zero $=_\beta$ one
+\end{exercise}
+\begin{proof}
+    \begin{subequations}
+        \begin{align}
+            \textit{suc zero } &=_\beta (\lambda mfx. f(mfx))(\lambda fx.x)\\
+            &\onebeta (\lambda fx. f((\lambda fx.x)fx))\\
+            &\onebeta (\lambda fx. f((\lambda x.x)x))\\
+            &\onebeta (\lambda fx. fx)\\
+            &:= one
+        \end{align}
+    \end{subequations}
+\end{proof}
+
+\begin{exercise}[b]
+    suc one $=_\beta$ two
+\end{exercise}
+\begin{proof}
+    \begin{subequations}
+        \begin{align}
+            \textit{suc one } &=_\beta (\lambda mfx. f(mfx))(\lambda fx.fx)\\
+            &\onebeta (\lambda fx. f((\lambda fx.fx)fx))\\
+            &\onebeta (\lambda fx. f((\lambda x.fx)x))\\
+            &\onebeta (\lambda fx. f(fx))\\
+            &:= two
+        \end{align}
+    \end{subequations}
+\end{proof}
+
+\subsubsection{1.12 - If then else}
+The term 'If $x$ then $u$ else $v$' is represented by $\lambda x. xuv$. Check this by
+calculating $\beta$-normal forms of $(\lambda x. xuv)\text{true}$ and $(\lambda x. xuv)\text{false}$, having that:
+\begin{itemize}
+    \item $\textit{true } := \lambda xy. x$
+    \item $\textit{false } := \lambda xy. y$
+\end{itemize}
+
+\begin{proof}[$(\lambda x. xuv)\text{true}$]
+    \begin{subequations}
+        \begin{align}
+            &:= (\lambda x. xuv)(\lambda xy. x)\\
+            &\onebeta (\lambda xy. x)uv\\
+            &\onebeta (\lambda y. u)v\\
+            &\onebeta u\\
+        \end{align}
+    \end{subequations}
+\end{proof}
+
+\begin{proof}[$(\lambda x. xuv)\text{false}$]
+    \begin{subequations}
+        \begin{align}
+            &:= (\lambda x. xuv)(\lambda xy. y)\\
+            &\onebeta (\lambda xy. y)uv\\
+            &\onebeta (\lambda y. y)v\\
+            &\onebeta v\\
+        \end{align}
+    \end{subequations}
+\end{proof}
+
+\section{Simply typed lambda calculus}
+In this chapter authors introduce \textbf{\textit{Types}} to \acrshort{lc} Formalization system.
+When we are acting on mathematical functions, the natural thing is to restrict over some domain, both the image and the pre-image.
+The addition of types to the formalization system prevents some anomalies that are present in the regular \acrshort{lc} model.
+
+\subsection{Simple types}
+It is done adding type \textit{variables} with an infinite set $\mathbb{V} = \{\alpha,\beta,\gamma,\dots\}$
+
+\begin{definition}[The set $\mathbb{T}$ of all simple types]
+\end{definition}
+\begin{enumerate}
+    \item (Type variable) If $\alpha \in \mathbb{V}$, then $\alpha \in \mathbb{T}$
+    \item (Arrow type) If $\sigma, \tau \in \mathbb{T}$, then $(\sigma \ra \tau) \in \mathbb{T}$
+\end{enumerate}
+Also, $\mathbb{T} = \mathbb{V} \mid \mathbb{T} \ra \mathbb{T}$.
+
+Parenthesis in \textit{arrow types} are right-\textit{associative}
+
+\subsubsection{Remarks}
+\begin{itemize}
+    \item \textit{Type variable} represent simple types like \textit{Nat, Lists, etc.}
+    \item \textit{Arrow types} represent functions such as $\textit{nat } \ra \textit{ real}$
+    \item \textit{'term $M$ has type $\sigma$'} (typing statement) is represented as $M : \sigma$
+    \item \textit{'variable $x$ has type $\sigma$'} is represented as $x : \sigma$
+    \item If $x : \sigma$ and $x : \tau$ then $\sigma \equiv \tau$
+    \item \textit{Application}: If $M : \sigma \ra \tau$ and $N : \sigma$, then $MN : \tau$ 
+    \item \textit{Abstraction}: If $x : \sigma$ and $M : \tau$, then $\lambda x. M : \sigma \ra \tau$ 
+\end{itemize}
+
+\subsection{Church-typing and Curry-typing}
+\subsubsection{Typing à la Church}
+Unique type for each variable upon its introduction~\cite{church}.
+
+\textbf{Example}: If $x$ has type $\alpha \ra \alpha$ and $y$ has type $(\alpha \ra \alpha) \ra \beta$, then $yx$ has type $\beta$.
+
+If $z$ has type $\beta$ and $u$ has type $\gamma$, then $\lambda zu.z$ has type $\beta \ra \gamma \ra \beta$.
+Therefore application $(\lambda zu.z)(yx)$ is permitted.
+
+\subsubsection{Typing à la Curry}
+Not give the types of variables, leave them \textit{implicit}, therefore is called \textit{implicit typing}.
+
+\textbf{Example}: Suppose we have $M \equiv (\lambda zu.z)(yx)$ but types are not given. 
+Guessing we have $\lambda zu.z$ should have some type $A \ra B$, so $(yx)$ must be of type $A$, then $M$ is of type $B$.
+If we continue with the guessing assigning type variables after replacing we end up with the same expression as explicit typing.
+
+Most of the book use \textit{Typing a la Church} because in math and logic types are usually fixed and known beforehand.
+
 \bibliographystyle{alpha}
 \bibliography{type_theory}
 

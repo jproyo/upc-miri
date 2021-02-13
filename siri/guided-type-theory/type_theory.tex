@@ -17,6 +17,8 @@
 \usepackage{caption}
 \usepackage{authblk}
 \usepackage{longtable}
+\usepackage{bussproofs}
+\usepackage{flagderiv}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
@@ -53,9 +55,9 @@
 \newcommand{\onebeta}{\rightarrow_\beta}
 \newcommand{\ra}{\rightarrow}
 
-\newtheorem{theorem}{Theorem}
-\newtheorem{definition}{Definition}
-\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{lemma}{Lemma}[section]
 \newtheorem*{exercise}{}
 
 \begin{document}
@@ -377,6 +379,60 @@ Guessing we have $\lambda zu.z$ should have some type $A \ra B$, so $(yx)$ must 
 If we continue with the guessing assigning type variables after replacing we end up with the same expression as explicit typing.
 
 Most of the book use \textit{Typing a la Church} because in math and logic types are usually fixed and known beforehand.
+
+\subsection{Derivation rules for Church's \texorpdfstring{$\lambda\ra$}{Lg}}
+\begin{definition}[Pre-typed \acrshort{lt}, $\Lambda_{\mathbb{T}}$]
+\end{definition}
+\begin{equation}
+    \Lambda_{\mathbb{T}} = V \mid (\Lambda_{\mathbb{T}}\Lambda_{\mathbb{T}}) \mid (\lambda V : \mathbb{T}.\Lambda_{\mathbb{T}})
+\end{equation}
+We want to express things like '\acrshort{lt} $M$ has type $\sigma$' relative to context $\Gamma$
+
+\begin{definition}[Statement, declaration, context, judgement]
+\end{definition}
+\begin{enumerate}
+    \item \textbf{Statement}: $M : \sigma$, where $M \in \Lambda_{\mathbb{T}}$ and $\sigma \in \mathbb{T}$. $M$ is called \textit{subject} and $\sigma$ \textit{type}
+    \item \textbf{Declaration}: Is a statement with a \textit{variable} as subject. Example $x : \alpha \ra \beta$ç
+    \item \textbf{Context}: List of Declarations with different subjects
+    \item \textbf{Judgement}: $\Gamma \vdash M : \sigma$, where $\Gamma$ is a \textit{Context} and $M :  \sigma$ is a \textit{Statement}.
+\end{enumerate}
+
+\begin{definition}[Derivation rules for $\lambda\ra$]
+\end{definition}
+\begin{itemize}
+    \item[(\textit{var})] $\Gamma \vdash x : \sigma$ if $x : \sigma \in \Gamma$
+    \item[(\textit{appl})] 
+    \AxiomC{$\Gamma \vdash M : \sigma \ra \tau$}
+    \AxiomC{$\Gamma \vdash N : \sigma$} 
+    \BinaryInfC{$\Gamma \vdash MN : \tau$} 
+    \DisplayProof
+    \item[(\textit{abst})] 
+    \AxiomC{$\Gamma, x : \sigma \vdash M : \tau$} 
+    \UnaryInfC{$\Gamma \vdash \lambda x : \sigma . M : \sigma \ra \tau$} 
+    \DisplayProof
+\end{itemize}
+
+This rules are \textbf{\textit{universal}}.
+
+\begin{definition}[Legal $\lambda\ra$-terms]
+    A pre-typed term $M$ in $\lambda\ra$ is called \textbf{\textit{legal}} if there exist a context $\Gamma$ and type $\rho$ such that $\Gamma \vdash M : \rho$
+\end{definition}
+
+\subsection{Flag notation}
+Flag notation is a succinct and useful way to represent Derivation rules on Typed-\acrshort{lc}. It is represented using a \textit{flag} (rectangular box)
+as a declaration, and everything that is bellow and attached to this \textit{flag} are statements that belong to it. This is also called \textit{flag pole}.
+Lets see an example of derivation:
+
+Having the following derivation:
+
+\begin{prooftree}
+    \AxiomC{$y : \alpha \ra \beta, z : \alpha \vdash y : \alpha \ra \beta$}
+    \AxiomC{$y : \alpha \ra \beta, z : \alpha \vdash z : \alpha$}
+    \BinaryInfC{$y : \alpha \ra \beta, z : \alpha \vdash yz : \beta$} 
+    \UnaryInfC{$y : \alpha \ra \beta \vdash \lambda z : \alpha . yz : \alpha \ra \beta$} 
+    \UnaryInfC{$\emptyset \vdash \lambda y : \alpha \ra \beta . \lambda z : \alpha . yz : (\alpha \ra \beta) \ra \alpha \ra \beta$} 
+\end{prooftree}
+
 
 \bibliographystyle{alpha}
 \bibliography{type_theory}

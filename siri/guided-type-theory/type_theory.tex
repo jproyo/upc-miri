@@ -50,10 +50,11 @@
 \newacronym{lc}{$\lambda$-\textit{calculus}}{Lambda Calculus}
 \newacronym{br}{$\beta$-\textit{reduction}}{Beta Reduction}
 \newacronym{lt}{$\lambda$-\textit{term}}{Lambda Terms}
+\newacronym{solc}{SOT $\lambda$-\textit{calculus}}{Second Order Typed $\lambda$-\textit{calculus}}
 
 \newcommand{\twobeta}{\twoheadrightarrow_\beta}
 \newcommand{\onebeta}{\to_\beta}
-\newcommand{\deriv}{\quad\vdash\quad}
+\newcommand{\deriv}{\ \vdash\ }
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{definition}{Definition}[section]
@@ -67,7 +68,8 @@
 \tableofcontents
 
 \section{Introduction}
-This report is going to provide a summary over the book~\cite{type_theory}.
+This report is going to provide a summary over the first 5 chapters of the book~\cite{type_theory}. Following chapters provide a more advanced view over Type Theory concepts.
+
 Alongside the different chapters of the book I am going to describe briefly the most important parts of each chapter and, at the same time,
 I am going to solve 1 or 2 of the exercises proposed by the authors.
 
@@ -668,6 +670,133 @@ where $\lambda z : \sigma. P^{y \to z}$ is $\alpha$-variant, such that $z \notin
   \end{flagderiv}
 \end{proof}
 
+\section{Second order typed lambda calculus}
+What we have seen until now with \textit{abstraction} and \textit{application} rules in \acrshort{lc} and typed-\acrshort{lc},
+is how \textbf{\textit{term depends on term}}. This kind of construction is called \textit{first order} abstraction (or dependency).
+
+In this chapter it is present another kind of dependency which is \textbf{\textit{terms depending on types}} or \textit{second order} operations (or dependency), 
+giving us a new system which is called \acrfull{solc}
+
+\textbf{Examples:}
+\textbf{Identity Function}
+\begin{itemize}
+    \item ($\lambda \alpha : * . \lambda x : \alpha . x$) The $*$ means the Type of all Types, giving a kind to the expression. Now this term depends on a type. (Polymorphic identity function)
+    \item $(\lambda \alpha : * . \lambda x : \alpha . x)\mathtt{nat} \onebeta \lambda x : \mathtt{nat} . x$, which is the identity of $\mathtt{nat}$
+    \item $(\lambda \alpha : * . \lambda x : \alpha . x)\mathtt{nat \to bool} \onebeta \lambda x : (\mathtt{nat \to bool}) . x$, which is the identity of $\mathtt{nat \to bool}$
+\end{itemize}
+
+\textbf{Iteration}
+\begin{itemize}
+    \item $D_{\sigma,F}$ function mapping $x$ in $\sigma$ to $F(F(x))$
+    \item $D_{\sigma,F}$ second iteration of $F(x)$ a.k.a $F \circ F$
+    \item $\lambda x : \sigma. F(F(x)) \equiv D_{\sigma,F}$
+    \item $D \equiv \lambda \alpha : *. \lambda f : \alpha \to \alpha. \lambda x : \alpha. f(f(x))$, applying Second Order.
+    \item $D$ is a polymorphic function.
+    \item $D\ \mathtt{nat} \onebeta \lambda f : \mathtt{nat \to nat}. \lambda x : \mathtt{nat}. f(f(x))$
+\end{itemize}
+
+\textbf{Function composition}
+\begin{equation}
+    \circ \equiv \lambda \alpha : *. \lambda \beta : *. \lambda \gamma : * . \lambda f : \alpha \to \beta . \lambda g : \beta \to \gamma. \lambda x : \alpha . g(f(x))
+\end{equation}
+
+\subsection{\texorpdfstring{$\Pi$}{Lg}-types}
+An expression like $\lambda \alpha : *. \lambda x : \alpha . x : * \to (\alpha \to \alpha)$, could be ambiguous if we name $\alpha$ with $\beta$.
+To avoid this ambiguity as we do in \acrshort{lc} with $\alpha$-conversion, we introduce a concept which is called $\Pi$-binder. In this case $\Pi\alpha : * . \alpha \to \alpha$
+means that any arbitrary type $\alpha$ can be use in a term $\alpha \to \alpha$.
+
+So we have $\Pi\alpha : * . \alpha \to \alpha \equiv_\alpha \Pi\beta : * . \beta \to \beta$ as an extension of $\alpha$-conversion for \acrshort{solc}.
+
+\subsection{Second Order abstraction and application rules}
+\begin{definition}[Second order abstraction rule]
+\end{definition}
+($\textit{abst}_2$)
+\AxiomC{$\Gamma, \alpha : * \deriv M : A$}
+\UnaryInfC{$\Gamma \deriv \lambda \alpha : * . M : \Pi\alpha : * . A$} 
+\DisplayProof
+
+\begin{definition}[Second order application rule]
+\end{definition}
+($\textit{appl}_2$)
+\AxiomC{$\Gamma \deriv M : \Pi\alpha : *. A$}
+\AxiomC{$\Gamma \deriv B : *$}
+\BinaryInfC{$\Gamma \deriv MB : A[\alpha := B]$} 
+\DisplayProof
+
+\subsection{The system \texorpdfstring{$\lambda2$}{}}
+$\mathbb{T}2 = \mathbb{V} \mid \mathbb{T}2 \to \mathbb{T}2 \mid \Pi\mathbb{V} : * . \mathbb{T}2$
+
+\begin{definition}[Second order pre-typed $\lambda$-terms, $\lambda2$-terms, $\Lambda_{\mathbb{T}2}$]
+\end{definition}
+$\Lambda_{\mathbb{T}2} = V \mid (\Lambda_{\mathbb{T}2}\Lambda_{\mathbb{T}2}) \mid (\Lambda_{\mathbb{T}2}\mathbb{T}2) \mid (\lambda V : \mathbb{T}2.\Lambda_{\mathbb{T}2} \mid (\lambda \mathbb{V} : * .\Lambda_{\mathbb{T}2})$
+
+\begin{definition}[Statement, declaration]
+\end{definition}
+\begin{enumerate}
+    \item Statement: Either 
+    \begin{itemize}
+        \item $M : \sigma$, where $M \in \Lambda_{\mathbb{T}2}$ and $\sigma \in \mathbb{T}2$
+        \item OR $\sigma : *$, where $\sigma \in \mathbb{T}2$
+    \end{itemize}
+    \item A Declaration is a Statement with a type variable and a term variable.
+\end{enumerate}
+
+\begin{definition}[$\lambda2$-context; domain; $\mathtt{dom}$]
+\end{definition}
+\begin{enumerate}
+    \item $\emptyset$ is a $\lambda2$-context. $\mathtt{dom}(\emptyset) = ()$
+    \item $\Gamma$ is a $\lambda2$-context, $\alpha \in \mathbb{V}$ and $\alpha \notin \mathtt{dom}(\Gamma)$, then $\Gamma, \alpha : *$ is a $\lambda2$-context. $\mathtt{dom}(\Gamma, \alpha : *) = (\mathtt{dom}(\Gamma), \alpha)$
+    \item $\Gamma$ is a $\lambda2$-context, if $\rho \in \mathtt{T}2$, $\alpha \in \mathtt{dom}(\Gamma)$ for all free typed variables in $\rho$ and if $x \notin \mathtt{dom}(\Gamma)$, then $\Gamma, x : \rho$ is a $\lambda2$-context; $\mathtt{dom}(\Gamma, x : \rho) = (\mathtt{dom}(\Gamma), x)$
+\end{enumerate}
+
+\begin{definition}[Var-rule for $\lambda2$]
+\end{definition}
+\textit{(var)} $\Gamma \deriv x : \sigma$ if $\Gamma$ is a $\lambda2$-context and $x : \sigma \in \Gamma$
+
+\begin{definition}[Formation rule]
+\end{definition}
+\textit{(form)} $\Gamma \deriv B : *$ if $\Gamma$ is a $\lambda2$-context, $B \in \mathbb{T}2$ and all free type variables in $B$ are declared in $\Gamma$
+
+\subsection{Properties of \texorpdfstring{$\lambda2$}{}}
+\begin{definition}[$\alpha$-conversion or $\alpha$-equivalence, extended]
+\end{definition}
+\begin{enumerate}
+    \item (Renaming of term variable) $\lambda x : \sigma . M =_\alpha \lambda y : \sigma . M^{x \to y}$ if $y \notin FV(M)$ and $y$ is not binding in $M$
+    \item (Renaming of type variable) \\
+    $\lambda \alpha : * . M =_\alpha \lambda \beta : * . M[\alpha := \beta]$ if $\beta$ does not occur in $M$, \\
+    $\Pi\alpha : * . M =_\alpha \Pi\beta : * . M[\alpha := \beta]$ if $\beta$ does not occur in $M$
+    \item (Compatibility, Reflexivity, Symmetry and Transitivity) equal to \textit{first order}
+\end{enumerate}
+
+\subsection{Exercises}
+\subsubsection{3.13 Addition and Multiplication}
+\begin{exercise}[a]
+    Having $\mathtt{Add} \equiv \lambda m,n: \mathtt{nat}. \lambda \alpha : *. \lambda f : \alpha \to \alpha. \lambda x : \mathtt{nat}. m\alpha f(n \alpha f x)$
+    Show that simulates addition
+\end{exercise}
+\begin{proof}
+    We have:
+    \begin{subequations}
+        \begin{align}
+            \mathtt{Add\ One\ One} &\equiv (\lambda m,n: \mathtt{nat}. \lambda \alpha \dots)(\lambda \alpha : * \dots \lambda x : \alpha. f x)\dots\\
+                                   &\twobeta \lambda \alpha : * . \lambda f : \alpha \to \alpha . \lambda x : \alpha . f(fx)\\
+                                   &\equiv \mathtt{Two}
+        \end{align}
+    \end{subequations}
+\end{proof}
+
+
+\begin{exercise}[b]
+    Find $\lambda2$-term \textit{Mult} that simulates multiplication on \textit{Nat}.
+\end{exercise}
+\begin{proof}
+    We have:
+    \begin{itemize}
+        \item $\mathtt{Mult} \equiv \lambda m,n : \mathtt{nat}. \lambda \alpha : * . \lambda f : \alpha \to \alpha. \lambda x : \mathtt{nat}. m\alpha(n \alpha f)x$
+        \item By statement of exercise 3.12 we know encoding of $\mathtt{One}$ and $\mathtt{Two}$.
+        \item So, $\mathtt{Mult\ One\ Two} \twobeta \lambda \alpha : *. \lambda f: \alpha \to \alpha. \lambda x : \mathtt{nat}. f(f(x)) \equiv \mathtt{Two}$
+    \end{itemize}
+\end{proof}
 
 \bibliographystyle{alpha}
 \bibliography{type_theory}

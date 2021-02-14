@@ -52,8 +52,8 @@
 \newacronym{lt}{$\lambda$-\textit{term}}{Lambda Terms}
 
 \newcommand{\twobeta}{\twoheadrightarrow_\beta}
-\newcommand{\onebeta}{\rightarrow_\beta}
-\newcommand{\ra}{\rightarrow}
+\newcommand{\onebeta}{\to_\beta}
+\newcommand{\deriv}{\quad\vdash\quad}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{definition}{Definition}[section]
@@ -159,9 +159,9 @@ in $\lambda x. M$. $M$ is called a \textit{binding} variable occurrence.
 \subsubsection{Alpha conversion}
 It is based on the possibility of renaming bound and binding variables.
 
-\begin{definition}[Renaming; $M^{x \ra y}$; $=_\alpha$]\label{def:6}
-    Let $M^{x \ra y}$ denote the result of replacing every free ocurrence of $x$ in $M$ by $y$.
-    Renaming, expressed by $=_\alpha$ is defined as: $\lambda x. M =_\alpha \lambda y. M^{x \ra y}$, provided
+\begin{definition}[Renaming; $M^{x \to y}$; $=_\alpha$]\label{def:6}
+    Let $M^{x \to y}$ denote the result of replacing every free ocurrence of $x$ in $M$ by $y$.
+    Renaming, expressed by $=_\alpha$ is defined as: $\lambda x. M =_\alpha \lambda y. M^{x \to y}$, provided
     that $y \notin FV(M)$ and $y$ is not binding in $M$
 \end{definition}
 
@@ -169,7 +169,7 @@ It is based on the possibility of renaming bound and binding variables.
 \end{definition}
 \begin{enumerate}
     \item (Renaming) same as~\ref{def:6}
-    \item (Compatibility) If $M =_\alpha N$, then $ML =_\alpha NL$, $LM =_\alpha LN$ and, for any arbitrary $z$, $\lambda z. M =_\alpha \lambda z. N$
+    \item (Compatibility) If $M =_\alpha N$, then $ML =_\alpha NL$, $LM =_\alpha LN$ and, for any arbitrary $z$, $\lambda z. M =_\alpha \lambda z. N$\label{def:comp}
     \item (Reflexivity) $M =_\alpha M$
     \item (Symmetry) If $M =_\alpha N$ then $N =_\alpha M$
     \item (Transitivity) If both $L =_\alpha M$ and $M =_\alpha N$, then $L =_\alpha N$
@@ -182,10 +182,10 @@ It is based on the possibility of renaming bound and binding variables.
     \item $x[x := N] \equiv N$
     \item $y[x := N] \equiv y$ if $x \not\equiv y$
     \item $(PQ)[x := N] \equiv (P[x := N])(Q[x := N])$
-    \item $(\lambda y. P)[x := N] \equiv \lambda z. (P^{y \ra z}[x := N])$, if $\lambda z. P^{y \ra z}$ is $\alpha$-variant of $\lambda y.P$ such that $z \notin FV(N)$
+    \item $(\lambda y. P)[x := N] \equiv \lambda z. (P^{y \to z}[x := N])$, if $\lambda z. P^{y \to z}$ is $\alpha$-variant of $\lambda y.P$ such that $z \notin FV(N)$
 \end{enumerate}
 
-\subsection{Beta reduction}
+\subsection{Beta reduction}\label{subsection:beta:reduction}
 \begin{definition}[One-step $\beta$-reduction, $\onebeta$]    
 \end{definition}
 \begin{enumerate}
@@ -345,42 +345,42 @@ It is done adding type \textit{variables} with an infinite set $\mathbb{V} = \{\
 \end{definition}
 \begin{enumerate}
     \item (Type variable) If $\alpha \in \mathbb{V}$, then $\alpha \in \mathbb{T}$
-    \item (Arrow type) If $\sigma, \tau \in \mathbb{T}$, then $(\sigma \ra \tau) \in \mathbb{T}$
+    \item (Arrow type) If $\sigma, \tau \in \mathbb{T}$, then $(\sigma \to \tau) \in \mathbb{T}$
 \end{enumerate}
-Also, $\mathbb{T} = \mathbb{V} \mid \mathbb{T} \ra \mathbb{T}$.
+Also, $\mathbb{T} = \mathbb{V} \mid \mathbb{T} \to \mathbb{T}$.
 
 Parenthesis in \textit{arrow types} are right-\textit{associative}
 
 \subsubsection{Remarks}
 \begin{itemize}
     \item \textit{Type variable} represent simple types like \textit{Nat, Lists, etc.}
-    \item \textit{Arrow types} represent functions such as $\textit{nat } \ra \textit{ real}$
+    \item \textit{Arrow types} represent functions such as $\textit{nat } \to \textit{ real}$
     \item \textit{'term $M$ has type $\sigma$'} (typing statement) is represented as $M : \sigma$
     \item \textit{'variable $x$ has type $\sigma$'} is represented as $x : \sigma$
     \item If $x : \sigma$ and $x : \tau$ then $\sigma \equiv \tau$
-    \item \textit{Application}: If $M : \sigma \ra \tau$ and $N : \sigma$, then $MN : \tau$ 
-    \item \textit{Abstraction}: If $x : \sigma$ and $M : \tau$, then $\lambda x. M : \sigma \ra \tau$ 
+    \item \textit{Application}: If $M : \sigma \to \tau$ and $N : \sigma$, then $MN : \tau$ 
+    \item \textit{Abstraction}: If $x : \sigma$ and $M : \tau$, then $\lambda x. M : \sigma \to \tau$ 
 \end{itemize}
 
 \subsection{Church-typing and Curry-typing}
 \subsubsection{Typing à la Church}
 Unique type for each variable upon its introduction~\cite{church}.
 
-\textbf{Example}: If $x$ has type $\alpha \ra \alpha$ and $y$ has type $(\alpha \ra \alpha) \ra \beta$, then $yx$ has type $\beta$.
+\textbf{Example}: If $x$ has type $\alpha \to \alpha$ and $y$ has type $(\alpha \to \alpha) \to \beta$, then $yx$ has type $\beta$.
 
-If $z$ has type $\beta$ and $u$ has type $\gamma$, then $\lambda zu.z$ has type $\beta \ra \gamma \ra \beta$.
+If $z$ has type $\beta$ and $u$ has type $\gamma$, then $\lambda zu.z$ has type $\beta \to \gamma \to \beta$.
 Therefore application $(\lambda zu.z)(yx)$ is permitted.
 
 \subsubsection{Typing à la Curry}
 Not give the types of variables, leave them \textit{implicit}, therefore is called \textit{implicit typing}.
 
 \textbf{Example}: Suppose we have $M \equiv (\lambda zu.z)(yx)$ but types are not given. 
-Guessing we have $\lambda zu.z$ should have some type $A \ra B$, so $(yx)$ must be of type $A$, then $M$ is of type $B$.
+Guessing we have $\lambda zu.z$ should have some type $A \to B$, so $(yx)$ must be of type $A$, then $M$ is of type $B$.
 If we continue with the guessing assigning type variables after replacing we end up with the same expression as explicit typing.
 
 Most of the book use \textit{Typing a la Church} because in math and logic types are usually fixed and known beforehand.
 
-\subsection{Derivation rules for Church's \texorpdfstring{$\lambda\ra$}{Lg}}
+\subsection{Derivation rules for Church's \texorpdfstring{$\lambda\to$}{Lg}}
 \begin{definition}[Pre-typed \acrshort{lt}, $\Lambda_{\mathbb{T}}$]
 \end{definition}
 \begin{equation}
@@ -392,46 +392,281 @@ We want to express things like '\acrshort{lt} $M$ has type $\sigma$' relative to
 \end{definition}
 \begin{enumerate}
     \item \textbf{Statement}: $M : \sigma$, where $M \in \Lambda_{\mathbb{T}}$ and $\sigma \in \mathbb{T}$. $M$ is called \textit{subject} and $\sigma$ \textit{type}
-    \item \textbf{Declaration}: Is a statement with a \textit{variable} as subject. Example $x : \alpha \ra \beta$ç
+    \item \textbf{Declaration}: Is a statement with a \textit{variable} as subject. Example $x : \alpha \to \beta$ç
     \item \textbf{Context}: List of Declarations with different subjects
-    \item \textbf{Judgement}: $\Gamma \vdash M : \sigma$, where $\Gamma$ is a \textit{Context} and $M :  \sigma$ is a \textit{Statement}.
+    \item \textbf{Judgement}: $\Gamma \deriv M : \sigma$, where $\Gamma$ is a \textit{Context} and $M :  \sigma$ is a \textit{Statement}.
 \end{enumerate}
 
-\begin{definition}[Derivation rules for $\lambda\ra$]
+\begin{definition}[Derivation rules for $\lambda\to$]
 \end{definition}
 \begin{itemize}
-    \item[(\textit{var})] $\Gamma \vdash x : \sigma$ if $x : \sigma \in \Gamma$
+    \item[(\textit{var})] $\Gamma \deriv x : \sigma$ if $x : \sigma \in \Gamma$
     \item[(\textit{appl})] 
-    \AxiomC{$\Gamma \vdash M : \sigma \ra \tau$}
-    \AxiomC{$\Gamma \vdash N : \sigma$} 
-    \BinaryInfC{$\Gamma \vdash MN : \tau$} 
+    \AxiomC{$\Gamma \deriv M : \sigma \to \tau$}
+    \AxiomC{$\Gamma \deriv N : \sigma$} 
+    \BinaryInfC{$\Gamma \deriv MN : \tau$} 
     \DisplayProof
     \item[(\textit{abst})] 
-    \AxiomC{$\Gamma, x : \sigma \vdash M : \tau$} 
-    \UnaryInfC{$\Gamma \vdash \lambda x : \sigma . M : \sigma \ra \tau$} 
+    \AxiomC{$\Gamma, x : \sigma \deriv M : \tau$} 
+    \UnaryInfC{$\Gamma \deriv \lambda x : \sigma . M : \sigma \to \tau$} 
     \DisplayProof
 \end{itemize}
 
 This rules are \textbf{\textit{universal}}.
 
-\begin{definition}[Legal $\lambda\ra$-terms]
-    A pre-typed term $M$ in $\lambda\ra$ is called \textbf{\textit{legal}} if there exist a context $\Gamma$ and type $\rho$ such that $\Gamma \vdash M : \rho$
+\begin{definition}[Legal $\lambda\to$-terms]
+    A pre-typed term $M$ in $\lambda\to$ is called \textbf{\textit{legal}} if there exist a context $\Gamma$ and type $\rho$ such that $\Gamma \deriv M : \rho$
 \end{definition}
 
-\subsection{Flag notation}
+\subsubsection{Example}
+\begin{prooftree}
+    \AxiomC{$y : \alpha \to \beta, z : \alpha \deriv y : \alpha \to \beta$}
+    \AxiomC{$y : \alpha \to \beta, z : \alpha \deriv z : \alpha$}
+    \BinaryInfC{$y : \alpha \to \beta, z : \alpha \deriv yz : \beta$} 
+    \UnaryInfC{$y : \alpha \to \beta \deriv \lambda z : \alpha . yz : \alpha \to \beta$} 
+    \UnaryInfC{$\emptyset \deriv \lambda y : \alpha \to \beta . \lambda z : \alpha . yz : (\alpha \to \beta) \to \alpha \to \beta$} 
+\end{prooftree}
+
+
+\subsection{Derivation formats}
+\subsubsection{Linear format}
+
+\begin{enumerate}
+    \item $y : \alpha \to \beta, z : \alpha \deriv y : \alpha \to \beta \quad \textit{(var)}$\label{s:1}
+    \item $y : \alpha \to \beta, z : \alpha \deriv z : \alpha \quad \textit{(var)}$\label{s:2}
+    \item $y : \alpha \to \beta, z : \alpha \deriv yz : \beta \quad \textit{(appl) on \ref{s:1} and \ref{s:2}}$\label{s:3}
+    \item $y : \alpha \to \beta \deriv \lambda z : \alpha . yz : \alpha \to \beta \quad \textit{(abst) on \ref{s:3}}$\label{s:4}
+    \item $\emptyset \deriv \lambda y : \alpha \to \beta . \lambda z : \alpha . yz : (\alpha \to \beta) \to \alpha \to \beta \quad \textit{(abst) on \ref{s:4}}$
+\end{enumerate}
+
+\subsubsection{Flag notation}
 Flag notation is a succinct and useful way to represent Derivation rules on Typed-\acrshort{lc}. It is represented using a \textit{flag} (rectangular box)
 as a declaration, and everything that is bellow and attached to this \textit{flag} are statements that belong to it. This is also called \textit{flag pole}.
 Lets see an example of derivation:
 
-Having the following derivation:
+We can translate \textit{linear format} into \textit{flag notation}:
 
-\begin{prooftree}
-    \AxiomC{$y : \alpha \ra \beta, z : \alpha \vdash y : \alpha \ra \beta$}
-    \AxiomC{$y : \alpha \ra \beta, z : \alpha \vdash z : \alpha$}
-    \BinaryInfC{$y : \alpha \ra \beta, z : \alpha \vdash yz : \beta$} 
-    \UnaryInfC{$y : \alpha \ra \beta \vdash \lambda z : \alpha . yz : \alpha \ra \beta$} 
-    \UnaryInfC{$\emptyset \vdash \lambda y : \alpha \ra \beta . \lambda z : \alpha . yz : (\alpha \ra \beta) \ra \alpha \ra \beta$} 
-\end{prooftree}
+\begin{flagderiv}
+    \assume{ctx:1}{y : \alpha \to \beta}{}
+    \assume{ctx:2}{z : \alpha}{}
+    \step{var:1}{y : \alpha \to \beta}{(var) on \ref{ctx:1}}
+    \step{var:2}{z : \alpha}{(var) on \ref{ctx:2}}
+    \step{appl:1}{yz : \beta}{(appl) on \ref{var:1} and \ref{var:2}}
+    \conclude{abst:1}{\lambda z : \alpha . yz : \alpha \to \beta}{(abst) on \ref{appl:1}}
+    \conclude{abst:2}{\lambda y : \alpha \to \beta . \lambda z : \alpha . yz : (\alpha \to \beta) \to \alpha \to \beta}{(abst) on \ref{abst:1}}
+  \end{flagderiv}
+
+Even more succinct without \textit{var} rule:
+
+\begin{flagderiv}
+    \assume{a:1:1}{y : \alpha \to \beta}{}
+    \assume{a:1:2}{z : \alpha}{}
+    \step{s:1:1}{yz : \beta}{(appl) on \ref{a:1:1} and \ref{a:1:2}}
+    \conclude{c:1:1}{\lambda z : \alpha . yz : \alpha \to \beta}{(abst) on \ref{s:1:1}}
+    \conclude{}{\lambda y : \alpha \to \beta . \lambda z : \alpha . yz : (\alpha \to \beta) \to \alpha \to \beta}{(abst) on \ref{c:1:1}}
+  \end{flagderiv}
+
+\subsection{Problems solved with judgement in Type Theory}
+
+\begin{itemize}
+    \item Well-typedness in $\lambda\to$
+    \item Type Checking in $\lambda\to$
+    \item Term finding in $\lambda\to$
+\end{itemize}
+
+\subsubsection{Well-typedness in \texorpdfstring{$\lambda\to$}{Lg}}
+Find out when a term is legal: 
+
+$ ? \deriv \text{ term } :\ ?$ 
+
+We want to show that a \acrshort{lt} $M$ is legal or not. This is done following the derivation tree and 
+trying to find a context $\Gamma$ an a type $\rho$ such that $\Gamma \deriv M : \rho$
+
+In our previous example of derivation if we start checking that the term $\lambda y : \alpha \to \beta . \lambda z : \alpha . yz : ?$ is legal.
+If we check with our flag notation from bottom up in the derivation tree, we are going to find the context in which this term is legal, but for example
+if that term would have been $\lambda y : \alpha \to \beta . \lambda z : \beta . yz : ?$, we have not because $z : \beta$ cannot be applied to $y$.
+
+\subsubsection{Type Checking in \texorpdfstring{$\lambda\to$}{Lg}}
+It is checking the validity of a full \textit{judgement}.
+Given the following: 
+
+$x : \alpha \to \alpha, y : (\alpha \to \alpha) \to \beta \deriv (\lambda z : \beta . \lambda u : \gamma . z)(yx) : \gamma \to \beta$
+
+\begin{flagderiv}
+    \assume{}{x : \alpha \to \alpha}{}
+    \assume{}{y : (\alpha \to \alpha) \to \beta}{}
+    \skipsteps*{\vdots}{}
+    \conclude{}{(\lambda z : \beta . \lambda u : \gamma . z)(yx) : \gamma \to \beta}{}
+  \end{flagderiv}
+
+The idea is to fill the dots:
+
+\begin{flagderiv}
+    \assume{a:2:1}{x : \alpha \to \alpha}{}
+    \assume{a:2:2}{y : (\alpha \to \alpha) \to \beta}{}
+    \step{s:2:1}{\lambda z : \beta . \lambda u : \gamma . z :\ ?_1}{}
+    \skipsteps*{\vdots}{}
+    \step{s:2:2}{yx :\ ?_2}{}
+    \conclude{}{(\lambda z : \beta . \lambda u : \gamma . z)(yx) : \gamma \to \beta}{(appl) on \ref{s:2:1} and \ref{s:2:2}, (?)}
+  \end{flagderiv}
+
+  \begin{flagderiv}
+    \assume{a:3:1}{x : \alpha \to \alpha}{}
+    \assume{a:3:2}{y : (\alpha \to \alpha) \to \beta}{}
+    \assume{a:3:3}{z : \beta}{}
+    \assume{a:3:4}{u : \gamma}{}
+    \step{s:3:0}{z : \beta}{(var) on \ref{a:3:3}}
+    \conclude{c:3:0}{\lambda u : \gamma . z : \gamma \to \beta}{(abst) on \ref{s:3:0}}
+    \conclude{c:3:1}{\lambda z : \beta . \lambda u : \gamma . z : \beta \to \gamma \to \beta}{(abst) on \ref{c:3:0}}
+    \step{s:3:2}{yx : \beta}{(appl) on \ref{a:3:1} and \ref{a:3:2}}
+    \conclude{}{(\lambda z : \beta . \lambda u : \gamma . z)(yx) : \gamma \to \beta}{(appl) on \ref{c:3:1} and \ref{s:3:2}, (?)}
+  \end{flagderiv}
+
+\subsubsection{Term finding in \texorpdfstring{$\lambda\to$}{Lg}}
+Finding an appropriated term of certain type, in a certain context. A \textit{term} that belongs to certain type is called \textbf{\textit{inhabitant}} of that type.
+
+This process is constructed starting with an empty context and exploring the situation on which the type is an expression from logic: \textit{a proposition}. Every inhabitant then codes a \textit{proof}
+of this proposition, hence declaring it to be a 'true' one.
+
+\textbf{Procedure:}
+\begin{itemize}
+    \item Take $A \to B \to A$ as a logical expression. This is a \textit{tautology}
+    \item Assume $A$ holds. 
+    \item Assume $B$ holds, then $A$ holds.
+\end{itemize}
+
+\begin{flagderiv}
+    \assume{a:4:1}{x : A}{}
+    \skipsteps*{\vdots}{}
+    \step{s:4:1}{?\ : B \to A}{}
+    \skipsteps*{\vdots}{}
+    \conclude{c:4:1}{\dots A \to B \to A}{(abst) on \ref{s:4:1}}
+  \end{flagderiv}
+
+  \begin{flagderiv}
+    \assume{a:5:1}{x : A}{}
+    \assume{a:5:1}{y : B}{}
+    \skipsteps*{\vdots}{}
+    \step{s:5:0}{?\ : A \to A}{}
+    \conclude{c:5:0}{\dots : B \to A}{(abst) on \ref{s:5:0}}
+    \conclude{}{\dots A \to B \to A}{(abst) on \ref{c:5:0}}
+  \end{flagderiv}
+
+  \begin{flagderiv}
+    \assume{a:6:1}{x : A}{}
+    \assume{a:6:2}{y : B}{}
+    \step{s:6:1}{x : A}{(var) on \ref{a:6:1}}
+    \conclude{c:6:1}{\lambda y : B. x : B \to A}{(abst) on \ref{s:6:1}}
+    \conclude{}{\lambda x : A. \lambda y : B. x : A \to B \to A}{(abst) on \ref{c:6:1}}
+  \end{flagderiv}
+
+\subsection{General properties of \texorpdfstring{$\lambda\to$}{Lg}}
+\begin{definition}[Domain, $\mathtt{dom}$, subcontext, $\subseteq$, permutation, projection, $\restriction$]
+\end{definition}
+\begin{enumerate}
+    \item If $\Gamma \equiv x_1 : \sigma_1, \dots, x_n : \sigma_n$, then the \textit{domain} of $\Gamma$ or $\mathtt{dom}(\Gamma)$ is the list $(x_1,\dots,x_n)$.
+    \item $\Gamma'$ is a subcontext of $\Gamma$, or $\Gamma' \subseteq \Gamma$, if all declarations in $\Gamma'$ occurs in $\Gamma$, in the same order.
+    \item $\Gamma'$ is a \textit{permutation} of $\Gamma$, if all declarations in $\Gamma'$ also occurs in $\Gamma$ and vice versa.
+    \item If $\Gamma$ is a context and $\phi$ a set of variables, the \textit{projection} in $\Gamma$ on $\phi$, or $\Gamma \restriction \phi$, is the subcontext $\Gamma'$ of $\Gamma$ with $\mathtt{dom}(\Gamma') = \mathtt{dom}(\Gamma) \cap \phi$
+\end{enumerate}
+
+\begin{lemma}[Free Variables Lemma]
+    If $\Gamma \deriv L : \sigma$, then $FV(L) \subseteq \mathtt{dom}(\Gamma)$
+\end{lemma}
+
+\begin{lemma}[Thinning, Condensing, Permutation]
+\end{lemma}
+\begin{enumerate}
+    \item (Thinning) Let $\Gamma'$ and $\Gamma''$ be contexts such that $\Gamma' \subseteq \Gamma''$. If $\Gamma' \deriv M : \sigma$, then also $\Gamma'' \deriv M : \sigma$
+    \item (Condensing) If $\Gamma \deriv M : \sigma$, then also $\Gamma \restriction FV(M) \deriv M : \sigma$
+    \item (Permutation) If $\Gamma \deriv M : \sigma$, and $\Gamma'$ is a permutation of $\Gamma$, then $\Gamma'$ is also a context and $\Gamma' \deriv M : \sigma$
+\end{enumerate}
+
+\begin{lemma}[Uniqueness of Types]
+    Assume $\Gamma \deriv M : \sigma$, and $\Gamma \deriv M : \tau$, then $\sigma \equiv \tau$
+\end{lemma}
+
+\subsection{Reductions and \texorpdfstring{$\lambda\to$}{Lg}}
+It is an adapted version of~\ref{subsection:beta:reduction}
+
+\begin{equation}
+    (3) (\lambda y : \sigma . P)[x := N] \equiv \lambda z : \sigma . (P^{y \to z}[x := N])
+\end{equation}
+
+where $\lambda z : \sigma. P^{y \to z}$ is $\alpha$-variant, such that $z \notin FV(N)$
+
+\begin{lemma}[Substituion Lemma]
+    Assume $\Gamma', x : \sigma, \Gamma'' \deriv M : \tau$ and $\Gamma' \deriv N : \sigma$, then $\Gamma', \Gamma'' \deriv M[x := N] : \tau$
+\end{lemma}
+
+\begin{definition}[One-step $\beta$-reduction, $\onebeta$, for $\Lambda_{\mathbb{T}}$]
+\end{definition}
+\begin{enumerate}
+    \item (Basis) $(\lambda x : \sigma . M)N \onebeta M [x := N]$
+    \item (Compatibility) As~\ref{def:comp}
+\end{enumerate}
+
+\subsection{Exercises}
+\subsubsection{2.5 Find pre-typed terms}
+\begin{exercise}[a]
+    $\lambda xy. x(\lambda z. y)y$
+\end{exercise}
+\begin{proof}
+    Having the following:
+    \begin{itemize}
+        \item Lets assume $x : \sigma \to \beta \to \gamma$, $\lambda z. y : \sigma$ and $y : \beta$
+        \item If $z : \rho$, then $\lambda z : \rho. y : \rho \to \beta \equiv \sigma$ should hold.
+        \item Taking the assumption $x : (\rho \to \beta) \to \beta \to \gamma$ 
+        \item there is a legal term $\lambda x: (\rho \to \beta) \to \beta \to \gamma. \lambda y : \beta. x(\lambda z : \rho . y)y$ with type $((\rho \to \beta) \to \beta \to \gamma) \to \beta \to \gamma$
+    \end{itemize}
+\end{proof}
+
+\begin{exercise}[b]
+    $\lambda xy. x(\lambda z. x)y$
+\end{exercise}
+\begin{proof}
+    Having the following:
+    \begin{itemize}
+        \item Having similar assumptions as before but $\lambda z. x : \sigma$ and $y : \beta$
+        \item If $z : \rho$, then $\lambda z : \rho. x : \rho \to \beta \to \gamma \equiv \sigma$ which does not hold.
+    \end{itemize}
+    Therefore, term is not typeable.
+\end{proof}
+
+\subsubsection{2.9 Type checking}
+\begin{exercise}[a]
+    $x : \delta \to \delta \to \alpha, y : \gamma \to \alpha, z : \alpha \to \beta \deriv \lambda u : \delta . \lambda v : \gamma . z(yv) : \delta \to \gamma \to \beta$
+\end{exercise}
+\begin{proof}
+  \begin{flagderiv}
+    \assume{a:7:1}{x : \delta \to \delta \to \alpha}{}
+    \assume{a:7:2}{y : \gamma \to \alpha}{}
+    \assume{a:7:3}{z : \alpha \to \beta}{}
+    \assume{a:7:4}{u : \delta}{}
+    \assume{a:7:5}{v : \gamma}{}
+    \step{s:7:1}{yv : \alpha}{(appl) on \ref{a:7:2} and \ref{a:7:5}}
+    \step{s:7:2}{z(yv) : \beta}{(appl) on \ref{a:7:3} and \ref{s:7:1}}
+    \conclude{c:7:1}{\lambda v : \gamma. z(yv) : \gamma \to \beta}{(abst) on \ref{s:7:2}}
+    \conclude{}{\lambda u : \delta . \lambda v : \gamma . z(yv) : \delta \to \gamma \to \beta}{(abst) on \ref{c:7:1}}
+  \end{flagderiv}
+\end{proof}
+
+\begin{exercise}[b]
+    $x : \delta \to \delta \to \alpha, y : \gamma \to \alpha, z : \alpha \to \beta \deriv \lambda u : \delta . \lambda v : \gamma . z(xuu) : \delta \to \gamma \to \beta$
+\end{exercise}
+\begin{proof}
+  \begin{flagderiv}
+    \assume{a:8:1}{x : \delta \to \delta \to \alpha}{}
+    \assume{a:8:2}{y : \gamma \to \alpha}{}
+    \assume{a:8:3}{z : \alpha \to \beta}{}
+    \assume{a:8:4}{u : \delta}{}
+    \assume{a:8:5}{v : \gamma}{}
+    \step{s:8:1}{xuu : \alpha}{(appl) on \ref{a:8:1} and \ref{a:8:4} twice}
+    \step{s:8:2}{z(xuu) : \beta}{(appl) on \ref{a:8:3} and \ref{s:8:1}}
+    \conclude{c:8:1}{\lambda v : \gamma. z(xuu) : \gamma \to \beta}{(abst) on \ref{s:8:2}}
+    \conclude{}{\lambda u : \delta . \lambda v : \gamma . z(xuu) : \delta \to \gamma \to \beta}{(abst) on \ref{c:8:1}}
+  \end{flagderiv}
+\end{proof}
 
 
 \bibliographystyle{alpha}

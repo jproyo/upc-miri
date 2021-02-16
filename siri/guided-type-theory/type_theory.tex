@@ -61,6 +61,8 @@
 \newtheorem{lemma}{Lemma}[section]
 \newtheorem*{exercise}{}
 
+\def\extraVskip{5pt}
+
 \begin{document}
 
 \maketitle
@@ -547,7 +549,7 @@ of this proposition, hence declaring it to be a 'true' one.
 
   \begin{flagderiv}
     \assume{a:5:1}{x : A}{}
-    \assume{a:5:1}{y : B}{}
+    \assume{a:5:2}{y : B}{}
     \skipsteps*{\vdots}{}
     \step{s:5:0}{?\ : A \to A}{}
     \conclude{c:5:0}{\dots : B \to A}{(abst) on \ref{s:5:0}}
@@ -797,6 +799,286 @@ $\Lambda_{\mathbb{T}2} = V \mid (\Lambda_{\mathbb{T}2}\Lambda_{\mathbb{T}2}) \mi
         \item So, $\mathtt{Mult\ One\ Two} \twobeta \lambda \alpha : *. \lambda f: \alpha \to \alpha. \lambda x : \mathtt{nat}. f(f(x)) \equiv \mathtt{Two}$
     \end{itemize}
 \end{proof}
+
+\section{Types dependent on types}
+Construct \textit{generalized} types $\lambda \alpha : * . \alpha \to \alpha$. This is a function with a \textit{type} as a value, what is called \textit{type constructor}.
+
+When we apply the type, we obtain the real types.
+\begin{itemize}
+    \item $(\lambda \alpha : * . \alpha \to \alpha)\beta \quad \onebeta \quad \beta \to \beta$
+    \item $(\lambda \alpha : * . \alpha \to \alpha)\gamma \quad \onebeta \quad \gamma \to \gamma$
+    \item $(\lambda \alpha : * . \alpha \to \alpha)(\gamma \to \beta) \quad \onebeta \quad (\gamma \to \beta) \to (\gamma \to \beta)$
+\end{itemize}
+
+More elaborated type constructors can be built like $\lambda \alpha : * . \lambda \beta : * . \alpha \to \beta$
+
+The type of $\lambda \alpha : * . \alpha \to \alpha$ is  $* \to *$, so $\lambda \alpha : * . \alpha \to \alpha : * \to *$
+
+Our type variable also can be of the form $\alpha : * \to *$, so these are some valid constructors:
+
+\begin{itemize}
+    \item $\lambda \alpha : * \to * . \alpha \gamma : (* \to *) \to *$ if $\gamma : *$
+    \item Having identity type $\lambda \beta : * . \beta : * \to *$, we can construct \newline
+    $(\lambda \alpha : * \to *. \alpha \gamma)(\lambda \beta : * . \beta) : *$
+    \item $\lambda \alpha : * \to * . \alpha : (* \to *) \to (* \to *)$
+\end{itemize}
+
+This system is called $\lambda\underline{\omega}$ or \textbf{\textit{types depending on types}}.
+
+Abstract syntax tree: $\mathbb{K} = * \mid (\mathbb{K} \to \mathbb{K})$
+
+New symbol for \textbf{\textit{type of all kinds}} which is $\square$. For example $* : \square$, $* \to * : \square$
+
+If $\mathcal{K}$ is a kind, each $M$ of type $\mathcal{K}$ is called a type constructor or constructor.
+
+\textbf{\textit{Proper constructors}} are constructors which are not types.
+
+\begin{definition}[Constructor, proper constructor, sort]    
+\end{definition}
+\begin{enumerate}
+    \item If $\mathcal{K} : \square$ and $M : \mathcal{K}$, then $M$ is a constructor. If $\mathcal{K} \not\equiv *$, then $M$ is a proper constructor.
+    \item The set of \textbf{\textit{sort}} is $\{*, \square\}$
+\end{enumerate}
+
+\begin{definition}[Levels]
+\end{definition}
+\begin{enumerate}
+    \item Level 1: Terms
+    \item Level 2: Constructors (Proper and types)
+    \item Level 3: kinds
+    \item Level 4: $\square$
+\end{enumerate}
+
+\textbf{\textit{Example}}: $t : \sigma : * \to * : \square$ (Level 1 to 4 from left to right)
+
+\begin{definition}[Sort-rule]
+    (sort) $\emptyset \deriv * : \square$ 
+\end{definition}
+$s$ will represent \textbf{\textit{sort}} rule. So $s$ is $*$ or $\square$.
+
+\begin{definition}[Var-rule]
+\end{definition}
+(\textit{var})
+\AxiomC{$\Gamma \deriv A : s$}
+\UnaryInfC{$\Gamma, x : A \deriv x : A$} 
+\DisplayProof
+\quad If $x \notin \Gamma$
+
+To declare $x$ we need to define $A$ which is a type or a kind.
+
+\textbf{Example}
+\begin{center}
+    \begin{tabular}{| c || c | c || c | c |} 
+     \hline
+     & \multicolumn{2}{c||}{$s \equiv \square$} & \multicolumn{2}{c|}{$s \equiv *$} \\
+     \hline
+     $A : s$ & $ * : \square $ & $* \to * : \square$ & $\alpha : *$ & $\alpha \to \beta : *$\\
+     \hline
+     $x : A$ & $\alpha : *$ & $\beta : * \to *$ & $x : \alpha$ & $y : \alpha \to \beta$\\
+    \hline
+   \end{tabular}
+   \end{center}
+   
+\vspace{1em}
+
+\begin{prooftree}
+    \AxiomC{(1) $\emptyset \deriv * : \square$}
+    \RightLabel{(var)}
+    \UnaryInfC{(2) $\alpha : * \deriv \alpha : *$}
+    \RightLabel{(var)}
+    \UnaryInfC{(3) $\alpha : *, x : \alpha \deriv x : \alpha$}
+\end{prooftree}
+
+\subsection{The weakening rule in \texorpdfstring{$\lambda\omega$}{}}
+This rule allow us to \textbf{\textit{weaken}} the context of a judgement.
+
+\begin{definition}[Weakening rule]
+\end{definition}
+\AxiomC{$\Gamma \deriv A : B$}
+\AxiomC{$\Gamma \deriv C : s$}
+\LeftLabel{\textit{(weak)}\quad}
+\RightLabel{\quad if $x \notin \Gamma$}
+\BinaryInfC{$\Gamma, x : C \deriv A : B$}
+\DisplayProof
+
+We are adding an extra declaration $C : s$ to the context $\Gamma$, assuming that we already provided something for that context.
+
+\textbf{\textit{Thinning}} in Type Theory is inserting new declarations in a given list. \textbf{\textit{Weakening}} is extending that list at the end.
+
+\textbf{\textit{Examples:}}
+
+\begin{prooftree}
+    \AxiomC{$\emptyset \deriv * : \square$}
+    \RightLabel{\textit{(var)}}
+    \UnaryInfC{$\alpha : * \deriv \alpha : *$}
+    \AxiomC{$\emptyset \deriv * : \square$}
+    \RightLabel{\textit{(var)}}
+    \UnaryInfC{$\alpha : * \deriv \alpha : *$}
+    \RightLabel{\textit{(weak)}}
+    \BinaryInfC{$\alpha : *, x : \alpha \deriv \alpha : *$}
+\end{prooftree}
+
+\vspace{1em}
+
+\begin{prooftree}
+    \AxiomC{$\emptyset \deriv * : \square$}
+    \RightLabel{\textit{(var)}}
+    \UnaryInfC{$\alpha : * \deriv \alpha : *$}
+    \AxiomC{$\emptyset \deriv * : \square$}
+    \AxiomC{$\emptyset \deriv * : \square$}
+    \RightLabel{\textit{(weak)}}
+    \BinaryInfC{$\alpha : * \deriv * : \square$}
+    \RightLabel{\textit{(weak)}}
+    \BinaryInfC{$\alpha : *, \beta : * \deriv \alpha : *$}
+\end{prooftree}
+
+\subsection{Formation rule in \texorpdfstring{$\lambda\omega$}{}}
+This rule enables to form types and kinds
+
+\begin{definition}[Formation rule]
+\end{definition}
+\AxiomC{$\Gamma \deriv A : s$}
+\AxiomC{$\Gamma \deriv B : s$}
+\LeftLabel{\textit{(form)}\quad}
+\BinaryInfC{$\Gamma \deriv A \to B : s$}
+\DisplayProof
+
+\textbf{\textit{Examples:}}
+\begin{prooftree}
+    \AxiomC{\dots}
+    \noLine
+    \UnaryInfC{$\alpha : *, \beta : * \deriv \alpha : *$}
+    \AxiomC{\dots}
+    \noLine
+    \UnaryInfC{$\alpha : *, \beta : * \deriv \beta : *$}
+    \RightLabel{\textit{(form)}}
+    \BinaryInfC{$\alpha : *, \beta : * \deriv \alpha \to \beta : *$}
+\end{prooftree}
+
+\vspace{1em}
+
+\begin{prooftree}
+    \AxiomC{\dots}
+    \noLine
+    \UnaryInfC{$\alpha : * \deriv * : \square$}
+    \AxiomC{\dots}
+    \noLine
+    \UnaryInfC{$\alpha : * \deriv * : \square$}
+    \RightLabel{\textit{(form)}}
+    \BinaryInfC{$\alpha : * \deriv * \to * : \square$}
+\end{prooftree}
+
+\subsection{Application and Abstraction rule in \texorpdfstring{$\lambda\omega$}{}}
+\AxiomC{$\Gamma \deriv M : A \to B$}
+\AxiomC{$\Gamma \deriv N : A$}
+\LeftLabel{\textit{(appl)}\quad}
+\BinaryInfC{$\Gamma \deriv MN : B$}
+\DisplayProof
+
+\vspace{1em}
+
+\AxiomC{$\Gamma, x : A \deriv M : B$}
+\AxiomC{$\Gamma \deriv A \to B : s$}
+\LeftLabel{\textit{(abst)}\quad}
+\BinaryInfC{$\Gamma \deriv \lambda x : A. M : A \to B$}
+\DisplayProof
+
+\textbf{\textit{Example:}}
+
+\begin{flagderiv}
+    \skipsteps*{\vdots}{}
+    \assume{a:9:1}{\beta : *}{}
+    \step{s:9:1}{* : \square}{(weak) on \ref{a:9:1} and \ref{a:9:1}}
+    \assume{a:9:2}{\alpha : *}{}
+    \step{s:9:2}{\alpha : *}{(var) on \ref{a:9:2}}
+    \step{s:9:3}{\alpha \to \alpha : *}{(form) on \ref{s:9:1} and \ref{s:9:1}}
+    \conclude{c:9:1}{* \to * : \square}{(form) on \ref{a:9:2} and \ref{a:9:2}}
+    \step{s:9:4}{\lambda \alpha : *. \alpha \to \alpha  : * \to *}{(abst) on \ref{s:9:3} and \ref{c:9:1}}
+    \step{s:9:5}{\beta : *}{(var)}
+    \step{s:9:6}{(\lambda \alpha : *. \alpha \to \alpha)\beta : *}{(appl) on \ref{s:9:4} and \ref{s:9:5}}
+\end{flagderiv}
+
+\subsection{The conversion rule}
+Recalling example:
+
+$(\lambda \alpha : *. \alpha \to \alpha)\beta \onebeta \beta \to \beta$
+
+We want to be able to derive something like:
+
+If $M$ has type $B$ and $B =_\beta B'$, then $M$ also has type $B'$.
+
+As it is, the system is to weak to derive that and because of that we need to define the conversion rule.
+
+\begin{definition}[Conversion rule]
+\end{definition}
+\AxiomC{$\Gamma \deriv A : B$}
+\AxiomC{$\Gamma \deriv B' : s$}
+\LeftLabel{\textit{(conv)}\quad}
+\RightLabel{\quad\textit{if } $B =_\beta B'$}
+\BinaryInfC{$\Gamma \deriv A : B'$}
+\DisplayProof
+
+\textbf{\textit{Example}}
+
+\AxiomC{$\Gamma \deriv x : (\lambda \alpha : *. \alpha \to \alpha)\beta$}
+\AxiomC{$\Gamma \deriv \beta \to \beta : *$}
+\RightLabel{\textit{(conv)}\quad}
+\BinaryInfC{$\Gamma \deriv x : \beta \to \beta$}
+\DisplayProof
+
+\subsection{Properties in \texorpdfstring{$\lambda\omega$}{}}
+All the properties of other system $\lambda \to$ and $\lambda 2$ applies here but a modification
+on Uniqueness property needs to be made:
+
+\begin{lemma}[Uniqueness of Types up to Conversion]
+If $\Gamma \deriv A : B_1$ and $\Gamma \deriv A : B_2$, then $B_1 =_\beta B_2$
+\end{lemma}
+
+\subsection{Exercises}
+\subsubsection{4.4. Flag derivations}
+\begin{exercise}[a]
+    $\alpha . *, \beta : * \to * \deriv \beta(\beta\alpha) : *$
+\end{exercise}
+\begin{flagderiv}
+    \assume{}{\alpha : *}{}
+    \assume{}{\beta : * \to *}{}
+    \step{}{\beta\alpha : *}{(appl)}
+    \step{}{\beta(\beta\alpha) : *)}{(appl)}
+\end{flagderiv}
+
+\begin{exercise}[b]
+    $\alpha . *, \beta : * \to *, x : \beta(\beta\alpha) \deriv \lambda y : \alpha . x : \alpha \to \beta(\beta\alpha)$
+\end{exercise}
+\begin{flagderiv}
+    \assume{}{\alpha : *}{}
+    \assume{}{\beta : * \to *}{}
+    \assume{}{y : \alpha}{}
+    \step{}{\beta\alpha : *}{(appl)}
+    \step{}{\beta(\beta\alpha) : *}{(appl)}
+    \assume{}{x : *}{}
+    \step{}{x : \beta(\beta\alpha)}{(conv)}
+    \step{}{\lambda y : \alpha . x : \alpha \to \beta(\beta\alpha)}{(abst)}
+\end{flagderiv}
+
+
+\subsubsection{4.5}
+Provide derivation in flag format of following judgement:
+
+$\alpha : *, x : \alpha \deriv \lambda y : \alpha . x : (\lambda \beta : * . \beta \to \beta)\alpha$
+
+\begin{flagderiv}
+    \assume{a:10:1}{\alpha : *}{}
+    \assume{a:10:2}{x : \alpha}{}
+    \assume{a:10:3}{y : \alpha}{}
+    \step{s:10:1}{x : \alpha}{(weak) on \ref{a:10:2}}
+    \step{s:10:2}{ \lambda y : \alpha . x: \alpha \to \alpha}{(abst) on \ref{s:10:1}}
+    \assume{a:10:4}{\beta : *}{}
+    \step{s:10:3}{\beta \to \beta : *}{(form) on \ref{a:10:4} twice}
+    \conclude{c:10:1}{\lambda\beta: *. \beta \to \beta : * \to * }{(abst) on \ref{s:10:3}}
+    \step{s:10:4}{(\lambda\beta: *. \beta \to \beta)\alpha : * }{(appl) on \ref{c:10:1} and \ref{a:10:1}}
+    \step{s:10:5}{\lambda y : \alpha. x : (\lambda\beta: *. \beta \to \beta)\alpha}{(conv) on \ref{s:10:2} and \ref{s:10:4}}
+\end{flagderiv}
+
 
 \bibliographystyle{alpha}
 \bibliography{type_theory}

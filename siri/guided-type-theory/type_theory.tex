@@ -1080,6 +1080,222 @@ $\alpha : *, x : \alpha \deriv \lambda y : \alpha . x : (\lambda \beta : * . \be
     \step{s:10:5}{\lambda y : \alpha. x : (\lambda\beta: *. \beta \to \beta)\alpha}{(conv) on \ref{s:10:2} and \ref{s:10:4}}
 \end{flagderiv}
 
+\section{Types dependent on terms}
+Until now in the previous systems described in the previous chapters we have seen:
+
+\begin{itemize}
+    \item $\lambda \to$: \textit{terms depending on terms}
+    \item $\lambda 2$: \textit{terms depending on terms + terms depending on types}
+    \item $\lambda\underline{\omega}$: We added \textit{types depending on types}
+\end{itemize}
+
+Now it is time to add to the system \textbf{\textit{types depending on terms}} which is going to be called as $\lambda P$, where $P$ stands from predicate.
+
+The format of a $\lambda P$ is: $\lambda x : A . M$, where $M$ is a type and $x$ a term-variable which type is $A$. This is known as 
+a \textit{type-valued} function or \textit{type constructor}.
+
+\textbf{Examples:}
+
+\begin{itemize}
+    \item $(\lambda n : \mathtt{nat} . S_n)3$ where $S_n$ is the Set $S_n$ for each $n : \mathtt{nat}$
+    \item $(\lambda n : \mathtt{nat} . P_n)3$ where $SP_n$ is the Proposition $P_n$ for each $n : \mathtt{nat}$
+\end{itemize}
+
+In both cases represents a type depending on a term. After \acrshort{br} first case $S_3$ is the Set of all non negative multiple of $3$. 
+In the second case $P_3$ the proposition \textit{3 is a prime number}.
+
+\subsection{Derivation rules of \texorpdfstring{$\lambda P$}{}}
+
+\begin{center}
+    \begin{tabular}{| l |} 
+    \hline
+    \\
+    \textit{(sort)}\quad\AxiomC{$\emptyset \deriv * : \square$}
+    \DisplayProof
+    \\
+    \\  
+    \AxiomC{$\Gamma \deriv A : s$}
+    \LeftLabel{\textit{(var)}\quad}
+    \RightLabel{\quad if $x \notin \Gamma$}
+    \UnaryInfC{$\Gamma, x : A \deriv x : A$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv A : B$}
+    \AxiomC{$\Gamma \deriv C : s$}
+    \LeftLabel{\textit{(weak)}\quad}
+    \RightLabel{\quad if $x \notin \Gamma$}
+    \BinaryInfC{$\Gamma, x : C \deriv A : B$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv A : *$}
+    \AxiomC{$\Gamma, x : A \deriv B : s$}
+    \LeftLabel{\textit{(form)}\quad}
+    \BinaryInfC{$\Gamma \deriv \Pi x : A . B : s$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv M : \Pi x : A . B$}
+    \AxiomC{$\Gamma \deriv N : A$}
+    \LeftLabel{\textit{(appl)}\quad}
+    \BinaryInfC{$\Gamma \deriv MN : B[x := N]$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma, x : A \deriv M : B$}
+    \AxiomC{$\Gamma \deriv \Pi x : A . B : s$}
+    \LeftLabel{\textit{(abst)}\quad}
+    \BinaryInfC{$\Gamma \deriv \lambda x : A . M : \Pi x : A. B$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv A : B$}
+    \AxiomC{$\Gamma \deriv B' : s$}
+    \LeftLabel{\textit{(conv)}\quad}
+    \RightLabel{\quad if $B =_\beta B'$}
+    \BinaryInfC{$\Gamma \deriv A : B'$}
+    \DisplayProof
+    \\
+    \\
+    \hline
+   \end{tabular}
+   \end{center}
+
+
+The main difference with $\lambda\underline\omega$ system is the introduction of $\Pi$-types in \textit{(form), (appl) and (abst)}.
+
+\begin{itemize}
+    \item \textit{(form)} the context is extended with $x$, so $\Gamma, x : A$
+    \item \textit{(appl)} proper type is chosen $B[x := N]$
+\end{itemize}
+
+\subsection{Example derivation of \texorpdfstring{$\lambda P$}{}}
+
+\begin{flagderiv}
+    \step{s:11:1}{* : \square}{(sort)}
+    \assume{a:11:1}{A :  *}{}
+    \step{s:11:2}{A : *}{(var) on \ref{s:11:1}}
+    \step{s:11:3}{* : \square}{(weak) on \ref{s:11:1} and \ref{s:11:1}}
+    \assume{a:11:2}{x : A}{}
+    \step{s:11:4}{* : \square}{(weak) on \ref{s:11:2} and \ref{s:11:3}}
+    \conclude{c:11:1}{A \to * : \square}{(form) on \ref{s:11:2} and \ref{s:11:4}}
+\end{flagderiv}
+
+\subsection{Minimal predicate logic in \texorpdfstring{$\lambda P$}{}}
+In this system we can build a \textit{minimal predicate logic}, which only contains \textit{implication} and \textit{universal quantification}
+as logical constructs. Entities are \textit{propositions, sets and predicates over sets}.
+
+With this we have \textit{propositions-as-types} and \textit{proof-as-terms}. Both are abbreviated as \textbf{PAT}-interpretation.
+
+\begin{itemize}
+    \item If a term $b$ inhabits type $B$ ($b : B$), in which $B$ is interpreted as a proposition, then $b$ is the \textit{proof} of $B$. $b$ is the proof object.
+    \item Where no inhabitant of $B$ exists, there is no \textit{proof} of $B$, so $B$ is \textit{false}.
+\end{itemize}
+
+\begin{definition}[PAT-interpretation]
+\end{definition}
+\begin{center}
+    \begin{tabular}{| l |} 
+    \hline
+    Proposition $B$ is inhabited $\iff B$ is true;\\
+    Proposition $B$ is not inhabited $\iff B$ is false.
+    \\
+    \hline
+   \end{tabular}
+\end{center}
+
+\subsubsection{Sets}
+Sets as types $S : *$, elements as terms. If $a$ is an element of $S$ then $a : S$.
+
+$\mathtt{nat} : *$, $\mathtt{nat} \to \mathtt{nat} :*$, $3 : \mathtt{nat}$, $\lambda n : \mathtt{nat} . n : \mathtt{nat} \to \mathtt{nat}$
+
+\subsubsection{Propositions}
+If $A$ is a proposition, then $A : *$. A term $p$ inhabits $A$ is a proof of $A$. 
+
+\subsubsection{Predicates}
+Predicate $P$ is a function from a set $S$ to the set of all propositions. $P : S \to *$. 
+Also for each $a : S$, then $Pa : *$
+
+\subsubsection{Implication}
+ Logical implication $A \implies B$ corresponds in types to $A \to B$.
+
+ \begin{itemize}
+     \item $A \implies B$ is true
+     \item If $A$ is true, then also $B$ is true.
+     \item If $A$ is inhabited, then also $B$ is inhabited.
+     \item there is a function mapping inhabitants of $A$ to inhabitants of $B$, $f : A \to B$
+     \item $A \to B$ is inhabited
+ \end{itemize}
+
+ \subsubsection{Universal quantification}
+ Having $\forall_{x \in S}(P(x))$ of some predicate $P$:
+
+ \begin{itemize}
+     \item $\forall_{x \in S}(P(x))$ is true;
+     \item for each $x \in S$, $P(x)$ is true;
+     \item for each $x \in S$, $Px$ is inhabited;
+     \item there is a function mapping each $x \in S$ to an inhabitant of $Px$ with type $\Pi x : S. Px$
+     \item $f : \Pi x : S . Px$
+     \item $\Pi x : S . Px$ is inhabited
+ \end{itemize}
+
+ Therefore we can encode $\forall$ in type theory with $\Pi$-type
+
+ \begin{center}
+    \begin{tabular}{| c | c |} 
+     \hline
+     Minimal predicate logic & The type theory of $\lambda P$ \\
+     \hline
+     \hline
+     $S$ is a set & $S : *$\\
+     $A$ is a proposition & $A : *$\\
+    \hline
+    $a \in S$ & $a : S$\\
+    $p \text{ proves } A$ & $p : A$\\
+    \hline
+    $P$ is a predicate on $S$ & $P : S \to *$\\
+    \hline
+    \hline
+    $A \implies B$ & $A \to B$ ($= \Pi x: A . B$)\\
+    $\forall_{x \in S}(P(x))$ & $\Pi x: S . Px$\\
+    \hline
+    \hline
+    ($\implies$-\textit{elim}) & \textit{(appl)}\\
+    ($\implies$-\textit{intro}) & \textit{(abst)}\\
+    \hline
+    ($\forall$-\textit{elim}) & \textit{(appl)}\\
+    ($\forall$-\textit{intro}) & \textit{(abst)}\\
+    \hline
+   \end{tabular}
+\end{center}
+
+\subsection{Examples of derivations in \texorpdfstring{$\lambda P$}{}}
+
+$\forall_{x \in S}\forall_{y \in S}(Q(x,y)) \implies \forall_{u \in S}(Q(u,u))$
+
+
+\begin{flagderiv}
+    \assume{a:12:1}{Assume : \forall_{x \in S}\forall_{y \in S}(Q(x,y))}{}
+    \assume{a:12:2}{Let : u \in S}{}
+    \step{s:12:1}{\forall_{y \in S}(Q(u,y))}{($\forall$-elim) on \ref{a:12:1} and \ref{a:12:2}}
+    \step{s:12:2}{Q(u,u)}{($\forall$-elim) on \ref{s:12:1} and \ref{a:12:2}}
+    \conclude{c:12:1}{\forall_{u \in S}(Q(u,u))}{($\forall$-intro) on \ref{s:12:2}}
+    \conclude{c:12:2}{\forall_{x \in S}\forall_{y \in S}(Q(x,y)) \implies \forall_{u \in S}(Q(u,u))}{($\implies$-intro) on \ref{c:12:1}}
+\end{flagderiv}
+
+Coding this into $\lambda P$ we need to find an inhabitant for this $? : \Pi x  : S. \Pi y : S. Qxy \to \Pi u : S. Quu$
+
+\begin{flagderiv}
+    \assume{a:13:1}{S : *}{}
+    \assume{a:13:2}{Q : S \to S \to *}{}
+    \assume{a:13:3}{z : \Pi x : S. \Pi y : S . Q x y}{}
+    \assume{a:13:4}{u : S}{}
+    \step{s:13:1}{z u : \Pi y : S. Q u y}{(appl) on \ref{a:13:3} and \ref{a:13:4}}
+    \step{s:13:2}{z u u : Q u u}{(appl) on \ref{s:13:1} and \ref{a:13:4}}
+    \conclude{c:13:1}{\lambda u : S. z u u : \Pi u : S. Q u u}{(abs) on \ref{s:13:2}}
+    \conclude{c:13:2}{\lambda z : (\Pi x : S. \Pi y : S. Qxy). \lambda u : S . z u u : \\ \Pi x  : S. \Pi y : S. Qxy \to \Pi u : S. Quu}{(abs) on \ref{c:13:1}}
+\end{flagderiv}
 
 \bibliographystyle{alpha}
 \bibliography{type_theory}

@@ -1297,6 +1297,21 @@ Coding this into $\lambda P$ we need to find an inhabitant for this $? : \Pi x  
     \conclude{c:13:2}{\lambda z : (\Pi x : S. \Pi y : S. Qxy). \lambda u : S . z u u : \\ \Pi x  : S. \Pi y : S. Qxy \to \Pi u : S. Quu}{(abs) on \ref{c:13:1}}
 \end{flagderiv}
 
+\subsection{Exercises}
+\subsubsection{5.4}
+\begin{exercise}
+    Prove that $*$ is the only legal kind in $\lambda P$
+\end{exercise}
+\begin{proof}
+    Lets think we can build a kind $* \to *$
+    \begin{itemize}
+        \item In system $\lambda P$ is $\Pi x : * . *$
+        \item This should be construct with \textit{(form)}
+        \item Having as premise $\Gamma \deriv * : *$
+        \item 
+    \end{itemize}
+\end{proof}
+
 \bibliographystyle{alpha}
 \bibliography{type_theory}
 

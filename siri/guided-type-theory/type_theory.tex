@@ -1274,7 +1274,6 @@ Also for each $a : S$, then $Pa : *$
 
 $\forall_{x \in S}\forall_{y \in S}(Q(x,y)) \implies \forall_{u \in S}(Q(u,u))$
 
-
 \begin{flagderiv}
     \assume{a:12:1}{Assume : \forall_{x \in S}\forall_{y \in S}(Q(x,y))}{}
     \assume{a:12:2}{Let : u \in S}{}
@@ -1308,9 +1307,35 @@ Coding this into $\lambda P$ we need to find an inhabitant for this $? : \Pi x  
         \item In system $\lambda P$ is $\Pi x : * . *$
         \item This should be construct with \textit{(form)}
         \item Having as premise $\Gamma \deriv * : *$
-        \item 
+        \item But $\Gamma \deriv * : B$ is not possible if we don't have $* : \square$ as premise
+        \item So, $\Gamma \deriv * : *$ is not possible
+        \item Therefore $* \to * : \square$ cannot be derived in $\Gamma$
     \end{itemize}
 \end{proof}
+
+\subsubsection{5.9(a)}
+
+$\forall_{x \in S}(Q(x)) \implies \forall_{y \in S}(P(y) \implies Q(y))$
+
+\begin{flagderiv}
+    \assume{a:14:1}{\forall_{x \in S}(Q(x))}{}
+    \assume{a:14:2}{y \in S}{}
+    \step{s:14:1}{Q(y)}{($\forall$-elim) on \ref{a:14:1} nad \ref{a:14:2}}
+    \step{s:14:2}{P(y) \implies Q(y)}{($\implies$-intro) on \ref{s:14:1} and \ref{a:14:2}}
+    \conclude{c:14:1}{\forall_{y \in S}(P(y) \implies Q(y))}{$\forall$-intro on \ref{s:14:2} and \ref{a:14:2}}
+    \conclude{c:14:2}{\forall_{x \in S}(Q(x)) \implies \forall_{y \in S}(P(y) \implies Q(y))}{($\implies$-intro) on \ref{c:14:1}}
+\end{flagderiv}
+
+\begin{flagderiv}
+    \assume{a:15:1}{S : *}{}
+    \assume{a:15:2}{P,Q : S \to *}{}
+    \assume{a:15:3}{u : \Pi x : S. Qx}{}
+    \assume{a:15:3}{v : \Pi z : S. (Pz \to Qz)}{}
+    \step{s:15:1}{u y : Q y}{}
+    \conclude{}{\lambda y : S. v y: \Pi y : S. Py \to Qy}{}
+    \conclude{}{\lambda u : (\Pi x : S. Qx) . \lambda y : S. v y: \Pi y : S. Py \to Qy}{}
+\end{flagderiv}
+
 
 \bibliographystyle{alpha}
 \bibliography{type_theory}

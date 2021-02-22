@@ -1336,10 +1336,268 @@ $\forall_{x \in S}(Q(x)) \implies \forall_{y \in S}(P(y) \implies Q(y))$
     \conclude{}{\lambda u : (\Pi x : S. Qx) . \lambda y : S. v y: \Pi y : S. Py \to Qy}{}
 \end{flagderiv}
 
+\section{The Calculus of Constructions}
+\subsection{System \texorpdfstring{$\lambda C$}{}}
+In this system we combine all the previous systems having all the possible choices \textit{terms/types depending on terms/types}.
+This is called \textit{Calculus of Constructions}, $\lambda C$ or $\lambda$-Coquand, after \textit{Th. Coquand}. Letter 'c' also refer
+to $\lambda$-cube.
 
+$\lambda C = \lambda 2 + \lambda \underline{\omega} + \lambda P$ 
+
+The main difference in the \textit{(form)} rule:
+
+In $\lambda P$ we have 
+
+\AxiomC{$\Gamma \deriv A : *$}
+\AxiomC{$\Gamma, x : A \deriv B : s$}
+\LeftLabel{\textit{(form)$_{\lambda P}$}\quad}
+\BinaryInfC{$\Gamma \deriv \Pi x : A . B : s$}
+\DisplayProof
+
+This mean that we have a type $B : s$ depending on a term $x : A$. So we can have only types or terms depending on terms only.
+If we relax the restriction we can have terms/types depending on terms/types. So we can put $A : s$ instead of $A : *$, but we need another $s$ to distinguish from the other one.
+
+\AxiomC{$\Gamma \deriv A : s_1$}
+\AxiomC{$\Gamma, x : A \deriv B : s_2$}
+\LeftLabel{\textit{(form)$_{\lambda C}$}\quad}
+\BinaryInfC{$\Gamma \deriv \Pi x : A . B : s_2$}
+\DisplayProof
+
+Both $s_1$ and $s_2$ can be chosen independently from each other. Final type is $s_2$ which is inherit from the body.
+
+\begin{itemize}
+    \item If $B$ is a type, then the generalized type $\Pi x : A . B$ is a type as well
+    \item If $B$ is a kind, then $\Pi x : A . B$ should be a kind.
+\end{itemize}
+
+
+\begin{center}
+    \begin{tabular}{| c | c | c || c | c |} 
+     \hline
+     $x : A : s_1$ & $b : B : s_2$ & $(s_1, s_2)$ & $\lambda x : A. b$ & form \\
+     \hline
+     $*$ & $*$ & $(*,*)$ & term-depending-on-term & $\lambda \to$\\
+     $\square$ & $*$ & $(\square,*)$ & term-depending-on-type & $\lambda 2$\\
+     $\square$ & $\square$ & $(\square,\square)$ & type-depending-on-type & $\lambda \underline\omega$\\
+     $*$ & $\square$ & $(*,\square)$ & type-depending-on-term & $\lambda P$\\
+     \hline
+   \end{tabular}
+\end{center}
+
+\subsection{The \texorpdfstring{$\lambda$-cube}{}}
+There are 3 possible extensions to $\lambda \to$
+\begin{itemize}
+    \item Terms depending on types: $\lambda 2$
+    \item Types depending on types: $\lambda \underline{\omega}$
+    \item Types depending on terms: $\lambda P$
+\end{itemize}
+
+All three extension together forms $\lambda C$. There are other possibilities of combining $\lambda \to$ with only 2 of them.
+All these possible combinations are called $\lambda$-cube or \textbf{\textit{Barendregt cube}}~\cite{barendregt}
+
+\begin{center}
+    \begin{tabular}{|c | c c c c |} 
+    \multicolumn{1}{c}{system:} & \multicolumn{4}{c}{combinations $(s_1, s_2)$ allowed } \\
+     \hline
+     $\lambda\to$ & $(*,*)$ & & &\\
+     $\lambda 2$ & $(*,*)$ & $(\square, *)$& &\\
+     $\lambda\underline{\omega}$ & $(*,*)$ & & $(\square, \square)$ &\\
+     $\lambda P$ & $(*,*)$ & & &$(*, \square)$\\
+     $\lambda \omega$ & $(*,*)$ &$(\square, *)$ & $(\square, \square)$&\\
+     $\lambda P 2$ & $(*,*)$ &$(\square, *)$ & &$(*, \square)$\\
+     $\lambda P \underline \omega$ & $(*,*)$ & &$(\square, \square)$ &$(*, \square)$\\
+     $\lambda P \omega = \lambda C$ & $(*,*)$ &$(\square, *)$ & $(\square, \square)$&$(*, \square)$\\
+     \hline
+   \end{tabular}
+\end{center}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+    \foreach \n/\x/\l/\p in{
+    1/{( 0  , 0)}/{$\lambda \to$}/below,
+    2/{( 4, 0)}/{$\lambda P$}/below,
+    3/{( 2, 1)}/{$\lambda \underline{\omega}$}/south east,
+    4/{( 6, 1)}/{$\lambda P \underline{\omega}$}/right,
+    5/{( 0, 4)}/{$\lambda 2$}/left,
+    6/{( 4, 4)}/{$\lambda P 2$}/south west,
+    7/{( 2, 5)}/{$\lambda\underline{\omega}$}/above,
+    8/{( 6, 5)}/{$\lambda C$}/above
+    }
+    {
+            \node[inner sep=2pt,circle,draw,fill,label={\p:\l}] (\n) at \x {};
+        }
+    \draw (1) -- (2) -- (6) -- (5) -- (1);
+    \draw (5) -- (6) -- (8) -- (7) -- (5);
+    \draw (2) -- (4) -- (8) -- (6) -- (2);
+    \draw[dashed] (1) -- (3) -- (4);
+    \draw[dashed] (3) -- (7);
+\end{tikzpicture}
+\caption{The $\lambda$-cube or Barendregt cube}
+\end{figure}
+
+The result investigations on~\cite{barendregt} is that all the eight systems can be described with only one set of derivations rules
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{| l |} 
+    \hline
+    \\
+    \textit{(sort)}\quad\AxiomC{$\emptyset \deriv * : \square$}
+    \DisplayProof
+    \\
+    \\  
+    \AxiomC{$\Gamma \deriv A : s$}
+    \LeftLabel{\textit{(var)}\quad}
+    \RightLabel{\quad if $x \notin \Gamma$}
+    \UnaryInfC{$\Gamma, x : A \deriv x : A$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv A : B$}
+    \AxiomC{$\Gamma \deriv C : s$}
+    \LeftLabel{\textit{(weak)}\quad}
+    \RightLabel{\quad if $x \notin \Gamma$}
+    \BinaryInfC{$\Gamma, x : C \deriv A : B$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv A : s_1$}
+    \AxiomC{$\Gamma, x : A \deriv B : s_2$}
+    \LeftLabel{\textit{(form)}\quad}
+    \BinaryInfC{$\Gamma \deriv \Pi x : A . B : s_2$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv M : \Pi x : A . B$}
+    \AxiomC{$\Gamma \deriv N : A$}
+    \LeftLabel{\textit{(appl)}\quad}
+    \BinaryInfC{$\Gamma \deriv MN : B[x := N]$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma, x : A \deriv M : B$}
+    \AxiomC{$\Gamma \deriv \Pi x : A . B : s$}
+    \LeftLabel{\textit{(abst)}\quad}
+    \BinaryInfC{$\Gamma \deriv \lambda x : A . M : \Pi x : A. B$}
+    \DisplayProof
+    \\
+    \\
+    \AxiomC{$\Gamma \deriv A : B$}
+    \AxiomC{$\Gamma \deriv B' : s$}
+    \LeftLabel{\textit{(conv)}\quad}
+    \RightLabel{\quad if $B =_\beta B'$}
+    \BinaryInfC{$\Gamma \deriv A : B'$}
+    \DisplayProof
+    \\
+    \\
+    \hline
+   \end{tabular}
+   \caption{Derivation rules for the systems of $\lambda$-cube}
+\end{table}
+
+\newpage
+\subsection{Properties of \texorpdfstring{$\lambda C$}{}}
+
+\begin{definition}[Expressions of $\lambda C$, $\mathcal{E}$]
+    The set of $\mathcal{E}$ of $\lambda C$ is defined by:
+\end{definition}
+$\mathcal{E} = V \mid \square \mid * \mid (\mathcal{E}\mathcal{E}) \mid (\lambda V: \mathcal{E}. \mathcal{E}) \mid (\Pi V : \mathcal{E}. \mathcal{E})$
+
+\begin{lemma}[Free Variable Lemma]
+\end{lemma}
+If $\Gamma \deriv A : B$, then $FV(A), FV(B) \subseteq \mathtt{dom}(\Gamma)$
+
+\begin{definition}[Well-formed context]
+\end{definition}
+A context $\Gamma$ is well-formed if there are $A$ and $B$ such that $\Gamma \deriv A : B$
+
+\begin{lemma}[Thinning, Permutation and Condesing Lemma]
+\end{lemma}
+\begin{enumerate}
+    \item \textit{(Thinning)}: Let $\Gamma'$ and $\Gamma''$ be contexts such that $\Gamma' \subseteq \Gamma''$. If $\Gamma' \deriv A : B$ and $\Gamma''$ is well-formed, then also $\Gamma'' \deriv A : B$.
+    \item \textit{(Permutation)}: Let $\Gamma'$ and $\Gamma''$ be contexts such that $\Gamma''$ is a Permutation of  $\Gamma'$. If $\Gamma' \deriv A : B$ and $\Gamma''$ is well-formed, then also $\Gamma'' \deriv A : B$.
+    \item \textit{(Condensing)}: If $\Gamma', x : A, \Gamma'' \deriv B : C$ and $x$ does not occur in $\Gamma'', B \text{ or } C$ , then also $\Gamma, \Gamma'' \deriv B : C$.
+\end{enumerate}
+
+\begin{lemma}[Generation Lemma]
+\end{lemma}
+\begin{enumerate}
+    \item If $\Gamma \deriv x : C$, there exists a sort $s$ and an expression $B$ such that $B =_\beta C, \Gamma \deriv B : s$ and $x : B \in \Gamma$.
+    \item If $\Gamma \deriv MN: C$, then $M$ has a $\Pi$-type, i.e. there exists an expression $A$ and $B$ such that $\Gamma \deriv M : \Pi x : A. B$; moreover, $N$ fits in this $\Pi$-type $\Gamma \deriv N :A$ and finally $C =_\beta B[x := N]$
+    \item If $\Gamma \deriv \lambda x : A. b : C$, then there are a sort $s$ and an expression $B$ such that $C =_\beta \Pi x : A. B$ where $\Gamma \deriv \Pi x: A. B :s$ and moreover $\Gamma, x: A \deriv b:B$
+    \item If $\Gamma \deriv \Pi x:A. B:C$ then there are $s_1$ and $s_2$ such that $C \equiv s_2$, and moreover $\Gamma \deriv A : s_1$ and $\Gamma, x : A \deriv B : s_2$
+\end{enumerate}
+
+\begin{definition}
+    An expression $M$ in $\lambda C$ is legal if there exists $\Gamma$ and $N$ such that $\Gamma \deriv M : N$ or $\Gamma \deriv N : M$ (typeable or inhabited)
+\end{definition}
+
+\begin{lemma}[Subexpression lemma]
+    If $M$ is legal, then every subexpression of $M$ is also legal.
+\end{lemma}
+
+\begin{lemma}[Uniqueness of Types up to Conversion]
+    If $\Gamma \deriv A : B_1$ and $\Gamma \deriv A : B_2$, then $B_1 =_\beta B_2$
+\end{lemma}
+
+\begin{lemma}[Substitution Lemma]
+\end{lemma}
+Let $\Gamma', x : A, \Gamma'' \deriv B : C$ and $\Gamma' \deriv D : A$.
+
+Then $\Gamma', \Gamma''[x := D] \deriv B[x := D] : C[x := D]$
+
+\begin{theorem}[Church-Rosser Theorem; CR; Confluence]
+    The Church-Rosser property holds for $\lambda C$.
+\end{theorem}
+
+\begin{theorem}[Strong Normalization Theorem or Termination Theorem]
+    Every legal $M$ is strongly normalizing.
+\end{theorem}
+
+\begin{theorem}[Decidability of Well-typedness and Type Checking]
+    In $\lambda C$ and its subsystems, the questions of Well-typedness and Type Checking are decidable.
+\end{theorem}
+
+The question of \textit{Term finding} it is decidable for $\lambda \to$ and $\lambda \underline{\omega}$, but undecidable for the rest.
+All the proofs can be found on~\cite{barendregt}.
+
+\subsection{Exercises}
+\subsubsection{6.6}
+Given $M \equiv \lambda S : *. \lambda P : S \to *. \lambda x : S. (P x \to \perp)$.
+
+\begin{exercise}[(a)]
+    Which is the smallest system in the $\lambda$-cube in which $M$ may occur?
+\end{exercise}
+The smallest is $\lambda C$. Taking the eight possibilities
+\begin{itemize}
+    \item $\perp$ needs $(\square, *)$
+    \item $\lambda x : S. (P x \to \perp)$ needs $(*, \square)$
+    \item $\lambda P : S \to *. \lambda x : S. (P x \to \perp)$ needs $(\square, \square)$
+\end{itemize}
+
+\begin{exercise}[(b)]
+    Proof $M$ is legal
+\end{exercise}
+\begin{flagderiv}
+    \assume{}{S : *}{}
+    \assume{}{P : S \to *}{}
+    \assume{}{x : S}{}
+    \step{}{Px : S}{}
+    \step{}{\perp : *}{}
+    \step{}{Px \to \perp : *}{}
+    \conclude{}{\lambda x : S. (P x \to \perp) : S \to *}{}
+    \conclude{}{\lambda P : S \to *. \lambda x : S. (P x \to \perp) : (S \to *) \to S \to *}{}
+    \conclude{}{\lambda S : *. \lambda P : S \to *. \lambda x : S. (P x \to \perp) : S \to (S \to *) \to S \to *}{}
+\end{flagderiv}
+
+\begin{exercise}[(c)]
+    How could you interpret $M$ if $A \to \perp$ encodes $\neg A$?
+\end{exercise}
+It is a function that maps $S$ and $P$ to $\overline{P}$, something that is true if $P$ does not hold, therefore it is impossible.
+
+\newpage
 \bibliographystyle{alpha}
 \bibliography{type_theory}
 
 \end{document}
-
-

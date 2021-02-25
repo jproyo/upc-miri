@@ -1596,6 +1596,418 @@ The smallest is $\lambda C$. Taking the eight possibilities
 \end{exercise}
 It is a function that maps $S$ and $P$ to $\overline{P}$, something that is true if $P$ does not hold, therefore it is impossible.
 
+\section{The encoding of logical notions in \texorpdfstring{$\lambda C$}{}}
+Until now in $\lambda P$ system we have been seen in $PAT$-interpretation how encode $\implies$ and $\forall$ through \textit{introduction} and \textit{elimination}
+rules.
+
+This chapter presents the formalization for encoding $\neg, \land, \lor$ in Type Theory.
+\subsection{Absurdity and negation in type theory}
+Negation '$\neg$', can be seen as an implication $A \implies \perp$, where $\perp$ is \textit{absurdity} or \textit{contradiction}.
+In that sense $\neg A$ means '$A$ implies absurdity'
+
+\textbf{\textit{Absurdity}}
+
+\textit{If $\perp$ is true, then every proposition is true.} 
+In Type Theory words \textit{If $\perp$ is inhabited, then all propositions $A$ are inhabited}.
+
+If $M$ is an inhabitant of $\perp$, there exist a function $f : \Pi \alpha : * . \alpha$. By \textit{(appl)} rule
+$f A : \alpha [\alpha := A]$, this holds for general $A$, so $f B$ inhabits $B$, etc.
+
+If such an $f$ exists, then we can make all propositions $(A, B, \dots)$ true; which is \textbf{absurd}.
+
+\begin{center}
+    $\perp$ is inhabited $\iff \Pi \alpha : * . \alpha$ is inhabited.
+\end{center}
+
+\textbf{\textit{Negation}}
+
+$\neg A \equiv A \to \perp$, where $A \to \perp$ is an abbreviation of $\Pi x : A. \perp$
+
+\AxiomC{$A$}
+\AxiomC{$A \implies \perp$}
+\LeftLabel{\textit{($\perp$-intro)}\quad}
+\BinaryInfC{$\perp$}
+\DisplayProof
+
+Introduction and elimination rule compared with Propositional logic
+
+\begin{tabular}[]{c c}
+    \AxiomC{$A$}
+    \noLine
+    \UnaryInfC{$\vdots$}
+    \noLine
+    \UnaryInfC{$\perp$}
+    \LeftLabel{\textit{($\neg$-intro)}\quad}
+    \UnaryInfC{$\neg A$}
+    \DisplayProof 
+    & \quad
+    \AxiomC{$A$}
+    \noLine
+    \UnaryInfC{$\vdots$}
+    \noLine
+    \UnaryInfC{$B$}
+    \LeftLabel{\textit{($\implies$-intro)}\quad}
+    \UnaryInfC{$A \implies B$}
+    \DisplayProof 
+    \\ & \\
+    \AxiomC{$\neg A$}
+    \AxiomC{$A$}
+    \LeftLabel{\textit{($\neg$-elim)}\quad}
+    \BinaryInfC{$\perp$}
+    \DisplayProof        
+    & \quad
+    \AxiomC{$A \implies B$}
+    \AxiomC{$A$}
+    \LeftLabel{\textit{($\implies$-elim)}\quad}
+    \BinaryInfC{$B$}
+    \DisplayProof  
+\end{tabular}
+
+\subsection{Conjunction and disjunction in type theory}
+
+\textbf{\textit{Conjunction}}
+
+$A \land B \equiv \Pi C : * . (A \to B \to C) \to C$, which is:
+
+\begin{itemize}
+    \item $\Pi C : * . (A \to B \to C) \to C$: For all $C$, ($A$ implies ($B$ implies $C$)) implies $C$
+    \item Or \textit{if $A$ and $B$ together imply $C$, $C$ holds}
+\end{itemize}
+
+
+
+Introduction and elimination rule for \textit{second order encodings} compared with Propositional logic:
+
+\begin{tabular}{c c}
+    \AxiomC{$A$}
+    \AxiomC{$B$}
+    \LeftLabel{\textit{($\land$-intro)}\quad}
+    \BinaryInfC{$A \land B$}
+    \DisplayProof 
+    & \quad
+    \AxiomC{$A$}
+    \AxiomC{$B$}
+    \LeftLabel{\textit{($\land$-intro-sec)}\quad}
+    \BinaryInfC{$\Pi C : * (A \to B \to C) \to C$}
+    \DisplayProof 
+    \\ & \\
+    \AxiomC{$A \land B$}
+    \LeftLabel{\textit{($\land$-elim-left)}\quad}
+    \UnaryInfC{$A$}
+    \DisplayProof 
+    & \quad
+    \AxiomC{$\Pi C : * (A \to B \to C) \to C$}
+    \LeftLabel{\textit{($\land$-elim-left-sec)}\quad}
+    \UnaryInfC{$A$}
+    \DisplayProof 
+    \\ & \\
+    \AxiomC{$A \land B$}
+    \LeftLabel{\textit{($\land$-elim-right)}\quad}
+    \UnaryInfC{$B$}
+    \DisplayProof 
+    & \quad
+    \AxiomC{$\Pi C : * (A \to B \to C) \to C$}
+    \LeftLabel{\textit{($\land$-elim-right-sec)}\quad}
+    \UnaryInfC{$B$}
+    \DisplayProof 
+\end{tabular}
+
+Derivable rules for this under $PAT$-interpretation, assuming that $\Gamma \equiv A : *, B : *$
+
+\AxiomC{$\Gamma \deriv a : A$}
+\AxiomC{$\Gamma \deriv b : B$}
+\LeftLabel{\textit{($\land$-intro-sec-tt)}\quad}
+\BinaryInfC{$\Gamma \deriv ?_1 : \Pi C : *. (A \to B \to C) \to C$}
+\DisplayProof 
+
+\AxiomC{$\Gamma \deriv c : \Pi C : *. (A \to B \to C) \to C$}
+\LeftLabel{\textit{($\land$-elim-left-sec-tt)}\quad}
+\UnaryInfC{$\Gamma \deriv ?_2 : A$}
+\DisplayProof 
+
+\AxiomC{$\Gamma \deriv c : \Pi C : *. (A \to B \to C) \to C$}
+\LeftLabel{\textit{($\land$-elim-right-sec-tt)}\quad}
+\UnaryInfC{$\Gamma \deriv ?_3 : B$}
+\DisplayProof 
+
+In flag derivation \textit{($\land$-intro-sec)} format to find $?_1, ?_2, ?_3$ we have:
+
+\begin{flagderiv}
+    \assume{a:16:1}{A : *}{}
+    \assume{a:16:2}{B : *}{}
+    \assume{a:16:3}{x : A}{}
+    \assume{a:16:4}{y : B}{}
+    \assume{a:16:5}{C : *}{}
+    \assume{a:16:6}{z : A \to B \to C}{}
+    \step{s:16:1}{zx : B \to C}{(appl) on \ref{a:16:6} and \ref{a:16:3}}
+    \step{s:16:2}{zxy : C}{(appl) on \ref{s:16:1} and \ref{a:16:4}}
+    \conclude{c:16:1}{\lambda z : A \to B \to C . zxy : (A \to B \to C) \to C}{(abst) on \ref{s:16:2}}
+    \conclude{c:16:2}{\lambda C : *. \lambda z : A \to B \to C . zxy : \\ \Pi C : *. (A \to B \to C) \to C}{(abst) on \ref{c:16:1}}
+\end{flagderiv}
+
+\textbf{\textit{Disjunction}}
+
+$A \lor B \equiv \Pi C : * . (A \to B) \to (B \to C) \to C$, which is:
+
+\begin{itemize}
+    \item $\Pi C : * . (A \to B) \to (B \to C) \to C$: For all $C$, ($A \to C$ implies that ($B \to C$ implies $C$)
+    \item Or \textit{if $A$ implies $C$ and also $B$ implies $C$, $C$ holds on its own}
+\end{itemize}
+
+In natural deduction rules:
+
+\AxiomC{$A$}
+\LeftLabel{\textit{($\lor$-intro-left)}\quad}
+\UnaryInfC{$A \lor B$}
+\DisplayProof 
+
+\AxiomC{$B$}
+\LeftLabel{\textit{($\lor$-intro-right)}\quad}
+\UnaryInfC{$A \lor B$}
+\DisplayProof 
+
+\AxiomC{$A \lor B$}
+\AxiomC{$A \implies C$}
+\AxiomC{$B \implies C$}
+\LeftLabel{\textit{($\forall$-elim)}\quad}
+\TrinaryInfC{$C$}
+\DisplayProof 
+
+In Type Theory second order version:
+
+
+\AxiomC{$A$}
+\LeftLabel{\textit{($\lor$-intro-left-sec)}\quad}
+\UnaryInfC{$\Pi C : * . (A \to B) \to (B \to C) \to C$}
+\DisplayProof 
+
+\AxiomC{$B$}
+\LeftLabel{\textit{($\lor$-intro-right-sec)}\quad}
+\UnaryInfC{$\Pi C : * . (A \to B) \to (B \to C) \to C$}
+\DisplayProof
+
+\AxiomC{$\Pi D : * . (A \to D) \to (B \to D) \to D$}
+\AxiomC{$A \to C$}
+\AxiomC{$B \to C$}
+\LeftLabel{\textit{($\forall$-elim-sec)}\quad}
+\TrinaryInfC{$C$}
+\DisplayProof 
+
+In flag derivation \textit{($\lor$-intro-sec)} 
+
+\begin{flagderiv}
+    \assume{a:17:1}{A : *}{}
+    \assume{a:17:2}{B : *}{}
+    \assume{a:17:3}{C : *}{}
+    \assume{a:17:4}{x : (\Pi D : *. (A \to D) \to (B \to D) \to D)}{}
+    \assume{a:17:5}{y : A \to C)}{}
+    \assume{a:17:6}{z : B \to C)}{}
+    \step{s:17:1}{xC :  (A \to C) \to (B \to C) \to C}{(appl) on \ref{a:17:4} and \ref{a:17:3}}
+    \step{s:17:2}{xCy : (B \to C) \to C}{(appl) on \ref{s:17:1} and \ref{a:17:5}}
+    \step{s:17:3}{xCyz : C}{(appl) on \ref{s:17:2} and \ref{a:17:6}}
+\end{flagderiv}
+
+The Three encodings $\neg, \land, \lor$ are not formally complete because $A, B$ are free variables and we need something to define formally that $A, B : *$.
+
+\begin{itemize}
+    \item $\neg \equiv \lambda \alpha : *. (\alpha \to \perp)$
+    \item $\land \equiv \lambda \alpha : *. \lambda \beta : *. \Pi \gamma : * . (\alpha \to \beta \to \gamma) \to \gamma$
+    \item $\lor \equiv \lambda \alpha : *. \lambda \beta : *. \Pi \gamma : * . (\alpha \to \gamma) \to (\beta \to \gamma) \to \gamma$
+\end{itemize}
+
+With this encoding we have everything in place to derive the expressions, for example:
+
+$\neg A \equiv (\lambda \alpha : *. (\alpha \to \perp))A \to \perp \quad \onebeta \quad A \to \perp$
+
+\subsection{Example of propositional logic in \texorpdfstring{$\lambda C$}{}}
+
+Lets start with the tautology $(A \lor B) \implies (\neg A \implies B)$:
+
+We need a type theoretical proof that the previous encoding works:
+
+$\underbrace{(\Pi C : *. (A \to C) \to (B \to C) \to C)}_{A \lor B} \to \underbrace{(A \to \perp)}_{\neg A} \to B$
+
+
+\begin{flagderiv}
+    \assume{a:18:1}{A : *}{}
+    \assume{a:18:2}{B : *}{}
+    \assume{a:18:3}{x : (\Pi C : *. (A \to C) \to (B \to C) \to C)}{}
+    \assume{a:18:4}{y : A \to \perp}{}
+    \step{s:18:1}{xB :  (A \to B) \to (B \to B) \to B}{(appl) on \ref{a:18:2} and \ref{a:18:3}}
+    \assume{a:18:5}{u : A}{}
+    \step{s:18:2}{yu : \perp}{(appl) on \ref{a:18:5} and \ref{a:18:4}}
+    \step{s:18:3}{yuB : B}{(appl) on \ref{s:18:2} and \ref{a:18:2}}
+    \conclude{c:18:1}{\lambda u : A. yuB : A \to B}{(abst) on \ref{s:18:3}}
+    \step{s:18:4}{xB(\lambda u : A. yuB) : (B \to B) \to B}{(appl) on \ref{s:18:1} and \ref{c:18:1}}
+    \assume{a:18:6}{v : B}{}
+    \step{s:18:5}{v : B}{(var) on \ref{a:18:6}}
+    \conclude{c:18:2}{\lambda v : B. v : B \to B}{(abst) on \ref{s:18:5}}
+    \step{s:18:6}{xB(\lambda u : A. yuB)(\lambda v : B. v):B}{(appl) on \ref{s:18:4} and \ref{c:18:2}}
+    \conclude{c:18:3}{\lambda y : A \to \perp. xB(\lambda u : A. yuB)(\lambda v : B. v) : \\(A \to perp) \to B}{(abst) on \ref{s:18:6}}
+    \conclude{}{\lambda x : (\Pi C : *. (A \to C) \to (B \to C) \to C). \\ \lambda y : A \to \perp. xB(\lambda u : A. yuB)(\lambda v : B. v) : \\ (\Pi C : *. ((A \to C) \to (B \to C) \to C)) \to (A \to \perp) \to B}{(abst) on \ref{c:18:3}}
+    \caption{A derivation of logical tautology $(A \lor B) \implies (\neg A \implies B)$}
+\end{flagderiv}
+
+
+\subsection{Classical logic in \texorpdfstring{$\lambda C$}{}}
+Until now the correspondence between type theory and Logic was focused on \textit{Constructive} logic, which is less powerful than \textit{Classical}, for example
+the law of \textit{exclude the third} (ET) where $A \lor \neg A$ holds for any $A$, and \textit{double negation} law (ND) where $\neg\neg A \implies A$ also holds for any $A$.
+
+In order to encode the extension of \textit{constructive} logic to \textit{classical} we only need to add either $ET$ or $ND$ to \textit{constructive}, because the one we dont add
+can be derived from the other. This addition on $\lambda C$ it is just having something that always holds. This can be done adding an assumption at the top 
+of the context.
+
+For example, adding $ET$:
+
+\begin{tabular}[]{|c|}
+    \hline
+    $i_{ET} : \Pi \alpha : *. \alpha \lor \neg \alpha$\\
+    \hline
+\end{tabular}
+
+We call this the addition of an \textit{axiom}. 
+
+Now we can derive from our \textit{constructive} logic plus $ET$, $ND$:
+
+\begin{flagderiv}
+    \assume{}{i_{ET} : \Pi \alpha : *. \alpha \lor \neg \alpha}{}
+    \assume{}{\beta : *}{}
+    \assume{}{x: \neg\neg\beta}{}
+    \step{}{i_{ET}\beta : \beta \lor \neg\beta}{}
+    \step{}{i_{ET}\beta : \Pi \gamma : * . (\beta \to \gamma) \to (\neg\beta \to \gamma) \to \gamma}{}
+    \step{}{i_{ET}\beta\beta : (\beta \to \beta) \to (\neg\beta \to \beta) \to \beta}{}
+    \step{}{\lambda y : \beta . y : \beta \to \beta}{}
+    \step{}{i_{ET}\beta\beta(\lambda y : \beta . y) : (\neg\beta \to \beta) \to \beta}{}
+    \assume{}{z : \neg\beta}{}
+    \step{}{xz : \perp}{}
+    \step{}{xz\beta : \beta}{}
+    \conclude{}{\lambda z : \neg\beta. xz\beta : \neg\beta \to \beta}{}
+    \step{}{i_{ET}\beta\beta(\lambda y : \beta . y)(\lambda z : \neg\beta. xz\beta ) : \beta}{}
+    \caption{A derivation of $ND$ from \textit{constructive} logic plus $ET$}
+\end{flagderiv}
+
+\subsection{Predicate logic \texorpdfstring{$\lambda C$}{}}
+Now we are going top encode \textit{Predicate logic}. For that we need to encode quantifiers $\forall, \exists$.
+
+In the case of $\forall$ we already provided the encoding for $\forall_{x \in S}(P(x))$ as $\Pi x : S. Px$.
+
+In the case of $\exists$ we need to provide something for $\exists_{x \in S}(P(x)) \equiv \neg \forall_{x \in S}(\neg P(x))$ having:
+
+$\exists_{x \in S}(P(x))$ as $\Pi \alpha : *. ((\Pi x : S. (Px \to \alpha)) \to \alpha)$
+
+Which means \textit{For all $\alpha$, if we know that for all $x \in S$ it holds that $Px$ implies $\alpha$, then $\alpha$ holds}.
+
+We got there with \textit{($\exists$-elim)} and \textit{($\exists$-intro)} rules:
+
+\textbf{\textit{Elimination rule}}
+
+\AxiomC{$\exists_{x \in S}P(x)$}
+\AxiomC{$\forall_{x \in S}(P(x) \implies A)$}
+\LeftLabel{\textit{($\exists$-elim)}\quad}
+\BinaryInfC{$A$}
+\DisplayProof 
+
+In type theory:
+
+\AxiomC{$\Pi \alpha : * . ((\Pi x : S. (Px \to \alpha) \to \alpha)$}
+\AxiomC{$\Pi x : S. (Px \to A)$}
+\LeftLabel{\textit{($\exists$-elim-sec)}\quad}
+\BinaryInfC{$A$}
+\DisplayProof 
+
+\begin{flagderiv}
+    \assume{}{S : *}{}
+    \assume{}{P : S \to *}{}
+    \assume{}{A : *}{}
+    \assume{}{y : \Pi \alpha : * . ((\Pi x : S. (Px \to \alpha) \to \alpha)}{}
+    \assume{}{z : \Pi x : S . (Px \to A)}{}
+    \step{}{yA : (\Pi x : S . (Px \to A)) \to A}{}
+    \step{}{yAz : A}{}
+    \caption{A derivation of \textit{($\exists$-elim-sec)}}
+\end{flagderiv}
+
+\textbf{\textit{Introduction rule}}
+
+\AxiomC{$a \in S$}
+\AxiomC{$P(a)$}
+\LeftLabel{\textit{($\exists$-intro)}\quad}
+\BinaryInfC{$\exists_{x \in S}(P(x))$}
+\DisplayProof 
+
+In type theory:
+
+\AxiomC{$a : S$}
+\AxiomC{$P a$}
+\LeftLabel{\textit{($\exists$-intro-sec)}\quad}
+\BinaryInfC{$\Pi \alpha : * . ((\Pi x : S. (Px \to \alpha) \to \alpha)$}
+\DisplayProof 
+
+\begin{flagderiv}
+    \assume{}{S : *}{}
+    \assume{}{P : S \to *}{}
+    \assume{}{a : S}{}
+    \assume{}{u : Pa}{}
+    \step{}{\vdots}{}
+    \step{}{? : \Pi \alpha : * . ((\Pi x : S. (Px \to \alpha) \to \alpha)}{}
+    \caption{A derivation of \textit{($\exists$-intro-sec)}}
+\end{flagderiv}
+
+\subsection{Example of predicate logic in \texorpdfstring{$\lambda C$}{}}
+
+Given the following proposition:
+
+$\neg \exists_{x \in S}(P(x)) \implies \forall_{y \in S}(\neg P(y))$
+
+In second order $\lambda C$-encoding this is:
+
+$\underbrace{\underbrace{(\underbrace{(\Pi \alpha : * . (\Pi x : S. (Px \to \alpha)) \to \alpha)}_{\exists_{x \in S}(P(x))} \to \perp)}_{\neg\exists_{x \in S}(P(x))} \to \underbrace{\Pi y : S. (P y \to \perp)}_{\forall_{y \in S}(P(y))}}_{\implies}$
+
+\begin{flagderiv}
+    \assume{a:20:1}{S : *}{}
+    \assume{a:20:2}{P : S \to *}{}
+    \assume{a:20:3}{u : \neg (\exists x : S . Px)}{}
+    \assume{a:20:4}{y : S}{}
+    \assume{a:20:5}{v : Py}{}
+    \step{s:20:1}{\lambda \alpha : *. \lambda w : (\Pi x : S . (Px \to \alpha)). wyv : \exists x : S.Px}{}
+    \step{s:20:2}{u(\lambda \alpha : *. \lambda w : (\Pi x : S . (Px \to \alpha)). wyv) : \perp}{(appl) on \ref{a:20:3} and \ref{s:20:1}}
+    \conclude{c:20:1}{\dots : \neg(Py)}{(abst) on \ref{s:20:2}}
+    \conclude{c:20:2}{\dots : \forall y : S. \neg(Py)}{(abst) on \ref{c:20:1}}
+    \conclude{c:20:3}{\dots : \neg (\exists x : S . Px) \implies \forall y : S . \neg P(y)}{(abst) on \ref{c:20:2}}
+    \caption{A derivation of $\neg \exists_{x \in S}(P(x)) \implies \forall_{y \in S}(\neg P(y))$}
+\end{flagderiv}
+
+\subsection{Exercises}
+\subsubsection{7.2}
+\begin{exercise}[a]
+    Formulate a double negation law (DN) as an axiom in $\lambda C$
+\end{exercise}
+\begin{proof}[Formulation]
+    \begin{tabular}[]{|c|}
+        \hline
+        $L_{dn} : \Pi \gamma : *. \neg\neg\gamma \to \gamma$\\
+        \hline
+    \end{tabular}
+\end{proof}
+
+\begin{exercise}[b]
+    Verify the following expression is a tautology in classical logic by givin a corresponding flag-style derivation in $\lambda C)$. Use (DN). $(\neg A \implies A) \implies A$
+\end{exercise}
+\begin{proof}[Derivation]
+    $\neg A \implies A \equiv \neg \neg A \lor A$\\
+    So, we have the following expression: $(\neg \neg A \lor A) \implies A$
+
+    \begin{flagderiv}
+        \assume{}{L_{dn} : \Pi \gamma : *. \neg\neg\gamma \to \gamma}{}
+        \assume{}{A : *}{}
+        \assume{}{x: \Pi A : *. ((\neg \neg A \to A) \to (A \to A) \to A)}{}
+        \assume{}{y : A}{}
+        \step{}{L_{dn} A : \neg \neg A \to A}{}
+        \step{}{x L_{dn} A : (A \to A) \to A}{}
+        \conclude{}{\lambda y : A . y : A \to A}{}
+        \step{}{x L_{dn} A y : A}{}
+    \end{flagderiv}
+\end{proof}
+
 \newpage
 \bibliographystyle{alpha}
 \bibliography{report}

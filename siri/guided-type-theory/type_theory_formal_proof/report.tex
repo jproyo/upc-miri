@@ -51,6 +51,7 @@
 \newacronym{br}{$\beta$-\textit{reduction}}{Beta Reduction}
 \newacronym{lt}{$\lambda$-\textit{term}}{Lambda Terms}
 \newacronym{solc}{SOT $\lambda$-\textit{calculus}}{Second Order Typed $\lambda$-\textit{calculus}}
+\newacronym{fp}{FP}{Functional Programming}
 
 \newcommand{\twobeta}{\twoheadrightarrow_\beta}
 \newcommand{\onebeta}{\to_\beta}
@@ -70,7 +71,7 @@
 \tableofcontents
 
 \section{Introduction}
-This report is going to provide a summary over the first 6 chapters of the book~\cite{type_theory}, which are the most relevant ones.
+This report is going to provide a summary over the first chapters of the book~\cite{type_theory}, which are the most relevant ones.
 Following chapters provide a more advanced view over Type Theory concepts.
 
 Alongside the different chapters of the book I am going to describe briefly the most important parts of each chapter and, at the same time,
@@ -890,7 +891,7 @@ To declare $x$ we need to define $A$ which is a type or a kind.
     \UnaryInfC{(3) $\alpha : *, x : \alpha \deriv x : \alpha$}
 \end{prooftree}
 
-\subsection{The weakening rule in \texorpdfstring{$\lambda\omega$}{}}
+\subsection{The weakening rule in \texorpdfstring{$\lambda\omega$}{}}\label{sub:weak:omega}
 This rule allow us to \textbf{\textit{weaken}} the context of a judgement.
 
 \begin{definition}[Weakening rule]
@@ -1327,11 +1328,11 @@ $\forall_{x \in S}(Q(x)) \implies \forall_{y \in S}(P(y) \implies Q(y))$
 \end{flagderiv}
 
 \begin{flagderiv}
-    \assume{a:15:1}{S : *}{}
-    \assume{a:15:2}{P,Q : S \to *}{}
-    \assume{a:15:3}{u : \Pi x : S. Qx}{}
-    \assume{a:15:3}{v : \Pi z : S. (Pz \to Qz)}{}
-    \step{s:15:1}{u y : Q y}{}
+    \assume{}{S : *}{}
+    \assume{}{P,Q : S \to *}{}
+    \assume{}{u : \Pi x : S. Qx}{}
+    \assume{}{v : \Pi z : S. (Pz \to Qz)}{}
+    \step{}{u y : Q y}{}
     \conclude{}{\lambda y : S. v y: \Pi y : S. Py \to Qy}{}
     \conclude{}{\lambda u : (\Pi x : S. Qx) . \lambda y : S. v y: \Pi y : S. Py \to Qy}{}
 \end{flagderiv}
@@ -1384,7 +1385,7 @@ Both $s_1$ and $s_2$ can be chosen independently from each other. Final type is 
    \end{tabular}
 \end{center}
 
-\subsection{The \texorpdfstring{$\lambda$-cube}{}}
+\subsection{The \texorpdfstring{$\lambda$-cube}{}}\label{sub:lambda:cube}
 There are 3 possible extensions to $\lambda \to$
 \begin{itemize}
     \item Terms depending on types: $\lambda 2$
@@ -2007,6 +2008,32 @@ $\underbrace{\underbrace{(\underbrace{(\Pi \alpha : * . (\Pi x : S. (Px \to \alp
         \step{}{x L_{dn} A y : A}{}
     \end{flagderiv}
 \end{proof}
+
+\section{Conclusion}
+I have been working professionally in \acrfull{fp} for the last 5 years, and in particular in \textbf{\textit{Haskell}} for the last 2. Reading this book allowed me to understand 
+the strong relationship between \textbf{\textit{Types}} and \textbf{\textit{Programs}}, in a more formal and mathematical way. This concept in fact was first introduced in~\cite{howard} 
+with the name of \textit{Proposition as types}, but here the full formalization of the concept in the framework of \textit{Type Theory} and in particular in $\lambda \to$ system, has been done
+in a deep and contextual manner. Learning the formalization on how a correspondence between \textit{Logic} and \textit{Type Theory} can be established, it is a great tool for understanding the 
+need of \textbf{\textit{Strong Typed Checked Languages}}, which give us a powerful tool where we can write programs as a mathematical proof of some propositions which are the types.
+
+Another important and fundamental construct of the book I have learned is the different \acrlong{lc} Systems describe from Chapter 1 up to 6. Before this book, my knowledge was limited to 
+Untyped \acrlong{lc} in general and some construct what is formalized here as $\lambda \to$ system. This is because in most of the \acrlong{fp} Books or Online resources, only Untyped \acrlong{lc}
+is introduced as a way to understand the formalization roots of Paradigm, but a lot of details are left for the reader. Reading and going deeper on the exercises allowed me to understand that there are more 
+systems involved like $\lambda 2$, $\lambda \underline{\omega}$, $\lambda P$ and $\lambda C$ and how they are related. Basically each system contains the previous with more formalization to support more encodings. 
+This have been summarized clearly in what it is called $\lambda$-cube~\ref{sub:lambda:cube}, until we reached to a formalization which allows us to encode \textbf{\textit{Propositional logic and Classical}}.
+
+Having discovering this it was a novelty for me because i understood finally the roots of the Automated Theorem Proofers like \textbf{\textit{Agda and Coq}} which now i am eager to explore deeper.
+
+Regarding the exercises I would say that are doable and manageable because in each chapter the author presents from the easiest ones to the complex. I have liked and enjoyed very much doing the \textit{flag derivation}
+exercises which i consider pretty challenging and close to natural deduction as well.
+
+In regards the practical exercises and description of \textit{flag derivation} or deductions, I think there is a lack of explanations from the authors of the book on some specific steps and how they are applied.
+For example, there is a part that is explained here~\ref{sub:weak:omega}, where there is a \textit{(var)} rule applied twice. This is something that is also applied in \textit{flag derivation}
+and it is not clearly explain from the authors and I had to research on my own. Although the rest of the explanations are quite formal and deep and they claimed in the Preface that the book is for \textit{advanced readers}, 
+I think they should have done a better explanation of the derivations and how to do this step by step, moreover in advanced system like $\lambda P$ or $\lambda \underline\omega$ which are not so cover. 
+
+In General the book is a great and complete guideline to \textit{Type Theory}, its formalization and how this is a applied in \textit{Formal Proof} in Mathematics. As I've claimed before, even for my field which is \textit{Computer Science}, 
+this is a great material for understanding in deep the roots of the \textit{Type Systems} behind \textit{Compilers and Strong typed languages}.
 
 \newpage
 \bibliographystyle{alpha}
